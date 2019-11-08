@@ -8,6 +8,9 @@ const routes: Routes = [
     path: '',
     component: HomePage
   }
+  // {
+  //   children: [{ path: '', component: HomePage, pathMatch: 'full' }]
+  // }
 ];
 
 @NgModule({

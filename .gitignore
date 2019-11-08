@@ -1,0 +1,20 @@
+# See http://help.github.com/ignore-files/ for more about ignoring files.
+*_DeploymentConfig.json
+*_BuildConfig.json
+*.crt
+*.key
+*.local.*
+
+# General
+**/*.env
+
+# Visual Studio Code
+.vscode
+.idea/*
+.vs
+
+# Node
+**/node_modules
+
+# Keycloak
+**/hsperfdata_jboss

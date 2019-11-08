@@ -7,5 +7,5 @@ import Router = require('koa-router');
 config({ path: resolve(__dirname, '../config.env') });
 
 app.listen(process.env.PORT, () => {
-  console.log('listening on port: ', process.env.port);
+  console.log('listening on port: ', process.env.PORT);
 });

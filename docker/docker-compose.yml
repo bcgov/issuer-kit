@@ -1,0 +1,185 @@
+version: "3"
+services:
+
+  #
+  # API/Controller
+  #
+  identity-controller-dev:
+    image: node:erbium
+    environment:
+      - PORT=${IDENTITY_CONTROLLER_PORT}
+      - HOOKS_PORT=${IDENTITY_CONTROLLER_HOOK_PORT}
+      - AGENT_ADMIN_URL=${AGENT_ADMIN_URL}
+      - DB_SERVICE=${DB_SERVICE}
+      - DB_USER=${MONGODB_USER}
+      - DB_PASSWORD=${MONGODB_PASSWORD}
+      - DB_PORT=${MONGODB_PORT}
+    volumes:
+      - ../identity-controller:/usr/src/controller
+    ports:
+      - ${IDENTITY_CONTROLLER_PORT}:${IDENTITY_CONTROLLER_PORT}
+    networks:
+      - identity_kit
+    working_dir: /usr/src/controller
+    command: npm start
+
+  #
+  # Admin frontend with hot-reloading
+  #
+  wa-admin-dev:
+    image: node:erbium
+    volumes:
+      - ../wa-admin:/usr/src/wa-admin
+    working_dir: /usr/src/wa-admin
+    ports:
+      - ${WA_ADMIN_PORT}:${WA_ADMIN_PORT}
+    networks:
+      - identity_kit
+    command: npm run start-docker
+  
+  #
+  # Public frontend with hot-reloading
+  #
+  wa-public-dev:
+    image: node:erbium
+    volumes:
+      - ../wa-public:/usr/src/wa-public
+    working_dir: /usr/src/wa-public
+    ports:
+      - ${WA_PUBLIC_PORT}:${WA_PUBLIC_PORT}
+    networks:
+      - identity_kit
+    command: npm run start-docker
+  
+  #
+  # wa-db
+  #
+  wa-db:
+    image: registry.access.redhat.com/rhscl/mongodb-36-rhel7
+    environment:
+      - MONGODB_ADMIN_PASSWORD=${MONGODB_ADMIN_PASSWORD}
+      - MONGODB_USER=${MONGODB_USER}
+      - MONGODB_PASSWORD=${MONGODB_PASSWORD}
+      - MONGODB_DATABASE=${MONGODB_DATABASE}
+    volumes:
+      - wa-db-data:/data/db
+    ports:
+      - ${MONGODB_PORT}:${MONGODB_PORT}
+    networks:
+      - identity_kit
+  
+  #
+  # keycloak service
+  #  
+  keycloak:
+    image: jboss/keycloak:7.0.0
+    environment:
+      DB_VENDOR: ${KEYCLOAK_DB_VENDOR}
+      DB_ADDR: ${KEYCLOAK_DB_ADDR}
+      DB_DATABASE: ${KEYCLOAK_DB_NAME}
+      DB_USER: ${KEYCLOAK_DB_USER}
+      DB_PASSWORD: ${KEYCLOAK_DB_PASSWORD}
+      KEYCLOAK_USER: ${KEYCLOAK_USER}
+      KEYCLOAK_PASSWORD: ${KEYCLOAK_PASSWORD}
+      KEYCLOAK_LOGLEVEL: ${KEYCLOAK_LOGLEVEL}
+      ROOT_LOGLEVEL: ${KEYCLOAK_ROOT_LOGLEVEL}
+      # KEYCLOAK_IMPORT: ${KEYCLOAK_IMPORT}
+    volumes:
+      - ../docker/keycloak/config:/tmp
+    ports:
+      - 8180:8080
+    depends_on:
+      - keycloak-db
+  
+  # 
+  # keycloak-db
+  # 
+  keycloak-db:
+    image: registry.access.redhat.com/rhscl/postgresql-10-rhel7:latest
+    environment:
+      POSTGRESQL_USER: ${KEYCLOAK_DB_USER}
+      POSTGRESQL_PASSWORD: ${KEYCLOAK_DB_PASSWORD}
+      POSTGRESQL_DATABASE: ${KEYCLOAK_DB_NAME}
+    volumes:
+      - keycloak-db-data:/var/lib/pgsql/data  
+
+  #
+  # Identity Kit Agent
+  #
+  identity-kit-agent:
+    image: bcgovimages/aries-cloudagent:py36-1.11-1_0.3.5
+    environment:
+      - LEDGER_URL=${LEDGER_URL}
+      - WALLET_TYPE=${WALLET_TYPE}
+      - POSTGRESQL_WALLET_HOST=${POSTGRESQL_WALLET_HOST}
+      - POSTGRESQL_WALLET_PORT=${POSTGRESQL_WALLET_PORT}
+      - POSTGRESQL_WALLET_USER=${POSTGRESQL_USER}
+      - POSTGRESQL_WALLET_PASSWORD=${POSTGRESQL_PASSWORD}
+      - POSTGRESQL_WALLET_ADMIN_PASSWORD=${POSTGRESQL_ADMIN_PASSWORD}
+      - WALLET_ENCRYPTION_KEY=${WALLET_ENCRYPTION_KEY}
+      - INDY_WALLET_SEED=${INDY_WALLET_SEED}
+      - WEBHOOK_URL=${WEBHOOK_URL}
+      - HTTP_INTERFACE_PORT=${HTTP_INTERFACE_PORT}
+      - AGENT_ADMIN_PORT=${AGENT_ADMIN_PORT}
+      - AGENT_NAME=${AGENT_NAME}
+    networks:
+      - identity_kit
+    ports:
+      - ${AGENT_HTTP_INTERFACE_PORT}:${AGENT_HTTP_INTERFACE_PORT}
+      - ${AGENT_ADMIN_PORT}:${AGENT_ADMIN_PORT}
+    depends_on:
+      - identity-kit-wallet
+    entrypoint: /bin/bash
+    command: [
+        "-c",
+        "curl -d '{\"seed\":\"${AGENT_WALLET_SEED}\", \"role\":\"TRUST_ANCHOR\", \"alias\":\"${AGENT_NAME}\"}' -X POST ${LEDGER_URL}/register; \
+        sleep 2; \
+        aca-py start \
+        --inbound-transport http '0.0.0.0' ${AGENT_HTTP_INTERFACE_PORT} \
+        --outbound-transport http \
+        --endpoint ${AGENT_ENDPOINT} \
+        --genesis-url '${LEDGER_URL}/genesis' \
+        --auto-accept-invites \
+        --auto-accept-requests \
+        --auto-ping-connection \
+        --auto-respond-messages \
+        --auto-respond-credential-proposal \
+        --auto-respond-credential-offer \
+        --auto-respond-credential-request \
+        --auto-verify-presentation \
+        --wallet-type 'indy' \
+        --wallet-name '${AGENT_WALLET_NAME}' \
+        --wallet-key '${AGENT_WALLET_ENCRYPTION_KEY}' \
+        --wallet-storage-type '${AGENT_STORAGE_WALLET_TYPE}' \
+        --wallet-storage-config '{\"url\":\"${WALLET_HOST}:${WALLET_PORT}\",\"max_connections\":5}' \
+        --wallet-storage-creds '{\"account\":\"${WALLET_USER}\",\"password\":\"${WALLET_PASSWORD}\",\"admin_account\":\"postgres\",\"admin_password\":\"${WALLET_ADMIN_PASSWORD}\"}' \
+        --seed '${AGENT_WALLET_SEED}' \
+        --admin '0.0.0.0' ${AGENT_ADMIN_PORT} \
+        --${AGENT_ADMIN_MODE} \
+        --label ${AGENT_NAME}",
+      ]
+  
+  #
+  # Identity Kit Wallet
+  #
+  identity-kit-wallet:
+    image: registry.access.redhat.com/rhscl/postgresql-10-rhel7:latest
+    environment:
+      - POSTGRESQL_USER=${WALLET_USER}
+      - POSTGRESQL_PASSWORD=${WALLET_PASSWORD}
+      - POSTGRESQL_DATABASE=${WALLET_DATABASE}
+      - POSTGRESQL_ADMIN_PASSWORD=${WALLET_ADMIN_PASSWORD}
+    networks:
+      - identity_kit
+    ports:
+      - ${WALLET_PORT}:${WALLET_PORT}
+    volumes:
+      - identity-kit-wallet-data:/var/lib/pgsql/data
+
+networks:
+  identity_kit:
+
+volumes:
+  keycloak-db-data:
+  identity-kit-wallet-data:
+  wa-db-data:

@@ -1,0 +1,322 @@
+#!/bin/bash
+export MSYS_NO_PATHCONV=1
+export DOCKERHOST=${APPLICATION_URL-$(docker run --rm --net=host codenvy/che-ip)}
+set -e
+
+S2I_EXE=s2i
+if [ -z $(type -P "$S2I_EXE") ]; then
+  echo -e "The ${S2I_EXE} executable is needed and not on your path."
+  echo -e "It can be downloaded from here: https://github.com/openshift/source-to-image/releases"
+  echo -e "Make sure you extract the binary and place it in a directory on your path."
+  exit 1
+fi
+
+SCRIPT_HOME="$(cd "$(dirname "$0")" && pwd)"
+
+# =================================================================================================================
+# Usage:
+# -----------------------------------------------------------------------------------------------------------------
+usage() {
+  cat <<-EOF
+    
+      Usage: $0 [command] [options]
+    
+      Commands:
+    
+      logs - Display the logs from the docker compose run (ctrl-c to exit).
+
+      start-dev - Runs a live development version of the containers, with hot-reloading
+                  enabled.
+
+      stop - Stops the services.  This is a non-destructive process.  The volumes and containers
+             are not deleted so they will be reused the next time you run start.
+    
+      down - Brings down the services and removes the volumes (storage) and containers.
+      rm - Same as down
+
+EOF
+  exit 1
+}
+# -----------------------------------------------------------------------------------------------------------------
+# Default Settings:
+# -----------------------------------------------------------------------------------------------------------------
+DEFAULT_CONTAINERS="wa-db identity-kit-agent identity-kit-wallet keycloak keycloak-db"
+PROD_CONTAINERS=""
+DEV_CONTAINERS="identity-controller-dev wa-admin-dev wa-public-dev"
+# -----------------------------------------------------------------------------------------------------------------
+# Functions:
+# -----------------------------------------------------------------------------------------------------------------
+function echoRed (){
+  _msg=${1}
+  _red='\e[31m'
+  _nc='\e[0m' # No Color
+  echo -e "${_red}${_msg}${_nc}"
+}
+
+function echoYellow (){
+  _msg=${1}
+  _yellow='\e[33m'
+  _nc='\e[0m' # No Color
+  echo -e "${_yellow}${_msg}${_nc}"
+}
+
+configureEnvironment() {
+
+  if [ -f .env ]; then
+    while read line; do
+      if [[ ! "$line" =~ ^\# ]] && [[ "$line" =~ .*= ]]; then
+        export ${line//[$'\r\n']}
+      fi
+    done <.env
+  fi
+
+  for arg in "$@"; do
+    # Remove recognized arguments from the list after processing.
+    shift
+
+    # echo "arg: ${arg}"
+    # echo "Remaining: ${@}"
+
+    case "$arg" in
+      *=*)
+        # echo "Exporting ..."
+        export "${arg}"
+        ;;
+      *)
+        # echo "Saving for later ..."
+        # If not recognized, save it for later procesing ...
+        set -- "$@" "$arg"
+        ;;
+    esac
+  done
+
+  # Global
+  export COMPOSE_PROJECT_NAME="${COMPOSE_PROJECT_NAME:-identity-kit}"
+  export STI_SCRIPTS_PATH=${STI_SCRIPTS_PATH:-/usr/libexec/s2i}
+  export DEBUG=${DEBUG}
+
+  # wa-admin
+  export WA_ADMIN_PORT=4250
+
+  # wa-public
+  export WA_PUBLIC_PORT=4251
+
+  # wa-db
+  export MONGODB_ADMIN_PASSWORD=admin
+  export MONGODB_USER=mongouser
+  export MONGODB_PASSWORD=mongopwd
+  export MONGODB_DATABASE=identity
+  export MONGODB_PORT=27017
+
+  # keycloak
+  export KEYCLOAK_DB_VENDOR="POSTGRES"
+  export KEYCLOAK_DB_ADDR="keycloak-db"
+  export KEYCLOAK_USER="admin"
+  export KEYCLOAK_PASSWORD="admin"
+  export KEYCLOAK_IMPORT="/tmp/master.json"
+  export KEYCLOAK_LOGLEVEL="WARN"
+  export KEYCLOAK_ROOT_LOGLEVEL="WARN"
+
+  # keycloak-db
+  export KEYCLOAK_DB_NAME="keycloak"
+  export KEYCLOAK_DB_USER="keycloak"
+  export KEYCLOAK_DB_PASSWORD="keycloak"
+
+  # identity-kit-wallet
+  export WALLET_HOST="identity-kit-wallet"
+  export WALLET_PORT="5432"
+  export WALLET_USER="DB_USER"
+  export WALLET_PASSWORD="DB_PASSWORD"
+  export WALLET_DATABASE="IDENTITY_KIT"
+  export WALLET_ADMIN_PASSWORD="mysecretpassword"
+
+  # identity-kit-agent
+  export LEDGER_URL=${LEDGER_URL-http://$DOCKERHOST:9000}
+  export AGENT_WALLET_NAME="identity_kit_agent"
+  export AGENT_WALLET_ENCRYPTION_KEY="key"
+  export AGENT_STORAGE_WALLET_TYPE="postgres_storage"
+  export AGENT_WALLET_SEED="identity_kit_agent_0000000000000"
+  export AGENT_ADMIN_PORT=8024
+  export AGENT_WEBHOOK_PORT=8020
+  export AGENT_WEBHOOK_URL=${WEBHOOK_URL:-http://$DOCKERHOST:$IDENTITY_CONTROLLER_HOOK_PORT}
+  export AGENT_HTTP_INTERFACE_PORT=8021
+  export AGENT_NAME="identity-kit-agent"
+  export AGENT_ENDPOINT=${AGENT_ENDPOINT:-http://$DOCKERHOST:$AGENT_HTTP_INTERFACE_PORT}
+  export AGENT_ADMIN_MODE="admin-insecure-mode"
+  if [ ! -z "${AGENT_ADMIN_API_KEY}" ]; then
+    AGENT_ADMIN_MODE="admin-api-key ${AGENT_ADMIN_API_KEY}"
+  fi
+
+  # identity-controller
+  export IDENTITY_CONTROLLER_PORT=5000
+  export IDENTITY_CONTROLLER_HOOK_PORT=5050
+  export AGENT_ADMIN_URL=${AGENT_ADMIN_URL:-http://identity-kit-agent:$AGENT_HTTP_INTERFACE_PORT}
+  export DATABASE_SERVICE="wa-db"
+}
+
+getInputParams() {
+  ARGS=""
+
+  for arg in $@; do
+    case "$arg" in
+    *=*)
+      # Skip it
+      ;;
+    *)
+      ARGS+=" $arg"
+      ;;
+    esac
+  done
+
+  echo ${ARGS}
+}
+
+getStartupParams() {
+  CONTAINERS=""
+  ARGS=""
+
+  for arg in $@; do
+    case "$arg" in
+    *=*)
+      # Skip it
+      ;;
+    -*)
+      ARGS+=" $arg"
+      ;;
+    *)
+      CONTAINERS+=" $arg"
+      ;;
+    esac
+  done
+
+  if [ -z "$CONTAINERS" ]; then
+    CONTAINERS="$DEFAULT_CONTAINERS"
+  fi
+
+  echo ${ARGS} ${CONTAINERS}
+}
+
+deleteVolumes() {
+  _projectName=${COMPOSE_PROJECT_NAME:-docker}
+
+  echo "Stopping and removing any running containers ..."
+  docker-compose down -v
+
+  _pattern="^${_projectName}_\|^docker_"
+  _volumes=$(docker volume ls -q | grep ${_pattern})
+
+  if [ ! -z "${_volumes}" ]; then
+    echo "Removing project volumes ..."
+    echo ${_volumes} | xargs docker volume rm
+  else
+    echo "No project volumes exist."
+  fi
+
+  echo "Removing build cache ..."
+  rm -Rf ../client/tob-web/.cache
+}
+
+registerDids() {
+  _seeds=${@}
+  if [ -z "${_seeds}" ]; then
+    echo -e \\n"registerDids; Missing parameter!"\\n
+    exit 1
+  fi
+
+  for _seed in ${_seeds}; do
+    registerDid ${_seed}
+  done
+}
+
+registerDid() {
+  _seed=${1}
+  if [ -z "${_seed}" ]; then
+    echo -e \\n"registerDid; Missing parameter!"\\n
+    exit 1
+  fi
+  _seedJson=$(getSeedJson ${_seed})
+  _ledgerUri=$(getLedgerRegistrationUrl)
+
+  echo -e \\n"Registering ${_seed} with the ledger ..."
+  curl -X POST \
+    ${_ledgerUri} \
+    -H 'content-type: application/json' \
+    -d "${_seedJson}"
+}
+
+getSeedJson() {
+  _seed=${1}
+  if [ -z "${_seed}" ]; then
+    echo -e \\n"getSeedJson; Missing parameter!"\\n
+    exit 1
+  fi
+
+  echo "{\"seed\": \"${_seed}\"}"
+}
+
+generateSeeds() {
+  echo ${INDY_WALLET_SEED}
+}
+
+getLedgerRegistrationUrl() {
+  if [[ ("${LEDGER_URL}" == "http://${DOCKERHOST}:9000") && ("${DOCKERHOST}" != "localhost") ]]; then
+    _ledgerUrl="http://localhost:9000"
+  else
+    _ledgerUrl="${LEDGER_URL}"
+  fi
+
+  echo "${_ledgerUrl}/register"
+}
+
+toLower() {
+  echo $(echo ${@} | tr '[:upper:]' '[:lower:]')
+}
+
+echoError (){
+  _msg=${1}
+  _red='\033[0;31m'
+  _nc='\033[0m' # No Color
+  echo -e "${_red}${_msg}${_nc}" >&2
+}
+
+functionExists() {
+  (
+    if [ ! -z ${1} ] && type ${1} &>/dev/null; then
+      return 0
+    else
+      return 1
+    fi
+  )
+}
+# =================================================================================================================
+
+pushd ${SCRIPT_HOME} >/dev/null
+COMMAND=$(toLower ${1})
+shift || COMMAND=usage
+
+_startupParams=$(getStartupParams --force-recreate $@)
+
+case "${COMMAND}" in
+  logs)
+    configureEnvironment "$@"
+    docker-compose logs -f
+    ;;
+  start-dev)
+    configureEnvironment "$@"
+    docker-compose up -d ${_startupParams} ${DEFAULT_CONTAINERS} ${DEV_CONTAINERS}
+    docker-compose logs -f
+    ;;
+  stop)
+    configureEnvironment
+    docker-compose stop 
+    ;;
+  rm|down)
+    configureEnvironment
+    deleteVolumes
+    ;;
+  *)
+    usage
+    ;;
+esac
+
+popd >/dev/null

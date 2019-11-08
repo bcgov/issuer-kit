@@ -19,6 +19,6 @@ client.connect().then(() => {
 });
 
 watchers.invitationWatcher.on(record => {
-  console.log(record);
+  // console.log(record);
   client.insertRecord(record);
 });

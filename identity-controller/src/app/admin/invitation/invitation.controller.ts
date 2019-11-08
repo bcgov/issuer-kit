@@ -27,4 +27,8 @@ watcher.on(test => {
   console.log(test);
 });
 
+// watcher.pipe((te) => {
+//   console.log(te);
+// });
+
 export default router;

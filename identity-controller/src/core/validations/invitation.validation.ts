@@ -6,8 +6,12 @@ const invitationSchema = Joi.object({
   email: Joi.string().email()
 });
 
-const validateInvitation = (opts: {method: string, jurisdiction: string, email: string}) => {
-  return invitationSchema.validate(opts)
-}
+const validateInvitation = (opts: {
+  method: string;
+  jurisdiction: string;
+  email: string;
+}) => {
+  return invitationSchema.validate(opts, { stripUnknown: true });
+};
 
 export { validateInvitation };

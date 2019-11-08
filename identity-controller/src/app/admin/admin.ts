@@ -33,7 +33,6 @@ admin.use(async (ctx: Koa.Context, next: () => Promise<any>) => {
     error.status = ctx.status;
     ctx.body = { error };
     ctx.app.emit('error', error, ctx);
-    console.log(error);
   }
 });
 

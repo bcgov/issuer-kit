@@ -11,7 +11,5 @@ test(prefix + 'validate invitations', t => {
     jurisdiction: 'BC'
   };
   const result = validateInvitation(obj);
-  console.log(result);
-  // t.is(result.value, obj);
   t.assert(result.errors === undefined);
 });

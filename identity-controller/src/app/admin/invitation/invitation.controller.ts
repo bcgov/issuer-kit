@@ -7,6 +7,11 @@ import { validateInvitation } from '../../../core/validations/invitation.validat
 
 import watchers from '../../../core/watchers/database.watchers';
 
+import client from '../../../core/database/database.model';
+
+import * as uuidv1 from 'uuid/v1';
+import db from '../../../core/database/database.model';
+
 export interface IInvitationEvent {
   _id: string;
   type: string;
@@ -25,24 +30,27 @@ router.post('/', (ctx: Context) => {
   console.log(valid.errors);
   if (valid.errors) return ctx.throw(400, valid.errors.details);
   let { method, email, jurisdiction } = data;
+  const uuid = uuidv1();
 
   watchers.invitationWatcher.emit({
     collection: 'invitations',
     action: 'insert',
+    ref: uuid,
     record: {
       method,
       email,
       jurisdiction,
-      created: new Date(),
       consumed: false
     }
   });
-});
 
-const watcher = new TypedEvent<IInvitationEvent>();
+  setTimeout(() => {
+    return ctx.throw(500, 'operation timed out');
+  }, 15000);
 
-watcher.on(test => {
-  console.log(test);
+  db.addListener(uuid, _id => {
+    return (ctx.body = uuid);
+  });
 });
 
 // watcher.pipe((te) => {

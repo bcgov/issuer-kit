@@ -5,12 +5,12 @@ import { MongoClient } from 'mongodb';
 export interface IDBEvent {
   operation: string;
   _id?: string;
+  ref: string;
 }
 
 export interface IInvitationRecord {
   _id?: any;
   consumed: boolean;
-  created: Date;
   method: string;
   email: string;
   jurisdiction: string;
@@ -42,13 +42,16 @@ class Database extends mongo.MongoClient {
   async insertRecord(opts: {
     collection: DatabaseCollectionType;
     record: DatabaseRecordType;
+    ref: string;
   }) {
-    const { collection, record } = opts;
+    const { collection, record, ref } = opts;
     if (!this.isConnected()) throw new Error('db not connected');
     try {
-      this.db('data')
+      let res = await this.db('data')
         .collection(collection)
         .insertOne(record);
+      console.log('res', res);
+      if (res.result) return this.emit(ref, { res, ref });
     } catch (err) {
       return new Error(err.message);
     }

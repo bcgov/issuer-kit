@@ -52,7 +52,9 @@ import { LoadingService } from 'src/app/services/loading.service';
                 (keyup.enter)="onSubmit(fg)"
               ></ion-input>
               <ion-note
-                *ngIf="fg.controls.email.touched && fg.controls.email.invalid"
+                *ngIf="
+                  fg['controls'].email.touched && fg['controls'].email.invalid
+                "
               >
                 <ion-text color="danger">Invalid username </ion-text></ion-note
               >
@@ -68,7 +70,9 @@ import { LoadingService } from 'src/app/services/loading.service';
                 (keyup.enter)="onSubmit(fg)"
               ></ion-input>
               <ion-note
-                *ngIf="fg.controls.pass.touched && fg.controls.pass.invalid"
+                *ngIf="
+                  fg['controls'].pass.touched && fg['controls'].pass.invalid
+                "
               >
                 <ion-text color="danger"> Invalid password</ion-text></ion-note
               >

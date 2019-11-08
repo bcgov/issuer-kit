@@ -6,6 +6,7 @@ import { AppComponent } from './app.component';
 import { IonicModule } from '@ionic/angular';
 import { LoginFormComponent } from './components/login-form/login-form.component';
 import { NotFoundComponent } from './components/not-found/not-found.component';
+import { HttpClientModule } from '@angular/common/http';
 import { SharedModule } from './shared/shared/shared.module';
 
 @NgModule({
@@ -17,7 +18,8 @@ import { SharedModule } from './shared/shared/shared.module';
       mode: 'ios',
       animated: true
     }),
-    SharedModule
+    SharedModule,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]

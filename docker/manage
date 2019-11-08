@@ -216,58 +216,6 @@ deleteVolumes() {
   rm -Rf ../client/tob-web/.cache
 }
 
-registerDids() {
-  _seeds=${@}
-  if [ -z "${_seeds}" ]; then
-    echo -e \\n"registerDids; Missing parameter!"\\n
-    exit 1
-  fi
-
-  for _seed in ${_seeds}; do
-    registerDid ${_seed}
-  done
-}
-
-registerDid() {
-  _seed=${1}
-  if [ -z "${_seed}" ]; then
-    echo -e \\n"registerDid; Missing parameter!"\\n
-    exit 1
-  fi
-  _seedJson=$(getSeedJson ${_seed})
-  _ledgerUri=$(getLedgerRegistrationUrl)
-
-  echo -e \\n"Registering ${_seed} with the ledger ..."
-  curl -X POST \
-    ${_ledgerUri} \
-    -H 'content-type: application/json' \
-    -d "${_seedJson}"
-}
-
-getSeedJson() {
-  _seed=${1}
-  if [ -z "${_seed}" ]; then
-    echo -e \\n"getSeedJson; Missing parameter!"\\n
-    exit 1
-  fi
-
-  echo "{\"seed\": \"${_seed}\"}"
-}
-
-generateSeeds() {
-  echo ${INDY_WALLET_SEED}
-}
-
-getLedgerRegistrationUrl() {
-  if [[ ("${LEDGER_URL}" == "http://${DOCKERHOST}:9000") && ("${DOCKERHOST}" != "localhost") ]]; then
-    _ledgerUrl="http://localhost:9000"
-  else
-    _ledgerUrl="${LEDGER_URL}"
-  fi
-
-  echo "${_ledgerUrl}/register"
-}
-
 toLower() {
   echo $(echo ${@} | tr '[:upper:]' '[:lower:]')
 }

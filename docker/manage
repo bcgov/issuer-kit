@@ -113,7 +113,7 @@ configureEnvironment() {
   export KEYCLOAK_DB_ADDR="keycloak-db"
   export KEYCLOAK_USER="admin"
   export KEYCLOAK_PASSWORD="admin"
-  export KEYCLOAK_IMPORT="/tmp/master.json"
+  export KEYCLOAK_IMPORT="/tmp/realm-export.json"
   export KEYCLOAK_LOGLEVEL="WARN"
   export KEYCLOAK_ROOT_LOGLEVEL="WARN"
 

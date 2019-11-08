@@ -83,7 +83,7 @@ services:
       KEYCLOAK_PASSWORD: ${KEYCLOAK_PASSWORD}
       KEYCLOAK_LOGLEVEL: ${KEYCLOAK_LOGLEVEL}
       ROOT_LOGLEVEL: ${KEYCLOAK_ROOT_LOGLEVEL}
-      # KEYCLOAK_IMPORT: ${KEYCLOAK_IMPORT}
+      KEYCLOAK_IMPORT: ${KEYCLOAK_IMPORT}
     volumes:
       - ../docker/keycloak/config:/tmp
     ports:

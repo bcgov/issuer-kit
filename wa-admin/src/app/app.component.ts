@@ -31,23 +31,9 @@ const themes = {
   selector: 'waa-root',
   template: `
     <!--The content below is only a placeholder and can be replaced.-->
-    <ion-header role="banner" class="ios header-ios hydrated">
-      <ion-toolbar class="ios hydrated">
-        <ion-buttons
-          slot="end"
-          class="sc-ion-buttons-ios-h sc-ion-buttons-ios-s ios buttons-first-slot hydrated"
-        >
-          <ion-menu-button
-            class="hydrated ios button ion-activatable ion-focusable activated"
-          ></ion-menu-button>
-        </ion-buttons>
-        <ion-title class="ios title-ios hydrated">Admin</ion-title>
-      </ion-toolbar>
-    </ion-header>
-    <ion-content padding fullscreen class="ion-padding">
+    <ion-app>
       <ion-router-outlet></ion-router-outlet>
-      <router-outlet></router-outlet>
-    </ion-content>
+    </ion-app>
   `,
   styleUrls: ['./app.component.scss']
 })

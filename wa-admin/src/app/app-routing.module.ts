@@ -4,22 +4,24 @@ import { LoginFormComponent } from './components/login-form/login-form.component
 import { NotFoundComponent } from './components/not-found/not-found.component';
 import { CanActivateGuard } from './guards/can-activate.guard';
 
+import prefix from './app.constants';
+
 const routes: Routes = [
   {
-    path: '',
+    path: prefix.login.path,
     component: LoginFormComponent,
     pathMatch: 'full'
   },
   {
-    path: '**',
-    component: NotFoundComponent
-  },
-  {
-    path: 'home',
+    path: prefix.home.path,
     redirectTo: 'home',
     canActivate: [CanActivateGuard],
     canActivateChild: [CanActivateGuard]
     // loadChildren: () => import('./pages/home/home.module').then( m => m.HomePageModule)
+  },
+  {
+    path: '**',
+    component: NotFoundComponent
   }
 ];
 

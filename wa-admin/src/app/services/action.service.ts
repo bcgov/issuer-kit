@@ -4,6 +4,12 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class ActionService {
+  constructor() {}
 
-  constructor() { }
+  async authenticate(opts: { email: string; pass: string }): Promise<any> {
+    const { email, pass } = opts;
+    return setTimeout(() => {
+      return true;
+    }, 1000);
+  }
 }

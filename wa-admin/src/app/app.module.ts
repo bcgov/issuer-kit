@@ -10,7 +10,15 @@ import { SharedModule } from './shared/shared/shared.module';
 
 @NgModule({
   declarations: [AppComponent, LoginFormComponent, NotFoundComponent],
-  imports: [BrowserModule, AppRoutingModule, IonicModule.forRoot(), SharedModule],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    IonicModule.forRoot({
+      mode: 'ios',
+      animated: true
+    }),
+    SharedModule
+  ],
   providers: [],
   bootstrap: [AppComponent]
 })

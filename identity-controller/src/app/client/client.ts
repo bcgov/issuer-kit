@@ -36,24 +36,11 @@ app.use(async (ctx: Koa.Context, next: () => Promise<any>) => {
   }
 });
 
-const routerOpts: Router.IRouterOptions = {
-  prefix: '/test'
-};
-
-const router: Router = new Router(routerOpts);
-
-router.get('/', ctx => {
-  return (ctx.body = 'test success');
-});
 /*
 if (client) {
   clientRoutes.forEach(route => app.use(route));
   clientMethods.forEach(route => app.use(route));
 }
 */
-app.use(router.routes());
-app.use(router.allowedMethods());
-// Application error logging.
-app.on('error', console.error);
 
 export default app;

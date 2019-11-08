@@ -1,0 +1,8 @@
+{
+  "name": "wa-admin",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular",
+  "defaultProject": "wa-admin"
+}

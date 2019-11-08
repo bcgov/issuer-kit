@@ -15,6 +15,8 @@
 
 # Node
 **/node_modules
+**/.nyc_output
+**/dist
 
 # Keycloak
 **/hsperfdata_jboss

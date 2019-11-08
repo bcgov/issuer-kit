@@ -44,12 +44,12 @@ import { LoadingService } from 'src/app/services/loading.service';
             <ion-item lines="full">
               <ion-label position="floating">Email</ion-label>
               <ion-input
-                ngModel
                 type="email"
                 name="email"
                 clearInput="true"
                 formControlName="email"
                 inputmode="email"
+                (keyup.enter)="onSubmit(fg)"
               ></ion-input>
               <ion-note
                 *ngIf="fg.controls.email.touched && fg.controls.email.invalid"
@@ -61,11 +61,11 @@ import { LoadingService } from 'src/app/services/loading.service';
             <ion-item lines="full">
               <ion-label position="floating">Password</ion-label>
               <ion-input
-                ngModel
                 type="password"
                 name="password"
                 clearInput="true"
                 formControlName="pass"
+                (keyup.enter)="onSubmit(fg)"
               ></ion-input>
               <ion-note
                 *ngIf="fg.controls.pass.touched && fg.controls.pass.invalid"
@@ -130,14 +130,19 @@ export class LoginFormComponent implements OnInit {
     await loading.present();
     const { email, pass } = fg.value;
     const isAuthenticated = await this.actionSvc.authenticate({ email, pass });
-    return isAuthenticated ? this.progress({ loading }) : this.notAuth;
+    // return isAuthenticated ? this.progress({ loading }) : this.notAuth;
+    // this.progress({ loading });
+
+    return setTimeout(() => {
+      this.progress({ loading }).then();
+    }, 1000);
   }
 
   async progress(opts: { loading: HTMLIonLoadingElement }) {
     const { loading } = opts;
     await loading.dismiss();
     this.stateSvc.isAuthenticated = true;
-    this.router.navigate(['/add']);
+    this.router.navigate(['/home']);
   }
 
   notAuth() {}

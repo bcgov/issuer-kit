@@ -7,11 +7,11 @@ export class StateService {
   private _isAuthenticated = false;
 
   set isAuthenticated(bool) {
-    this.isAuthenticated = bool;
+    this._isAuthenticated = bool;
   }
 
   get isAuthenticated() {
-    return this.isAuthenticated;
+    return this._isAuthenticated;
   }
   constructor() {}
 }

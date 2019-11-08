@@ -8,8 +8,6 @@ export class ActionService {
 
   async authenticate(opts: { email: string; pass: string }): Promise<any> {
     const { email, pass } = opts;
-    return setTimeout(() => {
-      return true;
-    }, 1000);
+    return true;
   }
 }

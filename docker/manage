@@ -157,7 +157,7 @@ configureEnvironment() {
   export IDENTITY_CONTROLLER_PORT=5000
   export IDENTITY_CONTROLLER_HOOK_PORT=5050
   export AGENT_ADMIN_URL=${AGENT_ADMIN_URL:-http://identity-kit-agent:$AGENT_HTTP_INTERFACE_PORT}
-  export DATABASE_SERVICE="wa-db"
+  export DB_SERVICE="wa-db"
 }
 
 getInputParams() {

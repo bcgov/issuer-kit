@@ -1,5 +1,5 @@
 import { TypedEvent } from '../typed-event/typed-event.model';
-import db, { IInvitationRecord } from '../database/database.model';
+import { IInvitationRecord } from '../database/database.model';
 
 export interface IDBInsert<T> {
   collection: 'invitations';

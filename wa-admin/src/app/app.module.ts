@@ -1,14 +1,14 @@
-import { HttpClientModule } from "@angular/common/http";
-import { NgModule } from "@angular/core";
-import { BrowserModule } from "@angular/platform-browser";
-import { IonicModule } from "@ionic/angular";
-import Axios from "axios";
-import { KeycloakAngularModule, KeycloakService } from "keycloak-angular";
-import { AppRoutingModule } from "./app-routing.module";
-import { AppComponent } from "./app.component";
-import { LoginFormComponent } from "./components/login-form/login-form.component";
-import { NotFoundComponent } from "./components/not-found/not-found.component";
-import { SharedModule } from "./shared/shared/shared.module";
+import { HttpClientModule } from '@angular/common/http';
+import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { IonicModule } from '@ionic/angular';
+import Axios from 'axios';
+import { KeycloakAngularModule, KeycloakService } from 'keycloak-angular';
+import { AppRoutingModule } from './app-routing.module';
+import { AppComponent } from './app.component';
+import { LoginFormComponent } from './components/login-form/login-form.component';
+import { NotFoundComponent } from './components/not-found/not-found.component';
+import { SharedModule } from './shared/shared/shared.module';
 
 const keycloakService = new KeycloakService();
 
@@ -18,7 +18,7 @@ const keycloakService = new KeycloakService();
     BrowserModule,
     AppRoutingModule,
     IonicModule.forRoot({
-      mode: "ios",
+      mode: 'ios',
       animated: true
     }),
     SharedModule,
@@ -36,7 +36,7 @@ const keycloakService = new KeycloakService();
 export class AppModule {
   ngDoBootstrap(app) {
     // Import app configuration from JSON
-    Axios.get("/assets/data/appConfig.json").then(response => {
+    Axios.get('/assets/data/appConfig.json').then(response => {
       console.log(`Loaded configuration from ${response.config.url}`);
       const config = response.data;
       keycloakService
@@ -47,18 +47,18 @@ export class AppModule {
             clientId: config.keycloak.clientId
           },
           initOptions: {
-            onLoad: "check-sso",
+            onLoad: 'check-sso',
             checkLoginIframe: false
           },
-          bearerExcludedUrls: ["/assets"]
+          bearerExcludedUrls: ['/assets']
         })
         .then(() => {
-          console.log("[ngDoBootstrap] bootstrap app");
+          console.log('[ngDoBootstrap] bootstrap app');
 
           app.bootstrap(AppComponent);
         })
         .catch(error =>
-          console.error("[ngDoBootstrap] init Keycloak failed", error)
+          console.error('[ngDoBootstrap] init Keycloak failed', error)
         );
     });
   }

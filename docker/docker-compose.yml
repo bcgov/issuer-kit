@@ -1,6 +1,5 @@
 version: "3"
 services:
-
   #
   # API/Controller
   #
@@ -21,6 +20,8 @@ services:
     networks:
       - identity_kit
     working_dir: /usr/src/controller
+    depends_on:
+      - wa-db
     command: npm start
 
   #
@@ -36,7 +37,7 @@ services:
     networks:
       - identity_kit
     command: npm run start-docker
-  
+
   #
   # Public frontend with hot-reloading
   #
@@ -50,7 +51,7 @@ services:
     networks:
       - identity_kit
     command: npm run start-docker
-  
+
   #
   # wa-db
   #
@@ -67,10 +68,10 @@ services:
       - ${MONGODB_PORT}:${MONGODB_PORT}
     networks:
       - identity_kit
-  
+
   #
   # keycloak service
-  #  
+  #
   keycloak:
     image: jboss/keycloak:7.0.0
     environment:
@@ -90,10 +91,10 @@ services:
       - 8180:8080
     depends_on:
       - keycloak-db
-  
-  # 
+
+  #
   # keycloak-db
-  # 
+  #
   keycloak-db:
     image: registry.access.redhat.com/rhscl/postgresql-10-rhel7:latest
     environment:
@@ -101,7 +102,7 @@ services:
       POSTGRESQL_PASSWORD: ${KEYCLOAK_DB_PASSWORD}
       POSTGRESQL_DATABASE: ${KEYCLOAK_DB_NAME}
     volumes:
-      - keycloak-db-data:/var/lib/pgsql/data  
+      - keycloak-db-data:/var/lib/pgsql/data
 
   #
   # Identity Kit Agent
@@ -158,7 +159,7 @@ services:
         --${AGENT_ADMIN_MODE} \
         --label ${AGENT_NAME}",
       ]
-  
+
   #
   # Identity Kit Wallet
   #

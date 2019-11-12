@@ -33,7 +33,10 @@ class DBClient extends mongo.MongoClient {
   }
 
   static getInstance(options: {uri?: string}) {
-    if (!DBClient.instance){
+    if (!DBClient.instance) {  
+      if (!options || !options.uri) {
+        throw new Error('No connection URI to the database was provided!');
+      }
       DBClient.instance = new DBClient(options);
     }
     return DBClient.instance;

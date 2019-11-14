@@ -1,6 +1,5 @@
 version: "3"
 services:
-
   #
   # API/Controller
   #
@@ -16,12 +15,13 @@ services:
       - DB_PORT=${MONGODB_PORT}
     volumes:
       - ../identity-controller:/usr/src/controller
+      - identity-controller-node-cache:/usr/src/controller/node_modules
     ports:
       - ${IDENTITY_CONTROLLER_PORT}:${IDENTITY_CONTROLLER_PORT}
     networks:
       - identity_kit
     working_dir: /usr/src/controller
-    command: npm start
+    command: npm run start-docker
 
   #
   # Admin frontend with hot-reloading
@@ -30,13 +30,14 @@ services:
     image: node:erbium
     volumes:
       - ../wa-admin:/usr/src/wa-admin
+      - wa-admin-node-cache:/usr/src/wa-admin/node_modules
     working_dir: /usr/src/wa-admin
     ports:
       - ${WA_ADMIN_PORT}:${WA_ADMIN_PORT}
     networks:
       - identity_kit
     command: npm run start-docker
-  
+
   #
   # Public frontend with hot-reloading
   #
@@ -44,13 +45,14 @@ services:
     image: node:erbium
     volumes:
       - ../wa-public:/usr/src/wa-public
+      - wa-public-node-cache:/usr/src/wa-public/node_modules
     working_dir: /usr/src/wa-public
     ports:
       - ${WA_PUBLIC_PORT}:${WA_PUBLIC_PORT}
     networks:
       - identity_kit
     command: npm run start-docker
-  
+
   #
   # wa-db
   #
@@ -67,10 +69,10 @@ services:
       - ${MONGODB_PORT}:${MONGODB_PORT}
     networks:
       - identity_kit
-  
+
   #
   # keycloak service
-  #  
+  #
   keycloak:
     image: jboss/keycloak:7.0.0
     environment:
@@ -90,10 +92,10 @@ services:
       - 8180:8080
     depends_on:
       - keycloak-db
-  
-  # 
+
+  #
   # keycloak-db
-  # 
+  #
   keycloak-db:
     image: registry.access.redhat.com/rhscl/postgresql-10-rhel7:latest
     environment:
@@ -101,7 +103,7 @@ services:
       POSTGRESQL_PASSWORD: ${KEYCLOAK_DB_PASSWORD}
       POSTGRESQL_DATABASE: ${KEYCLOAK_DB_NAME}
     volumes:
-      - keycloak-db-data:/var/lib/pgsql/data  
+      - keycloak-db-data:/var/lib/pgsql/data
 
   #
   # Identity Kit Agent
@@ -158,7 +160,7 @@ services:
         --${AGENT_ADMIN_MODE} \
         --label ${AGENT_NAME}",
       ]
-  
+
   #
   # Identity Kit Wallet
   #
@@ -183,3 +185,6 @@ volumes:
   keycloak-db-data:
   identity-kit-wallet-data:
   wa-db-data:
+  wa-admin-node-cache:
+  wa-public-node-cache:
+  identity-controller-node-cache:

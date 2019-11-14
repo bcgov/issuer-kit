@@ -244,7 +244,7 @@ functionExists() {
 }
 # =================================================================================================================
 
-pushd ${SCRIPT_HOME} >/dev/null
+pushd "${SCRIPT_HOME}" >/dev/null
 COMMAND=$(toLower ${1})
 shift || COMMAND=usage
 

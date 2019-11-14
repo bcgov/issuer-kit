@@ -16,6 +16,7 @@
   "devDependencies": {
     "@types/chai": "^4.2.3",
     "@types/dotenv": "^6.1.1",
+    "@types/expect": "^24.3.0",
     "@types/hapi__joi": "^16.0.3",
     "@types/http-status-codes": "^1.2.0",
     "@types/joi": "^14.3.4",

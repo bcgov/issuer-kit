@@ -3,11 +3,31 @@ export MSYS_NO_PATHCONV=1
 export DOCKERHOST=${APPLICATION_URL-$(docker run --rm --net=host codenvy/che-ip)}
 set -e
 
+#
+# Global utility functions - START
+#
+function echoError (){
+  _msg=${1}
+  _red='\e[31m'
+  _nc='\e[0m' # No Color
+  echo -e "${_red}${_msg}${_nc}"
+}
+
+function echoWarning (){
+  _msg=${1}
+  _yellow='\e[33m'
+  _nc='\e[0m' # No Color
+  echo -e "${_yellow}${_msg}${_nc}"
+}
+#
+# Global utility functions - END
+#
+
 S2I_EXE=s2i
 if [ -z $(type -P "$S2I_EXE") ]; then
-  echo -e "The ${S2I_EXE} executable is needed and not on your path."
-  echo -e "It can be downloaded from here: https://github.com/openshift/source-to-image/releases"
-  echo -e "Make sure you extract the binary and place it in a directory on your path."
+  echoError "The ${S2I_EXE} executable is needed and not on your path."
+  echoError "It can be downloaded from here: https://github.com/openshift/source-to-image/releases"
+  echoError "Make sure you extract the binary and place it in a directory on your path."
   exit 1
 fi
 
@@ -46,20 +66,6 @@ DEV_CONTAINERS="identity-controller-dev wa-admin-dev wa-public-dev"
 # -----------------------------------------------------------------------------------------------------------------
 # Functions:
 # -----------------------------------------------------------------------------------------------------------------
-function echoRed (){
-  _msg=${1}
-  _red='\e[31m'
-  _nc='\e[0m' # No Color
-  echo -e "${_red}${_msg}${_nc}"
-}
-
-function echoYellow (){
-  _msg=${1}
-  _yellow='\e[33m'
-  _nc='\e[0m' # No Color
-  echo -e "${_yellow}${_msg}${_nc}"
-}
-
 configureEnvironment() {
 
   if [ -f .env ]; then
@@ -238,7 +244,7 @@ functionExists() {
 }
 # =================================================================================================================
 
-pushd ${SCRIPT_HOME} >/dev/null
+pushd "${SCRIPT_HOME}" >/dev/null
 COMMAND=$(toLower ${1})
 shift || COMMAND=usage
 

@@ -10,11 +10,13 @@ services:
       - HOOKS_PORT=${IDENTITY_CONTROLLER_HOOK_PORT}
       - AGENT_ADMIN_URL=${AGENT_ADMIN_URL}
       - DB_SERVICE=${DB_SERVICE}
+      - DB_NAME=${MONGODB_DATABASE}
       - DB_USER=${MONGODB_USER}
       - DB_PASSWORD=${MONGODB_PASSWORD}
       - DB_PORT=${MONGODB_PORT}
     volumes:
       - ../identity-controller:/usr/src/controller
+      - identity-controller-node-cache:/usr/src/controller/node_modules
     ports:
       - ${IDENTITY_CONTROLLER_PORT}:${IDENTITY_CONTROLLER_PORT}
     networks:
@@ -24,6 +26,7 @@ services:
       - wa-db
     command: npm start
 
+
   #
   # Admin frontend with hot-reloading
   #
@@ -31,6 +34,7 @@ services:
     image: node:erbium
     volumes:
       - ../wa-admin:/usr/src/wa-admin
+      - wa-admin-node-cache:/usr/src/wa-admin/node_modules
     working_dir: /usr/src/wa-admin
     ports:
       - ${WA_ADMIN_PORT}:${WA_ADMIN_PORT}
@@ -45,6 +49,7 @@ services:
     image: node:erbium
     volumes:
       - ../wa-public:/usr/src/wa-public
+      - wa-public-node-cache:/usr/src/wa-public/node_modules
     working_dir: /usr/src/wa-public
     ports:
       - ${WA_PUBLIC_PORT}:${WA_PUBLIC_PORT}
@@ -184,3 +189,6 @@ volumes:
   keycloak-db-data:
   identity-kit-wallet-data:
   wa-db-data:
+  wa-admin-node-cache:
+  wa-public-node-cache:
+  identity-controller-node-cache:

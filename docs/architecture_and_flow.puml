@@ -1,0 +1,61 @@
+@startuml
+
+actor Approver
+
+package Approver as app {
+    component "Keycloak\nProtector\n" as kcapp {
+        rectangle "GitHub\nAuthorization\n\nWhitelist" as appgh
+    }
+    component "Approver Form\n" {
+        frame  "eMail\nJurisidiction\nAuth\nApprove Y/N\n\n<New / List>" as appfm
+    }
+    database "Approvals\n\nUser Data\nSession ID\nTimeout" as appdb
+    rectangle "Approvals\nAPI" as appapi
+    kcapp --> appfm
+    appfm --> appapi
+    appapi --> appdb
+
+}
+Approver -right-> kcapp
+
+package Issuer as iss {
+    component "Keycloak\nProtector\n" as issapp {
+        rectangle "GitHub\nAuthorization\n\nApproved Session\nOnly" as isgh
+    }
+    component "Issuer Controller\n" {
+        frame "Map:\n\nOIDC Claims\nto\nVC Claims\n\n< Issue VC >" as isscon
+    }
+    component "Issuer Agent" as issag
+    issapp --> isscon
+    issapp --> appapi: Session ID Active?
+    isscon --> issag
+}
+
+actor Participant as part
+
+package "Participant\nTools" as tools {
+    node EMail as email
+    node "Mobile\nWallet" as mwallet
+    node "Browser" as browser
+    part --> email
+    part --> browser
+    part --> mwallet
+    appfm -up-> email
+    issag -up-> mwallet
+    browser --> issapp: <URL>?id=<Session ID>
+}
+
+package "Proof Of Concept" as poc {
+    component "Keycloak\nProtector\n" as pocapp {
+        rectangle "Verifiable\nCredential\nAuthorization" as pocauth
+    }
+    component "PoC Application\n" {
+        frame "\nHello <UserName>!!\n" as poccon
+    }
+
+browser --> pocauth
+pocauth --> mwallet
+pocauth --> poccon
+}
+
+@enduml

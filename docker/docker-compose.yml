@@ -22,7 +22,10 @@ services:
     networks:
       - identity_kit
     working_dir: /usr/src/controller
-    command: npm run start-docker
+    depends_on:
+      - wa-db
+    command: npm start
+
 
   #
   # Admin frontend with hot-reloading

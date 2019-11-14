@@ -7,7 +7,7 @@
     "test": "tsc && ava",
     "serve": "ts-node src/index.ts",
     "test:watch": "nodemon --exec npm test",
-    "start": "nodemon -L"
+    "start": "nodemon -L",
   },
   "author": "",
   "license": "ISC",

@@ -20,14 +20,26 @@ export type DatabaseNameType = 'data';
 export type DatabaseCollectionType = 'invitations';
 export type DatabaseRecordType = IInvitationRecord;
 
-class Database extends mongo.MongoClient {
+class DBClient extends mongo.MongoClient {
+  private static instance: DBClient;
+
   events = new TypedEvent<IDBEvent>();
 
-  constructor(opts: { uri?: string; options?: mongo.MongoClientOptions }) {
+  private constructor (opts: { uri?: string; options?: mongo.MongoClientOptions }) {
     super(
-      opts.uri || process.env.DATABASE_URI || 'mongodb://localhost:27017',
+      opts.uri || '',
       opts.options || {}
     );
+  }
+
+  static getInstance(options: {uri?: string}) {
+    if (!DBClient.instance) {  
+      if (!options || !options.uri) {
+        throw new Error('No connection URI to the database was provided!');
+      }
+      DBClient.instance = new DBClient(options);
+    }
+    return DBClient.instance;
   }
 
   addListeners() {
@@ -58,10 +70,4 @@ class Database extends mongo.MongoClient {
   }
 }
 
-const db = new Database({});
-
-db.events.on(event => {
-  console.log(event);
-});
-
-export default db;
+export {DBClient}

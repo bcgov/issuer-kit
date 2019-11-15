@@ -26,7 +26,7 @@ export class CanActivateGuard extends KeycloakAuthGuard implements CanActivate {
         return reject(false);
       }
 
-      // Check the user has the wa-admin-admin
+      // Check required roles
       const requiredRoles: string[] = route.data.roles;
       if (!requiredRoles || requiredRoles.length === 0) {
         return resolve(true);

@@ -23,13 +23,13 @@ function echoWarning (){
 # Global utility functions - END
 #
 
-S2I_EXE=s2i
-if [ -z $(type -P "$S2I_EXE") ]; then
-  echoError "The ${S2I_EXE} executable is needed and not on your path."
-  echoError "It can be downloaded from here: https://github.com/openshift/source-to-image/releases"
-  echoError "Make sure you extract the binary and place it in a directory on your path."
-  exit 1
-fi
+# S2I_EXE=s2i
+# if [ -z $(type -P "$S2I_EXE") ]; then
+#   echoError "The ${S2I_EXE} executable is needed and not on your path."
+#   echoError "It can be downloaded from here: https://github.com/openshift/source-to-image/releases"
+#   echoError "Make sure you extract the binary and place it in a directory on your path."
+#   exit 1
+# fi
 
 SCRIPT_HOME="$(cd "$(dirname "$0")" && pwd)"
 
@@ -98,7 +98,7 @@ configureEnvironment() {
 
   # Global
   export COMPOSE_PROJECT_NAME="${COMPOSE_PROJECT_NAME:-identity-kit}"
-  export STI_SCRIPTS_PATH=${STI_SCRIPTS_PATH:-/usr/libexec/s2i}
+  # export STI_SCRIPTS_PATH=${STI_SCRIPTS_PATH:-/usr/libexec/s2i}
   export DEBUG=${DEBUG}
 
   # wa-admin

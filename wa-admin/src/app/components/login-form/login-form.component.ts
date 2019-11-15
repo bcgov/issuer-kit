@@ -19,22 +19,6 @@ import { LoadingService } from 'src/app/services/loading.service';
                   <ion-title slot="end" no-padding>{{ title }}</ion-title>
                 </ion-item>
               </ion-col>
-              <!-- <ion-col>
-                <ion-row>
-                  <ion-card-title>
-                    <ion-text color="primary">
-                      {{ title }}
-                    </ion-text>
-                  </ion-card-title>
-                </ion-row>
-                <ion-row>
-                  <ion-card-subtitle>
-                    <ion-text color="tertiary">
-                      {{ subtitle }}
-                    </ion-text>
-                  </ion-card-subtitle>
-                </ion-row>
-              </ion-col> -->
             </ion-row>
           </ion-grid>
         </ion-card-header>

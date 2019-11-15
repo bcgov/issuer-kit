@@ -20,9 +20,7 @@ export type DatabaseCollectionType = 'invitations';
 export type DatabaseRecordType = IInvitationRecord;
 
 const prefix = 'Database: ';
-const databaseName = 'data';
-
-const startupArgs = { prefix, databaseName };
+const databaseName = process.env.DB_NAME;
 
 class DBClient extends mongo.MongoClient {
   private static instance: DBClient;
@@ -34,17 +32,20 @@ class DBClient extends mongo.MongoClient {
   private constructor(opts: {
     uri?: string;
     options?: mongo.MongoClientOptions;
+    database?: string;
   }) {
     super(opts.uri || '', opts.options || {});
-    const { prefix, databaseName } = startupArgs;
-    this.database = databaseName;
+    const prefix = 'database';
+    this.database = databaseName || 'identity';
     this.prefix = prefix;
   }
 
-  static getInstance(options: { uri?: string }) {
+  static getInstance(options: { uri?: string; database?: string }) {
     if (!DBClient.instance) {
       if (!options || !options.uri) {
-        throw new Error('No connection URI to the database was provided!');
+        throw new Error(
+          prefix + 'No connection URI to the database was provided!'
+        );
       }
       DBClient.instance = new DBClient(options);
     }

@@ -8,6 +8,7 @@
     "serve": "ts-node src/index.ts",
     "test:watch": "nodemon --exec npm test",
     "start": "nodemon -L",
+    "start-docker": "npm install && nodemon -L"
   },
   "author": "",
   "license": "ISC",

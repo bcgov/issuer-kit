@@ -8,7 +8,7 @@ import { validateInvitation } from '../../../core/validations/invitation.validat
 import watchers from '../../../core/watchers/database.watchers';
 
 import * as uuidv1 from 'uuid/v1';
-import {DBClient} from '../../../core/database/database.model';
+import { DBClient } from '../../../core/database/database.model';
 
 export interface IInvitationEvent {
   _id: string;
@@ -20,7 +20,7 @@ const routerOpts: Router.IRouterOptions = {
 };
 
 const router = new Router(routerOpts);
-
+router.get('/', async (ctx: Context) => {});
 router.post('/', (ctx: Context) => {
   const data = ctx.request.body;
   if (!data) return ctx.throw(400, 'no data to add');

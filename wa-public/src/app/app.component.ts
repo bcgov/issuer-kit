@@ -14,5 +14,7 @@ import { Component, OnInit } from '@angular/core';
 export class AppComponent implements OnInit {
   title = 'Identity Kit';
   constructor() {}
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    throw new Error('Method not implemented.');
+  }
 }

@@ -1,21 +1,23 @@
 import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
-import { KeycloakGuard } from './guards/keycloak.guard';
-import { ValidInviteGuard } from './guards/valid-invite.guard';
+import { Routes, RouterModule } from '@angular/router';
 import { HomeComponent } from './home/home.component';
-import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { SuccessComponent } from './pages/success/success.component';
+import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 
 const routes: Routes = [
   {
-    path: 'validate',
-    component: HomeComponent,
-    canActivate: [ValidInviteGuard]
+    path: 'success/:id',
+    component: SuccessComponent,
+    canActivate: [
+      // TODO: @ES - put guard logic here for successful login
+    ]
   },
   {
-    path: 'success',
-    component: SuccessComponent,
-    canActivate: [ValidInviteGuard, KeycloakGuard]
+    path: 'validate/:id',
+    component: HomeComponent,
+    canActivate: [
+      // TODO: @ES - put guard logic here for redirect to keycloak, there's a placeholder call to check token validity
+    ]
   },
   { path: '**', component: PageNotFoundComponent }
 ];

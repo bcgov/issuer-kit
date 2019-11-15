@@ -4,14 +4,9 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class ActionService {
-  private _isAuth = false;
-
-  get isAuth() {
-    return this.isAuth;
+  authenticate() {
+    // TODO: @ES some authentication logic here
   }
 
-  set isAuth(bool: boolean) {
-    this._isAuth = bool;
-  }
   constructor() {}
 }

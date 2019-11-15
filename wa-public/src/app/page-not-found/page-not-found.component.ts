@@ -6,19 +6,12 @@ import { ActivatedRoute } from '@angular/router';
 @Component({
   selector: 'wap-page-not-found',
   template: `
-    WHOOPSIES PAGE NOT FOUND
+    No page here.
   `,
   styleUrls: ['./page-not-found.component.scss']
 })
 export class PageNotFoundComponent implements OnInit {
-  constructor(
-    private stateSvc: StateService,
-    private actionSvc: ActionService,
-    private route: ActivatedRoute
-  ) {}
+  constructor() {}
 
-  ngOnInit() {
-    const id = this.route.snapshot.paramMap.get('id');
-    console.log(id);
-  }
+  ngOnInit() {}
 }

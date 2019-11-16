@@ -7,9 +7,7 @@
     "test": "tsc && ava",
     "serve": "ts-node src/index.ts",
     "test:watch": "nodemon --exec npm test",
-    "start": "nodemon",
-    "start-docker": "npm install && nodemon -L",
-    "start:db": "docker run -d -p 27017-27019:27017-27019 --name mongodb mongo:4.0.4"
+    "start": "nodemon -L",
   },
   "author": "",
   "license": "ISC",

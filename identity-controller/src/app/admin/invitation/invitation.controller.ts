@@ -7,10 +7,8 @@ import { validateInvitation } from '../../../core/validations/invitation.validat
 
 import watchers from '../../../core/watchers/database.watchers';
 
-import client from '../../../core/database/database.model';
-
 import * as uuidv1 from 'uuid/v1';
-import db from '../../../core/database/database.model';
+import {DBClient} from '../../../core/database/database.model';
 
 export interface IInvitationEvent {
   _id: string;
@@ -48,7 +46,7 @@ router.post('/', (ctx: Context) => {
     return ctx.throw(500, 'operation timed out');
   }, 15000);
 
-  db.addListener(uuid, _id => {
+  DBClient.getInstance({}).addListener(uuid, _id => {
     return (ctx.body = uuid);
   });
 });

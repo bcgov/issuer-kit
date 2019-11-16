@@ -10,6 +10,7 @@ services:
       - HOOKS_PORT=${IDENTITY_CONTROLLER_HOOK_PORT}
       - AGENT_ADMIN_URL=${AGENT_ADMIN_URL}
       - DB_SERVICE=${DB_SERVICE}
+      - DB_NAME=${MONGODB_DATABASE}
       - DB_USER=${MONGODB_USER}
       - DB_PASSWORD=${MONGODB_PASSWORD}
       - DB_PORT=${MONGODB_PORT}
@@ -21,7 +22,10 @@ services:
     networks:
       - identity_kit
     working_dir: /usr/src/controller
-    command: npm run start-docker
+    depends_on:
+      - wa-db
+    command: npm start
+
 
   #
   # Admin frontend with hot-reloading

@@ -4,17 +4,21 @@ import { resolve } from 'path';
 import admin from './app/admin/admin';
 import Router = require('koa-router');
 
-import client from './core/database/database.model';
+import {DBClient} from './core/database/database.model';
 import watchers from './core/watchers/database.watchers';
 
 config({ path: resolve(__dirname, '../config.env') });
 
+let dbOptions = {
+  "uri": `mongodb://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_SERVICE}:${process.env.DB_PORT}/${process.env.DB_NAME}`
+};
+
+const client = DBClient.getInstance(dbOptions);
+
 client.connect().then(() => {
-  console.log(
-    'db connected on ' + process.env.DATABASE_URI || 'mongodb://localhost:27017'
-  );
+  console.log(`DB connected on ${dbOptions.uri}`);
   admin.listen(process.env.PORT, () => {
-    console.log('listening on port: ', process.env.port);
+    console.log(`Listening on port: ${process.env.PORT}`);
   });
 });
 

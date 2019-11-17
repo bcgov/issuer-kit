@@ -13,6 +13,8 @@ export interface IInvitationRecord {
   method: string;
   email: string;
   jurisdiction: string;
+  expiry?: string;
+  active: boolean;
 }
 
 export type DatabaseNameType = 'identity';

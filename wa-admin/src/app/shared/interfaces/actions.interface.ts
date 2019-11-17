@@ -5,9 +5,4 @@ export interface IChangeAction {
   action: ActionType;
 }
 
-export type ActionType = 'active' | 'clear' | 'email' | 'revoke';
-
-export interface IActionMenuItem {
-  label: string;
-  key: ActionType;
-}
+export type ActionType = 'active' | 'clear';

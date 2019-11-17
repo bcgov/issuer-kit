@@ -1,6 +1,5 @@
 import * as mongo from 'mongodb';
 import { TypedEvent } from '../typed-event/typed-event.model';
-import { IInvitationRecord } from '../interfaces/invitation-record.interface';
 
 export interface IDBEvent {
   operation: string;
@@ -8,11 +7,22 @@ export interface IDBEvent {
   ref: string;
 }
 
+export interface IInvitationRecord {
+  _id?: any;
+  consumed: boolean;
+  method: string;
+  email: string;
+  jurisdiction: string;
+  expiry?: string;
+  active: boolean;
+}
+
 export type DatabaseNameType = 'identity';
 export type DatabaseCollectionType = 'invitations';
 export type DatabaseRecordType = IInvitationRecord;
 
 const prefix = 'Database: ';
+const databaseName = process.env.DB_NAME;
 
 class DBClient extends mongo.MongoClient {
   private static instance: DBClient;
@@ -28,7 +38,7 @@ class DBClient extends mongo.MongoClient {
   }) {
     super(opts.uri || '', opts.options || {});
     const prefix = 'database';
-    this.database = 'identity';
+    this.database = databaseName || 'identity';
     this.prefix = prefix;
   }
 
@@ -54,22 +64,19 @@ class DBClient extends mongo.MongoClient {
       });
   }
 
-  async insertRecord<T>(opts: {
+  async insertRecord(opts: {
     collection: DatabaseCollectionType;
-    record: T;
+    record: DatabaseRecordType;
   }) {
     const { collection, record } = opts;
+    if (!this.isConnected()) throw new Error('db not connected');
     try {
       let res = await this.db(this.database)
-        .collection<T>(collection)
+        .collection(collection)
         .insertOne(record);
-      if (res.insertedId) {
-        const id = res.insertedCount;
-        const objId = new mongo.ObjectID(id).toHexString();
-
-        return objId;
-      } else {
-        throw new Error(this.prefix + 'failed to insert record');
+      console.log('res', res);
+      if (res.result) {
+        return res;
       }
     } catch (err) {
       throw new Error(this.prefix + err.message);
@@ -84,12 +91,12 @@ class DBClient extends mongo.MongoClient {
     }
   ) {
     const { count, batch, query } = opts;
+    if (!this.isConnected()) throw new Error('db not connected');
     try {
       let res = await this.db(this.database)
         .collection(collection)
         .find({});
-      const recs = await res.toArray();
-      return await res.toArray();
+      return res;
     } catch (err) {
       throw new Error(prefix + 'database fetch failed with ' + err.message);
     }
@@ -98,12 +105,10 @@ class DBClient extends mongo.MongoClient {
   async getRecord(opts: { collection: DatabaseCollectionType; id: string }) {
     const { collection, id } = opts;
     if (!id) throw new Error(this.prefix + 'no id entered');
-    const _id = new mongo.ObjectId(id);
     try {
       let res = await this.db(this.database)
         .collection(collection)
-        .findOne({ _id });
-      console.log(res);
+        .findOne({ id });
       return res;
     } catch (err) {}
   }

@@ -1,36 +1,45 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { IInvitationRecord } from 'src/app/shared/interfaces/invitation-record.interface';
 import { FormControl } from '@angular/forms';
+import { of } from 'rxjs';
+import { IChangeRecord } from 'src/app/shared/interfaces/change-record.interface';
 
 @Component({
   selector: 'waa-user-list-item',
   template: `
-    <mat-list-option *ngIf="invitationRecord">
-      <mat-icon>account_circle </mat-icon>
-      <h3 matLine *ngIf="firstName">{{ firstName }} {{ lastName }}</h3>
-      <p matLine>
-        {{ email }}
-      </p>
-      <p matLine>
-        {{ jurisdiction }}
-      </p>
-      <mat-checkbox
-        [checked]="active"
-        (click)="activeChange(_id, !active)"
-      ></mat-checkbox>
-    </mat-list-option>
+    <mat-card class="mat-elevation-z0">
+      <ion-item>
+        <mat-checkbox
+          color="accent"
+          [checked]="active"
+          (click)="activeChange(_id)"
+        >
+        </mat-checkbox>
+
+        <mat-card-header>
+          <mat-card-title>{{ email }}</mat-card-title>
+          <mat-card-subtitle>{{ firstName }} {{ lastName }} </mat-card-subtitle>
+          <mat-card-subtitle>
+            <ion-badge *ngIf="consumed" color="success">Active</ion-badge>
+          </mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <button mat-icon-button *ngIf="!consumed">
+            <mat-icon color="primary"> mail</mat-icon>
+          </button>
+        </mat-card-content>
+      </ion-item>
+    </mat-card>
   `,
   styleUrls: ['./user-list-item.component.scss']
 })
 export class UserListItemComponent implements OnInit {
   @Input() invitationRecord: IInvitationRecord;
-  @Output() recordChange: EventEmitter<{
-    _id: string;
-    active: boolean;
-  }> = new EventEmitter();
+  @Output() recordChange: EventEmitter<IChangeRecord> = new EventEmitter<
+    IChangeRecord
+  >();
 
   consumed: boolean;
-  _id: any;
   method: string;
   email: string;
   jurisdiction: string;
@@ -40,11 +49,19 @@ export class UserListItemComponent implements OnInit {
   lastName: string;
   icon: string;
 
-  fc: FormControl;
+  record: IInvitationRecord;
 
-  activeChange(_id, active) {
-    this.recordChange.emit({ _id, active });
+  fc: FormControl;
+  _id: any;
+
+  activeChange(_id: string) {
+    this.recordChange.emit({ _id });
   }
+
+  clearChanges() {
+    this.record.active = this.active;
+  }
+
   constructor() {
     // this.fc = new FormControl(active);
   }
@@ -58,9 +75,10 @@ export class UserListItemComponent implements OnInit {
       email,
       jurisdiction,
       expiry,
-      active
+      active,
+      firstName,
+      lastName
     } = this.invitationRecord;
-    this._id = _id;
     this.consumed = consumed;
     this.method = method;
 
@@ -68,5 +86,9 @@ export class UserListItemComponent implements OnInit {
     this.jurisdiction = jurisdiction;
     this.expiry = expiry;
     this.active = active;
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this._id = _id;
+    of(this.active).subscribe(obs => console.log(obs));
   }
 }

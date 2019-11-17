@@ -94,27 +94,27 @@ export class ActionService {
   applyAction(action: ActionType, records?: string[]) {
     const actions = {
       clear: this.clearRecords(),
-      change: this.changeAccess(records)
+      change: this.changeAccess(records),
+      email: this.sendEmail(records)
     };
     return actions[action];
   }
 
-  clearRecords() {
-    this.stateSvc.changeRecords.clear();
-    const state = this.stateSvc.state;
-    const recordList =
-      state === 'invited' ? this.invitedUsers : this.confirmedUsers;
-    this.stateSvc.userList =
-      state === 'invited'
-        ? recordList.map(record => {
-            const { changed, ...noChanged } = record;
-
-            return { changed: false, ...noChanged };
-          })
-        : recordList.map(record => {
-            const { changed, active, ...noChanged } = record;
-            return { changed: active, active, ...noChanged };
-          });
+  sendEmail(records: string[] | string) {
+    if (Array.isArray(records)) {
+      const mapped = this.invitedUsers.map(itm => {
+        if (records.some(id => id === itm._id)) {
+          itm.expiry = new Date().getTime() + 5000000;
+        }
+        return itm;
+      });
+      this.invitedUsers = mapped;
+      console.log(this.invitedUsers);
+    } else {
+      const itm = this.invitedUsers.find(itm => itm._id === records);
+      console.log(itm);
+    }
+    this.stateSvc.userList = this.invitedUsers;
   }
 
   changeAccess(records: string[]) {
@@ -139,5 +139,23 @@ export class ActionService {
       ...this.confirmedUsers
     ] as IInvitationRecord[];
     return of(recordList.filter(record => record._id === id)[0]);
+  }
+
+  clearRecords() {
+    this.stateSvc.changeRecords.clear();
+    const state = this.stateSvc.state;
+    const recordList =
+      state === 'invited' ? this.invitedUsers : this.confirmedUsers;
+    this.stateSvc.userList =
+      state === 'invited'
+        ? recordList.map(record => {
+            const { changed, ...noChanged } = record;
+
+            return { changed: false, ...noChanged };
+          })
+        : recordList.map(record => {
+            const { changed, active, ...noChanged } = record;
+            return { changed: active, active, ...noChanged };
+          });
   }
 }

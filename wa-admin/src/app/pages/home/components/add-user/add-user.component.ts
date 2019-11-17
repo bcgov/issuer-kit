@@ -7,22 +7,18 @@ import { LoadingService } from 'src/app/services/loading.service';
 @Component({
   selector: 'waa-add-user',
   template: `
-    <ion-header>
-      <ion-toolbar color="secondary">
-        <ion-buttons slot="start">
-          <ion-back-button></ion-back-button>
-        </ion-buttons>
-        <ion-title>{{ title }}</ion-title>
-      </ion-toolbar>
-    </ion-header>
-    <ion-content
-      ><form [formGroup]="fg">
+    <waa-item-header title="Invite"> </waa-item-header>
+    <waa-view-wrapper>
+      <mat-card [formGroup]="fg" *ngIf="index === 0; else preview">
         <ion-item>
           <ion-label position="stacked">Email Address</ion-label>
           <ion-input formControlName="email" placeholder="email@example.com">
           </ion-input>
           <ion-note
-            *ngIf="fg['controls'].email.touched && fg['controls'].email.invalid"
+            *ngIf="
+              (invalid && fg['controls'].email.invalid) ||
+              (fg['controls'].email.touched && fg['controls'].email.invalid)
+            "
           >
             <ion-text color="danger">Invalid username </ion-text></ion-note
           >
@@ -38,52 +34,65 @@ import { LoadingService } from 'src/app/services/loading.service';
           </ion-select>
           <ion-note
             *ngIf="
-              fg['controls'].jurisdiction.touched &&
-              fg['controls'].jurisdiction.invalid
+              (invalid && fg['controls'].jurisdiction.invalid) ||
+              (fg['controls'].jurisdiction.touched &&
+                fg['controls'].jurisdiction.invalid)
             "
           >
-            <ion-text color="danger">Invalid username </ion-text></ion-note
+            <ion-text color="danger">Invalid jurisdiction </ion-text></ion-note
           >
         </ion-item>
         <ion-item>
           <ion-label position="stacked">Authentication</ion-label>
           <ion-radio-group no-padding formControlName="method">
             <ion-item lines="none">
+              <ion-radio value="github" slot="start"></ion-radio>
               <ion-icon name="logo-github"></ion-icon>
-              <ion-label>Github</ion-label>
-              <ion-radio value="github"></ion-radio>
             </ion-item>
           </ion-radio-group>
           <ion-note
             *ngIf="
-              fg['controls'].method.touched && fg['controls'].method.invalid
+              (invalid && fg['controls'].method.invalid) ||
+              (fg['controls'].method.touched && fg['controls'].method.invalid)
             "
           >
-            <ion-text color="danger">Invalid username </ion-text></ion-note
+            <ion-text color="danger"
+              >Invalid authentication
+            </ion-text></ion-note
           >
         </ion-item>
-      </form>
-    </ion-content>
-    <ion-footer>
-      <ion-toolbar color="primary">
-        <ion-buttons slot="secondary" color="warning">
-          <ion-button click="reset()">
-            <ion-icon slot="icon-only" name="trash"></ion-icon>
-          </ion-button>
-        </ion-buttons>
-        <ion-buttons slot="primary">
-          <ion-button (click)="submit()">
-            <ion-icon slot="icon-only" name="send"></ion-icon>
-          </ion-button>
-        </ion-buttons>
-      </ion-toolbar>
-    </ion-footer>
+      </mat-card>
+      <ion-footer>
+        <ion-toolbar color="primary">
+          <ion-buttons slot="secondary" color="warning" *ngIf="this.index">
+            <ion-button (click)="this.index = 0">
+              <ion-label>Back</ion-label>
+            </ion-button>
+          </ion-buttons>
+          <ion-buttons slot="primary">
+            <ion-button (click)="submit(fg)">
+              <ion-label>{{ nextLabel }}</ion-label>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-footer>
+    </waa-view-wrapper>
+    <ng-template #preview>
+      <mat-card> </mat-card>
+    </ng-template>
   `,
   styleUrls: ['./add-user.component.scss']
 })
 export class AddUserComponent implements OnInit {
   title = 'Add user';
   fg: FormGroup;
+  index = 0;
+  invalid: boolean;
+
+  get nextLabel() {
+    return !this.index ? 'Next' : 'Submit';
+  }
+
   constructor(
     private actionSvc: ActionService,
     private stateSvc: StateService,
@@ -102,18 +111,25 @@ export class AddUserComponent implements OnInit {
 
   ngOnInit() {}
 
-  submit() {
-    if (this.fg.invalid) {
-      this.fg.markAsTouched();
-      return this.fg.updateValueAndValidity();
+  submit(fg) {
+    if (fg.invalid) {
+      fg.markAsTouched();
+      fg.updateValueAndValidity();
+      console.log(fg);
+      this.invalid = true;
+      return (this.fg = fg);
     }
 
     const { method, jurisdiction, email } = this.fg.value;
-
-    const response = this.actionSvc.createInvitation({
-      method,
-      jurisdiction,
-      email
-    });
+    if (this.index === 0) {
+      this.index = 1;
+      console.log(this.index);
+    } else {
+      const response = this.actionSvc.createInvitation({
+        method,
+        jurisdiction,
+        email
+      });
+    }
   }
 }

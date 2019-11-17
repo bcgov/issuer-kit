@@ -10,7 +10,11 @@ import { Router } from '@angular/router';
   template: `
     <mat-card class="mat-elevation-z0">
       <ion-item>
-        <mat-checkbox color="accent" [(ngModel)]="invitationRecord.changed">
+        <mat-checkbox
+          color="accent"
+          [(ngModel)]="invitationRecord.changed"
+          (change)="activeChange(_id)"
+        >
         </mat-checkbox>
 
         <mat-card-header (click)="viewItem(_id)">
@@ -57,7 +61,6 @@ export class UserListItemComponent implements OnInit {
 
   fc: FormControl;
   _id: any;
-  expired: boolean;
 
   activeChange(_id: string) {
     this.recordChange.emit({ _id });
@@ -69,6 +72,13 @@ export class UserListItemComponent implements OnInit {
 
   viewItem(_id: string) {
     this.router.navigate([`/view/${_id}`]);
+  }
+
+  get expired() {
+    const date = new Date(this.expiry).getTime();
+    const expired = !(date - new Date().getTime() > 0);
+    console.log(expired);
+    return expired;
   }
 
   constructor(private router: Router) {
@@ -97,10 +107,5 @@ export class UserListItemComponent implements OnInit {
     this.firstName = firstName;
     this.lastName = lastName;
     this._id = _id;
-    console.log(expiry);
-    const date = new Date(expiry).getTime();
-    console.log(date);
-    this.expired = !(date - new Date().getTime() > 0);
-    this.fc = new FormControl(this.invitationRecord.active);
   }
 }

@@ -4,6 +4,8 @@ import { StateService } from 'src/app/services/state.service';
 import { LoadingService } from 'src/app/services/loading.service';
 import { ActionService } from 'src/app/services/action.service';
 import { Router } from '@angular/router';
+import { ActionType } from 'src/app/shared/interfaces/actions.interface';
+import { AlertService } from 'src/app/services/alert.service';
 
 @Component({
   selector: 'waa-home',
@@ -51,12 +53,12 @@ import { Router } from '@angular/router';
       <button
         *ngIf="stateSvc.state === 'invited'"
         mat-menu-item
-        (click)="changeAction('enail')"
+        (click)="changeAction('email')"
         [disabled]="stateSvc.changeRecords.size < 1"
       >
         Send Invites
       </button>
-      <button mat-menu-item (click)="changeAction('clear')">
+      <button mat-menu-item (click)="clearChanges()">
         Clear Selections
       </button>
     </mat-menu>
@@ -73,7 +75,8 @@ export class HomePage implements OnInit {
     public stateSvc: StateService,
     private loadingSvc: LoadingService,
     private actionSvc: ActionService,
-    public router: Router
+    public router: Router,
+    private alertSvc: AlertService
   ) {}
 
   ngOnInit() {
@@ -85,12 +88,15 @@ export class HomePage implements OnInit {
       : this.router.navigate(['/home/add-user']);
   }
 
-  changeAction(action: 'active' = 'active') {
+  async changeAction(action: ActionType) {
     const records = Array.from(this.stateSvc.changeRecords.values()) || [];
-
-    action === 'active'
-      ? this.actionSvc.applyAction(action, records)
-      : this.clearChanges();
+    const message =
+      action === 'email'
+        ? 'Are you sure you want to resend invites?'
+        : 'Are you sure you want to change user access?';
+    const header = action === 'email' ? 'Re-send Invitations' : 'Change Access';
+    const modal = await this.alertSvc.confirmBox({ message, header });
+    this.actionSvc.applyAction(action, records);
   }
 
   clearChanges() {

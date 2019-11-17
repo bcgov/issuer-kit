@@ -15,6 +15,7 @@ import { IonicModule } from '@ionic/angular';
 import { ViewWrapperComponent } from './components/view-wrapper/view-wrapper.component';
 import { CardListItemComponent } from './components/card-list-item/card-list-item.component';
 import { CardToolbarComponent } from './components/card-toolbar/card-toolbar.component';
+import { MatToolbarModule } from '@angular/material/toolbar';
 
 const materialModules = [
   MatListModule,
@@ -25,7 +26,8 @@ const materialModules = [
   MatButtonModule,
   MatBadgeModule,
   MatMenuModule,
-  IonicModule
+  IonicModule,
+  MatToolbarModule
 ];
 
 const components = [

@@ -3,6 +3,12 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ActionService } from 'src/app/services/action.service';
 import { StateService } from 'src/app/services/state.service';
 import { LoadingService } from 'src/app/services/loading.service';
+import { environment } from 'src/environments/environment';
+import { IInvitationRecord } from 'src/app/shared/interfaces/invitation-record.interface';
+import { AlertService } from 'src/app/services/alert.service';
+import { Router } from '@angular/router';
+
+const url = environment.publicUrl;
 
 @Component({
   selector: 'waa-add-user',
@@ -78,7 +84,13 @@ import { LoadingService } from 'src/app/services/loading.service';
       </ion-footer>
     </waa-view-wrapper>
     <ng-template #preview>
-      <mat-card> </mat-card>
+      <waa-add-user-preview
+        [email]="fg.value['email']"
+        link="{{ url }}new-link"
+        state="unsubmitted"
+        [fields]="fields"
+      >
+      </waa-add-user-preview>
     </ng-template>
   `,
   styleUrls: ['./add-user.component.scss']
@@ -88,30 +100,63 @@ export class AddUserComponent implements OnInit {
   fg: FormGroup;
   index = 0;
   invalid: boolean;
+  url: string;
 
   get nextLabel() {
     return !this.index ? 'Next' : 'Submit';
   }
 
+  get fields() {
+    return [
+      {
+        key: 'method',
+        value: this.fg.value['method']
+      },
+      {
+        key: 'jurisdiction',
+        value: this.fg.value['jurisdiction']
+      },
+      {
+        key: 'expiry',
+        value: new Date(new Date().getTime() + 150000).toDateString()
+      },
+      {
+        key: 'created',
+        value: new Date().toDateString()
+      },
+      {
+        key: 'addedBy',
+        value: this.stateSvc.user.email
+      }
+    ];
+  }
+
   constructor(
     private actionSvc: ActionService,
     private stateSvc: StateService,
-    private loadingSvc: LoadingService
+    private loadingSvc: LoadingService,
+    private alertSvc: AlertService,
+    private router: Router
   ) {
+    this.setFg();
+    this.url = url;
+  }
+
+  ngOnInit() {}
+
+  setFg() {
     this.fg = new FormGroup({
       email: new FormControl('', [
         Validators.required,
         Validators.minLength(4),
         Validators.email
       ]),
-      method: new FormControl(null, [Validators.required]),
-      jurisdiction: new FormControl(null, Validators.required)
+      method: new FormControl('', [Validators.required]),
+      jurisdiction: new FormControl('', Validators.required)
     });
   }
 
-  ngOnInit() {}
-
-  submit(fg) {
+  async submit(fg) {
     if (fg.invalid) {
       fg.markAsTouched();
       fg.updateValueAndValidity();
@@ -125,11 +170,48 @@ export class AddUserComponent implements OnInit {
       this.index = 1;
       console.log(this.index);
     } else {
-      const response = this.actionSvc.createInvitation({
+      const response = await this.actionSvc.createInvitation({
         method,
         jurisdiction,
         email
       });
+      console.log(response);
+      const mapped = this.fields.map(itm => {
+        const obj = new Object();
+        obj[itm.key] = itm.value;
+        return obj;
+      });
+      const addedBy = this.stateSvc.user.email;
+      const record = {
+        _id: 'asdfjwezx',
+        active: false,
+        changed: false,
+        consumed: false,
+        expiry: new Date(new Date().getTime() + 150000).getTime(),
+        created: new Date().getTime(),
+        method,
+        jurisdiction,
+        firstName: '',
+        lastName: '',
+        addedBy,
+        ...response
+      } as IInvitationRecord;
+      this.actionSvc.invitedUsers.push(record);
+
+      const res = await this.alertSvc.confirmBox({
+        header: 'Invitation Sent!',
+        message: 'Would you like to create another user?',
+        decline: 'Home',
+        confirm: 'Add another'
+      });
+      console.log(res);
+      if (res) return this.resetState();
+      return this.router.navigate(['/']);
     }
+  }
+
+  resetState() {
+    this.setFg();
+    this.index = 0;
   }
 }

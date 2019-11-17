@@ -1,8 +1,17 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { IInvitationRecord } from '../shared/interfaces/invitation-record.interface';
+import { KeycloakService } from 'keycloak-angular';
 
 export type StateType = 'invited' | 'confirmed';
+
+export interface IUser {
+  username: string;
+  email: string;
+  emailVerified: boolean;
+  firstname: string;
+  lastName: string;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +23,7 @@ export class StateService {
   private _changeRecords = new Set<string>();
 
   private _state: StateType = 'invited';
+  user: IUser;
 
   get state() {
     return this._state;
@@ -48,5 +58,7 @@ export class StateService {
     return this._isAuthenticated;
   }
 
-  constructor() {}
+  constructor(private keyCloakSvc: KeycloakService) {
+    this.keyCloakSvc.loadUserProfile().then((obs: IUser) => (this.user = obs));
+  }
 }

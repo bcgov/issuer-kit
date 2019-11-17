@@ -5,6 +5,8 @@ export interface IBoxOptions {
   header: string;
   subHeader?: string;
   message: string;
+  confirm?: string;
+  decline?: string;
 }
 
 @Injectable({
@@ -12,7 +14,13 @@ export interface IBoxOptions {
 })
 export class AlertService {
   async confirmBox(args: IBoxOptions) {
-    const { header, subHeader, message } = args;
+    const {
+      header,
+      subHeader,
+      message,
+      confirm = 'Ok',
+      decline = 'Cancel'
+    } = args;
 
     const box = await this.alertCtrl.create({
       header,
@@ -20,12 +28,11 @@ export class AlertService {
       message,
       buttons: [
         {
-          text: 'Cancel',
-          role: 'cancel',
+          text: decline,
           handler: () => ({ values: false })
         },
         {
-          text: 'Ok',
+          text: confirm,
           handler: () => ({ values: true })
         }
       ]
@@ -33,6 +40,7 @@ export class AlertService {
     await box.present();
     const res = await box.onDidDismiss();
     console.log(res);
+    return res.data.values;
   }
 
   constructor(private alertCtrl: AlertController) {}

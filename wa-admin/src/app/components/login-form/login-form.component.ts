@@ -106,7 +106,6 @@ export class LoginFormComponent implements OnInit {
   ngOnInit() {}
 
   async onSubmit(fg: FormGroup) {
-    console.log(fg);
     if (fg.invalid) {
       fg.markAllAsTouched();
       fg.updateValueAndValidity();

@@ -10,6 +10,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatBadgeModule } from '@angular/material/badge';
 import { PopMenuComponent } from './pop-menu/pop-menu.component';
 import { MatMenuModule } from '@angular/material/menu';
+import { ItemHeaderComponent } from './components/item-header/item-header.component';
+import { IonicModule } from '@ionic/angular';
+import { ViewWrapperComponent } from './components/view-wrapper/view-wrapper.component';
+import { CardListItemComponent } from './components/card-list-item/card-list-item.component';
+import { CardToolbarComponent } from './components/card-toolbar/card-toolbar.component';
+
 const materialModules = [
   MatListModule,
   MatCheckboxModule,
@@ -18,10 +24,17 @@ const materialModules = [
   MatCardModule,
   MatButtonModule,
   MatBadgeModule,
-  MatMenuModule
+  MatMenuModule,
+  IonicModule
 ];
 
-const components = [PopMenuComponent];
+const components = [
+  PopMenuComponent,
+  ItemHeaderComponent,
+  ViewWrapperComponent,
+  CardListItemComponent,
+  CardToolbarComponent
+];
 
 @NgModule({
   declarations: [...components],

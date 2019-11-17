@@ -36,7 +36,7 @@ export class ManageUsersComponent implements OnInit {
   $invitationRecords: Observable<IInvitationRecord[]>;
 
   segmentChanged(event) {
-    console.log(event.detail.value);
+    this.actionSvc.clearRecords();
     this.actionSvc.changeState(event.detail.value);
   }
 
@@ -48,7 +48,6 @@ export class ManageUsersComponent implements OnInit {
 
   ngOnInit() {
     this.actionSvc.loadData();
-    this.stateSvc.$userList.subscribe(obs => console.log(obs));
     this.$invitationRecords = this.stateSvc.$userList;
   }
   clearRecords() {

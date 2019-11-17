@@ -14,15 +14,11 @@ import { UserListComponent } from './components/user-list/user-list.component';
 import { ManageUsersComponent } from './components/manage-users/manage-users.component';
 import { AddUserComponent } from './components/add-user/add-user.component';
 import { SuccessComponent } from './components/success/success.component';
+import { ViewComponent } from './components/view/view.component';
+import { ViewAuditComponent } from './components/view-audit/view-audit.component';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    IonicModule,
-    HomePageRoutingModule,
-    SharedModule
-  ],
+  imports: [CommonModule, FormsModule, HomePageRoutingModule, SharedModule],
   declarations: [
     HomePage,
     AddUserComponent,
@@ -30,7 +26,9 @@ import { SuccessComponent } from './components/success/success.component';
     UserListItemComponent,
     AdminPanelComponent,
     UserListComponent,
-    SuccessComponent
+    SuccessComponent,
+    ViewComponent,
+    ViewAuditComponent
   ]
 })
 export class HomePageModule {}

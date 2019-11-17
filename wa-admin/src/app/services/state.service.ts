@@ -28,14 +28,16 @@ export class StateService {
   }
   $userList = this.$$userList.asObservable();
 
-  userListValues = this.$$userList.value;
-
   clearChangeRecords() {
     this._changeRecords.clear();
   }
 
   set userList(records: IInvitationRecord[]) {
     this.$$userList.next(records);
+  }
+
+  get userList() {
+    return this.$$userList.getValue();
   }
 
   set isAuthenticated(bool) {

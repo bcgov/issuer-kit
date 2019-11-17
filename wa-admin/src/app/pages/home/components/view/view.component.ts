@@ -1,13 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { IInvitationRecord } from 'src/app/shared/interfaces/invitation-record.interface';
 import { Observable, of } from 'rxjs';
 import { ActionService } from 'src/app/services/action.service';
 import { tap, map } from 'rxjs/operators';
-import {
-  IActionMenuItem,
-  ActionType
-} from 'src/app/shared/interfaces/actions.interface';
+import { IActionMenuItem } from 'src/app/shared/interfaces/actions.interface';
 import { environment } from 'src/environments/environment';
 
 export interface IViewRecord {
@@ -19,7 +16,7 @@ export interface IViewRecord {
 }
 
 export interface IFields {
-  key: string;
+  [key: string]: string;
   value: string;
 }
 
@@ -42,7 +39,7 @@ const publicUrl = environment.publicUrl;
         <mat-card-header
           color="accent"
           [title]="r.email"
-          (primary)="action($event, r._id)"
+          (primary)="action($event)"
         >
           <mat-icon mat-card-avatar>
             person
@@ -50,7 +47,7 @@ const publicUrl = environment.publicUrl;
           <mat-card-subtitle *ngIf="r.name">{{ r.name }}</mat-card-subtitle>
           <mat-card-subtitle>{{ r.link }}</mat-card-subtitle>
           <mat-card-subtitle
-            ><ion-badge [color]="r.stateColor">{{
+            ><ion-badge color="tertiary">{{
               r.state
             }}</ion-badge></mat-card-subtitle
           >
@@ -74,39 +71,22 @@ export class ViewComponent implements OnInit {
   $actions: Observable<IActionMenuItem[]>;
   url: string;
 
-  action(evt: IActionMenuItem, record: string) {
+  action(evt: IActionMenuItem) {
     console.log(evt);
-    if (evt.key === 'email') this.actionSvc.sendEmail(record);
-    if (evt.key === 'active') this.actionSvc.revokeAccess(record);
-    this.router.navigate(['/'])
   }
-  constructor(private route: ActivatedRoute, private actionSvc: ActionService, private router: Router) {
+  constructor(private route: ActivatedRoute, private actionSvc: ActionService) {
     this.url = publicUrl;
   }
 
   ngOnInit() {
     const _id = this.route.snapshot.paramMap.get('id');
-    const fields = [
-      'jurisdiction',
-      'method',
-      'expiry',
-      'created',
-      'addedBy',
-      'updatedAt',
-      'updatedBy'
-    ];
+    const fields = ['jurisdiction', 'method', 'expiry', 'created'];
     const obs = this.actionSvc.getRecord(_id);
     this.$record = obs.pipe(
       map(r => {
         const name = `${r.firstName} ${r.lastName}`;
         const { email, active, consumed } = r;
         const state = consumed ? (active ? 'active' : 'inactive') : 'pending';
-        const stateColor = consumed
-          ? active
-            ? 'success'
-            : 'danger'
-          : 'warning';
-
         const filtered = Object.keys(r).filter(key =>
           fields.some(field => field === key)
         );
@@ -126,19 +106,15 @@ export class ViewComponent implements OnInit {
           email,
           fields: values,
           link: `${this.url}${r._id}`,
-          state,
-          stateColor
+          state
         };
       })
     );
     this.$actions = obs.pipe(
       map(obs => {
         return obs.consumed
-          ? [{ label: 'Revoke Access', key: 'active' }]
-          : [
-              { label: 'Send Email', key: 'email' },
-              { label: 'Revoke Access', key: 'active' }
-            ];
+          ? [{ label: 'Disable Access', key: 'active' }]
+          : [{ label: 'Send Email', key: 'email' }];
       })
     );
   }

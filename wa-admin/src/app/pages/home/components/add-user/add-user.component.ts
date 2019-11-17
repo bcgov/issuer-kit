@@ -104,13 +104,10 @@ export class AddUserComponent implements OnInit {
 
   submit() {
     if (this.fg.invalid) {
-      console.log(this.fg);
-
       this.fg.markAsTouched();
       return this.fg.updateValueAndValidity();
     }
 
-    console.log('valid');
     const { method, jurisdiction, email } = this.fg.value;
 
     const response = this.actionSvc.createInvitation({

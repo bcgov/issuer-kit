@@ -4,7 +4,6 @@ import { StateService } from 'src/app/services/state.service';
 import { LoadingService } from 'src/app/services/loading.service';
 import { ActionService } from 'src/app/services/action.service';
 import { Router } from '@angular/router';
-import { PopoverController } from '@ionic/angular';
 
 @Component({
   selector: 'waa-home',
@@ -33,11 +32,7 @@ import { PopoverController } from '@ionic/angular';
           </ion-button>
         </ion-buttons>
         <ion-buttons slot="primary">
-          <ion-button
-            (click)="action()"
-            slot="start"
-            [matMenuTriggerFor]="menu"
-          >
+          <ion-button slot="start" [matMenuTriggerFor]="menu">
             <mat-icon slot="icon-only">more_vert</mat-icon>
           </ion-button>
         </ion-buttons>
@@ -45,10 +40,25 @@ import { PopoverController } from '@ionic/angular';
       <waa-manage-users> </waa-manage-users>
     </ion-content>
     <mat-menu #menu="matMenu">
-      <button mat-menu-item (click)="changeAction('active')">
+      <button
+        mat-menu-item
+        *ngIf="stateSvc.state === 'confirmed'"
+        (click)="changeAction('active')"
+        [disabled]="stateSvc.changeRecords.size < 1"
+      >
         Disable/Enable Access
       </button>
-      <button (click)="changeAction('clear')">Clear Selections</button>
+      <button
+        *ngIf="stateSvc.state === 'invited'"
+        mat-menu-item
+        (click)="changeAction('active')"
+        [disabled]="stateSvc.changeRecords.size < 1"
+      >
+        Send Invites
+      </button>
+      <button mat-menu-item (click)="changeAction('clear')">
+        Clear Selections
+      </button>
     </mat-menu>
   `,
   styleUrls: ['./home.page.scss']
@@ -56,21 +66,12 @@ import { PopoverController } from '@ionic/angular';
 export class HomePage implements OnInit {
   title = 'Manage';
 
-  // actions = {
-  //   clear: this.actionSvc.applyAction('clear'),
-  //   active: this.changeAction('active')
-  // };
-
-  get icon() {
-    return this.stateSvc.changeRecords.size > 0 ? 'more_vert' : 'person_add';
-  }
   constructor(
     private httpSvc: HttpService,
-    private stateSvc: StateService,
+    public stateSvc: StateService,
     private loadingSvc: LoadingService,
     private actionSvc: ActionService,
-    public router: Router,
-    public popoverController: PopoverController
+    public router: Router
   ) {}
 
   ngOnInit() {}
@@ -81,11 +82,7 @@ export class HomePage implements OnInit {
   }
 
   changeAction(action: 'active' = 'active') {
-    const records = Array.from(this.stateSvc.changeRecords.values());
-    console.log('records', records);
-    // this.actionSvc.applyAction(action, records);
+    const records = Array.from(this.stateSvc.changeRecords.values()) || [];
+    this.actionSvc.applyAction(action, records);
   }
-
-  async showPopover(ev: any) {}
-  addUser() {}
 }

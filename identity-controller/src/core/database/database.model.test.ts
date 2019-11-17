@@ -1,42 +1,46 @@
 import test from 'ava';
 
-import {
-  DBClient,
-  IInvitationRecord,
-  DatabaseCollectionType
-} from './database.model';
+import { DBClient, DatabaseCollectionType } from './database.model';
 
 import { resolve } from 'path';
+import { IInvitationRecord } from '../interfaces/invitation-record.interface';
+import { MongoClient } from 'mongodb';
+
 const config = require('dotenv').config({
   path: resolve(__dirname, '../../../config.env')
 });
-
-const uri = `mongodb://${config.DB_USER}:${config.DB_PASSWORD}@${config.DB_SERVICE}:${config.DB_PORT}/${config.DB_NAME}`;
-console.log('mongo string', uri);
 
 const prefix = 'VALIDATORS: ';
 
 const collection = 'invitations' as DatabaseCollectionType;
 
 test(prefix + 'should insert an invitation', async t => {
-  const connect = DBClient;
-
   const uri = `mongodb://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_SERVICE}:${process.env.DB_PORT}/${process.env.DB_NAME}`;
   let dbOptions = {
     uri
   };
+  const db = await DBClient.connect(uri);
+  // const db
   t.log(uri);
-  const db = await connect.getInstance(dbOptions);
-  t.log(db.database);
   const record: IInvitationRecord = {
     consumed: false,
     email: 'sean.hamilton@quartech.com',
-    method: 'github',
-    jurisdiction: 'BC'
+    method: 'abcd',
+    jurisdiction: 'BC',
+    addedBy: 'sean',
+    active: false,
+    created: new Date(),
+    guid: 'alksdjfsda'
   };
 
-  const result = await db.insertRecord({ collection: 'invitations', record });
-  t.assert(result, 'defined');
+  const client = await DBClient.getInstance({ uri, database: 'identity' });
+  await client.connect();
+  const res = await client.insertRecord<IInvitationRecord>({
+    collection: 'invitations',
+    record
+  });
+  t.log('the id', res);
+  t.assert(typeof res === 'string');
 });
 test(prefix + 'should get invitation records', async t => {
   // const result = await db.getRecords('invitations');

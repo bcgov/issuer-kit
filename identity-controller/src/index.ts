@@ -8,7 +8,7 @@ let dbOptions = {
   uri: `mongodb://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_SERVICE}:${process.env.DB_PORT}/${process.env.DB_NAME}`
 };
 
-const client = DBClient.getInstance(dbOptions);
+export const client = DBClient.getInstance(dbOptions);
 
 client.connect().then(() => {
   console.log(`DB connected on ${dbOptions.uri}`);

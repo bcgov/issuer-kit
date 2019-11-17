@@ -138,6 +138,7 @@ export class ActionService {
         if (records.some(id => id === itm._id)) {
           itm.expiry = new Date().getTime() + 50000000;
           console.log(new Date(itm.expiry));
+          return itm;
         }
         return itm;
       });

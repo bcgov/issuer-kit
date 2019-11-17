@@ -76,8 +76,9 @@ export class UserListItemComponent implements OnInit {
 
   get expired() {
     const date = new Date(this.expiry).getTime();
-    const expired = !(date - new Date().getTime() > 0);
-    return expired;
+    const expired = date - new Date().getTime();
+    console.log(this.email, expired);
+    return !(expired > 0);
   }
 
   constructor(private router: Router) {

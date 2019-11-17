@@ -8,6 +8,7 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'waa-home',
   template: `
+    <!--
     <ion-header>
       <ion-toolbar color="secondary">
         <ion-title>{{ title }}</ion-title>
@@ -24,6 +25,8 @@ import { Router } from '@angular/router';
         </ion-buttons>
       </ion-toolbar>
     </ion-content>
+    -->
+    <waa-manage-users> </waa-manage-users>
   `,
   styleUrls: ['./home.page.scss']
 })

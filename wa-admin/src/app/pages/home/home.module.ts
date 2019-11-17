@@ -7,8 +7,13 @@ import { IonicModule } from '@ionic/angular';
 import { HomePageRoutingModule } from './home-routing.module';
 
 import { HomePage } from './home.page';
-import { AddUserComponent } from './add-user/add-user.component';
-import { SharedModule } from 'src/app/shared/shared/shared.module';
+import { SharedModule } from 'src/app/shared/shared.module';
+import { UserListItemComponent } from './components/user-list-item/user-list-item.component';
+import { AdminPanelComponent } from './components/admin-panel/admin-panel.component';
+import { UserListComponent } from './components/user-list/user-list.component';
+import { ManageUsersComponent } from './components/manage-users/manage-users.component';
+import { AddUserComponent } from './components/add-user/add-user.component';
+import { SuccessComponent } from './components/success/success.component';
 
 @NgModule({
   imports: [
@@ -18,6 +23,14 @@ import { SharedModule } from 'src/app/shared/shared/shared.module';
     HomePageRoutingModule,
     SharedModule
   ],
-  declarations: [HomePage, AddUserComponent]
+  declarations: [
+    HomePage,
+    AddUserComponent,
+    ManageUsersComponent,
+    UserListItemComponent,
+    AdminPanelComponent,
+    UserListComponent,
+    SuccessComponent
+  ]
 })
 export class HomePageModule {}

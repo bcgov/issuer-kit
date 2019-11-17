@@ -1,6 +1,6 @@
 const routePrefixes = {
   login: { path: 'login', name: 'Login' },
-  home: { path: 'home', name: 'Home' }
+  home: { path: '', name: 'Home' }
 };
 
 export default routePrefixes;

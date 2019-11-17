@@ -10,7 +10,7 @@ import { IActionMenuItem } from '../../interfaces/actions.interface';
           <mat-icon slot="icon-only">{{ secondaryIcon }}</mat-icon>
         </ion-button>
       </ion-buttons>
-      <ion-buttons slot="primary">
+      <ion-buttons slot="primary" *ngIf="actions">
         <ion-button slot="start" [matMenuTriggerFor]="menu">
           <mat-icon slot="icon-only">more_vert</mat-icon>
         </ion-button>

@@ -16,7 +16,7 @@ export interface IViewRecord {
 }
 
 export interface IFields {
-  [key: string]: string;
+  key: string;
   value: string;
 }
 
@@ -47,7 +47,7 @@ const publicUrl = environment.publicUrl;
           <mat-card-subtitle *ngIf="r.name">{{ r.name }}</mat-card-subtitle>
           <mat-card-subtitle>{{ r.link }}</mat-card-subtitle>
           <mat-card-subtitle
-            ><ion-badge color="tertiary">{{
+            ><ion-badge [color]="r.stateColor">{{
               r.state
             }}</ion-badge></mat-card-subtitle
           >
@@ -80,13 +80,19 @@ export class ViewComponent implements OnInit {
 
   ngOnInit() {
     const _id = this.route.snapshot.paramMap.get('id');
-    const fields = ['jurisdiction', 'method', 'expiry', 'created'];
+    const fields = ['jurisdiction', 'method', 'expiry', 'created', 'addedBy'];
     const obs = this.actionSvc.getRecord(_id);
     this.$record = obs.pipe(
       map(r => {
         const name = `${r.firstName} ${r.lastName}`;
         const { email, active, consumed } = r;
         const state = consumed ? (active ? 'active' : 'inactive') : 'pending';
+        const stateColor = consumed
+          ? active
+            ? 'success'
+            : 'danger'
+          : 'warning';
+
         const filtered = Object.keys(r).filter(key =>
           fields.some(field => field === key)
         );
@@ -106,7 +112,8 @@ export class ViewComponent implements OnInit {
           email,
           fields: values,
           link: `${this.url}${r._id}`,
-          state
+          state,
+          stateColor
         };
       })
     );

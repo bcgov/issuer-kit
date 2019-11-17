@@ -16,6 +16,7 @@ import { AddUserComponent } from './components/add-user/add-user.component';
 import { SuccessComponent } from './components/success/success.component';
 import { ViewComponent } from './components/view/view.component';
 import { ViewAuditComponent } from './components/view-audit/view-audit.component';
+import { AddUserPreviewComponent } from './components/add-user-preview/add-user-preview.component';
 
 @NgModule({
   imports: [CommonModule, FormsModule, HomePageRoutingModule, SharedModule],
@@ -28,7 +29,8 @@ import { ViewAuditComponent } from './components/view-audit/view-audit.component
     UserListComponent,
     SuccessComponent,
     ViewComponent,
-    ViewAuditComponent
+    ViewAuditComponent,
+    AddUserPreviewComponent
   ]
 })
 export class HomePageModule {}

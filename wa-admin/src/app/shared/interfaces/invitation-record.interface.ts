@@ -11,4 +11,5 @@ export interface IInvitationRecord {
   icon?: string;
   created: number;
   changed?: boolean;
+  addedBy: string;
 }

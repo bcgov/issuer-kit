@@ -77,7 +77,6 @@ export class UserListItemComponent implements OnInit {
   get expired() {
     const date = new Date(this.expiry).getTime();
     const expired = !(date - new Date().getTime() > 0);
-    console.log(expired);
     return expired;
   }
 

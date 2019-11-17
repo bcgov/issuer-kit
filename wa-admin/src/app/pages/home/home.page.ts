@@ -13,7 +13,7 @@ import { AlertService } from 'src/app/services/alert.service';
     <ion-header>
       <ion-toolbar color="primary">
         <ion-buttons slot="secondary">
-          <ion-button>
+          <ion-button (click)="actionSvc.logout()">
             <ion-label>Logout</ion-label>
             <ion-icon name="log-out"></ion-icon>
           </ion-button>
@@ -45,7 +45,7 @@ import { AlertService } from 'src/app/services/alert.service';
         (click)="changeAction('active')"
         [disabled]="stateSvc.changeRecords.size < 1"
       >
-        Disable/Enable Access
+        Enable/Disable Access
       </button>
       <button
         *ngIf="stateSvc.state === 'invited'"
@@ -54,6 +54,14 @@ import { AlertService } from 'src/app/services/alert.service';
         [disabled]="stateSvc.changeRecords.size < 1"
       >
         Send Invites
+      </button>
+      <button
+        *ngIf="stateSvc.state === 'invited'"
+        mat-menu-item
+        (click)="changeAction('revoke')"
+        [disabled]="stateSvc.changeRecords.size < 1"
+      >
+        Revoke Access
       </button>
       <button mat-menu-item (click)="clearChanges()">
         Clear Selections
@@ -71,13 +79,14 @@ export class HomePage implements OnInit {
     private httpSvc: HttpService,
     public stateSvc: StateService,
     private loadingSvc: LoadingService,
-    private actionSvc: ActionService,
+    public actionSvc: ActionService,
     public router: Router,
     private alertSvc: AlertService
   ) {}
 
   ngOnInit() {
     this.actionSvc.loadData();
+    this.title = this.stateSvc.user.username;
   }
   action() {
     this.stateSvc.changeRecords.size > 0

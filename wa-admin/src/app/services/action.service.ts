@@ -70,13 +70,16 @@ export class ActionService {
   invitedUsers: IInvitationRecord[];
   confirmedUsers: IInvitationRecord[];
   constructor(private httpSvc: HttpService, private stateSvc: StateService) {
-    this.loadData();
     this.invitedUsers = testData;
-    this.confirmedUsers = confirmed;
+    this.confirmedUsers = confirmed.map(r => ({ changed: r.active, ...r }));
+    this.loadData();
   }
 
   loadData() {
-    this.stateSvc.userList = testData;
+    this.stateSvc.userList =
+      this.stateSvc.state === 'invited'
+        ? this.invitedUsers
+        : this.confirmedUsers;
   }
 
   async createInvitation(params: {
@@ -98,12 +101,24 @@ export class ActionService {
 
   clearRecords() {
     this.stateSvc.changeRecords.clear();
+    const state = this.stateSvc.state;
+    const recordList =
+      state === 'invited' ? this.invitedUsers : this.confirmedUsers;
+    this.stateSvc.userList =
+      state === 'invited'
+        ? recordList.map(record => {
+            const { changed, ...noChanged } = record;
+
+            return { changed: false, ...noChanged };
+          })
+        : recordList.map(record => {
+            const { changed, active, ...noChanged } = record;
+            return { changed: active, active, ...noChanged };
+          });
   }
 
   changeAccess(records: string[]) {
-    console.log('records', records);
     const users = records.map(record => {
-      console.log(this.stateSvc.userList);
       const { active, ...noActive } = this.stateSvc.userList.filter(
         user => user._id === record
       )[0];
@@ -113,6 +128,7 @@ export class ActionService {
   }
 
   changeState(state: StateType) {
+    this.stateSvc.state = state;
     this.stateSvc.userList =
       state === 'invited' ? this.invitedUsers : this.confirmedUsers;
   }

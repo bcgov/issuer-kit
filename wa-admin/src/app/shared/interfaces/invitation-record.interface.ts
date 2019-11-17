@@ -10,4 +10,5 @@ export interface IInvitationRecord {
   lastName?: string;
   icon?: string;
   created: number;
+  changed?: boolean;
 }

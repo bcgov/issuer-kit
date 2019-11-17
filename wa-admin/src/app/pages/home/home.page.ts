@@ -87,6 +87,7 @@ export class HomePage implements OnInit {
   ngOnInit() {
     this.actionSvc.loadData();
     this.title = this.stateSvc.user.username;
+    console.log(this.stateSvc.user);
   }
   action() {
     this.stateSvc.changeRecords.size > 0
@@ -101,7 +102,7 @@ export class HomePage implements OnInit {
         ? 'Are you sure you want to resend invites?'
         : 'Are you sure you want to change user access?';
     const header = action === 'email' ? 'Re-send Invitations' : 'Change Access';
-    const modal = await this.alertSvc.confirmBox({ message, header });
+    const res = await this.alertSvc.confirmBox({ message, header });
     this.actionSvc.applyAction(action, records);
   }
 

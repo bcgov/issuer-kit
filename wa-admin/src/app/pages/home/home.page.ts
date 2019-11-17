@@ -26,10 +26,7 @@ import { AlertService } from 'src/app/services/alert.service';
     <ion-content padding fullscreen color="light">
       <ion-toolbar color="secondary">
         <ion-buttons slot="secondary">
-          <ion-button
-            (click)="router.navigate(['/home/add-user'])"
-            slot="start"
-          >
+          <ion-button (click)="router.navigate(['/add-user'])" slot="start">
             <mat-icon slot="icon-only">person_add</mat-icon>
           </ion-button>
         </ion-buttons>

@@ -37,7 +37,7 @@ import { Router } from '@angular/router';
           </ion-button>
         </ion-buttons>
       </ion-toolbar>
-      <waa-manage-users> </waa-manage-users>
+      <waa-manage-users [$invitationRecords]="$records"> </waa-manage-users>
     </ion-content>
     <mat-menu #menu="matMenu">
       <button
@@ -51,7 +51,7 @@ import { Router } from '@angular/router';
       <button
         *ngIf="stateSvc.state === 'invited'"
         mat-menu-item
-        (click)="changeAction('active')"
+        (click)="changeAction('enail')"
         [disabled]="stateSvc.changeRecords.size < 1"
       >
         Send Invites
@@ -66,6 +66,8 @@ import { Router } from '@angular/router';
 export class HomePage implements OnInit {
   title = 'Manage';
 
+  $records = this.stateSvc.$userList;
+
   constructor(
     private httpSvc: HttpService,
     public stateSvc: StateService,
@@ -74,7 +76,9 @@ export class HomePage implements OnInit {
     public router: Router
   ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.actionSvc.loadData();
+  }
   action() {
     this.stateSvc.changeRecords.size > 0
       ? this.changeAction('active')
@@ -83,6 +87,14 @@ export class HomePage implements OnInit {
 
   changeAction(action: 'active' = 'active') {
     const records = Array.from(this.stateSvc.changeRecords.values()) || [];
-    this.actionSvc.applyAction(action, records);
+
+    action === 'active'
+      ? this.actionSvc.applyAction(action, records)
+      : this.clearChanges();
+  }
+
+  clearChanges() {
+    this.actionSvc.clearRecords();
+    this.$records = this.stateSvc.$userList;
   }
 }

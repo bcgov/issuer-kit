@@ -10,11 +10,7 @@ import { Router } from '@angular/router';
   template: `
     <mat-card class="mat-elevation-z0">
       <ion-item>
-        <mat-checkbox
-          color="accent"
-          [checked]="active"
-          (click)="activeChange(_id)"
-        >
+        <mat-checkbox color="accent" [(ngModel)]="invitationRecord.changed">
         </mat-checkbox>
 
         <mat-card-header (click)="viewItem(_id)">
@@ -27,7 +23,8 @@ import { Router } from '@angular/router';
             <ion-badge *ngIf="!active" color="warning">Disabled</ion-badge>
           </mat-card-subtitle>
           <mat-card-subtitle *ngIf="!consumed" (click)="viewItem(_id)">
-            <ion-badge *ngIf="!consumed" color="success"></ion-badge>
+            <ion-badge *ngIf="expired" color="warning">expired</ion-badge>
+            <ion-badge *ngIf="!expired" color="success">pending</ion-badge>
           </mat-card-subtitle>
         </mat-card-header>
         <mat-card-content class="ion-float-right">
@@ -60,6 +57,7 @@ export class UserListItemComponent implements OnInit {
 
   fc: FormControl;
   _id: any;
+  expired: boolean;
 
   activeChange(_id: string) {
     this.recordChange.emit({ _id });
@@ -70,9 +68,8 @@ export class UserListItemComponent implements OnInit {
   }
 
   viewItem(_id: string) {
-    this.router.navigate([`/view/${_id}`])
+    this.router.navigate([`/view/${_id}`]);
   }
-
 
   constructor(private router: Router) {
     // this.fc = new FormControl(active);
@@ -103,7 +100,7 @@ export class UserListItemComponent implements OnInit {
     console.log(expiry);
     const date = new Date(expiry).getTime();
     console.log(date);
-    const expired = !(date - new Date().getTime() > 0);
-    console.log(expired);
+    this.expired = !(date - new Date().getTime() > 0);
+    this.fc = new FormControl(this.invitationRecord.active);
   }
 }

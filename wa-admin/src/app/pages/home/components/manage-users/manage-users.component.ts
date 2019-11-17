@@ -33,24 +33,19 @@ import { Observable } from 'rxjs';
   styleUrls: ['./manage-users.component.scss']
 })
 export class ManageUsersComponent implements OnInit {
-  $invitationRecords: Observable<IInvitationRecord[]>;
+  @Input() $invitationRecords: Observable<IInvitationRecord[]>;
 
   segmentChanged(event) {
     this.actionSvc.clearRecords();
     this.actionSvc.changeState(event.detail.value);
   }
 
-  changed() {
-    console.log(this.stateSvc.changeRecords);
-  }
+  changed() {}
 
   constructor(public stateSvc: StateService, public actionSvc: ActionService) {}
 
   ngOnInit() {
     this.actionSvc.loadData();
-    this.$invitationRecords = this.stateSvc.$userList;
   }
-  clearRecords() {
-    this.actionSvc.loadData();
-  }
+  clearRecords() {}
 }

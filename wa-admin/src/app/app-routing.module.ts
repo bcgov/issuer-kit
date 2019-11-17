@@ -15,6 +15,13 @@ const routes: Routes = [
   },
   {
     path: prefix.home.path,
+    // canActivate: [CanActivateGuard],
+    data: { roles: ['wa-admin'] },
+    loadChildren: () =>
+      import('./pages/home/home.module').then(m => m.HomePageModule)
+  },
+  {
+    path: '',
     canActivate: [CanActivateGuard],
     data: { roles: ['wa-admin'] },
     loadChildren: () =>

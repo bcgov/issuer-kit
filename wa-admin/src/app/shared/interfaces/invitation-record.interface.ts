@@ -4,14 +4,9 @@ export interface IInvitationRecord {
   method: string;
   email: string;
   jurisdiction: string;
-  expiry?: number;
-  expired?: boolean;
+  expiry?: string;
   active: boolean;
   firstName?: string;
   lastName?: string;
   icon?: string;
-  created: number;
-  changed?: boolean;
-  addedBy: string;
-  updatedBy: string;
 }

@@ -8,44 +8,18 @@ import { Observable } from 'rxjs';
   selector: 'waa-manage-users',
   template: `
     <ng-container *ngIf="$invitationRecords | async as invitationRecords">
-      <ion-segment (ionChange)="segmentChanged($event)" color="primary">
-        <ion-segment-button
-          value="invited"
-          [checked]="stateSvc.state === 'invited'"
-        >
-          <ion-label>Invited</ion-label>
-        </ion-segment-button>
-        <ion-segment-button
-          value="confirmed"
-          [checked]="stateSvc.state === 'confirmed'"
-        >
-          <ion-label>Confirmed</ion-label>
-        </ion-segment-button>
-      </ion-segment>
-      <waa-user-list
-        [invitationRecords]="invitationRecords"
-        [changeRecords]="stateSvc.changeRecords"
-        (changedRecords)="changed()"
-      >
-      </waa-user-list>
+      <waa-user-list [invitationRecords]="invitationRecords"> </waa-user-list>
     </ng-container>
   `,
   styleUrls: ['./manage-users.component.scss']
 })
 export class ManageUsersComponent implements OnInit {
-  @Input() $invitationRecords: Observable<IInvitationRecord[]>;
-
-  segmentChanged(event) {
-    this.actionSvc.clearRecords();
-    this.actionSvc.changeState(event.detail.value);
-  }
-
-  changed() {}
-
+  $invitationRecords: Observable<IInvitationRecord[]>;
   constructor(public stateSvc: StateService, public actionSvc: ActionService) {}
 
   ngOnInit() {
     this.actionSvc.loadData();
+    this.stateSvc.$userList.subscribe(obs => console.log(obs));
+    this.$invitationRecords = this.stateSvc.$userList;
   }
-  clearRecords() {}
 }

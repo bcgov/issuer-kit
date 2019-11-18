@@ -31,9 +31,7 @@ const themes = {
   selector: 'waa-root',
   template: `
     <!--The content below is only a placeholder and can be replaced.-->
-    <ion-app>
-      <ion-router-outlet></ion-router-outlet>
-    </ion-app>
+    <router-outlet></router-outlet>
   `,
   styleUrls: ['./app.component.scss']
 })

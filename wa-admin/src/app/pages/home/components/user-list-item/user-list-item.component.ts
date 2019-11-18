@@ -22,11 +22,16 @@ import { Router } from '@angular/router';
           <mat-card-subtitle (click)="viewItem(_id)"
             >{{ firstName }} {{ lastName }}
           </mat-card-subtitle>
-          <mat-card-subtitle *ngIf="consumed" (click)="viewItem(_id)">
-            <ion-badge *ngIf="active" color="success">Active</ion-badge>
-            <ion-badge *ngIf="!active" color="warning">Disabled</ion-badge>
+          <mat-card-subtitle *ngIf="!active" (click)="viewItem(_id)">
+            <ion-badge *ngIf="!active" color="danger">disabled</ion-badge>
           </mat-card-subtitle>
-          <mat-card-subtitle *ngIf="!consumed" (click)="viewItem(_id)">
+          <mat-card-subtitle *ngIf="consumed && active" (click)="viewItem(_id)">
+            <ion-badge *ngIf="active" color="success">active</ion-badge>
+          </mat-card-subtitle>
+          <mat-card-subtitle
+            *ngIf="!consumed && active"
+            (click)="viewItem(_id)"
+          >
             <ion-badge *ngIf="expired" color="warning">expired</ion-badge>
             <ion-badge *ngIf="!expired" color="success">pending</ion-badge>
           </mat-card-subtitle>
@@ -61,6 +66,7 @@ export class UserListItemComponent implements OnInit {
 
   fc: FormControl;
   _id: any;
+  expired: any;
 
   activeChange(_id: string) {
     this.recordChange.emit({ _id });
@@ -73,18 +79,18 @@ export class UserListItemComponent implements OnInit {
   viewItem(_id: string) {
     this.router.navigate([`/view/${_id}`]);
   }
-
+  /*
   get expired() {
     const date = new Date(this.expiry).getTime();
     const expired = date - new Date().getTime();
     console.log(this.email, expired);
     return !(expired > 0);
   }
+*/
 
   constructor(private router: Router) {
     // this.fc = new FormControl(active);
   }
-
   ngOnInit() {
     const {
       _id,
@@ -95,7 +101,8 @@ export class UserListItemComponent implements OnInit {
       expiry,
       active,
       firstName,
-      lastName
+      lastName,
+      expired
     } = this.invitationRecord;
     this.consumed = consumed;
     this.method = method;
@@ -107,5 +114,6 @@ export class UserListItemComponent implements OnInit {
     this.firstName = firstName;
     this.lastName = lastName;
     this._id = _id;
+    this.expired = expired;
   }
 }

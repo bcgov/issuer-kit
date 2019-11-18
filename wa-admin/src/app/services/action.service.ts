@@ -14,9 +14,10 @@ const testData = [
     email: 'sean@example.com',
     jurisdiction: 'BC',
     expiry: new Date().getTime() + 5000000,
-    active: false,
+    active: true,
     firstName: '',
     lastName: '',
+    expired: false,
     icon: '',
     created: new Date().getTime() - 5000000,
     addedBy: 'admin@example.com'
@@ -27,8 +28,9 @@ const testData = [
     method: 'github',
     email: 'billy@example.com',
     jurisdiction: 'BC',
+    expired: true,
     expiry: new Date().getTime() - 5000000,
-    active: false,
+    active: true,
     firstName: '',
     lastName: '',
     icon: '',
@@ -108,55 +110,81 @@ export class ActionService {
 
   applyAction(action: ActionType, records?: string[]) {
     const actions = {
-      clear: this.clearRecords(),
-      change: this.changeAccess(records),
-      email: this.sendEmail(records),
-      revoked: this.revokeAccess(records)
+      clear: rec => this.clearRecords(),
+      change: rec => this.changeAccess(rec),
+      email: rec => this.sendEmail(rec),
+      revoke: rec => this.revokeAccess(rec)
     };
     this.stateSvc.clearChangeRecords();
-
-    return actions[action];
+    console.log(action);
+    return actions[action](records);
   }
 
   revokeAccess(records: string[] | string) {
     if (Array.isArray(records)) {
-      const mapped = this.invitedUsers.map(itm => {
-        if (records.some(id => id === itm._id)) {
-          itm.expiry = new Date().getTime();
-          itm.expired = true;
-          itm.active = true;
-        }
-        itm.changed = false;
-
-        return itm;
-      });
-      this.invitedUsers = mapped;
+      for (let record of records) {
+        this.revokeAccess(record);
+      }
     } else {
-      const itm = this.invitedUsers.find(itm => itm._id === records);
-      itm.expired = true;
-      itm.active = false;
+      const users = this.confirmedUsers;
+      const index = users.findIndex(itm => itm._id === records);
+      if (index >= 0) {
+        const itm = users.find(itm => itm._id === records);
+        const { active, ...noActive } = itm;
+        const newActive = !active;
+        const newUser = {
+          active: newActive,
+          updatedBy: this.stateSvc.user.email,
+          ...noActive
+        };
+        users[index] = newUser;
+        this.confirmedUsers = users;
+        return this.stateSvc.setUserList(users);
+      } else {
+        const users = this.invitedUsers;
+        const itm = users.find(itm => itm._id === records);
+        const index = users.findIndex(itm => itm._id === records);
+        const { active, ...noActive } = itm;
+        const newActive = !active;
+        const newUser = {
+          active: newActive,
+          updatedBy: this.stateSvc.user.email,
+          ...noActive
+        };
+        users[index] = newUser;
+        this.invitedUsers = users;
+        this.stateSvc.setUserList(users);
+        this.clearRecords();
+      }
     }
-    this.stateSvc.userList = this.invitedUsers;
-    this.clearRecords();
   }
 
   sendEmail(records: string[] | string) {
     if (Array.isArray(records)) {
-      const mapped = this.invitedUsers.map(itm => {
-        if (records.some(id => id === itm._id)) {
-          itm.expiry = Date.now() + 50000000;
-          itm.expired = false;
-          console.log(new Date(itm.expiry));
-          return itm;
-        }
-        return itm;
-      });
-      this.invitedUsers = mapped;
+      for (let record of records) {
+        this.sendEmail(record);
+      }
     } else {
-      const itm = this.invitedUsers.find(itm => itm._id === records);
+      console.log(records);
+
+      const users = this.invitedUsers;
+      const itm = users.find(itm => itm._id === records);
+      const index = users.findIndex(itm => itm._id === records);
+      const { expired, expiry, ...noExpired } = itm;
+      const newExpired = false;
+      const newExpiry = Date.now() + 50000000;
+      const newUser = {
+        updatedBy: this.stateSvc.user.email,
+        expired: newExpired,
+        expiry: newExpiry,
+        ...noExpired
+      };
+      console.log('the item', newUser);
+      users[index] = newUser;
+      this.invitedUsers = users;
+      console.log(users);
+      return this.stateSvc.setUserList(users);
     }
-    this.stateSvc.userList = this.invitedUsers;
-    this.clearRecords();
   }
 
   changeAccess(records: string[]) {

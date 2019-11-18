@@ -193,7 +193,7 @@ export class AddUserComponent implements OnInit {
       const addedBy = this.stateSvc.user.email;
       const record = {
         _id: 'asdfjwezx',
-        active: false,
+        active: true,
         changed: false,
         consumed: false,
         expiry: new Date(new Date().getTime() + 150000).getTime(),

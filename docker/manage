@@ -45,8 +45,10 @@ usage() {
     
       logs - Display the logs from the docker compose run (ctrl-c to exit).
 
-      start-dev - Runs a live development version of the containers, with hot-reloading
-                  enabled.
+      start - Runs a live development version of the containers, with hot-reloading
+              enabled.
+      up - Same as start.
+      start-dev - Same as start.
 
       stop - Stops the services.  This is a non-destructive process.  The volumes and containers
              are not deleted so they will be reused the next time you run start.
@@ -255,7 +257,7 @@ case "${COMMAND}" in
     configureEnvironment "$@"
     docker-compose logs -f
     ;;
-  start-dev)
+  start-dev|start|up)
     configureEnvironment "$@"
     docker-compose up -d ${_startupParams} ${DEFAULT_CONTAINERS} ${DEV_CONTAINERS}
     docker-compose logs -f

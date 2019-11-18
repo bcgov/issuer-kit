@@ -33,7 +33,7 @@ import { interval } from 'rxjs/internal/observable/interval';
           <li id="awaiting-credential-offer">
             <h2>
               Waiting for you to accept the credential offer...
-              <ng-template [ngIf]="step === 1">
+              <ng-template [ngIf]="step === 2">
                 <mat-spinner class="inline-spinner" diameter="24"></mat-spinner>
               </ng-template>
               <ng-template [ngIf]="step > 2"

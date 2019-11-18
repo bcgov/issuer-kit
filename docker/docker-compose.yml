@@ -22,6 +22,8 @@ services:
     networks:
       - identity_kit
     working_dir: /usr/src/controller
+    depends_on:
+      - wa-db
     command: npm run start-docker
 
   #

@@ -1,5 +1,7 @@
 import { TypedEvent } from '../typed-event/typed-event.model';
+
 import { IInvitationRecord } from '../interfaces/invitation-record.interface';
+
 
 export interface IDBInsert<T> {
   collection: 'invitations';

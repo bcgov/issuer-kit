@@ -1,7 +1,9 @@
 import admin from './app/admin/admin';
 import Router = require('koa-router');
 
+
 import { DBClient } from './core/database/database.model';
+
 import watchers from './core/watchers/database.watchers';
 
 let dbOptions = {
@@ -9,6 +11,12 @@ let dbOptions = {
 };
 
 export const client = DBClient.getInstance(dbOptions);
+
+let dbOptions = {
+  "uri": `mongodb://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_SERVICE}:${process.env.DB_PORT}/${process.env.DB_NAME}`
+};
+
+const client = DBClient.getInstance(dbOptions);
 
 client.connect().then(() => {
   console.log(`DB connected on ${dbOptions.uri}`);

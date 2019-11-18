@@ -14,34 +14,22 @@ export type DatabaseRecordType = IInvitationRecord;
 
 const prefix = 'Database: ';
 
-class DBClient extends mongo.MongoClient {
-  private static instance: DBClient;
 
-  events = new TypedEvent<IDBEvent>();
-  database: string;
-  private prefix: string;
 
-  private constructor(opts: {
-    uri?: string;
-    options?: mongo.MongoClientOptions;
-    database?: string;
-  }) {
-    super(opts.uri || '', opts.options || {});
-    const prefix = 'database';
-    this.database = 'identity';
-    this.prefix = prefix;
+  private constructor (opts: { uri?: string; options?: mongo.MongoClientOptions }) {
+    super(
+      opts.uri || '',
+      opts.options || {}
+    );
   }
 
-  static getInstance(options: { uri?: string; database?: string }) {
-    if (!DBClient.instance) {
+  static getInstance(options: {uri?: string}) {
+    if (!DBClient.instance) {  
       if (!options || !options.uri) {
-        throw new Error(
-          prefix + 'No connection URI to the database was provided!'
-        );
+        throw new Error('No connection URI to the database was provided!');
       }
       DBClient.instance = new DBClient(options);
     }
-
     return DBClient.instance;
   }
 
@@ -95,6 +83,7 @@ class DBClient extends mongo.MongoClient {
     }
   }
 
+
   async getRecord(opts: { collection: DatabaseCollectionType; id: string }) {
     const { collection, id } = opts;
     if (!id) throw new Error(this.prefix + 'no id entered');
@@ -109,4 +98,4 @@ class DBClient extends mongo.MongoClient {
   }
 }
 
-export { DBClient };
+export {DBClient}

@@ -48,15 +48,7 @@ import { StateService } from 'src/app/services/state.service';
       </div>
     </ion-content>
 
-    <mat-menu #menu="matMenu">
-      <button
-        mat-menu-item
-        *ngIf="stateSvc.state === 'confirmed'"
-        (click)="changeAction('revoke')"
-        [disabled]="stateSvc.changeRecords.size < 1"
-      >
-        Enable/Disable Access
-      </button>
+    <mat-menu #menu="matMenu" *ngIf="stateSvc.state === 'invited'">
       <button
         *ngIf="stateSvc.state === 'invited'"
         mat-menu-item

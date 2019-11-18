@@ -55,6 +55,7 @@ const confirmed = [
     created: new Date().getTime() - 25000000,
     addedBy: 'admin@example.com',
     updatedBy: 'someotheradmin@example.com',
+    issued: true,
     activity: [{}]
   },
   {
@@ -64,13 +65,14 @@ const confirmed = [
     email: 'email@example.com',
     jurisdiction: 'BC',
     expiry: new Date().getTime(),
-    active: false,
+    active: true,
     firstName: 'Joe',
     lastName: 'Thomson',
     icon: 'github',
     created: new Date().getTime() - 35000000,
     updatedBy: 'admin@axemple.com',
     addedBy: 'anotheradmin@example.com',
+    issued: false,
     activity: [{}]
   }
 ];

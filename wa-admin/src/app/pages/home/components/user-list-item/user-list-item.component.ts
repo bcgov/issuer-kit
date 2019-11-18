@@ -11,6 +11,7 @@ import { Router } from '@angular/router';
     <mat-card class="mat-elevation-z0">
       <ion-item>
         <mat-checkbox
+          *ngIf="!consumed"
           color="accent"
           [(ngModel)]="invitationRecord.changed"
           (change)="activeChange(_id)"
@@ -26,14 +27,19 @@ import { Router } from '@angular/router';
             <ion-badge *ngIf="!active" color="danger">disabled</ion-badge>
           </mat-card-subtitle>
           <mat-card-subtitle *ngIf="consumed && active" (click)="viewItem(_id)">
-            <ion-badge *ngIf="active" color="success">active</ion-badge>
+            <ion-badge *ngIf="consumed && !issued" color="success"
+              >logged in</ion-badge
+            >
+            <ion-badge *ngIf="consumed && issued" color="success"
+              >issued</ion-badge
+            >
           </mat-card-subtitle>
           <mat-card-subtitle
             *ngIf="!consumed && active"
             (click)="viewItem(_id)"
           >
             <ion-badge *ngIf="expired" color="warning">expired</ion-badge>
-            <ion-badge *ngIf="!expired" color="success">pending</ion-badge>
+            <ion-badge *ngIf="!expired" color="success">sent</ion-badge>
           </mat-card-subtitle>
         </mat-card-header>
         <mat-card-content class="ion-float-right">
@@ -67,6 +73,7 @@ export class UserListItemComponent implements OnInit {
   fc: FormControl;
   _id: any;
   expired: any;
+  issued: boolean;
 
   activeChange(_id: string) {
     this.recordChange.emit({ _id });
@@ -102,7 +109,8 @@ export class UserListItemComponent implements OnInit {
       active,
       firstName,
       lastName,
-      expired
+      expired,
+      issued
     } = this.invitationRecord;
     this.consumed = consumed;
     this.method = method;
@@ -115,5 +123,6 @@ export class UserListItemComponent implements OnInit {
     this.lastName = lastName;
     this._id = _id;
     this.expired = expired;
+    this.issued = issued;
   }
 }

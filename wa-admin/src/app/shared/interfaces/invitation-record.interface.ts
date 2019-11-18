@@ -14,4 +14,5 @@ export interface IInvitationRecord {
   changed?: boolean;
   addedBy: string;
   updatedBy: string;
+  issued?: boolean;
 }

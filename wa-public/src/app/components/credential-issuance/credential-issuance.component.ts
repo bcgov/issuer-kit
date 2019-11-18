@@ -1,4 +1,8 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+
+import { startWith, switchMap } from 'rxjs/operators';
+import { interval } from 'rxjs/internal/observable/interval';
 
 @Component({
   selector: 'wap-credential-issuance',
@@ -25,13 +29,13 @@ import { Component, OnInit, AfterViewInit } from '@angular/core';
           </p>
         </li>
 
-        <li id="awaiting-credential-request">
+        <li id="awaiting-credential-offer">
           <h2>
             Waiting for you to accept the credential offer...
-            <ng-template [ngIf]="step === 1">
+            <ng-template [ngIf]="step === 2">
               <mat-spinner class="inline-spinner" diameter="24"></mat-spinner>
             </ng-template>
-            <ng-template [ngIf]="step > 1"
+            <ng-template [ngIf]="step > 2"
               ><i class="material-icons issuing-step-success"
                 >check_circle_outline</i
               ></ng-template
@@ -39,7 +43,7 @@ import { Component, OnInit, AfterViewInit } from '@angular/core';
           </h2>
         </li>
 
-        <ng-template [ngIf]="step > 1">
+        <ng-template [ngIf]="step > 2">
           <!-- Credential Issued -->
           <li id="credential-issued">
             <h2>
@@ -60,36 +64,55 @@ import { Component, OnInit, AfterViewInit } from '@angular/core';
   `,
   styleUrls: ['./credential-issuance.component.scss']
 })
-export class CredentialIssuanceComponent implements OnInit, AfterViewInit {
+export class CredentialIssuanceComponent implements OnInit {
   step: number;
   progressValue: number;
   private stateProgressMapping = {
     connected: {
       state: 'connected',
-      progressValue: 33
+      progressValue: 33,
+      step: 1
     },
-    offered: {
-      state: 'credential-offered',
-      progressValue: 66
+    offer_sent: {
+      state: 'offer_sent',
+      progressValue: 66,
+      step: 2
     },
-    issued: {
-      state: 'credential-issued',
-      progressValue: 100
+    credential_issued: {
+      state: 'credential_issued',
+      progressValue: 100,
+      step: 3
     }
   };
 
-  constructor() {}
+  constructor(private http: HttpClient) {}
+
+  private connectionId: string;
+  private transactionStateURL: string;
 
   ngOnInit() {
+    this.connectionId = '123-456-789'; // TODO @SH: set the current connection id
+    this.transactionStateURL = `/api/state/${this.connectionId}`;
     this.progressValue = this.stateProgressMapping.connected.progressValue;
     this.step = 1;
+
+    interval(5000)
+      .pipe(
+        startWith(0),
+        switchMap(() => this.http.get('/assets/data/appConfig.json')) // TODO: @SH replace with this.transactionStateURL
+      )
+      .subscribe(res => this.updateProgress(res));
   }
 
-  ngAfterViewInit() {
-    // TODO: @SH - do stuff to subscribe and update the state to display the progress
-    /**
-     * We need to subsctribe to something coming from the API that will reflect the state
-     * of the credential issuance and use it to show/hide the new elements.
-     */
+  updateProgress(state: any) {
+    // Should look like:
+    // {
+    //   state: 'offer_sent'
+    // }
+    const newState = this.stateProgressMapping[state.state];
+    if (newState) {
+      this.progressValue = newState.progressValue;
+      this.step = newState.step;
+    }
   }
 }

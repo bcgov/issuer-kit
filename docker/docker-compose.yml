@@ -24,8 +24,7 @@ services:
     working_dir: /usr/src/controller
     depends_on:
       - wa-db
-    command: npm start
-
+    command: npm run start-docker
 
   #
   # Admin frontend with hot-reloading

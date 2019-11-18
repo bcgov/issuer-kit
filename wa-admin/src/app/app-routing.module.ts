@@ -5,7 +5,6 @@ import { NotFoundComponent } from './components/not-found/not-found.component';
 import { CanActivateGuard } from './guards/can-activate.guard';
 
 import prefix from './app.constants';
-import { HomePage } from './pages/home/home.page';
 
 const routes: Routes = [
   {

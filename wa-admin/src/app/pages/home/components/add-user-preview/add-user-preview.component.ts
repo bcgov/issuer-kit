@@ -4,15 +4,7 @@ import { IFields } from '../view/view.component';
 @Component({
   selector: 'waa-add-user-preview',
   template: `
-    <waa-card-toolbar [title]="email"> </waa-card-toolbar>
-    <mat-toolbar color="warn">
-      <mat-toolbar-row>
-        <mat-icon>
-          warning
-        </mat-icon>
-        <span>This is a preview.</span>
-      </mat-toolbar-row>
-    </mat-toolbar>
+    <waa-card-toolbar title="PREVIEW" color="warning"> </waa-card-toolbar>
     <mat-card>
       <mat-card-header color="accent" [title]="email">
         <mat-icon mat-card-avatar>

@@ -15,74 +15,83 @@ const url = environment.publicUrl;
   template: `
     <waa-item-header title="Invite"> </waa-item-header>
     <waa-view-wrapper>
-      <mat-card [formGroup]="fg" *ngIf="index === 0; else preview">
-        <ion-item>
-          <ion-label position="stacked">Email Address</ion-label>
-          <ion-input formControlName="email" placeholder="email@example.com">
-          </ion-input>
-          <ion-note
-            *ngIf="
-              (invalid && fg['controls'].email.invalid) ||
-              (fg['controls'].email.touched && fg['controls'].email.invalid)
-            "
-          >
-            <ion-text color="danger">Invalid username </ion-text></ion-note
-          >
-        </ion-item>
-        <ion-item>
-          <ion-label position="stacked">Jurisdiction</ion-label>
-          <ion-select
-            required
-            formControlName="jurisdiction"
-            placeholder="Select a jurisdiction"
-          >
-            <ion-select-option>BC</ion-select-option>
-          </ion-select>
-          <ion-note
-            *ngIf="
-              (invalid && fg['controls'].jurisdiction.invalid) ||
-              (fg['controls'].jurisdiction.touched &&
-                fg['controls'].jurisdiction.invalid)
-            "
-          >
-            <ion-text color="danger">Invalid jurisdiction </ion-text></ion-note
-          >
-        </ion-item>
-        <ion-item>
-          <ion-label position="stacked">Authentication</ion-label>
-          <ion-radio-group no-padding formControlName="method">
-            <ion-item lines="none">
-              <ion-radio value="github" slot="start"></ion-radio>
-              <ion-icon name="logo-github"></ion-icon>
-            </ion-item>
-          </ion-radio-group>
-          <ion-note
-            *ngIf="
-              (invalid && fg['controls'].method.invalid) ||
-              (fg['controls'].method.touched && fg['controls'].method.invalid)
-            "
-          >
-            <ion-text color="danger"
-              >Invalid authentication
-            </ion-text></ion-note
-          >
-        </ion-item>
-      </mat-card>
-      <ion-footer>
-        <ion-toolbar color="primary">
-          <ion-buttons slot="secondary" color="warning" *ngIf="this.index">
-            <ion-button (click)="this.index = 0">
-              <ion-label>Back</ion-label>
-            </ion-button>
-          </ion-buttons>
-          <ion-buttons slot="primary">
-            <ion-button (click)="submit(fg)">
-              <ion-label>{{ nextLabel }}</ion-label>
-            </ion-button>
-          </ion-buttons>
-        </ion-toolbar>
-      </ion-footer>
+      <div class="view-wrapper">
+        <mat-card [formGroup]="fg" *ngIf="index === 0; else preview">
+          <waa-card-toolbar title="Invite User"> </waa-card-toolbar>
+          <ion-item>
+            <ion-label position="stacked">Email Address</ion-label>
+            <ion-input formControlName="email" placeholder="email@example.com">
+            </ion-input>
+            <ion-note
+              *ngIf="
+                (invalid && fg['controls'].email.invalid) ||
+                (fg['controls'].email.touched && fg['controls'].email.invalid)
+              "
+            >
+              <ion-text color="danger">Invalid username </ion-text></ion-note
+            >
+          </ion-item>
+          <ion-item>
+            <ion-label position="stacked">Jurisdiction</ion-label>
+            <ion-select
+              required
+              formControlName="jurisdiction"
+              placeholder="Select a jurisdiction"
+            >
+              <ion-select-option>BC</ion-select-option>
+            </ion-select>
+            <ion-note
+              *ngIf="
+                (invalid && fg['controls'].jurisdiction.invalid) ||
+                (fg['controls'].jurisdiction.touched &&
+                  fg['controls'].jurisdiction.invalid)
+              "
+            >
+              <ion-text color="danger"
+                >Invalid jurisdiction
+              </ion-text></ion-note
+            >
+          </ion-item>
+          <ion-item>
+            <ion-label position="stacked">Authentication</ion-label>
+            <ion-radio-group no-padding formControlName="method">
+              <ion-item lines="none">
+                <ion-radio value="github" slot="start"></ion-radio>
+                <ion-icon name="logo-github"></ion-icon>
+              </ion-item>
+            </ion-radio-group>
+            <ion-note
+              *ngIf="
+                (invalid && fg['controls'].method.invalid) ||
+                (fg['controls'].method.touched && fg['controls'].method.invalid)
+              "
+            >
+              <ion-text color="danger"
+                >Invalid authentication
+              </ion-text></ion-note
+            >
+          </ion-item>
+        </mat-card>
+        <ion-footer>
+          <ion-toolbar color="secondary">
+            <ion-buttons slot="secondary" *ngIf="this.index">
+              <ion-button (click)="this.index = 0">
+                <mat-icon>arrow_back_ios</mat-icon>
+
+                <ion-label>Back</ion-label>
+              </ion-button>
+            </ion-buttons>
+            <ion-buttons slot="primary">
+              <ion-button (click)="submit(fg)">
+                <ion-label slot="start">{{ nextLabel }}</ion-label>
+                <mat-icon>arrow_forward_ios</mat-icon>
+              </ion-button>
+            </ion-buttons>
+          </ion-toolbar>
+        </ion-footer>
+      </div>
     </waa-view-wrapper>
+
     <ng-template #preview>
       <waa-add-user-preview
         [email]="fg.value['email']"
@@ -184,7 +193,7 @@ export class AddUserComponent implements OnInit {
       const addedBy = this.stateSvc.user.email;
       const record = {
         _id: 'asdfjwezx',
-        active: false,
+        active: true,
         changed: false,
         consumed: false,
         expiry: new Date(new Date().getTime() + 150000).getTime(),

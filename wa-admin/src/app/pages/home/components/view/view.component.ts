@@ -34,7 +34,7 @@ const publicUrl = environment.publicUrl;
       <waa-card-toolbar
         *ngIf="$actions | async as actions"
         [actions]="actions"
-        (primary)="action($event)"
+        (primary)="action($event, r._id)"
         [title]="r.email"
       >
       </waa-card-toolbar>
@@ -76,11 +76,16 @@ export class ViewComponent implements OnInit {
 
   action(evt: IActionMenuItem, record: string) {
     console.log(evt);
+    console.log('record', record);
     if (evt.key === 'email') this.actionSvc.sendEmail(record);
-    if (evt.key === 'active') this.actionSvc.revokeAccess(record);
-    this.router.navigate(['/'])
+    if (evt.key === 'revoke') this.actionSvc.revokeAccess(record);
+    this.router.navigate(['/']);
   }
-  constructor(private route: ActivatedRoute, private actionSvc: ActionService, private router: Router) {
+  constructor(
+    private route: ActivatedRoute,
+    private actionSvc: ActionService,
+    private router: Router
+  ) {
     this.url = publicUrl;
   }
 
@@ -100,12 +105,14 @@ export class ViewComponent implements OnInit {
       map(r => {
         const name = `${r.firstName} ${r.lastName}`;
         const { email, active, consumed } = r;
-        const state = consumed ? (active ? 'active' : 'inactive') : 'pending';
+        const state = active ? (consumed ? 'active' : 'pending') : 'disbled';
         const stateColor = consumed
           ? active
             ? 'success'
             : 'danger'
-          : 'warning';
+          : active
+          ? 'warning'
+          : 'danger';
 
         const filtered = Object.keys(r).filter(key =>
           fields.some(field => field === key)
@@ -123,6 +130,7 @@ export class ViewComponent implements OnInit {
         }) as any;
         return {
           name,
+          _id,
           email,
           fields: values,
           link: `${this.url}${r._id}`,
@@ -133,11 +141,12 @@ export class ViewComponent implements OnInit {
     );
     this.$actions = obs.pipe(
       map(obs => {
+        const accessLabel = obs.active ? 'Revoke Access' : 'Grant Access';
         return obs.consumed
-          ? [{ label: 'Revoke Access', key: 'active' }]
+          ? [{ label: accessLabel, key: 'revoke' }]
           : [
               { label: 'Send Email', key: 'email' },
-              { label: 'Revoke Access', key: 'active' }
+              { label: accessLabel, key: 'revoke' }
             ];
       })
     );

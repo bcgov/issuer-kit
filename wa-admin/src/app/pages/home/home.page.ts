@@ -52,7 +52,7 @@ import { StateService } from 'src/app/services/state.service';
       <button
         mat-menu-item
         *ngIf="stateSvc.state === 'confirmed'"
-        (click)="changeAction('active')"
+        (click)="changeAction('revoke')"
         [disabled]="stateSvc.changeRecords.size < 1"
       >
         Enable/Disable Access
@@ -71,7 +71,7 @@ import { StateService } from 'src/app/services/state.service';
         (click)="changeAction('revoke')"
         [disabled]="stateSvc.changeRecords.size < 1"
       >
-        Revoke Access
+        Enable/Disable Access
       </button>
       <button mat-menu-item (click)="clearChanges()">
         Clear Selections

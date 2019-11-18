@@ -58,7 +58,12 @@ export class StateService {
     return this._isAuthenticated;
   }
 
+  setUserList(records: IInvitationRecord[]) {
+    this.$$userList.next(records);
+  }
+
   constructor(private keyCloakSvc: KeycloakService) {
     this.keyCloakSvc.loadUserProfile().then((obs: IUser) => (this.user = obs));
+    this.$$userList.subscribe(obs => console.log(obs));
   }
 }

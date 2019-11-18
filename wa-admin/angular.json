@@ -34,12 +34,10 @@
               }
             ],
             "styles": [
-              {
-                "input": "src/global.scss"
-              },
-              {
-                "input": "src/theme/variables.scss"
-              }
+              "./node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css",
+              "src/styles.scss",
+              "src/theme/variables.scss",
+              "src/global.scss"
             ],
             "scripts": []
           },
@@ -101,7 +99,10 @@
             "tsConfig": "tsconfig.spec.json",
             "karmaConfig": "karma.conf.js",
             "assets": ["src/favicon.ico", "src/assets"],
-            "styles": ["src/styles.scss"],
+            "styles": [
+              "./node_modules/@angular/material/prebuilt-themes/pink-bluegrey.css",
+              "src/styles.scss"
+            ],
             "scripts": []
           }
         },

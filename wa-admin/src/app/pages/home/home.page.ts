@@ -6,6 +6,10 @@ import { ActionService } from 'src/app/services/action.service';
 import { Router } from '@angular/router';
 import { ActionType } from 'src/app/shared/interfaces/actions.interface';
 import { AlertService } from 'src/app/services/alert.service';
+import { FormControl } from '@angular/forms';
+import { map } from 'rxjs/operators';
+import { IInvitationRecord } from 'src/app/shared/interfaces/invitation-record.interface';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'waa-home',
@@ -25,6 +29,10 @@ import { AlertService } from 'src/app/services/alert.service';
 
     <ion-content padding fullscreen color="light">
       <ion-toolbar color="secondary">
+        <ion-searchbar
+          showCancelButton="focus"
+          [formControl]="fc"
+        ></ion-searchbar>
         <ion-buttons slot="secondary">
           <ion-button (click)="router.navigate(['/add-user'])" slot="start">
             <mat-icon slot="icon-only">person_add</mat-icon>
@@ -73,12 +81,12 @@ import { AlertService } from 'src/app/services/alert.service';
 export class HomePage implements OnInit {
   title = 'Manage';
 
-  $records = this.stateSvc.$userList;
+  $records: Observable<IInvitationRecord[]>;
+  fc: FormControl;
+  searchString: string;
 
   constructor(
-    private httpSvc: HttpService,
     public stateSvc: StateService,
-    private loadingSvc: LoadingService,
     public actionSvc: ActionService,
     public router: Router,
     private alertSvc: AlertService
@@ -87,7 +95,20 @@ export class HomePage implements OnInit {
   ngOnInit() {
     this.actionSvc.loadData();
     this.title = this.stateSvc.user.username;
-    console.log(this.stateSvc.user);
+    this.fc = new FormControl();
+    this.$records = this.stateSvc.$userList;
+    // .pipe(
+    // map(obs => obs.filter(r => r.email.includes(this.searchString)))
+    // );
+
+    this.fc.valueChanges.subscribe(text => {
+      console.log(text);
+      if (text.length > 0) {
+        this.$records = this.stateSvc.$userList.pipe(
+          map(obs => obs.filter(r => r.email.includes(text)))
+        );
+      } else this.$records = this.stateSvc.$userList;
+    });
   }
   action() {
     this.stateSvc.changeRecords.size > 0

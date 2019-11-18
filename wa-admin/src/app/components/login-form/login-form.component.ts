@@ -116,7 +116,6 @@ export class LoginFormComponent implements OnInit {
     });
     await loading.present();
     const { email, pass } = fg.value;
-    const isAuthenticated = await this.actionSvc.authenticate({ email, pass });
     // return isAuthenticated ? this.progress({ loading }) : this.notAuth;
     // this.progress({ loading });
 

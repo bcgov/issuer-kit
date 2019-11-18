@@ -33,7 +33,8 @@ const testData = [
     lastName: '',
     icon: '',
     created: new Date().getTime() - 10000000,
-    addedBy: 'admin@example.com'
+    addedBy: 'admin@example.com',
+    activity: [{}]
   }
 ] as IInvitationRecord[];
 
@@ -50,7 +51,9 @@ const confirmed = [
     lastName: 'Example',
     icon: 'github',
     created: new Date().getTime() - 25000000,
-    addedBy: 'admin@example.com'
+    addedBy: 'admin@example.com',
+    updatedBy: 'someotheradmin@example.com',
+    activity: [{}]
   },
   {
     _id: 'abcd',
@@ -64,7 +67,9 @@ const confirmed = [
     lastName: 'Thomson',
     icon: 'github',
     created: new Date().getTime() - 35000000,
-    addedBy: 'anotheradmin@example.com'
+    updatedBy: 'admin@axemple.com',
+    addedBy: 'anotheradmin@example.com',
+    activity: [{}]
   }
 ];
 
@@ -106,18 +111,20 @@ export class ActionService {
       clear: this.clearRecords(),
       change: this.changeAccess(records),
       email: this.sendEmail(records),
-      revoked: this.revokeAcces(records)
+      revoked: this.revokeAccess(records)
     };
     this.stateSvc.clearChangeRecords();
 
     return actions[action];
   }
 
-  revokeAcces(records: string[] | string) {
+  revokeAccess(records: string[] | string) {
     if (Array.isArray(records)) {
       const mapped = this.invitedUsers.map(itm => {
         if (records.some(id => id === itm._id)) {
           itm.expiry = new Date().getTime();
+          itm.expired = true;
+          itm.active = true;
         }
         itm.changed = false;
 
@@ -126,7 +133,8 @@ export class ActionService {
       this.invitedUsers = mapped;
     } else {
       const itm = this.invitedUsers.find(itm => itm._id === records);
-      console.log(itm);
+      itm.expired = true;
+      itm.active = false;
     }
     this.stateSvc.userList = this.invitedUsers;
     this.clearRecords();
@@ -136,7 +144,8 @@ export class ActionService {
     if (Array.isArray(records)) {
       const mapped = this.invitedUsers.map(itm => {
         if (records.some(id => id === itm._id)) {
-          itm.expiry = new Date().getTime() + 50000000;
+          itm.expiry = Date.now() + 50000000;
+          itm.expired = false;
           console.log(new Date(itm.expiry));
           return itm;
         }

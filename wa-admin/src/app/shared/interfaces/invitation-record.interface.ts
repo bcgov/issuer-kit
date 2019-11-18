@@ -5,6 +5,7 @@ export interface IInvitationRecord {
   email: string;
   jurisdiction: string;
   expiry?: number;
+  expired?: boolean;
   active: boolean;
   firstName?: string;
   lastName?: string;
@@ -12,4 +13,5 @@ export interface IInvitationRecord {
   created: number;
   changed?: boolean;
   addedBy: string;
+  updatedBy: string;
 }

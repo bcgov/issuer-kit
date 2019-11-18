@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { HttpService } from 'src/app/services/http.service';
 import { StateService } from 'src/app/services/state.service';
 import { LoadingService } from 'src/app/services/loading.service';
@@ -9,7 +9,7 @@ import { AlertService } from 'src/app/services/alert.service';
 import { FormControl } from '@angular/forms';
 import { map } from 'rxjs/operators';
 import { IInvitationRecord } from 'src/app/shared/interfaces/invitation-record.interface';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 
 @Component({
   selector: 'waa-home',
@@ -78,12 +78,13 @@ import { Observable } from 'rxjs';
   `,
   styleUrls: ['./home.page.scss']
 })
-export class HomePage implements OnInit {
+export class HomePage implements OnInit, OnDestroy {
   title = 'Manage';
 
   $records: Observable<IInvitationRecord[]>;
   fc: FormControl;
   searchString: string;
+  subscriptions: Subscription[];
 
   constructor(
     public stateSvc: StateService,
@@ -101,15 +102,21 @@ export class HomePage implements OnInit {
     // map(obs => obs.filter(r => r.email.includes(this.searchString)))
     // );
 
-    this.fc.valueChanges.subscribe(text => {
-      console.log(text);
-      if (text.length > 0) {
-        this.$records = this.stateSvc.$userList.pipe(
-          map(obs => obs.filter(r => r.email.includes(text)))
-        );
-      } else this.$records = this.stateSvc.$userList;
-    });
+    this.subscriptions.push(
+      this.fc.valueChanges.subscribe(text => {
+        if (text.length > 0) {
+          this.$records = this.stateSvc.$userList.pipe(
+            map(obs => obs.filter(r => r.email.includes(text)))
+          );
+        } else this.$records = this.stateSvc.$userList;
+      })
+    );
   }
+
+  ngOnDestroy() {
+    this.subscriptions.forEach(s => s.unsubscribe());
+  }
+
   action() {
     this.stateSvc.changeRecords.size > 0
       ? this.changeAction('active')

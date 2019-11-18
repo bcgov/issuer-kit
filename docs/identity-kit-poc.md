@@ -32,6 +32,15 @@ The Identity Kit Proof of Concept (IKP) architecture is presented in the diagram
 
 * A participant receives an email with instructions on how to prepare for the demo and a link to the Issuer app.
 * The Issuer app is protected by Keycloak using some number of IdPs - initially just GitHub.
+* The realm should have the follow claims included in the OIDC token:
+  * DisplayName
+  * DateOfBirth
+  * StreetAddress
+  * Locality
+  * PostalCode
+  * EmailAddress
+* The mapping from the IdP into the realm token should be best effort.
+  * E.g. the github one would like populate only email address (maybe?) and/or DisplayName (perhaps with email address?). The rest of the fields would be blank, which comes into play later in the process.
 * A user accesses the site via the email-embedded link, which contains a GUID for the user.
 * On authorization from Keycloak, the GUID from the link is checked in the "Approved Participants" database (described above)
   * If there is no link - send to rejected screen.

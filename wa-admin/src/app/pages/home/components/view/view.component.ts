@@ -1,10 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { IInvitationRecord } from 'src/app/shared/interfaces/invitation-record.interface';
 import { Observable, of } from 'rxjs';
 import { ActionService } from 'src/app/services/action.service';
 import { tap, map } from 'rxjs/operators';
-import { IActionMenuItem } from 'src/app/shared/interfaces/actions.interface';
+import {
+  IActionMenuItem,
+  ActionType
+} from 'src/app/shared/interfaces/actions.interface';
 import { environment } from 'src/environments/environment';
 
 export interface IViewRecord {
@@ -39,7 +42,7 @@ const publicUrl = environment.publicUrl;
         <mat-card-header
           color="accent"
           [title]="r.email"
-          (primary)="action($event)"
+          (primary)="action($event, r._id)"
         >
           <mat-icon mat-card-avatar>
             person
@@ -71,16 +74,27 @@ export class ViewComponent implements OnInit {
   $actions: Observable<IActionMenuItem[]>;
   url: string;
 
-  action(evt: IActionMenuItem) {
+  action(evt: IActionMenuItem, record: string) {
     console.log(evt);
+    if (evt.key === 'email') this.actionSvc.sendEmail(record);
+    if (evt.key === 'active') this.actionSvc.revokeAccess(record);
+    this.router.navigate(['/'])
   }
-  constructor(private route: ActivatedRoute, private actionSvc: ActionService) {
+  constructor(private route: ActivatedRoute, private actionSvc: ActionService, private router: Router) {
     this.url = publicUrl;
   }
 
   ngOnInit() {
     const _id = this.route.snapshot.paramMap.get('id');
-    const fields = ['jurisdiction', 'method', 'expiry', 'created', 'addedBy'];
+    const fields = [
+      'jurisdiction',
+      'method',
+      'expiry',
+      'created',
+      'addedBy',
+      'updatedAt',
+      'updatedBy'
+    ];
     const obs = this.actionSvc.getRecord(_id);
     this.$record = obs.pipe(
       map(r => {
@@ -120,8 +134,11 @@ export class ViewComponent implements OnInit {
     this.$actions = obs.pipe(
       map(obs => {
         return obs.consumed
-          ? [{ label: 'Disable Access', key: 'active' }]
-          : [{ label: 'Send Email', key: 'email' }];
+          ? [{ label: 'Revoke Access', key: 'active' }]
+          : [
+              { label: 'Send Email', key: 'email' },
+              { label: 'Revoke Access', key: 'active' }
+            ];
       })
     );
   }

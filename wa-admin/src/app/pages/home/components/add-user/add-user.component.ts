@@ -188,6 +188,7 @@ export class AddUserComponent implements OnInit {
         changed: false,
         consumed: false,
         expiry: new Date(new Date().getTime() + 150000).getTime(),
+        expired: false,
         created: new Date().getTime(),
         method,
         jurisdiction,

@@ -104,6 +104,8 @@ export class ActionService {
     method: string;
     jurisdiction: string;
     email: string;
+    firstName: string;
+    lastName: string;
   }) {
     // TODO: SH: Hook this up to the back end
     // return this.httpSvc.post<{ _id: string }>('invitations', params);

@@ -19,8 +19,14 @@ const url = environment.publicUrl;
         <mat-card [formGroup]="fg" *ngIf="index === 0; else preview">
           <waa-card-toolbar title="Invite User"> </waa-card-toolbar>
           <ion-item>
-            <ion-label position="stacked">Email Address</ion-label>
-            <ion-input formControlName="email" placeholder="email@example.com">
+            <ion-label position="stacked"
+              >Email Address <ion-text color="danger">*</ion-text></ion-label
+            >
+            <ion-input
+              formControlName="email"
+              placeholder="email@example.com"
+              (keyup.enter)="submit(fg)"
+            >
             </ion-input>
             <ion-note
               *ngIf="
@@ -28,18 +34,50 @@ const url = environment.publicUrl;
                 (fg['controls'].email.touched && fg['controls'].email.invalid)
               "
             >
-              <ion-text color="danger">Invalid username </ion-text></ion-note
+              <ion-text color="danger"
+                >Invalid email address
+              </ion-text></ion-note
             >
           </ion-item>
           <ion-item>
-            <ion-label position="stacked">Jurisdiction</ion-label>
+            <ion-label position="stacked">First Name</ion-label>
+            <ion-input
+              formControlName="firstName"
+              placeholder="John"
+              (keyup.enter)="submit(fg)"
+            >
+            </ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="stacked">Last Name</ion-label>
+            <ion-input
+              formControlName="lastName"
+              placeholder="Doe"
+              (keyup.enter)="submit(fg)"
+            >
+            </ion-input>
+          </ion-item>
+
+          <ion-item>
+            <ion-label position="stacked"
+              >Jurisdiction <ion-text color="danger">*</ion-text></ion-label
+            >
+            <!-- in case i use a select in future
             <ion-select
               required
+              interface="popover"
               formControlName="jurisdiction"
               placeholder="Select a jurisdiction"
             >
               <ion-select-option>BC</ion-select-option>
             </ion-select>
+            -->
+            <ion-radio-group no-padding formControlName="jurisdiction">
+              <ion-item lines="none">
+                <ion-radio value="BC" slot="start"></ion-radio>
+                <ion-label>Jurisdiction</ion-label>
+              </ion-item>
+            </ion-radio-group>
             <ion-note
               *ngIf="
                 (invalid && fg['controls'].jurisdiction.invalid) ||
@@ -53,7 +91,9 @@ const url = environment.publicUrl;
             >
           </ion-item>
           <ion-item>
-            <ion-label position="stacked">Authentication</ion-label>
+            <ion-label position="stacked"
+              >Authentication <ion-text color="danger">*</ion-text></ion-label
+            >
             <ion-radio-group no-padding formControlName="method">
               <ion-item lines="none">
                 <ion-radio value="github" slot="start"></ion-radio>
@@ -95,6 +135,8 @@ const url = environment.publicUrl;
     <ng-template #preview>
       <waa-add-user-preview
         [email]="fg.value['email']"
+        [firstName]="fg.value['firstName']"
+        [lastName]="fg.value['lastName']"
         link="{{ url }}new-link"
         state="unsubmitted"
         [fields]="fields"
@@ -155,13 +197,16 @@ export class AddUserComponent implements OnInit {
 
   setFg() {
     this.fg = new FormGroup({
+      firstName: new FormControl(''),
+      lastName: new FormControl(''),
+
       email: new FormControl('', [
         Validators.required,
         Validators.minLength(4),
         Validators.email
       ]),
-      method: new FormControl('', [Validators.required]),
-      jurisdiction: new FormControl('', Validators.required)
+      method: new FormControl('github', [Validators.required]),
+      jurisdiction: new FormControl('BC', Validators.required)
     });
   }
 
@@ -174,7 +219,7 @@ export class AddUserComponent implements OnInit {
       return (this.fg = fg);
     }
 
-    const { method, jurisdiction, email } = this.fg.value;
+    const { method, jurisdiction, email, firstName, lastName } = this.fg.value;
     if (this.index === 0) {
       this.index = 1;
       console.log(this.index);
@@ -182,27 +227,25 @@ export class AddUserComponent implements OnInit {
       const response = await this.actionSvc.createInvitation({
         method,
         jurisdiction,
-        email
+        email,
+        firstName,
+        lastName
       });
       console.log(response);
-      const mapped = this.fields.map(itm => {
-        const obj = new Object();
-        obj[itm.key] = itm.value;
-        return obj;
-      });
+      const created = new Date();
+      const expiry = new Date();
+      expiry.setDate(created.getDate() + 1);
       const addedBy = this.stateSvc.user.email;
       const record = {
         _id: 'asdfjwezx',
         active: true,
         changed: false,
         consumed: false,
-        expiry: new Date(new Date().getTime() + 150000).getTime(),
+        expiry: expiry.getTime(),
         expired: false,
-        created: new Date().getTime(),
+        created: created.getTime(),
         method,
         jurisdiction,
-        firstName: '',
-        lastName: '',
         addedBy,
         ...response
       } as IInvitationRecord;

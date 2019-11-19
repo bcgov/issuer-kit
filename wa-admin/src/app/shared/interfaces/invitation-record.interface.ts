@@ -13,6 +13,6 @@ export interface IInvitationRecord {
   created: number;
   changed?: boolean;
   addedBy: string;
-  updatedBy: string;
+  updatedBy?: string;
   issued?: boolean;
 }

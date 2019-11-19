@@ -11,7 +11,11 @@ import { IActionMenuItem } from '../../interfaces/actions.interface';
         </ion-button>
       </ion-buttons>
       <ion-buttons slot="primary" *ngIf="actions">
-        <ion-button slot="start" [matMenuTriggerFor]="menu">
+        <ion-button
+          slot="start"
+          [matMenuTriggerFor]="menu"
+          *ngIf="actions.length > 0"
+        >
           <mat-icon slot="icon-only">more_vert</mat-icon>
         </ion-button>
       </ion-buttons>

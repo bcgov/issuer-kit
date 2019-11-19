@@ -77,8 +77,6 @@ export class ViewComponent implements OnInit {
   url: string;
 
   action(evt: IActionMenuItem, record: string) {
-    console.log(evt);
-    console.log('record', record);
     if (evt.key === 'email') this.actionSvc.sendEmail(record);
     if (evt.key === 'revoke') this.actionSvc.revokeAccess(record);
     this.router.navigate(['/']);
@@ -155,7 +153,7 @@ export class ViewComponent implements OnInit {
       map(obs => {
         const accessLabel = obs.active ? 'Revoke Access' : 'Grant Access';
         return obs.consumed
-          ? [{ label: accessLabel, key: 'revoke' }]
+          ? []
           : [
               { label: 'Send Email', key: 'email' },
               { label: accessLabel, key: 'revoke' }

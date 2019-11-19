@@ -1,7 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { IInvitationRecord } from 'src/app/shared/interfaces/invitation-record.interface';
 import { FormControl } from '@angular/forms';
-import { of } from 'rxjs';
 import { IChangeRecord } from 'src/app/shared/interfaces/change-record.interface';
 import { Router } from '@angular/router';
 
@@ -27,7 +26,7 @@ import { Router } from '@angular/router';
             <ion-badge *ngIf="!active" color="danger">disabled</ion-badge>
           </mat-card-subtitle>
           <mat-card-subtitle *ngIf="consumed && active" (click)="viewItem(_id)">
-            <ion-badge *ngIf="consumed && !issued" color="success"
+            <ion-badge *ngIf="consumed && !issued" color="warning"
               >logged in</ion-badge
             >
             <ion-badge *ngIf="consumed && issued" color="success"
@@ -124,5 +123,6 @@ export class UserListItemComponent implements OnInit {
     this._id = _id;
     this.expired = expired;
     this.issued = issued;
+    console.log('blah blah blah asddsafdasfdasfa');
   }
 }

@@ -37,7 +37,7 @@ import { StateService } from 'src/app/services/state.service';
               <mat-icon slot="icon-only">person_add</mat-icon>
             </ion-button>
           </ion-buttons>
-          <ion-buttons slot="primary">
+          <ion-buttons slot="primary" *ngIf="stateSvc.state === 'invited'">
             <ion-button slot="start" [matMenuTriggerFor]="menu">
               <mat-icon slot="icon-only">more_vert</mat-icon>
             </ion-button>
@@ -48,7 +48,7 @@ import { StateService } from 'src/app/services/state.service';
       </div>
     </ion-content>
 
-    <mat-menu #menu="matMenu" *ngIf="stateSvc.state === 'invited'">
+    <mat-menu #menu="matMenu">
       <button
         *ngIf="stateSvc.state === 'invited'"
         mat-menu-item

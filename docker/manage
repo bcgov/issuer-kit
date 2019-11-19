@@ -31,6 +31,19 @@ function echoWarning (){
 #   exit 1
 # fi
 
+if [ -z "$GITHUB_CLIENT_ID" ] || [ -z "$GITHUB_CLIENT_ID" ]; then
+  echoWarning "The client id and/or secret for the integration of GitHub as IDP for Keycloak were not provided."
+  echoWarning "Please set the GITHUB_CLIENT_ID and GITHUB_CLIENT_SECRET environment variables to use GitHub as your IDP."
+  echoWarning "To get your  client id/secret combination, please visit: https://github.com/settings/developers"
+  echoWarning "Press Ctrl+C now to stop, or wait to proceed without GitHub integration."
+  sleep 8;
+else
+  # Preparing Keycloak realm...
+  echo "Configuring GitHub IDP integration for Keycloak..."
+  sed -i "s/%GITHUB_CLIENT_ID%/$GITHUB_CLIENT_ID/g" ./keycloak/config/realm-export.json
+  sed -i "s/%GITHUB_CLIENT_SECRET%/$GITHUB_CLIENT_SECRET/g" ./keycloak/config/realm-export.json
+fi
+
 SCRIPT_HOME="$(cd "$(dirname "$0")" && pwd)"
 
 # =================================================================================================================

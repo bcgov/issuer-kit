@@ -5,7 +5,7 @@ import { StateService } from '../services/state.service';
 @Component({
   selector: 'wap-home',
   template: `
-    <span>Home Component</span>
+    <span>Home Component</span> xxx
   `,
   styleUrls: ['./home.component.scss']
 })

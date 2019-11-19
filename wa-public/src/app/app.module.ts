@@ -13,32 +13,51 @@ import { KeycloakAngularModule, KeycloakService } from 'keycloak-angular';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { CredentialIssuanceComponent } from './components/credential-issuance/credential-issuance.component';
-import { HomeComponent } from './home/home.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { SuccessComponent } from './pages/success/success.component';
+import { IonicModule } from '@ionic/angular';
+import { HomeComponent } from './home/home.component';
+import { MatButtonModule } from '@angular/material/button';
+import { ReactiveFormsModule } from '@angular/forms';
+import { MatMenuModule } from '@angular/material/menu';
+import { ViewWrapperComponent } from './components/view-wrapper/view-wrapper.component';
+import { CardToolbarComponent } from './components/card-toolbar/card-toolbar.component';
+import { InputComponent } from './components/input/input.component';
 
 const keycloakService = new KeycloakService();
 
+const matModules = [
+  MatSidenavModule,
+  MatToolbarModule,
+  MatCardModule,
+  MatIconModule,
+  MatProgressBarModule,
+  MatProgressSpinnerModule,
+  MatButtonModule,
+  MatMenuModule,
+  ReactiveFormsModule
+];
+
+const components = [
+  CardToolbarComponent,
+  ViewWrapperComponent,
+  CredentialIssuanceComponent,
+  HomeComponent,
+  SuccessComponent,
+  PageNotFoundComponent,
+  InputComponent
+];
+
 @NgModule({
-  declarations: [
-    AppComponent,
-    CredentialIssuanceComponent,
-    HomeComponent,
-    SuccessComponent,
-    PageNotFoundComponent
-  ],
+  declarations: [AppComponent, [...components]],
   imports: [
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     HttpClientModule,
     KeycloakAngularModule,
-    MatSidenavModule,
-    MatToolbarModule,
-    MatCardModule,
-    MatIconModule,
-    MatProgressBarModule,
-    MatProgressSpinnerModule
+    [...matModules],
+    IonicModule.forRoot()
   ],
   providers: [
     {

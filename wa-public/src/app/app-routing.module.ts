@@ -15,8 +15,8 @@ const routes: Routes = [
   },
   {
     path: 'success',
-    component: SuccessComponent,
-    canActivate: [ValidInviteGuard, KeycloakGuard]
+    component: SuccessComponent
+    // canActivate: [ValidInviteGuard, KeycloakGuard]
   },
   {
     path: 'issue-credential',

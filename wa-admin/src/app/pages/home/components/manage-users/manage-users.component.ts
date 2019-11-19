@@ -19,7 +19,7 @@ import { Observable } from 'rxjs';
           value="confirmed"
           [checked]="stateSvc.state === 'confirmed'"
         >
-          <ion-label>Confirmed</ion-label>
+          <ion-label>Used</ion-label>
         </ion-segment-button>
       </ion-segment>
       <waa-user-list

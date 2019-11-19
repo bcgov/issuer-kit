@@ -48,7 +48,9 @@ const publicUrl = environment.publicUrl;
             person
           </mat-icon>
           <mat-card-subtitle *ngIf="r.name">{{ r.name }}</mat-card-subtitle>
+          <!-- this will display a link for the user
           <mat-card-subtitle>{{ r.link }}</mat-card-subtitle>
+          -->
           <mat-card-subtitle
             ><ion-badge [color]="r.stateColor">{{
               r.state
@@ -75,8 +77,6 @@ export class ViewComponent implements OnInit {
   url: string;
 
   action(evt: IActionMenuItem, record: string) {
-    console.log(evt);
-    console.log('record', record);
     if (evt.key === 'email') this.actionSvc.sendEmail(record);
     if (evt.key === 'revoke') this.actionSvc.revokeAccess(record);
     this.router.navigate(['/']);
@@ -104,11 +104,21 @@ export class ViewComponent implements OnInit {
     this.$record = obs.pipe(
       map(r => {
         const name = `${r.firstName} ${r.lastName}`;
-        const { email, active, consumed } = r;
-        const state = active ? (consumed ? 'active' : 'pending') : 'disbled';
+        const { email, active, consumed, issued, expired } = r;
+        const state = active
+          ? consumed
+            ? issued
+              ? 'issued'
+              : 'logged in'
+            : expired
+            ? 'expired'
+            : 'sent'
+          : 'disbled';
         const stateColor = consumed
           ? active
-            ? 'success'
+            ? issued
+              ? 'success'
+              : 'warning'
             : 'danger'
           : active
           ? 'warning'
@@ -143,7 +153,7 @@ export class ViewComponent implements OnInit {
       map(obs => {
         const accessLabel = obs.active ? 'Revoke Access' : 'Grant Access';
         return obs.consumed
-          ? [{ label: accessLabel, key: 'revoke' }]
+          ? []
           : [
               { label: 'Send Email', key: 'email' },
               { label: accessLabel, key: 'revoke' }

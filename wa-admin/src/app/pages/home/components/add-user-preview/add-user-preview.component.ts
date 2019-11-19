@@ -4,14 +4,19 @@ import { IFields } from '../view/view.component';
 @Component({
   selector: 'waa-add-user-preview',
   template: `
-    <waa-card-toolbar title="PREVIEW" color="warning"> </waa-card-toolbar>
+    <waa-card-toolbar title="PREVIEW: {{ email }}" color="warning">
+    </waa-card-toolbar>
     <mat-card>
       <mat-card-header color="accent" [title]="email">
         <mat-icon mat-card-avatar>
           person
         </mat-icon>
-        <mat-card-subtitle *ngIf="name">{{ name }}</mat-card-subtitle>
+        <mat-card-subtitle *ngIf="firstName && lastName">
+          {{ firstName }} {{ lastName }}</mat-card-subtitle
+        >
+        <!-- if wanted
         <mat-card-subtitle>{{ link }}</mat-card-subtitle>
+        -->
         <mat-card-subtitle
           ><ion-badge color="tertiary">{{
             state
@@ -37,6 +42,8 @@ export class AddUserPreviewComponent implements OnInit {
   @Input() fields: IFields[];
   @Input() email: string;
   @Input() link: string;
+  @Input() firstName: string;
+  @Input() lastName;
 
   constructor() {}
 

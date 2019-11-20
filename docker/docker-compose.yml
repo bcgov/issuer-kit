@@ -72,7 +72,7 @@ services:
       - MONGODB_PASSWORD=${MONGODB_PASSWORD}
       - MONGODB_DATABASE=${MONGODB_DATABASE}
     volumes:
-      - wa-db-data:/data/db
+      - wa-db-data:/var/lib/mongodb/data
     ports:
       - ${MONGODB_PORT}:${MONGODB_PORT}
     networks:

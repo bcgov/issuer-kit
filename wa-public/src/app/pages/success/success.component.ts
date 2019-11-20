@@ -234,7 +234,8 @@ export class SuccessComponent implements OnInit {
 
   validateIndex(i: number, fg: FormGroup) {
     console.log('this has been run');
-    if (i === 5) return this.setIndex(i);
+
+    if (i === 5 || i === 1) return this.setIndex(i);
     const ctrls = fg.controls;
 
     function validFc(fc: AbstractControl) {
@@ -281,9 +282,9 @@ export class SuccessComponent implements OnInit {
       Validators.email
     ]);
 
-    const streetAddress = initFc('123 Fake Street');
-    const locality = initFc('Victoria');
-    const postalCode = new FormControl('A1A1A1', [
+    const streetAddress = initFc('');
+    const locality = initFc('');
+    const postalCode = new FormControl('', [
       Validators.required,
       postalCodeValidator()
     ]);
@@ -313,7 +314,7 @@ export class SuccessComponent implements OnInit {
     const stringVal = JSON.stringify(invite);
     this.img = `https://chart.googleapis.com/chart?cht=qr&chs=300x300&chld=L|0&chl=${stringVal}`;
 
-    this.setIndex(5);
+    this.setIndex(0);
   }
 
   setPreview(fg: FormGroup) {

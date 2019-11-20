@@ -75,7 +75,7 @@ const url = environment.publicUrl;
             <ion-radio-group no-padding formControlName="jurisdiction">
               <ion-item lines="none">
                 <ion-radio value="BC" slot="start"></ion-radio>
-                <ion-label>Jurisdiction</ion-label>
+                <ion-label>BC</ion-label>
               </ion-item>
             </ion-radio-group>
             <ion-note
@@ -158,6 +158,9 @@ export class AddUserComponent implements OnInit {
   }
 
   get fields() {
+    const created = new Date();
+    const expiry = new Date(created);
+    expiry.setDate(created.getDate() + 1);
     return [
       {
         key: 'method',
@@ -169,11 +172,11 @@ export class AddUserComponent implements OnInit {
       },
       {
         key: 'expiry',
-        value: new Date(new Date().getTime() + 150000).toDateString()
+        value: expiry
       },
       {
         key: 'created',
-        value: new Date().toDateString()
+        value: created
       },
       {
         key: 'addedBy',

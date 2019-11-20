@@ -134,10 +134,20 @@ import { Observable, of } from 'rxjs';
               "
             >
               <ion-text color="danger"
-                >Invalid email address
+                >Invalid date of birth
               </ion-text></ion-note
             >
-            <ion-item> </ion-item>
+            <ion-item lines="none"
+              ><p>
+                Preview your verifiable credential.
+              </p>
+            </ion-item>
+          </mat-card-content>
+          <mat-card-content *ngIf="index === 4"
+            ><wap-issue-preview [values]="previewData"></wap-issue-preview>
+          </mat-card-content>
+          <mat-card-content *ngIf="index === 5" class="qr-wrapper"
+            ><img [src]="img" mat-card-img class="qr-code" />
           </mat-card-content>
         </ion-list>
         <mat-card-actions>
@@ -168,6 +178,15 @@ export class SuccessComponent implements OnInit {
   cardTitle = '';
   cardSubtitle = 'Sign-up for a verified credential';
   nextLabel = '';
+  previewData: { key: string; value: any }[];
+  invite: {
+    '@type': string;
+    '@id': string;
+    serviceEndpoint: string;
+    label: string;
+    recipientKeys: string[];
+  };
+  img: string;
 
   setIndex(i: number) {
     const indexMap = [
@@ -177,29 +196,45 @@ export class SuccessComponent implements OnInit {
         nextLabel: 'Sign-up'
       },
       {
-        cardTitle: 'Account',
+        cardTitle: 'Sign-up',
         cardSubtitle: 'Account information',
         nextLabel: 'Next'
       },
       {
-        cardTitle: 'Address',
+        cardTitle: 'Sign-up',
         cardSubtitle: 'Address information',
         nextLabel: 'Next'
       },
       {
-        cardTitle: 'Personal',
+        cardTitle: 'Sign-up',
         cardSubtitle: 'Personal information',
         nextLabel: 'Preview'
+      },
+      {
+        cardTitle: 'Preview Credential',
+        cardSubtitle: 'Personal information',
+        nextLabel: 'Submit'
+      },
+      {
+        cardTitle: 'Connect',
+        cardSubtitle: 'Connect your mobile agent',
+        nextLabel: 'Submit'
       }
     ];
     this.cardTitle = indexMap[i].cardTitle;
     this.cardSubtitle = indexMap[i].cardSubtitle;
     this.nextLabel = indexMap[i].nextLabel;
     this.invalid = false;
+    if (i === 4) {
+      this.previewData = this.setPreview(this.fg);
+    }
+
     this.index = i;
   }
 
   validateIndex(i: number, fg: FormGroup) {
+    console.log('this has been run');
+    if (i === 5) return this.setIndex(i);
     const ctrls = fg.controls;
 
     function validFc(fc: AbstractControl) {
@@ -235,7 +270,6 @@ export class SuccessComponent implements OnInit {
 
   ngOnInit() {
     const user = this.stateSvc.user;
-    console.log(user);
     const initFc = (val: string) =>
       new FormControl(val, [Validators.required, Validators.minLength(4)]);
 
@@ -247,21 +281,14 @@ export class SuccessComponent implements OnInit {
       Validators.email
     ]);
 
-    const streetAddress = initFc('');
-    const locality = initFc('');
-    const postalCode = new FormControl('', [
+    const streetAddress = initFc('123 Fake Street');
+    const locality = initFc('Victoria');
+    const postalCode = new FormControl('A1A1A1', [
       Validators.required,
       postalCodeValidator()
     ]);
 
     const dateOfBirth = initFc('');
-    /*
-    const email = new FormControl(, [
-      Validators.required,
-      Validators.minLength(4),
-      Validators.email
-    ])
-    */
 
     this.fg = new FormGroup({
       firstName,
@@ -274,7 +301,51 @@ export class SuccessComponent implements OnInit {
     });
 
     this.fg.updateValueAndValidity();
-    this.setIndex(1);
     this.$title = of(`Sign-up: ${user.firstName} ${user.lastName}`);
+
+    const invite = {
+      '@type': 'did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connections/1.0/invitation',
+      '@id': '65595c96-6881-470c-bb5e-50e1335c0ff6',
+      serviceEndpoint: 'http://192.168.65.3:8050',
+      label: 'Alice',
+      recipientKeys: ['CfvGNENfc13D7GfdYZ4s64va5VwrD5XYyZ91khHnzcAZ']
+    };
+    const stringVal = JSON.stringify(invite);
+    this.img = `https://chart.googleapis.com/chart?cht=qr&chs=300x300&chld=L|0&chl=${stringVal}`;
+
+    this.setIndex(5);
+  }
+
+  setPreview(fg: FormGroup) {
+    const values = fg.getRawValue();
+    console.log(values);
+    const map = [
+      {
+        key: 'Display Name',
+        value: `${values['firstName']} ${values['lastName']}`
+      },
+      {
+        key: 'Email Address',
+        value: values['emailAddress']
+      },
+      {
+        key: 'Street Address',
+        value: values['streetAddress']
+      },
+      {
+        key: 'Locality',
+        value: values['locality']
+      },
+      {
+        key: 'Postal Code',
+        value: values['postalCode']
+      },
+      {
+        key: 'Date of Birth',
+        value: values['dateOfBirth']
+      }
+    ];
+
+    return map;
   }
 }

@@ -23,6 +23,8 @@ import { MatMenuModule } from '@angular/material/menu';
 import { ViewWrapperComponent } from './components/view-wrapper/view-wrapper.component';
 import { CardToolbarComponent } from './components/card-toolbar/card-toolbar.component';
 import { InputComponent } from './components/input/input.component';
+import { IssuePreviewComponent } from './components/issue-preview/issue-preview.component';
+import { CardListItemComponent } from './components/card-list-item/card-list-item.component';
 
 const keycloakService = new KeycloakService();
 
@@ -45,7 +47,9 @@ const components = [
   HomeComponent,
   SuccessComponent,
   PageNotFoundComponent,
-  InputComponent
+  InputComponent,
+  IssuePreviewComponent,
+  CardListItemComponent
 ];
 
 @NgModule({

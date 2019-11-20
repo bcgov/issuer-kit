@@ -1,8 +1,15 @@
 mat-card {
   max-width: 600px;
+  margin-bottom: 40px;
 }
 .header-image {
   border-radius: 0;
   width: 60px;
   height: 60px;
+}
+.qr-wrapper {
+  display: flex;
+  .qr-code {
+    margin: auto auto;
+  }
 }

@@ -1,28 +1,39 @@
 import { Component, OnInit } from '@angular/core';
 import { StateService, IUser } from 'src/app/services/state.service';
 import { ActionService } from 'src/app/services/action.service';
-import { ActivatedRoute } from '@angular/router';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import {
+  FormGroup,
+  FormControl,
+  Validators,
+  AbstractControl
+} from '@angular/forms';
+import { postalCodeValidator } from 'src/app/services/validators';
+import { Observable, of } from 'rxjs';
 
 @Component({
   selector: 'wap-success',
   template: `
-    <ion-header>
+    <ion-header *ngIf="$title | async as title">
       <ion-toolbar color="primary">
-        <ion-buttons slot="secondary">
+        <ion-title> {{ title }}</ion-title>
+
+        <ion-buttons slot="primary">
           <ion-button (click)="actionSvc.logout()">
             <ion-label>Logout</ion-label>
             <ion-icon name="log-out"></ion-icon>
           </ion-button>
         </ion-buttons>
-
-        <ion-title>{{ title }}</ion-title>
       </ion-toolbar>
     </ion-header>
     <wap-view-wrapper>
-      <mat-card class="example-card">
-        <img mat-card-image src="assets/VONLogo.png" alt="VON Network logo" />
+      <mat-card>
         <mat-card-header>
+          <img
+            mat-card-avatar
+            src="assets/VON-Logo.png"
+            alt="VON Network logo"
+            class="header-image"
+          />
           <mat-card-title>{{ cardTitle }}</mat-card-title>
           <mat-card-subtitle>{{ cardSubtitle }}</mat-card-subtitle>
         </mat-card-header>
@@ -59,18 +70,14 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
               label="Email Address"
               error="Email address is required"
               [invalid]="
-                (invalid && fg.controls['lastName'].invalid) ||
-                (fg.controls['lastName'].touched &&
-                  fg.controls['lastName'].invalid)
+                (invalid && fg.controls['emailAddress'].invalid) ||
+                (fg.controls['emailAddress'].touched &&
+                  fg.controls['emailAddress'].invalid)
               "
             >
             </wap-input>
-            <ion-item>
-              <ion-label>Date of Birth</ion-label>
-              <ion-datetime displayFormat="MMM DD YYYY"></ion-datetime>
-            </ion-item>
           </mat-card-content>
-          <mat-card-content *ngIf="index === 2">
+          <mat-card-content *ngIf="index === 2" [formGroup]="fg">
             <wap-input
               [fc]="fg.controls['streetAddress']"
               placeholder="123 Fake Street"
@@ -99,14 +106,38 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
               [fc]="fg.controls['postalCode']"
               placeholder="A1AA1A"
               label="Postal Code"
-              error="Postal code is required"
+              error="Postal code must be in the format of A1A1A1"
               [invalid]="
-                (invalid && fg.controls['locality'].invalid) ||
-                (fg.controls['locality'].touched &&
-                  fg.controls['locality'].invalid)
+                (invalid && fg.controls['postalCode'].invalid) ||
+                (fg.controls['postalCode'].touched &&
+                  fg.controls['postalCode'].invalid)
               "
             >
             </wap-input>
+          </mat-card-content>
+          <mat-card-content *ngIf="index === 3" [formGroup]="fg">
+            <ion-item>
+              <ion-label position="stacked"
+                >Date of Birth <ion-text color="danger">*</ion-text></ion-label
+              >
+              <ion-datetime
+                formControlName="dateOfBirth"
+                displayFormat="MMM DD YYYY"
+                placeholder="MMM DD YYYY"
+              ></ion-datetime>
+            </ion-item>
+            <ion-note
+              *ngIf="
+                (invalid && fg['controls'].dateOfBirth.invalid) ||
+                (fg['controls'].dateOfBirth.touched &&
+                  fg['controls'].dateOfBirth.invalid)
+              "
+            >
+              <ion-text color="danger"
+                >Invalid email address
+              </ion-text></ion-note
+            >
+            <ion-item> </ion-item>
           </mat-card-content>
         </ion-list>
         <mat-card-actions>
@@ -118,7 +149,7 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
             Back
           </button>
 
-          <button mat-stroked-button (click)="setIndex(index + 1)">
+          <button mat-stroked-button (click)="validateIndex(index + 1, fg)">
             {{ nextLabel }}
           </button>
         </mat-card-actions>
@@ -132,7 +163,8 @@ export class SuccessComponent implements OnInit {
   user: IUser;
   fg: FormGroup;
   invalid = false;
-  title = '';
+  title = 'test';
+  $title: Observable<string>;
   cardTitle = '';
   cardSubtitle = 'Sign-up for a verified credential';
   nextLabel = '';
@@ -140,7 +172,7 @@ export class SuccessComponent implements OnInit {
   setIndex(i: number) {
     const indexMap = [
       {
-        cardTitle: 'Sign-up',
+        cardTitle: 'Welcome to VON',
         cardSubtitle: 'Authenticated',
         nextLabel: 'Sign-up'
       },
@@ -152,41 +184,75 @@ export class SuccessComponent implements OnInit {
       {
         cardTitle: 'Address',
         cardSubtitle: 'Address information',
-        nextLabel: 'Submit'
+        nextLabel: 'Next'
+      },
+      {
+        cardTitle: 'Personal',
+        cardSubtitle: 'Personal information',
+        nextLabel: 'Preview'
       }
     ];
     this.cardTitle = indexMap[i].cardTitle;
     this.cardSubtitle = indexMap[i].cardSubtitle;
     this.nextLabel = indexMap[i].nextLabel;
-
+    this.invalid = false;
     this.index = i;
+  }
+
+  validateIndex(i: number, fg: FormGroup) {
+    const ctrls = fg.controls;
+
+    function validFc(fc: AbstractControl) {
+      return fc.valid;
+    }
+    const indexOneCtrls = [
+      ctrls['firstName'],
+      ctrls['lastName'],
+      ctrls['emailAddress']
+    ];
+    const indexTwoCtrls = [
+      ctrls['streetAddress'],
+      ctrls['postalCode'],
+      ctrls['locality']
+    ];
+    const indexThreeCtrls = [ctrls['dateOfBirth']];
+
+    const ctrlMap = [indexOneCtrls, indexTwoCtrls, indexThreeCtrls];
+
+    const indexValid = (args: { ctrls: AbstractControl[] }) => {
+      const { ctrls } = args;
+      const valids = ctrls.some(ctrl => validFc(ctrl));
+      return valids;
+    };
+    const valid = indexValid({ ctrls: ctrlMap[i - 2] });
+    return valid ? this.setIndex(i) : (this.invalid = true);
   }
 
   constructor(
     private stateSvc: StateService,
-    public actionSvc: ActionService,
-    private route: ActivatedRoute
+    public actionSvc: ActionService
   ) {}
 
   ngOnInit() {
-    this.setIndex(2);
     const user = this.stateSvc.user;
     console.log(user);
-
     const initFc = (val: string) =>
       new FormControl(val, [Validators.required, Validators.minLength(4)]);
 
     const firstName = initFc(user.firstName || '');
     const lastName = initFc(user.lastName || '');
-    const emailAddress = initFc(user.email || '');
-
-    const streetAddress = new FormControl('', [
+    const emailAddress = new FormControl(user.email || '', [
       Validators.required,
       Validators.minLength(4),
       Validators.email
     ]);
+
+    const streetAddress = initFc('');
     const locality = initFc('');
-    const postalCode = initFc('');
+    const postalCode = new FormControl('', [
+      Validators.required,
+      postalCodeValidator()
+    ]);
 
     const dateOfBirth = initFc('');
     /*
@@ -206,5 +272,9 @@ export class SuccessComponent implements OnInit {
       postalCode,
       dateOfBirth
     });
+
+    this.fg.updateValueAndValidity();
+    this.setIndex(1);
+    this.$title = of(`Sign-up: ${user.firstName} ${user.lastName}`);
   }
 }

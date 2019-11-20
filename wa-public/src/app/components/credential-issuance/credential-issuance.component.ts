@@ -25,9 +25,7 @@ import { interval } from 'rxjs/internal/observable/interval';
                 >check_circle_outline</i
               >
             </h2>
-            <p>
-              You now have a connection with the Identity Kit agent.
-            </p>
+            <p>xxx You now have a connection with the Identity Kit agent.</p>
           </li>
 
           <li id="awaiting-credential-offer">

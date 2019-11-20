@@ -4,9 +4,6 @@ import { Component, OnInit } from '@angular/core';
   selector: 'wap-root',
   template: `
     <!--The content below is only a placeholder and can be replaced.-->
-    <mat-toolbar color="primary">
-      <mat-toolbar-row> </mat-toolbar-row>
-    </mat-toolbar>
     <router-outlet></router-outlet>
   `,
   styleUrls: ['./app.component.scss']

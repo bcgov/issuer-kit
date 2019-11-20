@@ -1,12 +1,16 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
+export interface IUser extends Keycloak.KeycloakProfile {}
+
 @Injectable({
   providedIn: 'root'
 })
 export class StateService {
   private _isAuth = false;
   private _title = 'Identity Kit POC';
+
+  user: IUser;
 
   isValidToken(token: string) {
     // this.http.post('/api/check-invite', {

@@ -169,24 +169,22 @@ export class ActionService {
         this.sendEmail(record);
       }
     } else {
-      console.log(records);
-
       const users = this.invitedUsers;
       const itm = users.find(itm => itm._id === records);
       const index = users.findIndex(itm => itm._id === records);
       const { expired, expiry, ...noExpired } = itm;
       const newExpired = false;
-      const newExpiry = Date.now() + 50000000;
+      const created = new Date();
+      const newExpiry = new Date(created);
+      newExpiry.setDate(created.getDate() + 1);
       const newUser = {
         updatedBy: this.stateSvc.user.email,
         expired: newExpired,
-        expiry: newExpiry,
+        expiry: newExpiry.getTime(),
         ...noExpired
       };
-      console.log('the item', newUser);
       users[index] = newUser;
       this.invitedUsers = users;
-      console.log(users);
       return this.stateSvc.setUserList(users);
     }
   }

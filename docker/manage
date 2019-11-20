@@ -31,6 +31,8 @@ function echoWarning (){
 #   exit 1
 # fi
 
+# Customize realm settings for development environment
+cp -f ./keycloak/config/realm-export.json ./keycloak/config/realm-export-docker.json
 if [ -z "$GITHUB_CLIENT_ID" ] || [ -z "$GITHUB_CLIENT_ID" ]; then
   echoWarning "The client id and/or secret for the integration of GitHub as IDP for Keycloak were not provided."
   echoWarning "Please set the GITHUB_CLIENT_ID and GITHUB_CLIENT_SECRET environment variables to use GitHub as your IDP."
@@ -40,8 +42,8 @@ if [ -z "$GITHUB_CLIENT_ID" ] || [ -z "$GITHUB_CLIENT_ID" ]; then
 else
   # Preparing Keycloak realm...
   echo "Configuring GitHub IDP integration for Keycloak..."
-  sed -i "s/%GITHUB_CLIENT_ID%/$GITHUB_CLIENT_ID/g" ./keycloak/config/realm-export.json
-  sed -i "s/%GITHUB_CLIENT_SECRET%/$GITHUB_CLIENT_SECRET/g" ./keycloak/config/realm-export.json
+  sed -i "s/%GITHUB_CLIENT_ID%/$GITHUB_CLIENT_ID/g" ./keycloak/config/realm-export-docker.json
+  sed -i "s/%GITHUB_CLIENT_SECRET%/$GITHUB_CLIENT_SECRET/g" ./keycloak/config/realm-export-docker.json
 fi
 
 SCRIPT_HOME="$(cd "$(dirname "$0")" && pwd)"
@@ -134,7 +136,7 @@ configureEnvironment() {
   export KEYCLOAK_DB_ADDR="keycloak-db"
   export KEYCLOAK_USER="admin"
   export KEYCLOAK_PASSWORD="admin"
-  export KEYCLOAK_IMPORT="/tmp/realm-export.json"
+  export KEYCLOAK_IMPORT="/tmp/realm-export-docker.json"
   export KEYCLOAK_LOGLEVEL="WARN"
   export KEYCLOAK_ROOT_LOGLEVEL="WARN"
 

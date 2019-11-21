@@ -1360,9 +1360,9 @@
       "config": {
         "hideOnLoginPage": "",
         "acceptsPromptNoneForwardFromClient": "",
-        "clientId": "%GITHUB_CLIENT_ID%",
+        "clientId": "445513b9acd2adad6934",
         "disableUserInfo": "",
-        "clientSecret": "%GITHUB_CLIENT_SECRET%",
+        "clientSecret": "e58edd1878245bbcbec7a017a2807e5ec82ab62a",
         "useJwksUrl": "true"
       }
     }

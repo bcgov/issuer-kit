@@ -1,70 +1,93 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, Input } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import { startWith, switchMap } from 'rxjs/operators';
 import { interval } from 'rxjs/internal/observable/interval';
+import { StateService } from 'src/app/services/state.service';
+import { Observable, of } from 'rxjs';
 
 @Component({
   selector: 'wap-credential-issuance',
   template: `
     <div class="content">
-      <h1>Issuing Identity Credential</h1>
+      <h2>Issuing Identity Credential</h2>
       <ng-container>
         <mat-progress-bar
+          *ngIf="step !== 3"
           mode="indeterminate"
           value="{{ progressValue }}"
         ></mat-progress-bar>
+        <mat-progress-bar
+          *ngIf="step === 3"
+          mode="determinate"
+          value="100"
+        ></mat-progress-bar>
       </ng-container>
-      <ng-container id="issuing-steps">
-        <ul style="list-style: none;">
-          <!-- Connection formed -->
-          <li id="connection-formed">
-            <h2>
-              Connection Formed
-              <i class="material-icons issuing-step-success"
-                >check_circle_outline</i
-              >
-            </h2>
-            <p>xxx You now have a connection with the Identity Kit agent.</p>
-          </li>
+      <mat-list id="issuing-steps">
+        <!-- Connection formed -->
+        <mat-list-item>
+          <mat-icon mat-list-icon class="material-icons issuing-step-success"
+            >check_circle_outline</mat-icon
+          >
+          <h3 mat-line>
+            Connection Formed
+          </h3>
 
-          <li id="awaiting-credential-offer">
-            <h2>
-              Waiting for you to accept the credential offer...
-              <ng-template [ngIf]="step === 2">
-                <mat-spinner class="inline-spinner" diameter="24"></mat-spinner>
-              </ng-template>
-              <ng-template [ngIf]="step > 2"
-                ><i class="material-icons issuing-step-success"
-                  >check_circle_outline</i
-                ></ng-template
-              >
-            </h2>
-          </li>
+          <p mat-line *ngIf="$user | async as firstName">
+            {{ firstName }} you now have a connection with the Identity Kit
+            agent.
+          </p>
+        </mat-list-item>
+        <mat-list-item>
+          <mat-icon mat-list-icon *ngIf="step === 2">
+            <mat-spinner class="inline-spinner" diameter="24"></mat-spinner>
+          </mat-icon>
+          <mat-icon
+            *ngIf="step > 2"
+            mat-list-icon
+            class="material-icons issuing-step-success"
+          >
+            check_circle_outline</mat-icon
+          >
+          <h3 mat-line>
+            Waiting for you to accept the credential offer...
+          </h3>
+        </mat-list-item>
 
-          <ng-template [ngIf]="step > 2">
-            <!-- Credential Issued -->
-            <li id="credential-issued">
-              <h2>
-                Credential Issued
-                <i class="material-icons issuing-step-success"
-                  >check_circle_outline</i
-                >
-              </h2>
-              <p>
-                Congratulations! Your Identity Kit credential has been issued.
-                You should receive a notification to store the credential in
-                your wallet.
-              </p>
-            </li>
-          </ng-template>
-        </ul>
-      </ng-container>
+        <ng-template [ngIf]="step > 2">
+          <!-- Credential Issued -->
+          <mat-list-item>
+            <mat-icon mat-list-icon class="material-icons issuing-step-success"
+              >check_circle_outline</mat-icon
+            >
+
+            <h3 mat-line>
+              Credential Issued
+            </h3>
+            <p mat-line>
+              Your Identity Kit credential has been issued.
+            </p>
+          </mat-list-item>
+        </ng-template>
+      </mat-list>
+      <mat-card *ngIf="step === 3">
+        <mat-card-header>
+          <mat-card-title>Credential Issued</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <p>
+            Congratulations! Your credential has been issued. You will receive a
+            notification to store the credential in your wallet.
+          </p>
+        </mat-card-content>
+      </mat-card>
     </div>
   `,
   styleUrls: ['./credential-issuance.component.scss']
 })
 export class CredentialIssuanceComponent implements OnInit {
+  @Input() connectionId: string;
+  $user: Observable<string>;
   step: number;
   progressValue: number;
   private stateProgressMapping = {
@@ -82,15 +105,14 @@ export class CredentialIssuanceComponent implements OnInit {
     }
   };
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private stateSvc: StateService) {}
 
-  private connectionId: string;
   private transactionStateURL: string;
 
   ngOnInit() {
     this.connectionId = '123-456-789'; // TODO @SH: set the current connection id
     this.transactionStateURL = `/api/state/${this.connectionId}`;
-    this.step = 1;
+    this.step = 2;
 
     interval(5000)
       .pipe(
@@ -98,6 +120,10 @@ export class CredentialIssuanceComponent implements OnInit {
         switchMap(() => this.http.get('/assets/data/appConfig.json')) // TODO: @SH replace with this.transactionStateURL
       )
       .subscribe(res => this.updateProgress(res));
+    setTimeout(() => (this.step = 3), 10000);
+    // setTimeout(() => (this.step = 3), 20000);
+    const user = this.stateSvc.user;
+    if (user) this.$user = of(`${user.firstName}`);
   }
 
   updateProgress(state: any) {

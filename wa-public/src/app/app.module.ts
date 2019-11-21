@@ -25,6 +25,8 @@ import { CardToolbarComponent } from './components/card-toolbar/card-toolbar.com
 import { InputComponent } from './components/input/input.component';
 import { IssuePreviewComponent } from './components/issue-preview/issue-preview.component';
 import { CardListItemComponent } from './components/card-list-item/card-list-item.component';
+import { TrackComponent } from './pages/track/track.component';
+import { MatListModule } from '@angular/material/list';
 
 const keycloakService = new KeycloakService();
 
@@ -37,7 +39,8 @@ const matModules = [
   MatProgressSpinnerModule,
   MatButtonModule,
   MatMenuModule,
-  ReactiveFormsModule
+  ReactiveFormsModule,
+  MatListModule
 ];
 
 const components = [
@@ -49,7 +52,8 @@ const components = [
   PageNotFoundComponent,
   InputComponent,
   IssuePreviewComponent,
-  CardListItemComponent
+  CardListItemComponent,
+  TrackComponent
 ];
 
 @NgModule({

@@ -277,8 +277,8 @@
       "name": "TAG_NAME",
       "displayName": "Environment TAG name",
       "description": "The TAG name for this environment, e.g., dev, test, prod",
-      "value": "dev",
-      "required": true
+      "required": true,
+      "value": "latest"
     },
     {
       "name": "AGENT_SERVICE_NAME",

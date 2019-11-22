@@ -2,10 +2,11 @@
   "name": "identity-controller",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
+    "build": "tsc",
     "test": "tsc && ava",
-    "serve": "ts-node src/index.ts",
+    "serve": "node src/index.js",
     "test:watch": "nodemon --exec npm test",
     "start": "nodemon -L",
     "start-docker": "npm install && nodemon -L",

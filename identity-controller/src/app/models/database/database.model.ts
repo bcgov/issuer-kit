@@ -65,9 +65,9 @@ class DBClient extends mongo.MongoClient {
         .insertOne(record);
       if (res.insertedId) {
         const id = res.insertedCount;
-        const objId = new mongo.ObjectID(id).toHexString();
+        const objId = new mongo.ObjectID(id);
 
-        return objId;
+        return id;
       } else {
         throw new Error(this.prefix + 'failed to insert record');
       }

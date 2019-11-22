@@ -60,7 +60,6 @@ router.post('/', async (ctx: Context) => {
     addedBy: 'wa-admin',
     linkId: uuidv4()
   } as IInvitationRecord;
-
   try {
     const res = await client.insertRecord<IInvitationRecord>({
       collection: 'invitations',

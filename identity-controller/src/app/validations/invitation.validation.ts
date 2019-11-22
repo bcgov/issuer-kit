@@ -10,6 +10,8 @@ const validateInvitation = (opts: {
   method: string;
   jurisdiction: string;
   email: string;
+  firstName: string;
+  lastName: string;
 }) => {
   return invitationSchema.validate(opts, { stripUnknown: true });
 };

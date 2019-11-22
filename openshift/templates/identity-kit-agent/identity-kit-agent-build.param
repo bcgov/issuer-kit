@@ -1,0 +1,11 @@
+#=========================================================
+# OpenShift template parameters for:
+# Component: .
+# Template File: ../openshift/templates/identity-kit-agent/identity-kit-agent-build.json
+#=========================================================
+NAME=identity-kit-agent
+GIT_REPO_URL=https://github.com/bcgov/identity-kit-poc.git
+GIT_REF=master
+SOURCE_CONTEXT_DIR=.
+DOCKER_FILE_PATH=docker/agent/Dockerfile
+OUTPUT_IMAGE_TAG=latest

@@ -16,7 +16,7 @@
       "metadata": {
         "name": "${NAME}",
         "annotations": {
-          "description": "Exposes and load balances the application pods",
+          "description": "Exposes and load balances the application pods"
         },
         "labels": {
           "name": "${NAME}",

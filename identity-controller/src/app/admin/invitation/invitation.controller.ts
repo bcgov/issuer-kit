@@ -7,6 +7,15 @@ import { client } from '../../../index';
 import { ObjectId } from 'bson';
 import { validateInvitation } from '../../validations/invitation.validation';
 import { IInvitationRecord } from '../../models/interfaces/invitation-record';
+import { EmailService } from '../../services/email.service';
+
+const host = process.env.SMTP_HOST || 'smtp.mailtrap.io';
+const port = parseInt(process.env.SMTP_PORT || '2525');
+const user = process.env.SMTP_USERNAME || '6969c1013a75cd';
+const pass = process.env.SMTP_PASS || '05e096d9af30c8';
+const publicUrl = process.env.PUBLIC_URL || 'http://localhost:4251/';
+
+const emailSvc = new EmailService({ host, port, user, pass });
 
 export interface IInvitationEvent {
   _id: string;
@@ -65,7 +74,17 @@ router.post('/', async (ctx: Context) => {
       collection: 'invitations',
       record
     });
-    return (ctx.body = res);
+
+    ctx.body = res;
+
+    try {
+      const mail = await emailSvc.mailInvite({
+        address: res.email,
+        url: `${publicUrl}validate?invite_token=${res.linkId}`
+      });
+    } catch (err) {
+      ctx.throw(500, 'failed to send email to ' + res.email);
+    }
   } catch (err) {
     return ctx.throw('An internal server error occured', 500);
   } finally {
@@ -73,8 +92,36 @@ router.post('/', async (ctx: Context) => {
   }
 });
 
+router.get('/:id/validate/', async (ctx: Context) => {
+  const linkId = ctx.params.id;
+  const res = await client.getRecordByQuery({
+    collection: 'invitations',
+    query: { linkId }
+  });
+  ctx.body = res;
+});
+
+router.post('/:id/renew/', async (ctx: Context) => {
+  const id = ctx.params.id;
+  const today = new Date();
+  const expiry = new Date();
+  expiry.setDate(today.getDate() + 1);
+  const res = await client.updateRecord<any>({
+    collection: 'invitations',
+    query: {
+      linkId: uuidv4(),
+      expiry,
+      updatedBy: 'wa-admin',
+      updatedAt: new Date()
+    },
+    id
+  });
+  ctx.body = res;
+});
+
 router.get('/:id', async (ctx: Context) => {
   const id = ctx.params.id;
+
   try {
     const record = await client.getRecord({ collection: 'invitations', id });
     return (ctx.body = record);
@@ -83,5 +130,4 @@ router.get('/:id', async (ctx: Context) => {
   }
 });
 
-router.get('/validate/:id', async (ctx: Context) => {});
 export default router;

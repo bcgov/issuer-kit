@@ -57,17 +57,15 @@ class DBClient extends mongo.MongoClient {
   async insertRecord<T>(opts: {
     collection: DatabaseCollectionType;
     record: T;
-  }) {
+  }): Promise<T> {
     const { collection, record } = opts;
     try {
       let res = await this.db(this.database)
         .collection<T>(collection)
         .insertOne(record);
       if (res.insertedId) {
-        const id = res.insertedCount;
-        const objId = new mongo.ObjectID(id);
-
-        return id;
+        const data = res.ops[0] as any;
+        return data as T;
       } else {
         throw new Error(this.prefix + 'failed to insert record');
       }
@@ -75,6 +73,25 @@ class DBClient extends mongo.MongoClient {
       throw new Error(this.prefix + err.message);
     }
   }
+
+  async updateRecord<T>(opts: {
+    collection: DatabaseCollectionType;
+    query: { [key: string]: string | Date };
+    id: string;
+  }): Promise<T> {
+    const { collection, query, id } = opts;
+    const _id = new mongo.ObjectId(id);
+    try {
+      let res = await this.db(this.database)
+        .collection<T>(collection)
+        // @ts-ignore
+        .updateOne({ _id }, { $set: { ...query } });
+      return res;
+    } catch (err) {
+      throw err;
+    }
+  }
+
   async getRecords(
     collection: DatabaseCollectionType,
     opts: { count: number; batch: number; query: {} } = {
@@ -88,7 +105,6 @@ class DBClient extends mongo.MongoClient {
       let res = await this.db(this.database)
         .collection(collection)
         .find({});
-      const recs = await res.toArray();
       return await res.toArray();
     } catch (err) {
       throw new Error(prefix + 'database fetch failed with ' + err.message);
@@ -106,6 +122,18 @@ class DBClient extends mongo.MongoClient {
       console.log(res);
       return res;
     } catch (err) {}
+  }
+
+  async getRecordByQuery<T>(opts: {
+    collection: DatabaseCollectionType;
+    query: { [key: string]: string };
+  }) {
+    const { collection, query } = opts;
+    console.log('query', { ...query });
+    let res = await this.db(this.database)
+      .collection(collection)
+      .findOne({ ...query });
+    return res;
   }
 }
 

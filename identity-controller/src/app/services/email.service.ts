@@ -28,7 +28,7 @@ export class EmailService {
       from: 'Identity Kit POC <no-reply@gov.bc.ca>',
       to: address,
       subject: 'Welcome to the Identity Kit POC test.',
-      text: `Welcome to identity kit POC test. Click here to get started ${url}`
+      html: `<h3>Welcome to identity kit POC test.<h3> <p>Click here to get started <a href="${url}">Link</a></p>`
     });
     return mail;
   }

@@ -104,7 +104,7 @@ router.get('/:id/validate/', async (ctx: Context) => {
     query: { linkId }
   });
   if (!res) return ctx.throw(404);
-  return (ctx.body = res);
+  return (ctx.status = 200);
 });
 
 router.post('/:id/renew/', async (ctx: Context) => {

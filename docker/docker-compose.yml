@@ -1,4 +1,4 @@
-version: "3"
+version: '3'
 services:
   #
   # API/Controller
@@ -14,6 +14,11 @@ services:
       - DB_USER=${MONGODB_USER}
       - DB_PASSWORD=${MONGODB_PASSWORD}
       - DB_PORT=${MONGODB_PORT}
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_PORT=${SMTP_PORT}
+      - SMTP_USERNAME=${SMTP_USERNAME}
+      - SMTP_PASS=${SMTP_HOST}
+      - PUBLIC_URL=${PUBLIC_URL}
     volumes:
       - ../identity-controller:/usr/src/controller
       - identity-controller-node-cache:/usr/src/controller/node_modules
@@ -136,7 +141,7 @@ services:
       - identity-kit-wallet
     entrypoint: /bin/bash
     command: [
-        "-c",
+        '-c',
         "curl -d '{\"seed\":\"${AGENT_WALLET_SEED}\", \"role\":\"TRUST_ANCHOR\", \"alias\":\"${AGENT_NAME}\"}' -X POST ${LEDGER_URL}/register; \
         sleep 2; \
         aca-py start \

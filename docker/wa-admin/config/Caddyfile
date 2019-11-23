@@ -13,7 +13,7 @@
     # Openly exposed health check endpoint for OpenShift
     status 200 /health
 
-    # Required for vue-router to work
+    # Required for angular router to work
     rewrite {
         regexp ^/(!?api)/?$
         to {path} /

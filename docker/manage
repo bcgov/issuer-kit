@@ -82,7 +82,7 @@ EOF
 # Default Settings:
 # -----------------------------------------------------------------------------------------------------------------
 DEFAULT_CONTAINERS="wa-db identity-kit-agent identity-kit-wallet keycloak keycloak-db"
-PROD_CONTAINERS="identity-controller"
+PROD_CONTAINERS="identity-controller wa-admin wa-public"
 DEV_CONTAINERS="identity-controller-dev wa-admin-dev wa-public-dev"
 # -----------------------------------------------------------------------------------------------------------------
 # Functions:
@@ -97,8 +97,24 @@ build-identity-controller() {
     'identity-kit-controller'
 }
 
+build-wa-admin() {
+  echo -e "\nBuilding wa-admin image..."
+  docker build \
+    -t 'wa-admin' \
+    -f '../docker/wa-admin/Dockerfile' '../'
+}
+
+build-wa-public() {
+  echo -e "\nBuilding wa-public image..."
+  docker build \
+    -t 'wa-public' \
+    -f '../docker/wa-public/Dockerfile' '../'
+}
+
 build-all() {
   build-identity-controller
+  build-wa-admin
+  build-wa-public
 }
 
 configureEnvironment() {
@@ -138,9 +154,19 @@ configureEnvironment() {
 
   # wa-admin
   export WA_ADMIN_PORT=4250
+  export ADMIN_WEB_HOST_NAME=0.0.0.0
+  export ADMIN_WEB_HOST_PORT=8081
+  export ADMIN_WEB_HOST_TLS=off
+  export ADMIN_API_HOST=identity-controller
+  export ADMIN_API_PORT=8080
 
   # wa-public
   export WA_PUBLIC_PORT=4251
+  export PUBLIC_WEB_HOST_NAME=0.0.0.0
+  export PUBLIC_WEB_HOST_PORT=8082
+  export PUBLIC_WEB_HOST_TLS=off
+  export PUBLIC_API_HOST=identity-controller
+  export PUBLIC_API_PORT=8080
 
   # wa-db
   export MONGODB_ADMIN_PASSWORD=admin

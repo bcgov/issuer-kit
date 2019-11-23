@@ -70,6 +70,32 @@ services:
       - identity_kit
     command: npm run start-docker
 
+  wa-admin:
+    image: wa-admin:latest
+    environment:
+      - WEB_HOST_NAME=${ADMIN_WEB_HOST_NAME}
+      - WEB_HOST_PORT=${ADMIN_WEB_HOST_PORT}
+      - WEB_HOST_TLS=${ADMIN_WEB_HOST_TLS}
+      - API_HOST=${ADMIN_API_HOST}
+      - API_PORT=${ADMIN_API_PORT}
+    ports:
+      - ${ADMIN_WEB_HOST_PORT}:${ADMIN_WEB_HOST_PORT}
+    networks:
+      - identity_kit
+
+  wa-public:
+    image: wa-public:latest
+    environment:
+      - WEB_HOST_NAME=${PUBLIC_WEB_HOST_NAME}
+      - WEB_HOST_PORT=${PUBLIC_WEB_HOST_PORT}
+      - WEB_HOST_TLS=${PUBLIC_WEB_HOST_TLS}
+      - API_HOST=${PUBLIC_API_HOST}
+      - API_PORT=${PUBLIC_API_PORT}
+    ports:
+      - ${PUBLIC_WEB_HOST_PORT}:${PUBLIC_WEB_HOST_PORT}
+    networks:
+      - identity_kit
+
   #
   # Public frontend with hot-reloading
   #

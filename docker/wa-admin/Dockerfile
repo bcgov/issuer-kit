@@ -9,4 +9,4 @@ RUN npm run build
 # production stage
 FROM abiosoft/caddy:1.0.3-no-stats as production-stage
 COPY docker/wa-admin/config/Caddyfile /etc/Caddyfile
-COPY --from=build-stage /app/dist /srv
+COPY --from=build-stage /app/dist/wa-admin /srv

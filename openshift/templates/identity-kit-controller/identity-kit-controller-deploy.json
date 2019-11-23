@@ -28,9 +28,15 @@
         "ports": [
           {
             "name": "${SERVICE_PORT}-tcp",
-            "port": "${SERVICE_PORT}",
+            "port": "${{SERVICE_PORT}}",
             "protocol": "TCP",
-            "targetPort": "${SERVICE_PORT}"
+            "targetPort": "${{SERVICE_PORT}}"
+          },
+          {
+            "name": "${HOOKS_PORT}-tcp",
+            "port": "${{HOOKS_PORT}}",
+            "protocol": "TCP",
+            "targetPort": "${{HOOKS_PORT}}"
           }
         ],
         "selector": {
@@ -95,7 +101,11 @@
                 "image": " ",
                 "ports": [
                   {
-                    "containerPort": "${SERVICE_PORT}",
+                    "containerPort": "${{SERVICE_PORT}}",
+                    "protocol": "TCP"
+                  },
+                  {
+                    "containerPort": "${{HOOKS_PORT}}",
                     "protocol": "TCP"
                   }
                 ],
@@ -106,7 +116,7 @@
                   "timeoutSeconds": 20,
                   "httpGet": {
                     "path": "/health",
-                    "port": "${SERVICE_PORT}"
+                    "port": "${{SERVICE_PORT}}"
                   }
                 },
                 "livenessProbe": {
@@ -116,13 +126,13 @@
                   "timeoutSeconds": 20,
                   "httpGet": {
                     "path": "/health",
-                    "port": "${SERVICE_PORT}"
+                    "port": "${{SERVICE_PORT}}"
                   }
                 },
                 "env": [
                   {
-                    "name": "SERVICE_PORT",
-                    "value": "${PORT}"
+                    "name": "PORT",
+                    "value": "${SERVICE_PORT}"
                   },
                   {
                     "name": "HOOKS_PORT",
@@ -170,6 +180,14 @@
                         "key": "admin-api-key"
                       }
                     }
+                  },
+                  {
+                    "name": "SMTP_HOST",
+                    "value": "${SMTP_SERVER_ADDRESS}"
+                  },
+                  {
+                    "name": "SMTP_PORT",
+                    "value": "${SMTP_SERVER_PORT}"
                   }
                 ],
                 "resources": {
@@ -229,7 +247,7 @@
       "displayName": "App Group",
       "description": "The name assigned to all of the deployments in this project.",
       "required": true,
-      "value": "identity-kit"
+      "value": "identity-kit-controller"
     },
     {
       "name": "IMAGE_NAMESPACE",
@@ -293,6 +311,20 @@
       "description": "Agent admin port",
       "required": true,
       "value": "8024"
+    },
+    {
+      "name": "SMTP_SERVER_ADDRESS",
+      "displayName": "SMTP Server Address",
+      "description": "SMTP Server Address",
+      "required": true,
+      "value": ""
+    },
+    {
+      "name": "SMTP_SERVER_PORT",
+      "displayName": "SMTP Server Port",
+      "description": "SMTP Server Port",
+      "required": true,
+      "value": ""
     },
     {
       "name": "MIN_REPLICAS",

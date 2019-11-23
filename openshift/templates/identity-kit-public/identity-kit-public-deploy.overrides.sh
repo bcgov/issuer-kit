@@ -2,10 +2,10 @@
 # The generated config map is used for the configuration of Caddy.
 # ========================================================================
 
-CONFIG_MAP_NAME=identity-kit-admin-caddy-conf
-SOURCE_FILE=../docker/wa-admin/config/Caddyfile
+CONFIG_MAP_NAME=identity-kit-public-caddy-conf
+SOURCE_FILE=../docker/wa-public/config/Caddyfile
 OUTPUT_FORMAT=json
-OUTPUT_FILE=identity-kit-admin-caddy-conf-configmap_DeploymentConfig.json
+OUTPUT_FILE=identity-kit-public-caddy-conf-configmap_DeploymentConfig.json
 
 generateConfigMap() {  
   _config_map_name=${1}

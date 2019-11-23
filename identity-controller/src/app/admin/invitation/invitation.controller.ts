@@ -9,13 +9,18 @@ import { validateInvitation } from '../../validations/invitation.validation';
 import { IInvitationRecord } from '../../models/interfaces/invitation-record';
 import { EmailService } from '../../services/email.service';
 
-const host = process.env.SMTP_HOST || 'smtp.mailtrap.io';
+const host = process.env.SMTP_HOST;
 const port = parseInt(process.env.SMTP_PORT || '2525');
-const user = process.env.SMTP_USERNAME || '6969c1013a75cd';
-const pass = process.env.SMTP_PASS || '05e096d9af30c8';
-const publicUrl = process.env.PUBLIC_URL || 'http://localhost:4251/';
+const user = process.env.SMTP_USERNAME;
+const pass = process.env.SMTP_PASS;
+const publicUrl = process.env.PUBLIC_URL;
 
-const emailSvc = new EmailService({ host, port, user, pass });
+const emailSvc = new EmailService({
+  host: host || '',
+  port,
+  user: user || '',
+  pass: pass || ''
+});
 
 export interface IInvitationEvent {
   _id: string;

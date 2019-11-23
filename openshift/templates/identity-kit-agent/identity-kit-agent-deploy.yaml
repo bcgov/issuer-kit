@@ -15,13 +15,13 @@ objects:
     spec:
       ports:
         - name: ${NAME}-admin
-          port: ${AGENT_ADMIN_PORT}
+          port: ${{AGENT_ADMIN_PORT}}
           protocol: TCP
-          targetPort: ${AGENT_ADMIN_PORT}
+          targetPort: ${{AGENT_ADMIN_PORT}}
         - name: ${NAME}-http
-          port: ${AGENT_HTTP_PORT}
+          port: ${{AGENT_HTTP_PORT}}
           protocol: TCP
-          targetPort: ${AGENT_HTTP_PORT}
+          targetPort: ${{AGENT_HTTP_PORT}}
       selector:
         name: ${NAME}
 
@@ -180,22 +180,22 @@ objects:
                   value: ${LOG_LEVEL}
               image:
               ports:
-                - containerPort: ${AGENT_ADMIN_PORT}
+                - containerPort: ${{AGENT_ADMIN_PORT}}
                   protocol: TCP
-                - containerPort: ${AGENT_HTTP_PORT}
+                - containerPort: ${{AGENT_HTTP_PORT}}
                   protocol: TCP
               readinessProbe:
                 timeoutSeconds: 30
                 initialDelaySeconds: 3
                 httpGet:
                   path: /
-                  port: ${AGENT_HTTP_PORT}
+                  port: ${{AGENT_HTTP_PORT}}
               livenessProbe:
                 timeoutSeconds: 30
                 initialDelaySeconds: 300
                 httpGet:
                   path: /
-                  port: ${AGENT_HTTP_PORT}
+                  port: ${{AGENT_HTTP_PORT}}
               imagePullPolicy: IfNotPresent
               resources:
                 limits:
@@ -233,12 +233,12 @@ parameters:
     displayName: App Name
     description: Used to group components together in the OpenShift console.
     required: true
-    value: law-society-demo
+    value: identity-kit
   - name: APP_GROUP
     displayName: App Group
     description: Used to group components together.
     required: true
-    value: law-society-demo
+    value: identity-kit-agent
   - name: APPLICATION_DOMAIN
     displayName: Application Hostname
     description: The exposed hostname that will route to the service, if left blank a value will be defaulted.
@@ -267,7 +267,7 @@ parameters:
     displayName: Webhook URL
     description: The webhook endpoint
     required: true
-    value: http://oidc-controller:5000
+    value: http://identity-kit-controller:5050
   - name: AGENT_ADMIN_PORT
     displayName: Agent Admin Port
     description: The admin port on which the service will listen.

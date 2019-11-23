@@ -98,7 +98,8 @@ router.get('/:id/validate/', async (ctx: Context) => {
     collection: 'invitations',
     query: { linkId }
   });
-  ctx.body = res;
+  if (!res) return ctx.throw(404);
+  return (ctx.body = res);
 });
 
 router.post('/:id/renew/', async (ctx: Context) => {

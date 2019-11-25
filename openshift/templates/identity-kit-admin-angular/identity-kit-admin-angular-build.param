@@ -1,9 +1,11 @@
 #=========================================================
 # OpenShift template parameters for:
 # Component: .
-# Template File: ../openshift/templates/identity-kit-admin/identity-kit-admin-build.json
+# Template File: ../openshift/templates/identity-kit-admin-angular/identity-kit-admin-angular-build.json
 #=========================================================
 NAME=identity-kit-admin-angular
+APP_NAME=identity-kit
+APP_GROUP=identity-kit-base-image
 GIT_REPO_URL=https://github.com/bcgov/identity-kit-poc.git
 GIT_REF=master
 SOURCE_CONTEXT_DIR=.

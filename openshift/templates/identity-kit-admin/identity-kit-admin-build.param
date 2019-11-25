@@ -4,6 +4,8 @@
 # Template File: ../openshift/templates/identity-kit-admin/identity-kit-admin-build.json
 #=========================================================
 NAME=identity-kit-admin
+APP_NAME=identity-kit
+APP_GROUP=identity-kit-runtime
 OUTPUT_IMAGE_TAG=latest
 SOURCE_IMAGE_TAG=1.0.3-no-stats
 SOURCE_IMAGE_NAME=abiosoft/caddy

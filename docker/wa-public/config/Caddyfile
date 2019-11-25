@@ -14,8 +14,8 @@
     status 200 /health
 
     #  Serve configuration file from the environment
-    rewrite =/assets/data/appConfig.json {
-        to /tmp/appConfig..json
+    rewrite =/appconfig {
+        to /tmp/appConfig.json
     }
 
     # Required for angular router to work

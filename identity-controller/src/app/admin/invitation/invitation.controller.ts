@@ -13,13 +13,13 @@ const host = process.env.SMTP_HOST;
 const port = parseInt(process.env.SMTP_PORT || '2525');
 const user = process.env.SMTP_USERNAME;
 const pass = process.env.SMTP_PASS;
-const publicUrl = process.env.PUBLIC_URL;
+const publicUrl = process.env.PUBLIC_SITE_URL;
 
 const emailSvc = new EmailService({
   host: host || '',
   port,
   user: user || '',
-  pass: pass || ''
+  pass: pass || '',
 });
 
 export interface IInvitationEvent {
@@ -28,7 +28,7 @@ export interface IInvitationEvent {
 }
 
 const routerOpts: Router.IRouterOptions = {
-  prefix: '/invitations'
+  prefix: '/invitations',
 };
 
 const router = new Router(routerOpts);
@@ -72,12 +72,12 @@ router.post('/', async (ctx: Context) => {
     lastName,
     created: today,
     addedBy: 'wa-admin',
-    linkId: uuidv4()
+    linkId: uuidv4(),
   } as IInvitationRecord;
   try {
     const res = await client.insertRecord<IInvitationRecord>({
       collection: 'invitations',
-      record
+      record,
     });
 
     ctx.body = res;
@@ -85,7 +85,7 @@ router.post('/', async (ctx: Context) => {
     try {
       const mail = await emailSvc.mailInvite({
         address: res.email,
-        url: `${publicUrl}validate?invite_token=${res.linkId}`
+        url: `${publicUrl}validate?invite_token=${res.linkId}`,
       });
     } catch (err) {
       ctx.throw(500, 'failed to send email to ' + res.email);
@@ -101,7 +101,7 @@ router.get('/:id/validate/', async (ctx: Context) => {
   const linkId = ctx.params.id;
   const res = await client.getRecordByQuery({
     collection: 'invitations',
-    query: { linkId }
+    query: { linkId },
   });
   if (!res) return ctx.throw(404);
   return (ctx.status = 200);
@@ -118,9 +118,9 @@ router.post('/:id/renew/', async (ctx: Context) => {
       linkId: uuidv4(),
       expiry,
       updatedBy: 'wa-admin',
-      updatedAt: new Date()
+      updatedAt: new Date(),
     },
-    id
+    id,
   });
   ctx.body = res;
 });

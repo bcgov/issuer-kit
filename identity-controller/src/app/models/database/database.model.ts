@@ -8,7 +8,6 @@ export interface IDBEvent {
   ref: string;
 }
 
-export type DatabaseNameType = 'identity';
 export type DatabaseCollectionType = 'invitations';
 export type DatabaseRecordType = IInvitationRecord;
 
@@ -36,7 +35,7 @@ class DBClient extends mongo.MongoClient {
     if (!DBClient.instance) {
       if (!options || !options.uri) {
         throw new Error(
-          prefix + 'No connection URI to the database was provided!'
+          prefix + 'No connection URI to the database was provided!',
         );
       }
       DBClient.instance = new DBClient(options);
@@ -97,8 +96,8 @@ class DBClient extends mongo.MongoClient {
     opts: { count: number; batch: number; query: {} } = {
       count: 25,
       batch: 1,
-      query: {}
-    }
+      query: {},
+    },
   ) {
     const { count, batch, query } = opts;
     try {

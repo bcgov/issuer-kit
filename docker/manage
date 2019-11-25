@@ -101,14 +101,14 @@ build-wa-admin() {
   echo -e "\nBuilding wa-admin image..."
   docker build \
     -t 'wa-admin' \
-    -f '../docker/wa-admin/Dockerfile' '../'
+    -f '../docker/wa-admin/Dockerfile.dockerprod' '../'
 }
 
 build-wa-public() {
   echo -e "\nBuilding wa-public image..."
   docker build \
     -t 'wa-public' \
-    -f '../docker/wa-public/Dockerfile' '../'
+    -f '../docker/wa-public/Dockerfile.dockerprod' '../'
 }
 
 build-all() {

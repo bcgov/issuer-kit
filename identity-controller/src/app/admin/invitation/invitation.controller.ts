@@ -1,14 +1,26 @@
 import { Context } from 'koa';
 import * as Router from 'koa-router';
 
-import { TypedEvent } from '../../../core/typed-event/typed-event.model';
+import * as uuidv4 from 'uuid/v4';
 
-import { validateInvitation } from '../../../core/validations/invitation.validation';
+import { client } from '../../../index';
+import { ObjectId } from 'bson';
+import { validateInvitation } from '../../validations/invitation.validation';
+import { IInvitationRecord } from '../../models/interfaces/invitation-record';
+import { EmailService } from '../../services/email.service';
 
-import watchers from '../../../core/watchers/database.watchers';
+const host = process.env.SMTP_HOST;
+const port = parseInt(process.env.SMTP_PORT || '2525');
+const user = process.env.SMTP_USERNAME;
+const pass = process.env.SMTP_PASS;
+const publicUrl = process.env.PUBLIC_URL;
 
-import * as uuidv1 from 'uuid/v1';
-import {DBClient} from '../../../core/database/database.model';
+const emailSvc = new EmailService({
+  host: host || '',
+  port,
+  user: user || '',
+  pass: pass || ''
+});
 
 export interface IInvitationEvent {
   _id: string;
@@ -16,43 +28,112 @@ export interface IInvitationEvent {
 }
 
 const routerOpts: Router.IRouterOptions = {
-  prefix: '/invitation'
+  prefix: '/invitations'
 };
 
 const router = new Router(routerOpts);
-
-router.post('/', (ctx: Context) => {
+router.get('/', async (ctx: Context) => {
+  const params = ctx.request.querystring;
+  console.log(params);
+  const timer = setTimeout(() => {
+    return ctx.throw(500, 'operation timed out');
+  }, 5000);
+  try {
+    const records = await client.getRecords('invitations');
+    return (ctx.body = records);
+  } catch (err) {
+    return ctx.throw(500, err.message);
+  } finally {
+    clearTimeout(timer);
+  }
+});
+router.post('/', async (ctx: Context) => {
   const data = ctx.request.body;
   if (!data) return ctx.throw(400, 'no data to add');
   const valid = validateInvitation(data);
-  console.log(valid.errors);
   if (valid.errors) return ctx.throw(400, valid.errors.details);
-  let { method, email, jurisdiction } = data;
-  const uuid = uuidv1();
+  const { method, email, jurisdiction, firstName = '', lastName = '' } = data;
 
-  watchers.invitationWatcher.emit({
-    collection: 'invitations',
-    action: 'insert',
-    ref: uuid,
-    record: {
-      method,
-      email,
-      jurisdiction,
-      consumed: false
-    }
-  });
-
-  setTimeout(() => {
+  const timer = setTimeout(() => {
     return ctx.throw(500, 'operation timed out');
-  }, 15000);
+  }, 5000);
 
-  DBClient.getInstance({}).addListener(uuid, _id => {
-    return (ctx.body = uuid);
-  });
+  const today = new Date();
+  const expiry = new Date();
+  expiry.setDate(today.getDate() + 1);
+  const record = {
+    method,
+    email,
+    jurisdiction,
+    consumed: false,
+    expiry: expiry,
+    active: true,
+    firstName,
+    lastName,
+    created: today,
+    addedBy: 'wa-admin',
+    linkId: uuidv4()
+  } as IInvitationRecord;
+  try {
+    const res = await client.insertRecord<IInvitationRecord>({
+      collection: 'invitations',
+      record
+    });
+
+    ctx.body = res;
+
+    try {
+      const mail = await emailSvc.mailInvite({
+        address: res.email,
+        url: `${publicUrl}validate?invite_token=${res.linkId}`
+      });
+    } catch (err) {
+      ctx.throw(500, 'failed to send email to ' + res.email);
+    }
+  } catch (err) {
+    return ctx.throw('An internal server error occured', 500);
+  } finally {
+    clearTimeout(timer);
+  }
 });
 
-// watcher.pipe((te) => {
-//   console.log(te);
-// });
+router.get('/:id/validate/', async (ctx: Context) => {
+  const linkId = ctx.params.id;
+  const res = await client.getRecordByQuery({
+    collection: 'invitations',
+    query: { linkId }
+  });
+  if (!res) return ctx.throw(404);
+  return (ctx.status = 200);
+});
+
+router.post('/:id/renew/', async (ctx: Context) => {
+  const id = ctx.params.id;
+  const today = new Date();
+  const expiry = new Date();
+  expiry.setDate(today.getDate() + 1);
+  const res = await client.updateRecord<any>({
+    collection: 'invitations',
+    query: {
+      linkId: uuidv4(),
+      expiry,
+      updatedBy: 'wa-admin',
+      updatedAt: new Date()
+    },
+    id
+  });
+  ctx.body = res;
+});
+
+router.get('/:id', async (ctx: Context) => {
+  const id = ctx.params.id;
+
+  try {
+    const record = await client.getRecord({ collection: 'invitations', id });
+    return (ctx.body = record);
+  } catch (err) {
+    return ctx.throw(err.message);
+  }
+});
 
 export default router;

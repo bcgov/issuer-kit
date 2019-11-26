@@ -79,6 +79,8 @@ services:
       - WEB_HOST_TLS=${ADMIN_WEB_HOST_TLS}
       - API_HOST=${ADMIN_API_HOST}
       - API_PORT=${ADMIN_API_PORT}
+    volumes:
+      - ./wa-admin/config/Caddyfile:/etc/Caddyfile
     ports:
       - ${ADMIN_WEB_HOST_PORT}:${ADMIN_WEB_HOST_PORT}
     networks:
@@ -92,6 +94,8 @@ services:
       - WEB_HOST_TLS=${PUBLIC_WEB_HOST_TLS}
       - API_HOST=${PUBLIC_API_HOST}
       - API_PORT=${PUBLIC_API_PORT}
+    volumes:
+      - ./wa-public/config/Caddyfile:/etc/Caddyfile
     ports:
       - ${PUBLIC_WEB_HOST_PORT}:${PUBLIC_WEB_HOST_PORT}
     networks:

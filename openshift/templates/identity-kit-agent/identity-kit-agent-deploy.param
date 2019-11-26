@@ -6,7 +6,7 @@
 NAME=identity-kit-agent
 APP_NAME=identity-kit
 APP_GROUP=identity-kit-agent
-APPLICATION_DOMAIN=identity-kit-agent-devex-von-dev.pathfinder.gov.bc.ca
+APPLICATION_DOMAIN=identity-kit-agent.pathfinder.gov.bc.ca
 IMAGE_NAMESPACE=devex-von-tools
 TAG_NAME=dev
 AGENT_LABEL_NAME=identity-kit-agent

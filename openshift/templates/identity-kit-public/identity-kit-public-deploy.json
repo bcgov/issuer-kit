@@ -316,7 +316,7 @@
       "description": "The exposed hostname that will route to the service, e.g., myappname.pathfinder.gov.bc.ca, if left blank a value will be defaulted.",
       "displayName": "Application Hostname",
       "name": "APPLICATION_DOMAIN",
-      "value": "identity-kit-public.pathfinder.gov.bc.ca"
+      "value": "identity-kit.pathfinder.gov.bc.ca"
     },
     {
       "description": "The TAG name for this environment, e.g., dev, test, prod",

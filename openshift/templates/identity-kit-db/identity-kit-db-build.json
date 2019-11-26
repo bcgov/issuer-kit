@@ -44,8 +44,7 @@
           "git": {
             "uri": "${GIT_REPO_URL}",
             "ref": "${GIT_REF}"
-          },
-          "contextDir": "${SOURCE_CONTEXT_DIR}"
+          }
         },
         "strategy": {
           "type": "Source",
@@ -100,13 +99,6 @@
       "description": "The git reference or branch.",
       "required": true,
       "value": "master"
-    },
-    {
-      "name": "SOURCE_CONTEXT_DIR",
-      "displayName": "Source Context Directory",
-      "description": "The source context directory.",
-      "required": false,
-      "value": "wa-db/config"
     },
     {
       "name": "SOURCE_IMAGE_KIND",

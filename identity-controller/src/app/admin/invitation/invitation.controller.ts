@@ -111,6 +111,9 @@ router.get('/:id/validate/', async (ctx: Context) => {
     query: { linkId }
   });
   if (!res) return ctx.throw(404);
+  if (!res.active) return ctx.throw(404);
+  if (res.expiry.getTime() <= Date.now()) return ctx.throw(400);
+  console.log('result', res);
   return (ctx.status = 200);
 });
 

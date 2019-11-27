@@ -112,9 +112,10 @@ router.get('/:id/validate/', async (ctx: Context) => {
   });
   if (!res) return ctx.throw(404);
   if (!res.active) return ctx.throw(404);
-  if (res.expiry.getTime() <= Date.now()) return ctx.throw(400);
+  if (res.expiry.getTime() <= Date.now())
+    return (ctx.body = { validated: false });
   console.log('result', res);
-  return (ctx.status = 200);
+  return (ctx.body = { validated: true });
 });
 
 router.post('/:id/renew/', async (ctx: Context) => {

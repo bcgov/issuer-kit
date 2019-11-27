@@ -4,7 +4,6 @@ const attributes = [
   'surname',
   'givenname',
   'birthdate',
-  'age',
   'streetaddress',
   'locality',
   'stateorprovince',
@@ -15,7 +14,7 @@ const attributes = [
 const schemaDef = {
   attributes,
   schema_name: 'verified_person',
-  schema_version: '1.1'
+  schema_version: '1.2'
 };
 
 export default schemaDef;

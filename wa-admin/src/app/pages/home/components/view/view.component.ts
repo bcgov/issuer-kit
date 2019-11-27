@@ -143,12 +143,13 @@ export class ViewComponent implements OnInit {
           _id,
           email,
           fields: values,
-          link: `${this.url}${r.linkId}`,
+          link: `${this.url}validate?invite_token=${r.linkId}`,
           state,
           stateColor
         };
       })
     );
+
     this.$actions = obs.pipe(
       map(obs => {
         const accessLabel = obs.active ? 'Revoke Access' : 'Grant Access';

@@ -32,20 +32,22 @@ const router = new Router(routerOpts);
 
 router.post('/', async (ctx: Context) => {
   const data = ctx.request.body as ICredentialPayload;
-  console.log('the request', data);
   const keys = Object.keys(data.claims);
   const claims = data.claims as any;
   const mapped = keys.map(key => ({ name: key, value: claims[key] }));
-  console.log('mapped', mapped);
 
   const res = await issueSvc.issueCredential({
     connId: data.connectionId,
     attrs: mapped
   });
-  console.log('result', res);
   ctx.body = res;
 });
 
-router.get('/:id', async (ctx: Context) => {});
+router.get('/:id', async (ctx: Context) => {
+  const id = ctx.params.id;
+  const res = await issueSvc.credentialStatus(id);
+  console.log(res);
+  ctx.body = res;
+});
 
 export default router;

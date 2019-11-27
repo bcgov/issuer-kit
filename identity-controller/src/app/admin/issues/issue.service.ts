@@ -36,12 +36,10 @@ export class IssueService {
       .then(credDefId => (this.credDefId = credDefId.credential_definition_id));
   }
 
-  /*
-    connId: string,
-    comment: string,
-    attrs: ICredentialAttributes[],
-    credDefId: string
-  */
+  async credentialStatus(id: string) {
+    const res = await this._issue.records();
+    return res.find(record => record.credential_exchange_id === id);
+  }
 
   async issueCredential(args: {
     connId: string;

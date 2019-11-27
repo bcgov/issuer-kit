@@ -6,6 +6,10 @@ import { ActionType } from '../shared/interfaces/actions.interface';
 import { of } from 'rxjs';
 import { KeycloakService } from 'keycloak-angular';
 import { take } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
+import { environment } from 'src/environments/environment';
+
+const apiUrl = environment.apiUrl;
 
 @Injectable({
   providedIn: 'root'
@@ -13,19 +17,20 @@ import { take } from 'rxjs/operators';
 export class ActionService {
   invitedUsers: IInvitationRecord[];
   confirmedUsers: IInvitationRecord[];
+  _apiUrl: string;
   constructor(
     private httpSvc: HttpService,
     private stateSvc: StateService,
-    private keyCloakSvc: KeycloakService
+    private keyCloakSvc: KeycloakService,
+    private http: HttpClient
   ) {
+    this._apiUrl = apiUrl;
     this.loadData();
   }
 
   loadData() {
     const obs = this.httpSvc.get<IInvitationRecord[]>('invitations');
     obs.pipe(take(1)).subscribe(val => {
-      console.log('run', this.stateSvc.state);
-
       this.stateSvc.userList =
         this.stateSvc.state === 'invited'
           ? val.filter(user => !user.consumed)
@@ -54,7 +59,6 @@ export class ActionService {
       revoke: rec => this.revokeAccess(rec)
     };
     this.stateSvc.clearChangeRecords();
-    console.log(action);
     return actions[action](records);
   }
 
@@ -96,30 +100,23 @@ export class ActionService {
       }
     }
   }
-
-  sendEmail(records: string[] | string) {
+  // http://localhost:5000/invitations/5dd8715e9273bf009d687fda/renew
+  async sendEmail(records: string[] | string) {
     if (Array.isArray(records)) {
+      const arr = [];
       for (let record of records) {
-        this.sendEmail(record);
+        arr.push(
+          this.http
+            .post(`${this._apiUrl}invitations/${record}/renew`, {})
+            .toPromise()
+        );
       }
+      await Promise.all(arr);
+      this.loadData();
     } else {
-      const users = this.invitedUsers;
-      const itm = users.find(itm => itm._id === records);
-      const index = users.findIndex(itm => itm._id === records);
-      const { expired, expiry, ...noExpired } = itm;
-      const newExpired = false;
-      const created = new Date();
-      const newExpiry = new Date(created);
-      newExpiry.setDate(created.getDate() + 1);
-      const newUser = {
-        updatedBy: this.stateSvc.user.email,
-        expired: newExpired,
-        expiry: newExpiry.getTime(),
-        ...noExpired
-      };
-      users[index] = newUser;
-      this.invitedUsers = users;
-      return this.stateSvc.setUserList(users);
+      const res = await this.http
+        .post(`${this._apiUrl}invitations/${records}/renew`, {})
+        .toPromise();
     }
   }
 

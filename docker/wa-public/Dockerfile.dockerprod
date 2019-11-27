@@ -4,7 +4,7 @@ WORKDIR /app
 COPY wa-public/package*.json ./
 RUN npm install
 COPY wa-public/ .
-RUN npm run build
+RUN npm run build --prod
 
 # production stage
 FROM abiosoft/caddy:1.0.3-no-stats as production-stage

@@ -64,6 +64,5 @@ export class StateService {
 
   constructor(private keyCloakSvc: KeycloakService) {
     this.keyCloakSvc.loadUserProfile().then((obs: IUser) => (this.user = obs));
-    this.$$userList.subscribe(obs => console.log(obs));
   }
 }

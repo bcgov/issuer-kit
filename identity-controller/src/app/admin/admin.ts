@@ -2,11 +2,9 @@ import * as Koa from 'koa';
 import * as HttpStatus from 'http-status-codes';
 import * as bodyParser from 'koa-bodyparser';
 import * as cors from '@koa/cors';
-import Router = require('koa-router');
-import invitationController from './invitation/invitation.controller';
+import { allowedRoutes, allowedMethods } from './routes';
 
 const admin: Koa = new Koa();
-const client = true;
 // Generic error handling middleware.
 
 const options = {
@@ -36,14 +34,8 @@ admin.use(async (ctx: Koa.Context, next: () => Promise<any>) => {
   }
 });
 
-/*
-if (client) {
-  clientRoutes.forEach(route => app.use(route));
-  clientMethods.forEach(route => app.use(route));
-}
-*/
-admin.use(invitationController.routes());
-admin.use(invitationController.allowedMethods());
+allowedRoutes.forEach(route => admin.use(route));
+allowedMethods.forEach(method => admin.use(method));
 // Application error logging.
 admin.on('error', console.error);
 

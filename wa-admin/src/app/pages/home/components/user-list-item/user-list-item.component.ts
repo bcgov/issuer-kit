@@ -85,14 +85,6 @@ export class UserListItemComponent implements OnInit {
   viewItem(_id: string) {
     this.router.navigate([`/view/${_id}`]);
   }
-  /*
-  get expired() {
-    const date = new Date(this.expiry).getTime();
-    const expired = date - new Date().getTime();
-    console.log(this.email, expired);
-    return !(expired > 0);
-  }
-*/
 
   constructor(private router: Router) {
     // this.fc = new FormControl(active);
@@ -123,6 +115,5 @@ export class UserListItemComponent implements OnInit {
     this._id = _id;
     this.expired = expired;
     this.issued = issued;
-    console.log('blah blah blah asddsafdasfdasfa');
   }
 }

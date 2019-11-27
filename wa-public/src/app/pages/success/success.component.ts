@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { StateService, IUser } from 'src/app/services/state.service';
 import { ActionService } from 'src/app/services/action.service';
 import {
@@ -8,8 +8,9 @@ import {
   AbstractControl
 } from '@angular/forms';
 import { postalCodeValidator } from 'src/app/services/validators';
-import { Observable, of } from 'rxjs';
+import { Observable, of, interval, merge, Subscription } from 'rxjs';
 import { Router } from '@angular/router';
+import { map, take, mergeMap } from 'rxjs/operators';
 
 @Component({
   selector: 'wap-success',
@@ -251,7 +252,7 @@ import { Router } from '@angular/router';
   `,
   styleUrls: ['./success.component.scss']
 })
-export class SuccessComponent implements OnInit {
+export class SuccessComponent implements OnInit, OnDestroy {
   accepted = false;
   connectionId: string;
   get formInvalid() {
@@ -266,6 +267,7 @@ export class SuccessComponent implements OnInit {
   cardTitle = '';
   cardSubtitle = 'Sign-up for a verified credential';
   nextLabel = '';
+  subs: Subscription[] = [];
   $previewData: Observable<{ key: string; value: any; label: string }[]>;
   invite: {
     '@type': string;
@@ -367,7 +369,7 @@ export class SuccessComponent implements OnInit {
     private router: Router
   ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
     const user = this.stateSvc.user;
     const keys = Object.keys(user);
     this.disableList = keys.filter(
@@ -408,19 +410,18 @@ export class SuccessComponent implements OnInit {
     this.fg.updateValueAndValidity();
     this.$title = of(`Issue Verified Person Digital ID`);
 
-    const invite = {
-      '@type': 'did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/connections/1.0/invitation',
-      '@id': '65595c96-6881-470c-bb5e-50e1335c0ff6',
-      serviceEndpoint: 'http://192.168.65.3:8050',
-      label: 'Alice',
-      recipientKeys: ['CfvGNENfc13D7GfdYZ4s64va5VwrD5XYyZ91khHnzcAZ']
-    };
-    this.connectionId = invite['@id'];
-    const stringVal = JSON.stringify(invite);
+    const invitation = await this.actionSvc.getInvitation().toPromise();
+    this.connectionId = invitation.connection_id;
+    const stringVal = JSON.stringify(invitation.invitation);
+    this.invite = invitation.invitation as any;
     this.img = `https://chart.googleapis.com/chart?cht=qr&chs=300x300&chld=L|0&chl=${stringVal}`;
     const previewData = of(this.setPreview(this.fg));
     this.$previewData = previewData;
     this.setIndex(0);
+  }
+
+  ngOnDestroy() {
+    this.subs.forEach(sub => sub.unsubscribe());
   }
 
   setPreview(fg: FormGroup) {
@@ -466,9 +467,45 @@ export class SuccessComponent implements OnInit {
     return map;
   }
   fakeConnection() {
-    setTimeout(
-      () => this.router.navigate([`issue-credential/${this.connectionId}`]),
-      10000
+    const form = this.fg.getRawValue();
+    const timer = interval(7000);
+    this.subs.push(
+      timer
+        .pipe(
+          take(20),
+          mergeMap(() => this.actionSvc.getConnectionState(this.connectionId))
+        )
+        .subscribe(obs => {
+          console.log(obs);
+          console.log(this.connectionId);
+          console.log(JSON.stringify(this.invite, null, 2));
+          if (obs.state === 'active') {
+            this.actionSvc
+              .issueCredentials({
+                connectionId: this.connectionId,
+                claims: {
+                  userdisplayname: `${form.firstName} ${form.lastName}`,
+                  stateorprovince: 'BC',
+                  locality: form.locality,
+                  emailaddress: form.emailAddress,
+                  birthdate: form.dateOfBirth,
+                  surname: form.lastName,
+                  givenname: form.firstName,
+                  streetaddress: form.streetAddress,
+                  postalcode: form.postalCode,
+                  country: 'CA'
+                }
+              })
+              .toPromise()
+              .then(res => {
+                console.log(res);
+                this.router.navigate([
+                  `/issue-credential/${res.credential_exchange_id}`
+                ]);
+                // return this.router.navigate([])
+              });
+          }
+        })
     );
   }
 }

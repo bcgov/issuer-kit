@@ -25,6 +25,7 @@
     }
 
     proxy /api {%API_HOST%}:{%API_PORT%} {
+        without /api
         transparent
         fail_timeout 0 # see https://github.com/mholt/caddy/issues/1925
     }

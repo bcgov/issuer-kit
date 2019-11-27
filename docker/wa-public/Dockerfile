@@ -5,4 +5,4 @@ COPY docker/wa-public/config/Caddyfile /app/config/Caddyfile
 COPY wa-public/package*.json ./
 RUN npm install
 COPY wa-public/ .
-RUN npm run build
+RUN npm run build --prod

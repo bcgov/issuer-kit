@@ -162,7 +162,7 @@ import { encodeBase64 } from './encode.script';
                   <ion-item lines="none">
                     <ion-label
                       ><ion-text class="ion-text-wrap"
-                        >lorem ipsum dolor sit amet...</ion-text
+                        >DISCLAIMER: lorem ipsum dolor sit amet...</ion-text
                       ></ion-label
                     >
                     <ion-checkbox

@@ -1,7 +1,10 @@
 const PROXY_CONFIG = {
   '/api': {
     target: 'http://localhost:5000',
-    secure: false
+    secure: false,
+    pathRewrite: {
+      '^/api': ''
+    }
   },
   '/appconfig': {
     target: 'http://localhost:4251',

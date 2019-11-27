@@ -158,7 +158,7 @@ configureEnvironment() {
   export ADMIN_WEB_HOST_PORT=8081
   export ADMIN_WEB_HOST_TLS=off
   export ADMIN_API_HOST=identity-controller
-  export ADMIN_API_PORT=8080
+  export ADMIN_API_PORT=5000
 
   # wa-public
   export WA_PUBLIC_PORT=4251
@@ -166,7 +166,7 @@ configureEnvironment() {
   export PUBLIC_WEB_HOST_PORT=8082
   export PUBLIC_WEB_HOST_TLS=off
   export PUBLIC_API_HOST=identity-controller
-  export PUBLIC_API_PORT=8080
+  export PUBLIC_API_PORT=5000
 
   # wa-db
   export MONGODB_ADMIN_PASSWORD=admin

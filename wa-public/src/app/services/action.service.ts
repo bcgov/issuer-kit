@@ -4,7 +4,7 @@ import { StateService } from './state.service';
 import { environment } from 'src/environments/environment';
 import { HttpClient } from '@angular/common/http';
 
-const apiUrl = environment.apiUrl;
+const apiUrl = '/api/';
 
 export interface IInvitation {
   connection_id: string;

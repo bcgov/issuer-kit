@@ -1,6 +1,6 @@
 const PROXY_CONFIG = {
   '/api': {
-    target: 'http://localhost:5000',
+    target: 'http://identity-controller-dev:5000',
     secure: false,
     pathRewrite: {
       '^/api': ''

@@ -116,6 +116,7 @@ router.get('/:id/validate/', async (ctx: Context) => {
 
 router.post('/:id/renew/', async (ctx: Context) => {
   const id = ctx.params.id;
+  const { updatedBy } = ctx.request.body;
   const today = new Date();
   const expiry = new Date();
   expiry.setDate(today.getDate() + 1);
@@ -124,7 +125,29 @@ router.post('/:id/renew/', async (ctx: Context) => {
     query: {
       linkId: uuidv4(),
       expiry,
-      updatedBy: 'wa-admin',
+      updatedBy,
+      updatedAt: new Date()
+    },
+    id
+  });
+  ctx.body = res;
+});
+
+router.post('/:id/revoke/', async (ctx: Context) => {
+  const id = ctx.params.id;
+  const { updatedBy } = ctx.request.body;
+
+  const record = await client.getRecord({ collection: 'invitations', id });
+  if (!record) return ctx.throw(404);
+  const active = !record.active;
+  const expiry = new Date();
+  const res = await client.updateRecord<any>({
+    collection: 'invitations',
+    query: {
+      linkId: uuidv4(),
+      expiry,
+      active,
+      updatedBy,
       updatedAt: new Date()
     },
     id

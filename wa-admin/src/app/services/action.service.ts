@@ -62,60 +62,50 @@ export class ActionService {
     return actions[action](records);
   }
 
-  revokeAccess(records: string[] | string) {
-    if (Array.isArray(records)) {
-      for (const record of records) {
-        this.revokeAccess(record);
-      }
-    } else {
-      const users = this.confirmedUsers;
-      const index = users.findIndex(itm => itm._id === records);
-      if (index >= 0) {
-        const itm = users.find(itm => itm._id === records);
-        const { active, ...noActive } = itm;
-        const newActive = !active;
-        const newUser = {
-          active: newActive,
-          updatedBy: this.stateSvc.user.email,
-          ...noActive
-        };
-        users[index] = newUser;
-        this.confirmedUsers = users;
-        return this.stateSvc.setUserList(users);
-      } else {
-        const users = this.invitedUsers;
-        const itm = users.find(itm => itm._id === records);
-        const index = users.findIndex(itm => itm._id === records);
-        const { active, ...noActive } = itm;
-        const newActive = !active;
-        const newUser = {
-          active: newActive,
-          updatedBy: this.stateSvc.user.email,
-          ...noActive
-        };
-        users[index] = newUser;
-        this.invitedUsers = users;
-        this.stateSvc.setUserList(users);
-        this.clearRecords();
-      }
-    }
-  }
-  // http://localhost:5000/invitations/5dd8715e9273bf009d687fda/renew
-  async sendEmail(records: string[] | string) {
+  async revokeAccess(records: string[] | string) {
     if (Array.isArray(records)) {
       const arr = [];
-      for (let record of records) {
+      for (const record of records) {
         arr.push(
           this.http
-            .post(`${this._apiUrl}invitations/${record}/renew`, {})
+            .post(`${this._apiUrl}invitations/${record}/revoke`, {
+              addedBy: this.stateSvc.user.username
+            })
             .toPromise()
         );
       }
       await Promise.all(arr);
+      this.clearRecords();
       this.loadData();
     } else {
       const res = await this.http
-        .post(`${this._apiUrl}invitations/${records}/renew`, {})
+        .post(`${this._apiUrl}invitations/${records}/revoke`, {
+          addedBy: this.stateSvc.user.username
+        })
+        .toPromise();
+    }
+  }
+  async sendEmail(records: string[] | string) {
+    if (Array.isArray(records)) {
+      const arr = [];
+      for (const record of records) {
+        arr.push(
+          this.http
+            .post(`${this._apiUrl}invitations/${record}/renew`, {
+              addedBy: this.stateSvc.user.username
+            })
+            .toPromise()
+        );
+      }
+      await Promise.all(arr);
+      this.clearRecords();
+
+      this.loadData();
+    } else {
+      const res = await this.http
+        .post(`${this._apiUrl}invitations/${records}/renew`, {
+          addedBy: this.stateSvc.user.username
+        })
         .toPromise();
     }
   }

@@ -4,7 +4,6 @@ import * as Router from 'koa-router';
 import * as uuidv4 from 'uuid/v4';
 
 import { client } from '../../../index';
-import { ObjectId } from 'bson';
 import { validateInvitation } from '../../validations/invitation.validation';
 import { IInvitationRecord } from '../../models/interfaces/invitation-record';
 import { EmailService } from '../../services/email.service';
@@ -98,7 +97,7 @@ router.post('/', async (ctx: Context) => {
       ctx.throw(500, 'failed to send email to ' + res.email);
     }
   } catch (err) {
-    return ctx.throw('An internal server error occured', 500);
+    return ctx.throw('An internal server error occurred', 500);
   } finally {
     clearTimeout(timer);
   }
@@ -114,8 +113,7 @@ router.get('/:id/validate/', async (ctx: Context) => {
   if (!res.active) return ctx.throw(404);
   if (res.expiry.getTime() <= Date.now())
     return (ctx.body = { validated: false });
-  console.log('result', res);
-  return (ctx.body = { validated: true });
+  return (ctx.body = { validated: true, _id: res._id });
 });
 
 router.post('/:id/renew/', async (ctx: Context) => {

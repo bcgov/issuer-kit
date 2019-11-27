@@ -35,6 +35,7 @@ export interface IConnectionResponse {
 export interface IssueCredential {
   claims: Claims;
   connectionId: string;
+  _id: string;
 }
 export interface Claims {
   userdisplayname: string;

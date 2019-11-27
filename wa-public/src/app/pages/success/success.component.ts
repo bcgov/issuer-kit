@@ -480,8 +480,6 @@ export class SuccessComponent implements OnInit, OnDestroy {
           mergeMap(() => this.actionSvc.getConnectionState(this.connectionId))
         )
         .subscribe(obs => {
-          console.log(obs);
-          console.log(this.connectionId);
           console.log(JSON.stringify(this.invite, null, 2));
           if (obs.state === 'active') {
             this.actionSvc
@@ -498,7 +496,8 @@ export class SuccessComponent implements OnInit, OnDestroy {
                   streetaddress: form.streetAddress,
                   postalcode: form.postalCode,
                   country: 'CA'
-                }
+                },
+                _id: this.stateSvc.user._id,
               })
               .toPromise()
               .then(res => {

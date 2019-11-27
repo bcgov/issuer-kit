@@ -5,77 +5,7 @@ import { StateService, StateType } from './state.service';
 import { ActionType } from '../shared/interfaces/actions.interface';
 import { of } from 'rxjs';
 import { KeycloakService } from 'keycloak-angular';
-
-const testData = [
-  {
-    _id: 'abcdef',
-    consumed: false,
-    method: 'github',
-    email: 'sean@example.com',
-    jurisdiction: 'BC',
-    expiry: new Date().getTime() + 5000000,
-    active: true,
-    firstName: '',
-    lastName: '',
-    expired: false,
-    icon: '',
-    created: new Date().getTime() - 5000000,
-    addedBy: 'admin@example.com'
-  },
-  {
-    _id: 'xyzeabced',
-    consumed: false,
-    method: 'github',
-    email: 'billy@example.com',
-    jurisdiction: 'BC',
-    expired: true,
-    expiry: new Date().getTime() - 5000000,
-    active: true,
-    firstName: '',
-    lastName: '',
-    icon: '',
-    created: new Date().getTime() - 10000000,
-    addedBy: 'admin@example.com',
-    activity: [{}]
-  }
-] as IInvitationRecord[];
-
-const confirmed = [
-  {
-    _id: 'abc123',
-    consumed: true,
-    method: 'github',
-    email: 'emiliano@example.com',
-    jurisdiction: 'BC',
-    expiry: new Date().getTime(),
-    active: true,
-    firstName: 'Emiliano',
-    lastName: 'Example',
-    icon: 'github',
-    created: new Date().getTime() - 25000000,
-    addedBy: 'admin@example.com',
-    updatedBy: 'someotheradmin@example.com',
-    issued: true,
-    activity: [{}]
-  },
-  {
-    _id: 'abcd',
-    consumed: true,
-    method: 'github',
-    email: 'email@example.com',
-    jurisdiction: 'BC',
-    expiry: new Date().getTime(),
-    active: true,
-    firstName: 'Joe',
-    lastName: 'Thomson',
-    icon: 'github',
-    created: new Date().getTime() - 35000000,
-    updatedBy: 'admin@axemple.com',
-    addedBy: 'anotheradmin@example.com',
-    issued: false,
-    activity: [{}]
-  }
-];
+import { take } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -88,28 +18,28 @@ export class ActionService {
     private stateSvc: StateService,
     private keyCloakSvc: KeycloakService
   ) {
-    this.invitedUsers = testData;
-    this.confirmedUsers = confirmed.map(r => ({ changed: r.active, ...r }));
     this.loadData();
   }
 
   loadData() {
-    this.stateSvc.userList =
-      this.stateSvc.state === 'invited'
-        ? this.invitedUsers
-        : this.confirmedUsers;
+    const obs = this.httpSvc.get<IInvitationRecord[]>('invitations');
+    obs.pipe(take(1)).subscribe(val => {
+      console.log('run');
+      this.stateSvc.userList = val;
+    });
   }
 
-  async createInvitation(params: {
+  createInvitation(params: {
     method: string;
     jurisdiction: string;
     email: string;
     firstName: string;
     lastName: string;
+    addedBy: string;
   }) {
     // TODO: SH: Hook this up to the back end
-    // return this.httpSvc.post<{ _id: string }>('invitations', params);
-    return params;
+    return this.httpSvc.post<{ _id: string }>('invitations', params);
+    // return params;
   }
 
   applyAction(action: ActionType, records?: string[]) {
@@ -126,7 +56,7 @@ export class ActionService {
 
   revokeAccess(records: string[] | string) {
     if (Array.isArray(records)) {
-      for (let record of records) {
+      for (const record of records) {
         this.revokeAccess(record);
       }
     } else {
@@ -201,34 +131,16 @@ export class ActionService {
 
   changeState(state: StateType) {
     this.stateSvc.state = state;
-    this.stateSvc.userList =
-      state === 'invited' ? this.invitedUsers : this.confirmedUsers;
+    this.loadData();
   }
 
   getRecord(id: string) {
-    const recordList = [
-      ...this.invitedUsers,
-      ...this.confirmedUsers
-    ] as IInvitationRecord[];
-    return of(recordList.filter(record => record._id === id)[0]);
+    return this.httpSvc.get<IInvitationRecord>('invitations', {}, id);
   }
 
   clearRecords() {
     this.stateSvc.changeRecords.clear();
-    const state = this.stateSvc.state;
-    const recordList =
-      state === 'invited' ? this.invitedUsers : this.confirmedUsers;
-    this.stateSvc.userList =
-      state === 'invited'
-        ? recordList.map(record => {
-            const { changed, ...noChanged } = record;
-
-            return { changed: false, ...noChanged };
-          })
-        : recordList.map(record => {
-            const { changed, active, ...noChanged } = record;
-            return { changed: active, active, ...noChanged };
-          });
+    this.loadData();
   }
   logout() {
     this.keyCloakSvc.logout();

@@ -52,7 +52,14 @@ router.post('/', async (ctx: Context) => {
   if (!data) return ctx.throw(400, 'no data to add');
   const valid = validateInvitation(data);
   if (valid.errors) return ctx.throw(400, valid.errors.details);
-  const { method, email, jurisdiction, firstName = '', lastName = '' } = data;
+  const {
+    method,
+    email,
+    jurisdiction,
+    addedBy,
+    firstName = '',
+    lastName = ''
+  } = data;
 
   const timer = setTimeout(() => {
     return ctx.throw(500, 'operation timed out');
@@ -71,7 +78,7 @@ router.post('/', async (ctx: Context) => {
     firstName,
     lastName,
     created: today,
-    addedBy: 'wa-admin',
+    addedBy,
     linkId: uuidv4()
   } as IInvitationRecord;
   try {

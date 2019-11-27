@@ -16,6 +16,8 @@ export interface IViewRecord {
   fields: IFields;
   link: string;
   state: string;
+  stateColor?: string;
+  _id?: string;
 }
 
 export interface IFields {

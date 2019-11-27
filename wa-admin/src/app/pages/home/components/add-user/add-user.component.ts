@@ -217,7 +217,6 @@ export class AddUserComponent implements OnInit {
     if (fg.invalid) {
       fg.markAsTouched();
       fg.updateValueAndValidity();
-      console.log(fg);
       this.invalid = true;
       return (this.fg = fg);
     }
@@ -225,34 +224,21 @@ export class AddUserComponent implements OnInit {
     const { method, jurisdiction, email, firstName, lastName } = this.fg.value;
     if (this.index === 0) {
       this.index = 1;
-      console.log(this.index);
     } else {
-      const response = await this.actionSvc.createInvitation({
-        method,
-        jurisdiction,
-        email,
-        firstName,
-        lastName
-      });
-      console.log(response);
+      const addedBy = this.stateSvc.user.username;
+      const response = await this.actionSvc
+        .createInvitation({
+          method,
+          jurisdiction,
+          email,
+          firstName,
+          lastName,
+          addedBy
+        })
+        .toPromise();
       const created = new Date();
       const expiry = new Date();
       expiry.setDate(created.getDate() + 1);
-      const addedBy = this.stateSvc.user.email;
-      const record = {
-        _id: 'asdfjwezx',
-        active: true,
-        changed: false,
-        consumed: false,
-        expiry: expiry.getTime(),
-        expired: false,
-        created: created.getTime(),
-        method,
-        jurisdiction,
-        addedBy,
-        ...response
-      } as IInvitationRecord;
-      this.actionSvc.invitedUsers.push(record);
 
       const res = await this.alertSvc.confirmBox({
         header: 'Invitation Sent!',
@@ -260,7 +246,6 @@ export class AddUserComponent implements OnInit {
         decline: 'Home',
         confirm: 'Add another'
       });
-      console.log(res);
       if (res) return this.resetState();
       return this.router.navigate(['/']);
     }

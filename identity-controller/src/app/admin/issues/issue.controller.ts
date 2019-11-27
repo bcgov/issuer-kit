@@ -46,7 +46,6 @@ router.post('/', async (ctx: Context) => {
 router.get('/:id', async (ctx: Context) => {
   const id = ctx.params.id;
   const res = await issueSvc.credentialStatus(id);
-  console.log(res);
   ctx.body = res;
 });
 

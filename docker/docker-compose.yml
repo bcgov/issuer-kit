@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 services:
   #
   # API/Controller
@@ -16,9 +16,7 @@ services:
       - DB_PORT=${MONGODB_PORT}
       - SMTP_HOST=${SMTP_HOST}
       - SMTP_PORT=${SMTP_PORT}
-      - SMTP_USERNAME=${SMTP_USERNAME}
-      - SMTP_PASS=${SMTP_HOST}
-      - PUBLIC_URL=${PUBLIC_URL}
+      - PUBLIC_SITE_URL=${PUBLIC_SITE_URL}
     volumes:
       - ../identity-controller:/usr/src/controller
       - identity-controller-node-cache:/usr/src/controller/node_modules
@@ -30,6 +28,33 @@ services:
     depends_on:
       - wa-db
     command: npm run start-docker
+
+  identity-controller:
+    image: identity-kit-controller:latest
+    environment:
+      - PORT=${IDENTITY_CONTROLLER_PORT}
+      - HOOKS_PORT=${IDENTITY_CONTROLLER_HOOK_PORT}
+      - AGENT_ADMIN_URL=${AGENT_ADMIN_URL}
+      - DB_SERVICE=${DB_SERVICE}
+      - DB_NAME=${MONGODB_DATABASE}
+      - DB_USER=${MONGODB_USER}
+      - DB_PASSWORD=${MONGODB_PASSWORD}
+      - DB_PORT=${MONGODB_PORT}
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_PORT=${SMTP_PORT}
+      - PUBLIC_SITE_URL=${PUBLIC_SITE_URL}
+      - S2I_SCRIPTS_PATH=${STI_SCRIPTS_PATH}
+    ports:
+      - ${IDENTITY_CONTROLLER_PORT}:${IDENTITY_CONTROLLER_PORT}
+    networks:
+      - identity_kit
+    depends_on:
+      - wa-db
+    command: >
+      /bin/bash -c "
+      echo waiting for database...;
+      sleep 10;
+      ${S2I_SCRIPTS_PATH}/run;"
 
   #
   # Admin frontend with hot-reloading
@@ -45,6 +70,36 @@ services:
     networks:
       - identity_kit
     command: npm run start-docker
+
+  wa-admin:
+    image: wa-admin:latest
+    environment:
+      - WEB_HOST_NAME=${ADMIN_WEB_HOST_NAME}
+      - WEB_HOST_PORT=${ADMIN_WEB_HOST_PORT}
+      - WEB_HOST_TLS=${ADMIN_WEB_HOST_TLS}
+      - API_HOST=${ADMIN_API_HOST}
+      - API_PORT=${ADMIN_API_PORT}
+    volumes:
+      - ./wa-admin/config/Caddyfile:/etc/Caddyfile
+    ports:
+      - ${ADMIN_WEB_HOST_PORT}:${ADMIN_WEB_HOST_PORT}
+    networks:
+      - identity_kit
+
+  wa-public:
+    image: wa-public:latest
+    environment:
+      - WEB_HOST_NAME=${PUBLIC_WEB_HOST_NAME}
+      - WEB_HOST_PORT=${PUBLIC_WEB_HOST_PORT}
+      - WEB_HOST_TLS=${PUBLIC_WEB_HOST_TLS}
+      - API_HOST=${PUBLIC_API_HOST}
+      - API_PORT=${PUBLIC_API_PORT}
+    volumes:
+      - ./wa-public/config/Caddyfile:/etc/Caddyfile
+    ports:
+      - ${PUBLIC_WEB_HOST_PORT}:${PUBLIC_WEB_HOST_PORT}
+    networks:
+      - identity_kit
 
   #
   # Public frontend with hot-reloading
@@ -72,7 +127,7 @@ services:
       - MONGODB_PASSWORD=${MONGODB_PASSWORD}
       - MONGODB_DATABASE=${MONGODB_DATABASE}
     volumes:
-      - wa-db-data:/data/db
+      - wa-db-data:/var/lib/mongodb/data
     ports:
       - ${MONGODB_PORT}:${MONGODB_PORT}
     networks:
@@ -141,7 +196,7 @@ services:
       - identity-kit-wallet
     entrypoint: /bin/bash
     command: [
-        '-c',
+        "-c",
         "curl -d '{\"seed\":\"${AGENT_WALLET_SEED}\", \"role\":\"TRUST_ANCHOR\", \"alias\":\"${AGENT_NAME}\"}' -X POST ${LEDGER_URL}/register; \
         sleep 2; \
         aca-py start \
@@ -156,7 +211,9 @@ services:
         --auto-respond-credential-proposal \
         --auto-respond-credential-offer \
         --auto-respond-credential-request \
+        --auto-store-credential \
         --auto-verify-presentation \
+        --auto-respond-presentation-proposal \
         --wallet-type 'indy' \
         --wallet-name '${AGENT_WALLET_NAME}' \
         --wallet-key '${AGENT_WALLET_ENCRYPTION_KEY}' \

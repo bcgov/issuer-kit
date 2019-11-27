@@ -16,6 +16,8 @@ export interface IViewRecord {
   fields: IFields;
   link: string;
   state: string;
+  stateColor?: string;
+  _id?: string;
 }
 
 export interface IFields {
@@ -48,9 +50,7 @@ const publicUrl = environment.publicUrl;
             person
           </mat-icon>
           <mat-card-subtitle *ngIf="r.name">{{ r.name }}</mat-card-subtitle>
-          <!-- this will display a link for the user
           <mat-card-subtitle>{{ r.link }}</mat-card-subtitle>
-          -->
           <mat-card-subtitle
             ><ion-badge [color]="r.stateColor">{{
               r.state
@@ -143,12 +143,13 @@ export class ViewComponent implements OnInit {
           _id,
           email,
           fields: values,
-          link: `${this.url}${r._id}`,
+          link: `${this.url}validate?invite_token=${r.linkId}`,
           state,
           stateColor
         };
       })
     );
+
     this.$actions = obs.pipe(
       map(obs => {
         const accessLabel = obs.active ? 'Revoke Access' : 'Grant Access';

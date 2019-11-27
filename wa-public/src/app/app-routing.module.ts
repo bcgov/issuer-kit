@@ -6,6 +6,8 @@ import { HomeComponent } from './home/home.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { SuccessComponent } from './pages/success/success.component';
 import { TrackComponent } from './pages/track/track.component';
+import { AcceptDisclaimerComponent } from './components/accept-disclaimer/accept-disclaimer.component';
+import { RequestTokenComponent } from './components/request-token/request-token.component';
 
 const routes: Routes = [
   {
@@ -16,12 +18,20 @@ const routes: Routes = [
   {
     path: 'success',
     component: SuccessComponent,
-    canActivate: [ValidInviteGuard, KeycloakGuard]
+    canActivate: [KeycloakGuard]
   },
   {
     path: 'issue-credential/:id',
     component: TrackComponent,
     canActivate: [KeycloakGuard]
+  },
+  {
+    path: 'accept/:id',
+    component: AcceptDisclaimerComponent
+  },
+  {
+    path: 'request/:id',
+    component: RequestTokenComponent
   },
   { path: '**', component: PageNotFoundComponent }
 ];

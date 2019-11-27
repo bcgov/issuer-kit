@@ -577,7 +577,8 @@
       "clientAuthenticatorType": "client-secret",
       "secret": "**********",
       "redirectUris": [
-        "http://localhost:4250/*"
+        "http://localhost:4250/*",
+        "http://localhost:8081/*"
       ],
       "webOrigins": [
         "+"
@@ -684,7 +685,8 @@
       "clientAuthenticatorType": "client-secret",
       "secret": "**********",
       "redirectUris": [
-        "http://localhost:4251/*"
+        "http://localhost:4251/*",
+        "http://localhost:8082/*"
       ],
       "webOrigins": [
         "+"

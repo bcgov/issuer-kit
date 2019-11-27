@@ -52,7 +52,14 @@ router.post('/', async (ctx: Context) => {
   if (!data) return ctx.throw(400, 'no data to add');
   const valid = validateInvitation(data);
   if (valid.errors) return ctx.throw(400, valid.errors.details);
-  const { method, email, jurisdiction, firstName = '', lastName = '' } = data;
+  const {
+    method,
+    email,
+    jurisdiction,
+    addedBy,
+    firstName = '',
+    lastName = ''
+  } = data;
 
   const timer = setTimeout(() => {
     return ctx.throw(500, 'operation timed out');
@@ -71,7 +78,7 @@ router.post('/', async (ctx: Context) => {
     firstName,
     lastName,
     created: today,
-    addedBy: 'wa-admin',
+    addedBy,
     linkId: uuidv4()
   } as IInvitationRecord;
   try {
@@ -104,11 +111,16 @@ router.get('/:id/validate/', async (ctx: Context) => {
     query: { linkId }
   });
   if (!res) return ctx.throw(404);
-  return (ctx.status = 200);
+  if (!res.active) return ctx.throw(404);
+  if (res.expiry.getTime() <= Date.now())
+    return (ctx.body = { validated: false });
+  console.log('result', res);
+  return (ctx.body = { validated: true });
 });
 
 router.post('/:id/renew/', async (ctx: Context) => {
   const id = ctx.params.id;
+  const { updatedBy } = ctx.request.body;
   const today = new Date();
   const expiry = new Date();
   expiry.setDate(today.getDate() + 1);
@@ -117,7 +129,29 @@ router.post('/:id/renew/', async (ctx: Context) => {
     query: {
       linkId: uuidv4(),
       expiry,
-      updatedBy: 'wa-admin',
+      updatedBy,
+      updatedAt: new Date()
+    },
+    id
+  });
+  ctx.body = res;
+});
+
+router.post('/:id/revoke/', async (ctx: Context) => {
+  const id = ctx.params.id;
+  const { updatedBy } = ctx.request.body;
+
+  const record = await client.getRecord({ collection: 'invitations', id });
+  if (!record) return ctx.throw(404);
+  const active = !record.active;
+  const expiry = new Date();
+  const res = await client.updateRecord<any>({
+    collection: 'invitations',
+    query: {
+      linkId: uuidv4(),
+      expiry,
+      active,
+      updatedBy,
       updatedAt: new Date()
     },
     id

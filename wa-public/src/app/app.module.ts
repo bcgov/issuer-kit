@@ -27,6 +27,8 @@ import { IssuePreviewComponent } from './components/issue-preview/issue-preview.
 import { CardListItemComponent } from './components/card-list-item/card-list-item.component';
 import { TrackComponent } from './pages/track/track.component';
 import { MatListModule } from '@angular/material/list';
+import { RequestTokenComponent } from './components/request-token/request-token.component';
+import { AcceptDisclaimerComponent } from './components/accept-disclaimer/accept-disclaimer.component';
 
 const keycloakService = new KeycloakService();
 
@@ -53,7 +55,9 @@ const components = [
   InputComponent,
   IssuePreviewComponent,
   CardListItemComponent,
-  TrackComponent
+  TrackComponent,
+  RequestTokenComponent,
+  AcceptDisclaimerComponent
 ];
 
 @NgModule({
@@ -78,7 +82,7 @@ const components = [
 export class AppModule {
   ngDoBootstrap(app) {
     // Import app configuration from JSON
-    Axios.get('/assets/data/appConfig.json').then(response => {
+    Axios.get('/appconfig').then(response => {
       console.log(`Loaded configuration from ${response.config.url}`);
       const config = response.data;
       keycloakService

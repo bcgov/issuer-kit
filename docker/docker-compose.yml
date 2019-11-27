@@ -211,7 +211,9 @@ services:
         --auto-respond-credential-proposal \
         --auto-respond-credential-offer \
         --auto-respond-credential-request \
+        --auto-store-credential \
         --auto-verify-presentation \
+        --auto-respond-presentation-proposal \
         --wallet-type 'indy' \
         --wallet-name '${AGENT_WALLET_NAME}' \
         --wallet-key '${AGENT_WALLET_ENCRYPTION_KEY}' \

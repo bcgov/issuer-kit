@@ -39,7 +39,6 @@ export class AlertService {
     });
     await box.present();
     const res = await box.onDidDismiss();
-    console.log(res);
     return res.data.values;
   }
 

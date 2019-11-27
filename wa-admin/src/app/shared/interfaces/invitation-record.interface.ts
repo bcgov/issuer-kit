@@ -15,4 +15,5 @@ export interface IInvitationRecord {
   addedBy: string;
   updatedBy?: string;
   issued?: boolean;
+  linkId?: string;
 }

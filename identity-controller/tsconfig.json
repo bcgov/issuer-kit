@@ -5,6 +5,7 @@
     "noImplicitAny": true,
     "removeComments": true,
     "preserveConstEnums": true,
+    "strictPropertyInitialization": false,
     "sourceMap": true,
     "target": "es2017",
     "lib": ["es2017"],

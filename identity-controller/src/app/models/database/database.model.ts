@@ -75,7 +75,7 @@ class DBClient extends mongo.MongoClient {
 
   async updateRecord<T>(opts: {
     collection: DatabaseCollectionType;
-    query: { [key: string]: string | Date };
+    query: { [key: string]: string | Date | boolean };
     id: string;
   }): Promise<T> {
     const { collection, query, id } = opts;

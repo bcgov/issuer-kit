@@ -1,5 +1,5 @@
-This is just a placeholder, replace with appropriate configuration.
 {
+  "comment": "This is just a placeholder, replace with appropriate configuration.",
   "keycloak": {
     "url": "http://localhost:8180/auth",
     "realm": "identity-kit",

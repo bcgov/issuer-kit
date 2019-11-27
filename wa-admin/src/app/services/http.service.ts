@@ -15,6 +15,12 @@ export class HttpService {
     return this.http.post<T>(`${this.url}${segment}`, params);
   }
 
+  get<T>(segment: APISegmentType, params = {}, id?: string) {
+    return id
+      ? this.http.get<T>(`${this.url}${segment}/${id}`, {})
+      : this.http.get<T>(`${this.url}${segment}`, {});
+  }
+
   constructor(private http: HttpClient) {
     this.url = apiUrl;
   }

@@ -13,13 +13,13 @@ const host = process.env.SMTP_HOST;
 const port = parseInt(process.env.SMTP_PORT || '2525');
 const user = process.env.SMTP_USERNAME;
 const pass = process.env.SMTP_PASS;
-const publicUrl = process.env.PUBLIC_SITE_URL;
+const publicUrl = process.env.PUBLIC_URL;
 
 const emailSvc = new EmailService({
   host: host || '',
   port,
   user: user || '',
-  pass: pass || '',
+  pass: pass || ''
 });
 
 export interface IInvitationEvent {
@@ -28,7 +28,7 @@ export interface IInvitationEvent {
 }
 
 const routerOpts: Router.IRouterOptions = {
-  prefix: '/invitations',
+  prefix: '/invitations'
 };
 
 const router = new Router(routerOpts);
@@ -52,7 +52,14 @@ router.post('/', async (ctx: Context) => {
   if (!data) return ctx.throw(400, 'no data to add');
   const valid = validateInvitation(data);
   if (valid.errors) return ctx.throw(400, valid.errors.details);
-  const { method, email, jurisdiction, firstName = '', lastName = '' } = data;
+  const {
+    method,
+    email,
+    jurisdiction,
+    addedBy,
+    firstName = '',
+    lastName = ''
+  } = data;
 
   const timer = setTimeout(() => {
     return ctx.throw(500, 'operation timed out');
@@ -71,13 +78,13 @@ router.post('/', async (ctx: Context) => {
     firstName,
     lastName,
     created: today,
-    addedBy: 'wa-admin',
-    linkId: uuidv4(),
+    addedBy,
+    linkId: uuidv4()
   } as IInvitationRecord;
   try {
     const res = await client.insertRecord<IInvitationRecord>({
       collection: 'invitations',
-      record,
+      record
     });
 
     ctx.body = res;
@@ -85,7 +92,7 @@ router.post('/', async (ctx: Context) => {
     try {
       const mail = await emailSvc.mailInvite({
         address: res.email,
-        url: `${publicUrl}validate?invite_token=${res.linkId}`,
+        url: `${publicUrl}validate?invite_token=${res.linkId}`
       });
     } catch (err) {
       ctx.throw(500, 'failed to send email to ' + res.email);
@@ -101,14 +108,19 @@ router.get('/:id/validate/', async (ctx: Context) => {
   const linkId = ctx.params.id;
   const res = await client.getRecordByQuery({
     collection: 'invitations',
-    query: { linkId },
+    query: { linkId }
   });
   if (!res) return ctx.throw(404);
-  return (ctx.status = 200);
+  if (!res.active) return ctx.throw(404);
+  if (res.expiry.getTime() <= Date.now())
+    return (ctx.body = { validated: false });
+  console.log('result', res);
+  return (ctx.body = { validated: true });
 });
 
 router.post('/:id/renew/', async (ctx: Context) => {
   const id = ctx.params.id;
+  const { updatedBy } = ctx.request.body;
   const today = new Date();
   const expiry = new Date();
   expiry.setDate(today.getDate() + 1);
@@ -117,10 +129,32 @@ router.post('/:id/renew/', async (ctx: Context) => {
     query: {
       linkId: uuidv4(),
       expiry,
-      updatedBy: 'wa-admin',
-      updatedAt: new Date(),
+      updatedBy,
+      updatedAt: new Date()
     },
-    id,
+    id
+  });
+  ctx.body = res;
+});
+
+router.post('/:id/revoke/', async (ctx: Context) => {
+  const id = ctx.params.id;
+  const { updatedBy } = ctx.request.body;
+
+  const record = await client.getRecord({ collection: 'invitations', id });
+  if (!record) return ctx.throw(404);
+  const active = !record.active;
+  const expiry = new Date();
+  const res = await client.updateRecord<any>({
+    collection: 'invitations',
+    query: {
+      linkId: uuidv4(),
+      expiry,
+      active,
+      updatedBy,
+      updatedAt: new Date()
+    },
+    id
   });
   ctx.body = res;
 });

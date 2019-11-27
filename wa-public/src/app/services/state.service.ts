@@ -1,5 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { environment } from 'src/environments/environment';
+
+const apiUrl = environment.apiUrl;
 
 export interface IUser extends Keycloak.KeycloakProfile {}
 
@@ -11,18 +14,11 @@ export class StateService {
   private _title = 'Identity Kit POC';
 
   user: IUser;
+  private _apiUrl: string;
 
-  isValidToken(token: string) {
-    // this.http.post('/api/check-invite', {
-    //   "token": token
-    // });
-    // TODO @SH: call API on controller to verify token is valid
-
-    if (!this._isAuth) {
-      this._isAuth = token !== '123-456-789' ? false : true;
-    }
-
-    return this._isAuth;
+  async isValidToken(token: string) {
+    const url = `${this._apiUrl}invitations/${token}/validate`;
+    return await this.http.get<{ validated: boolean }>(url).toPromise();
   }
 
   get isAuth() {
@@ -33,5 +29,7 @@ export class StateService {
     return this._title;
   }
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    this._apiUrl = apiUrl;
+  }
 }

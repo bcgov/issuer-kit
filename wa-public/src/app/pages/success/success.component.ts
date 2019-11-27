@@ -11,6 +11,7 @@ import { postalCodeValidator } from 'src/app/services/validators';
 import { Observable, of, interval, merge, Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 import { map, take, mergeMap } from 'rxjs/operators';
+import { encodeBase64 } from './encode.script';
 
 @Component({
   selector: 'wap-success',
@@ -413,8 +414,11 @@ export class SuccessComponent implements OnInit, OnDestroy {
     const invitation = await this.actionSvc.getInvitation().toPromise();
     this.connectionId = invitation.connection_id;
     const stringVal = JSON.stringify(invitation.invitation);
+    console.log(stringVal)
+    const encoded = invitation.base
+    console.log(encoded)
     this.invite = invitation.invitation as any;
-    this.img = `https://chart.googleapis.com/chart?cht=qr&chs=300x300&chld=L|0&chl=${stringVal}`;
+    this.img = `https://chart.googleapis.com/chart?cht=qr&chs=300x300&chld=L|0&chl=${encoded}`;
     const previewData = of(this.setPreview(this.fg));
     this.$previewData = previewData;
     this.setIndex(0);

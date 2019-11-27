@@ -16,7 +16,7 @@ export class StateService {
   private _isAuth = false;
   private _title = 'Identity Kit POC';
 
-  user: IUser;
+  user: IUser = {};
   private _apiUrl: string;
 
   async isValidToken(token: string) {

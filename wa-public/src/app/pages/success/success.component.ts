@@ -476,7 +476,7 @@ export class SuccessComponent implements OnInit, OnDestroy {
     this.subs.push(
       timer
         .pipe(
-          take(20),
+          take(50),
           mergeMap(() => this.actionSvc.getConnectionState(this.connectionId))
         )
         .subscribe(obs => {

@@ -161,7 +161,7 @@ configureEnvironment() {
   export AGENT_WALLET_SEED="identity_kit_agent_0000000000000"
   export AGENT_ADMIN_PORT=8024
   export AGENT_WEBHOOK_PORT=8020
-  export AGENT_WEBHOOK_URL=${WEBHOOK_URL:-http://$DOCKERHOST:$IDENTITY_CONTROLLER_HOOK_PORT}
+  export AGENT_WEBHOOK_URL="http://identity-controller-dev:5000"
   export AGENT_HTTP_INTERFACE_PORT=8021
   export AGENT_NAME="identity-kit-agent"
   export AGENT_ENDPOINT=${AGENT_ENDPOINT:-http://$DOCKERHOST:$AGENT_HTTP_INTERFACE_PORT}
@@ -172,7 +172,7 @@ configureEnvironment() {
 
   # identity-controller
   export IDENTITY_CONTROLLER_PORT=5000
-  export IDENTITY_CONTROLLER_HOOK_PORT=5050
+  export IDENTITY_CONTROLLER_HOOK_PORT=5000
   export AGENT_ADMIN_URL=${AGENT_ADMIN_URL:-http://identity-kit-agent:$AGENT_ADMIN_PORT}
   export DB_SERVICE="wa-db"
   export SMTP_HOST=""

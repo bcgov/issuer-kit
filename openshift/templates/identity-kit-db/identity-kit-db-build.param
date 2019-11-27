@@ -1,0 +1,15 @@
+#=========================================================
+# OpenShift template parameters for:
+# Component: .
+# Template File: ../openshift/templates/identity-kit-db/identity-kit-db-build.json
+#=========================================================
+NAME=identity-kit-db
+APP_NAME=identity-kit
+APP_GROUP=identity-kit-storage
+GIT_REPO_URL=https://github.com/bcgov/identity-kit-poc.git
+GIT_REF=master
+SOURCE_CONTEXT_DIR=wa-db/config
+SOURCE_IMAGE_KIND=DockerImage
+SOURCE_IMAGE_NAME=registry.access.redhat.com/rhscl/mongodb-36-rhel7
+SOURCE_IMAGE_TAG=latest
+OUTPUT_IMAGE_TAG=latest

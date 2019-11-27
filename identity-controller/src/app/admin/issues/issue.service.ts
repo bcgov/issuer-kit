@@ -2,7 +2,7 @@ import schemaDef from './schema';
 import { CredentialDefinition } from '../../../core/agent-controller/modules/credential-definition/credential-definition.model';
 import { Schema } from '../../../core/agent-controller/modules/schema/schema.model';
 import { Issue } from '../../../core/agent-controller/modules/issue/issue.model';
-import { ICredentialAttributes } from 'src/core/interfaces/issue-credential.interface';
+import { ICredentialAttributes } from '../../../core/interfaces/issue-credential.interface';
 
 export class IssueService {
   _issue: Issue;
@@ -51,7 +51,7 @@ export class IssueService {
         connId,
         'issued by identity kit poc',
         attrs,
-        this.credDefId
+        this.credDefId,
       );
       return res;
     } catch (err) {

@@ -75,7 +75,17 @@ import { StateService } from 'src/app/services/state.service';
 export class HomePage implements OnInit, OnDestroy {
   title = 'Manage';
 
-  $records: Observable<IInvitationRecord[]>;
+  $records = this.stateSvc.$userList.pipe(
+    map(obs => {
+      if (!obs) return;
+      const state = this.stateSvc.state;
+      const filtered =
+        state === 'invited'
+          ? obs.filter(recs => !recs.consumed)
+          : obs.filter(recs => recs.consumed);
+      return filtered;
+    })
+  );
   fc: FormControl;
   searchString: string;
   subscriptions: Subscription[] = [];
@@ -96,31 +106,9 @@ export class HomePage implements OnInit, OnDestroy {
     const sub = this.fc.valueChanges.subscribe(text => {
       if (text.length > 0) {
         this.$records = this.stateSvc.$userList.pipe(
-          map(obs => {
-            if (!obs) return;
-            const state = this.stateSvc.state;
-            const filtered =
-              state === 'invited'
-                ? obs.filter(recs => !recs.consumed)
-                : obs.filter(recs => recs.consumed);
-            return filtered;
-          }),
           map(obs => obs.filter(r => r.email.includes(text)))
         );
-      } else {
-        this.$records = this.stateSvc.$userList.pipe(
-          map(obs => {
-            if (!obs) return;
-            const state = this.stateSvc.state;
-            const filtered =
-              state === 'invited'
-                ? obs.filter(recs => !recs.consumed)
-                : obs.filter(recs => recs.consumed);
-            console.log('filtered');
-            return filtered;
-          })
-        );
-      }
+      } else this.$records = this.stateSvc.$userList;
     });
     this.subscriptions.push(sub);
   }

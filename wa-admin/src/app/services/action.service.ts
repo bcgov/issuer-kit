@@ -24,8 +24,12 @@ export class ActionService {
   loadData() {
     const obs = this.httpSvc.get<IInvitationRecord[]>('invitations');
     obs.pipe(take(1)).subscribe(val => {
-      console.log('run');
-      this.stateSvc.userList = val;
+      console.log('run', this.stateSvc.state);
+
+      this.stateSvc.userList =
+        this.stateSvc.state === 'invited'
+          ? val.filter(user => !user.consumed)
+          : val.filter(user => user.consumed);
     });
   }
 

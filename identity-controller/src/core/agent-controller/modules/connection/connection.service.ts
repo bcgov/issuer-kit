@@ -1,13 +1,13 @@
 import {
   IInvitationRequestResponse,
   IInvitationRequest,
-  IReceiveInvitationRequestResponse
-} from 'src/core/interfaces/invitation-request.interface';
+  IReceiveInvitationRequestResponse,
+} from '../../../interfaces/invitation-request.interface';
 import request = require('superagent');
 import {
   IConnectionParams,
-  IConnectionsResult
-} from 'src/core/interfaces/connection.interface';
+  IConnectionsResult,
+} from '../../../interfaces/connection.interface';
 
 const segment = 'connections/';
 
@@ -41,7 +41,7 @@ export class ConnectionService {
   async receiveInvitation(
     invitation: IInvitationRequest,
     accept: boolean = true,
-    params?: IConnectionParams
+    params?: IConnectionParams,
   ): Promise<IReceiveInvitationRequestResponse> {
     const res = await request
       .post(`${this.apiUrl}connections/receive-invitation`)
@@ -58,7 +58,7 @@ export class ConnectionService {
   async acceptInvitation(id: string) {
     try {
       const res = await request.post(
-        `${this.apiUrl}connections/${id}/accept-invitation`
+        `${this.apiUrl}connections/${id}/accept-invitation`,
       );
 
       return res.body;
@@ -75,7 +75,7 @@ export class ConnectionService {
   async acceptRequest(id: string) {
     try {
       const res = await request.post(
-        `${this.apiUrl}connections/${id}/accept-request`
+        `${this.apiUrl}connections/${id}/accept-request`,
       );
       return res.body;
     } catch (err) {
@@ -90,7 +90,7 @@ export class ConnectionService {
 
   async connections(
     id: string | null = null,
-    params: IConnectionParams = {}
+    params: IConnectionParams = {},
   ): Promise<IConnectionsResult | IConnectionsResult[]> {
     try {
       const res =
@@ -122,7 +122,7 @@ export class ConnectionService {
   async sendMessage(id: string) {
     try {
       const res = await request.get(
-        `${this.apiUrl}connections/${id}/send-message`
+        `${this.apiUrl}connections/${id}/send-message`,
       );
       return res.body;
     } catch (err) {
@@ -162,7 +162,7 @@ export class ConnectionService {
   async postById(id: string, subsegment: 'send-ping') {
     try {
       const res = await request.post(
-        `${this.apiUrl}${segment}${id}/${subsegment}`
+        `${this.apiUrl}${segment}${id}/${subsegment}`,
       );
       return res;
     } catch (err) {

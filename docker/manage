@@ -19,33 +19,37 @@ function echoWarning (){
   _nc='\e[0m' # No Color
   echo -e "${_yellow}${_msg}${_nc}"
 }
+
+function checkS2IPresent () {
+  if [ -z $(type -P "$S2I_EXE") ]; then
+    echoError "The ${S2I_EXE} executable is needed and not on your path."
+    echoError "It can be downloaded from here: https://github.com/openshift/source-to-image/releases"
+    echoError "Make sure you extract the binary and place it in a directory on your path."
+    exit 1
+  fi
+}
+
+function customizeKeycloakConfig () {
+  # Customize realm settings for development environment
+  cp -f ./keycloak/config/realm-export.json ./keycloak/config/realm-export-docker.json
+  if [ -z "$GITHUB_CLIENT_ID" ] || [ -z "$GITHUB_CLIENT_ID" ]; then
+    echoWarning "The client id and/or secret for the integration of GitHub as IDP for Keycloak were not provided."
+    echoWarning "Please set the GITHUB_CLIENT_ID and GITHUB_CLIENT_SECRET environment variables to use GitHub as your IDP."
+    echoWarning "To get your  client id/secret combination, please visit: https://github.com/settings/developers"
+    echoWarning "Press Ctrl+C now to stop, or wait to proceed without GitHub integration."
+    sleep 8;
+  else
+    # Preparing Keycloak realm...
+    echo "Configuring GitHub IDP integration for Keycloak..."
+    sed -i "s/%GITHUB_CLIENT_ID%/$GITHUB_CLIENT_ID/g" ./keycloak/config/realm-export-docker.json
+    sed -i "s/%GITHUB_CLIENT_SECRET%/$GITHUB_CLIENT_SECRET/g" ./keycloak/config/realm-export-docker.json
+  fi
+}
 #
 # Global utility functions - END
 #
 
-# S2I_EXE=s2i
-# if [ -z $(type -P "$S2I_EXE") ]; then
-#   echoError "The ${S2I_EXE} executable is needed and not on your path."
-#   echoError "It can be downloaded from here: https://github.com/openshift/source-to-image/releases"
-#   echoError "Make sure you extract the binary and place it in a directory on your path."
-#   exit 1
-# fi
-
-# Customize realm settings for development environment
-cp -f ./keycloak/config/realm-export.json ./keycloak/config/realm-export-docker.json
-if [ -z "$GITHUB_CLIENT_ID" ] || [ -z "$GITHUB_CLIENT_ID" ]; then
-  echoWarning "The client id and/or secret for the integration of GitHub as IDP for Keycloak were not provided."
-  echoWarning "Please set the GITHUB_CLIENT_ID and GITHUB_CLIENT_SECRET environment variables to use GitHub as your IDP."
-  echoWarning "To get your  client id/secret combination, please visit: https://github.com/settings/developers"
-  echoWarning "Press Ctrl+C now to stop, or wait to proceed without GitHub integration."
-  sleep 8;
-else
-  # Preparing Keycloak realm...
-  echo "Configuring GitHub IDP integration for Keycloak..."
-  sed -i "s/%GITHUB_CLIENT_ID%/$GITHUB_CLIENT_ID/g" ./keycloak/config/realm-export-docker.json
-  sed -i "s/%GITHUB_CLIENT_SECRET%/$GITHUB_CLIENT_SECRET/g" ./keycloak/config/realm-export-docker.json
-fi
-
+S2I_EXE=s2i
 SCRIPT_HOME="$(cd "$(dirname "$0")" && pwd)"
 
 # =================================================================================================================
@@ -78,11 +82,41 @@ EOF
 # Default Settings:
 # -----------------------------------------------------------------------------------------------------------------
 DEFAULT_CONTAINERS="wa-db identity-kit-agent identity-kit-wallet keycloak keycloak-db"
-PROD_CONTAINERS=""
+PROD_CONTAINERS="identity-controller wa-admin wa-public"
 DEV_CONTAINERS="identity-controller-dev wa-admin-dev wa-public-dev"
 # -----------------------------------------------------------------------------------------------------------------
 # Functions:
 # -----------------------------------------------------------------------------------------------------------------
+build-identity-controller() {
+  BASE_IMAGE="registry.access.redhat.com/rhscl/nodejs-10-rhel7"
+  echo "Building identity-kit-controller image using $BASE_IMAGE as base..."
+  
+  ${S2I_EXE} build \
+    '../identity-controller' \
+    $BASE_IMAGE \
+    'identity-kit-controller'
+}
+
+build-wa-admin() {
+  echo -e "\nBuilding wa-admin image..."
+  docker build \
+    -t 'wa-admin' \
+    -f '../docker/wa-admin/Dockerfile.dockerprod' '../'
+}
+
+build-wa-public() {
+  echo -e "\nBuilding wa-public image..."
+  docker build \
+    -t 'wa-public' \
+    -f '../docker/wa-public/Dockerfile.dockerprod' '../'
+}
+
+build-all() {
+  build-identity-controller
+  build-wa-admin
+  build-wa-public
+}
+
 configureEnvironment() {
 
   if [ -f .env ]; then
@@ -115,14 +149,24 @@ configureEnvironment() {
 
   # Global
   export COMPOSE_PROJECT_NAME="${COMPOSE_PROJECT_NAME:-identity-kit}"
-  # export STI_SCRIPTS_PATH=${STI_SCRIPTS_PATH:-/usr/libexec/s2i}
+  export S2I_SCRIPTS_PATH=${S2I_SCRIPTS_PATH:-/usr/libexec/s2i}
   export DEBUG=${DEBUG}
 
   # wa-admin
   export WA_ADMIN_PORT=4250
+  export ADMIN_WEB_HOST_NAME=0.0.0.0
+  export ADMIN_WEB_HOST_PORT=8081
+  export ADMIN_WEB_HOST_TLS=off
+  export ADMIN_API_HOST=identity-controller
+  export ADMIN_API_PORT=8080
 
   # wa-public
   export WA_PUBLIC_PORT=4251
+  export PUBLIC_WEB_HOST_NAME=0.0.0.0
+  export PUBLIC_WEB_HOST_PORT=8082
+  export PUBLIC_WEB_HOST_TLS=off
+  export PUBLIC_API_HOST=identity-controller
+  export PUBLIC_API_PORT=8080
 
   # wa-db
   export MONGODB_ADMIN_PASSWORD=admin
@@ -275,8 +319,36 @@ case "${COMMAND}" in
     configureEnvironment "$@"
     docker-compose logs -f
     ;;
+  build)
+    checkS2IPresent
+
+    configureEnvironment "$@"
+
+    buildImage=$(toLower ${1})
+    shift || buildImage=all
+    buildImage=$(echo ${buildImage} | sed s~^identity-kit-~~)
+    case "$buildImage" in
+      *=*)
+        buildImage=all
+        ;;
+    esac
+
+    if functionExists "build-${buildImage}"; then
+      eval "build-${buildImage}"
+    else
+      echoError "\nThe build function, build-${buildImage}, does not exist.  Please check your build parameters and try again.\nUse '-h' to get full help details."
+      exit 1
+    fi
+    ;;
+  start-prod)
+    configureEnvironment "$@"
+    customizeKeycloakConfig
+    docker-compose up -d ${_startupParams} ${DEFAULT_CONTAINERS} ${PROD_CONTAINERS}
+    docker-compose logs -f
+    ;;
   start-dev|start|up)
     configureEnvironment "$@"
+    customizeKeycloakConfig
     docker-compose up -d ${_startupParams} ${DEFAULT_CONTAINERS} ${DEV_CONTAINERS}
     docker-compose logs -f
     ;;

@@ -13,7 +13,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 const keycloakService = new KeycloakService();
 
-
 @NgModule({
   declarations: [AppComponent, LoginFormComponent, NotFoundComponent],
   imports: [
@@ -36,7 +35,7 @@ const keycloakService = new KeycloakService();
 export class AppModule {
   ngDoBootstrap(app) {
     // Import app configuration from JSON
-    Axios.get('/assets/data/appConfig.json').then(response => {
+    Axios.get('/appconfig').then(response => {
       console.log(`Loaded configuration from ${response.config.url}`);
       const config = response.data;
       keycloakService

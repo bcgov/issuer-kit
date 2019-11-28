@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 
-const apiUrl = environment.apiUrl;
+const apiUrl = '/api/';
 
 export interface IUser extends Keycloak.KeycloakProfile {}
 

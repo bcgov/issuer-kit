@@ -27,7 +27,7 @@ class DBClient extends mongo.MongoClient {
   }) {
     super(opts.uri || '', opts.options || {});
     const prefix = 'database';
-    this.database = 'identity';
+    this.database = process.env.DB_NAME;
     this.prefix = prefix;
   }
 

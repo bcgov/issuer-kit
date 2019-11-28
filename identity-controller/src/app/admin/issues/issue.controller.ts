@@ -66,6 +66,7 @@ router.post('/', async (ctx: Context) => {
 });
 /*
   ID passed is credential exchange id
+  return whole object to validate the credential
 */
 router.get('/:id', async (ctx: Context) => {
   const id = ctx.params.id;

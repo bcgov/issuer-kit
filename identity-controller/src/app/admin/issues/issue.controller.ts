@@ -64,10 +64,12 @@ router.post('/', async (ctx: Context) => {
     ctx.throw(500, 'failed to create credential exchange record');
   }
 });
-
+/*
+  ID passed is credential exchange id
+*/
 router.get('/:id', async (ctx: Context) => {
   const id = ctx.params.id;
-  const res = await issueSvc.credentialStatus(id);
+  const res = await client.getRecordByQuery({collection: 'invitations', query: {credExId: id}} )
   ctx.body = res;
 });
 

@@ -1,5 +1,7 @@
 import * as Router from 'koa-router';
 import { Context } from 'koa';
+import { ICredHookResponse } from 'src/core/interfaces/cred-hook-response.interface';
+import {client} from '../../../index'
 
 export interface IConnectionActivity {
   created_at: string;
@@ -30,10 +32,20 @@ router.post('/connections', async (ctx: Context) => {
 });
 
 router.post('/issue_credential', async (ctx: Context) => {
-  const data = ctx.request.body;
-  console.log(JSON.stringify(data, null, 2))
+  const data = ctx.request.body as ICredHookResponse;
+  if (data.state === 'issued') {
+    console.log('Credential has been store', data.credential_exchange_id)
+  }
+  if (data.state === 'stored') {
+    console.log('Credential has been store', data.credential_exchange_id)
+    const res = await client.getRecordByQuery({collection: 'invitations', query: {credExId: data.credential_exchange_id}})
+    console.log(res)
+    if (!res) return console.log('something went wrong storing the credential', data.credential_exchange_id)
+    const update = await client.updateRecord({collection: 'invitations', query: {issued: true, consumed: true}, id: res._id})
+    if (!update) return console.log('something went wrong saving the update to the user record', data.credential_exchange_id)
 
-  // if (data.)
+    
+  }
   return ctx.status = 200
 
 });

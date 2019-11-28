@@ -57,7 +57,7 @@ import { encodeBase64 } from './encode.script';
                   alt="VON Network logo"
                   class="header-image"
                 />
-                <mat-card-title>Verified Claims Vallues</mat-card-title>
+                <mat-card-title>Verified Claims Values</mat-card-title>
                 <mat-card-subtitle>Validate claims</mat-card-subtitle>
               </mat-card-header>
               <mat-card-content [formGroup]="fg">
@@ -501,11 +501,9 @@ export class SuccessComponent implements OnInit, OnDestroy {
               })
               .toPromise()
               .then(res => {
-                console.log(res);
                 this.router.navigate([
                   `/issue-credential/${res.credential_exchange_id}`
                 ]);
-                // return this.router.navigate([])
               });
           }
         })

@@ -1,6 +1,6 @@
 import * as nodemailer from 'nodemailer';
 import Mail = require('nodemailer/lib/mailer');
-import {emailTemplate} from './invitation_email'
+import { emailTemplate } from './invitation_email';
 
 export class EmailService {
   transporter: Mail;
@@ -14,11 +14,11 @@ export class EmailService {
     const transport = nodemailer.createTransport({
       host: host,
       port: port,
-      secure: false,
+      secure: process.env.NODE_ENV === 'production' ? true : false,
       auth: {
         user: user,
-        pass: pass
-      }
+        pass: pass,
+      },
     });
     this.transporter = transport;
   }
@@ -29,7 +29,7 @@ export class EmailService {
       from: 'Identity Kit POC <no-reply@gov.bc.ca>',
       to: address,
       subject: 'Welcome to the Identity Kit POC test.',
-      html: emailTemplate(url)
+      html: emailTemplate(url),
     });
     return mail;
   }

@@ -1,5 +1,6 @@
 import * as nodemailer from 'nodemailer';
 import Mail = require('nodemailer/lib/mailer');
+import {emailTemplate} from './invitation_email'
 
 export class EmailService {
   transporter: Mail;
@@ -28,7 +29,7 @@ export class EmailService {
       from: 'Identity Kit POC <no-reply@gov.bc.ca>',
       to: address,
       subject: 'Welcome to the Identity Kit POC test.',
-      html: `<h3>Welcome to identity kit POC test.<h3> <p>Click here to get started <a href="${url}">Link</a></p>`
+      html: emailTemplate(url)
     });
     return mail;
   }

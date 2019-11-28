@@ -3,10 +3,10 @@ import test from 'ava';
 import { DBClient, DatabaseCollectionType } from './database.model';
 
 import { resolve } from 'path';
-import { IInvitationRecord } from 'src/app/models/interfaces/invitation-record';
+import { IInvitationRecord } from '../../models/interfaces/invitation-record';
 
 const config = require('dotenv').config({
-  path: resolve(__dirname, '../../../../config.env')
+  path: resolve(__dirname, '../../../../config.env'),
 });
 
 const prefix = 'VALIDATORS: ';
@@ -26,14 +26,14 @@ test(prefix + 'should insert an invitation', async t => {
     addedBy: 'sean',
     active: false,
     created: new Date(),
-    linkId: 'alksdjfsda'
+    linkId: 'alksdjfsda',
   };
 
   const client = await DBClient.getInstance({ uri, database: 'identity' });
   await client.connect();
   const res = await client.insertRecord<IInvitationRecord>({
     collection: 'invitations',
-    record
+    record,
   });
   t.log('the id', res);
   t.assert(typeof res === 'string');

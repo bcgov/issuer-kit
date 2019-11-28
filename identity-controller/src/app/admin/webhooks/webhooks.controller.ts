@@ -33,7 +33,7 @@ router.post('/connections', async (ctx: Context) => {
 router.post('/issue_credential', async (ctx: Context) => {
   const data = ctx.request.body as ICredHookResponse;
   if (data.state === 'issued') {
-    console.log('Credential has been store', data.credential_exchange_id);
+    console.log('Credential has been issued', data.credential_exchange_id);
   }
   if (data.state === 'stored') {
     console.log('Credential has been store', data.credential_exchange_id);

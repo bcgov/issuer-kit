@@ -42,5 +42,22 @@ export class AlertService {
     return res.data.values;
   }
 
+  async error(args: {header: string, message: string}) {
+    const {
+      header,
+      message,
+    } = args;
+
+    const box = await this.alertCtrl.create({
+      header,
+      message,
+      buttons: [{
+          text: 'OK',
+          handler: () => ({ values: true })
+        }]
+    });
+    return await box.present();
+  }
+
   constructor(private alertCtrl: AlertController) {}
 }

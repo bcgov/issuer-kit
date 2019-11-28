@@ -81,10 +81,18 @@ router.post('/', async (ctx: Context) => {
     linkId: uuidv4(),
   } as IInvitationRecord;
   try {
+    const exists = await client.getRecordByQuery({
+      collection: 'invitations',
+      query: { email },
+    });
+    if (exists != null) {
+      return (ctx.body.error = `User with email ${email} already exists`);
+    }
     const res = await client.insertRecord<IInvitationRecord>({
       collection: 'invitations',
       record,
     });
+    if (!res) ctx.throw(500, 'user failed to add');
 
     ctx.body = res;
 
@@ -92,9 +100,12 @@ router.post('/', async (ctx: Context) => {
       address: res.email,
       url: `${publicUrl}validate?invite_token=${res.linkId}`,
     });
-    if (!mail) console.log('email failed to send', res.email);
+    if (!mail) {
+      console.log('email failed to send', res.email);
+      ctx.body.error = ['email failed to send'];
+    }
   } catch (err) {
-    console.log('email failed to send', err.message);
+    console.log(err.status, err.message);
   } finally {
     clearTimeout(timer);
   }

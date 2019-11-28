@@ -226,6 +226,7 @@ export class AddUserComponent implements OnInit {
       this.index = 1;
     } else {
       const addedBy = this.stateSvc.user.username;
+      try {
       const response = await this.actionSvc
         .createInvitation({
           method,
@@ -248,6 +249,9 @@ export class AddUserComponent implements OnInit {
       });
       if (res) return this.resetState();
       return this.router.navigate(['/']);
+    } catch(err) {
+      this.alertSvc.error({header: err.status, message: err.message})
+    }
     }
   }
 

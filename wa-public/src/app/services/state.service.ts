@@ -15,6 +15,9 @@ export interface IUser extends Keycloak.KeycloakProfile {
 export class StateService {
   private _isAuth = false;
   private _title = 'Identity Kit POC';
+  _id: string;
+  guid: string;
+
 
   user: IUser = {};
   private _apiUrl: string;

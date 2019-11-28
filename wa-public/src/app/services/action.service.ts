@@ -128,6 +128,7 @@ export class ActionService {
   }
 
   issueCredentials(data: IssueCredential) {
+    console.log('issue data', data)
     return this.http.post<IssueResponse>(`${this._apiUrl}issues/`, data);
   }
 

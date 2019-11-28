@@ -47,7 +47,7 @@ export class ActionService {
     addedBy: string;
   }) {
     // TODO: SH: Hook this up to the back end
-    return this.httpSvc.post<{ _id: string }>('invitations', params);
+    return this.httpSvc.post<{ _id: string, error?: string }>('invitations', params);
     // return params;
   }
 

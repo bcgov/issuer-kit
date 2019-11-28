@@ -25,12 +25,17 @@ export class EmailService {
 
   async mailInvite(opts: { address: string; url: string }) {
     const { address, url } = opts;
-    const mail = await this.transporter.sendMail({
-      from: 'Identity Kit POC <no-reply@gov.bc.ca>',
-      to: address,
-      subject: 'Welcome to the Identity Kit POC test.',
-      html: emailTemplate(url),
-    });
-    return mail;
+    try {
+      const mail = await this.transporter.sendMail({
+        from: 'Identity Kit POC <no-reply@gov.bc.ca>',
+        to: address,
+        subject: 'Welcome to the Identity Kit POC test.',
+        html: emailTemplate(url),
+      });
+      return mail;
+    } catch (err) {
+      console.log(err);
+    }
+
   }
 }

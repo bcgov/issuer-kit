@@ -8,7 +8,7 @@ import { IInvitationRecord } from 'src/app/shared/interfaces/invitation-record.i
 import { AlertService } from 'src/app/services/alert.service';
 import { Router } from '@angular/router';
 
-const url = 'https://identity-kit.pathfinder.gov.bc.ca/';
+const url = environment.publicUrl;
 
 @Component({
   selector: 'waa-add-user',
@@ -250,7 +250,8 @@ export class AddUserComponent implements OnInit {
       if (res) return this.resetState();
       return this.router.navigate(['/']);
     } catch(err) {
-      this.alertSvc.error({header: err.status, message: err.message})
+      console.log(err)
+      this.alertSvc.error({header: 'An error occurred adding the user', message: err.error.error.message})
     }
     }
   }

@@ -1,10 +1,10 @@
-import { Component, OnInit, AfterViewInit, Input } from '@angular/core';
+import { Component, OnInit, AfterViewInit, Input, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import { startWith, switchMap } from 'rxjs/operators';
 import { interval } from 'rxjs/internal/observable/interval';
 import { StateService } from 'src/app/services/state.service';
-import { Observable, of } from 'rxjs';
+import { Observable, of, Subscription } from 'rxjs';
 import { ActionService } from 'src/app/services/action.service';
 
 @Component({
@@ -86,11 +86,12 @@ import { ActionService } from 'src/app/services/action.service';
   `,
   styleUrls: ['./credential-issuance.component.scss']
 })
-export class CredentialIssuanceComponent implements OnInit {
+export class CredentialIssuanceComponent implements OnInit, OnDestroy {
   @Input() credExId: string;
   $user: Observable<string>;
   step: number;
   progressValue: number;
+  subs: Subscription[] = []
   private stateProgressMapping = {
     connected: {
       state: 'connected',
@@ -114,16 +115,22 @@ export class CredentialIssuanceComponent implements OnInit {
      // TODO @SH: set the current connection id
     // this.transactionStateURL = `/api/state/${this.credExId}`;
     this.step = 2;
-    
-    interval(5000)
+    this.subs.push(interval(5000)
       .pipe(
         startWith(0),
         switchMap(() => this.actionSvc.getCredentialById(this.credExId)) // TODO: @SH replace with this.transactionStateURL
       )
-      .subscribe(res => this.updateProgress(res.issued));
+      .subscribe(res => {
+        console.log(res)
+        if (!res) return
+        this.updateProgress(res.issued)
+      }));
     // setTimeout(() => (this.step = 3), 20000);
     const user = this.stateSvc.user;
     if (user) this.$user = of(`${user.firstName}`);
+  }
+  ngOnDestroy() {
+    this.subs.forEach(sub => sub.unsubscribe())
   }
 
   updateProgress(issued: boolean) {

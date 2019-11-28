@@ -9,7 +9,7 @@ import { take } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 
-const apiUrl = environment.apiUrl;
+const apiUrl = '/api/';
 
 @Injectable({
   providedIn: 'root'

@@ -5,7 +5,7 @@ import { environment } from 'src/environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { IInvitationRecord } from '../interfaces/invitation-record';
 
-const apiUrl = environment.apiUrl;
+const apiUrl = '/api/';
 
 export interface IInvitation {
   connection_id: string;

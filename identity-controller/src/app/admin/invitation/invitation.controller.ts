@@ -86,7 +86,7 @@ router.post('/', async (ctx: Context) => {
       query: { email },
     });
     if (exists != null) {
-      return (ctx.body.error = `User with email ${email} already exists`);
+      ctx.throw(400, `User with email ${email} already exists`);
     }
     const res = await client.insertRecord<IInvitationRecord>({
       collection: 'invitations',
@@ -102,10 +102,15 @@ router.post('/', async (ctx: Context) => {
     });
     if (!mail) {
       console.log('email failed to send', res.email);
-      ctx.body.error = ['email failed to send'];
+
+      ctx.throw(
+        500,
+        `${email} was added to the POC. They did not receive an e-mail invitation due to an internal server error.`,
+      );
     }
   } catch (err) {
-    console.log(err.status, err.message);
+    console.log('an error occurred adding the user', err);
+    ctx.throw(err.status, err.message);
   } finally {
     clearTimeout(timer);
   }

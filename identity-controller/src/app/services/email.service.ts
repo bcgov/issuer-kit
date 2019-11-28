@@ -1,6 +1,6 @@
 import * as nodemailer from 'nodemailer';
 import Mail = require('nodemailer/lib/mailer');
-import {emailTemplate} from './invitation_email'
+import { emailTemplate } from './invitation_email';
 
 export class EmailService {
   transporter: Mail;
@@ -17,20 +17,24 @@ export class EmailService {
       secure: false,
       auth: {
         user: user,
-        pass: pass
-      }
+        pass: pass,
+      },
     });
     this.transporter = transport;
   }
 
   async mailInvite(opts: { address: string; url: string }) {
     const { address, url } = opts;
-    const mail = await this.transporter.sendMail({
-      from: 'Identity Kit POC <no-reply@gov.bc.ca>',
-      to: address,
-      subject: 'Welcome to the Identity Kit POC test.',
-      html: emailTemplate(url)
-    });
-    return mail;
+    try {
+      const mail = await this.transporter.sendMail({
+        from: 'Identity Kit POC <no-reply@gov.bc.ca>',
+        to: address,
+        subject: 'Welcome to the Identity Kit POC test.',
+        html: emailTemplate(url),
+      });
+      return mail;
+    } catch (err) {
+      console.log(err);
+    }
   }
 }

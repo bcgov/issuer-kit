@@ -15,10 +15,6 @@ export class EmailService {
       host: host,
       port: port,
       secure: process.env.NODE_ENV === 'production' ? true : false,
-      auth: {
-        user: user,
-        pass: pass,
-      },
     });
     this.transporter = transport;
   }

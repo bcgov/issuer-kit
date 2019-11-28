@@ -18,7 +18,7 @@ const emailSvc = new EmailService({
   host: host || '',
   port,
   user: user || '',
-  pass: pass || ''
+  pass: pass || '',
 });
 
 export interface IInvitationEvent {
@@ -27,7 +27,7 @@ export interface IInvitationEvent {
 }
 
 const routerOpts: Router.IRouterOptions = {
-  prefix: '/invitations'
+  prefix: '/invitations',
 };
 
 const router = new Router(routerOpts);
@@ -57,7 +57,7 @@ router.post('/', async (ctx: Context) => {
     jurisdiction,
     addedBy,
     firstName = '',
-    lastName = ''
+    lastName = '',
   } = data;
 
   const timer = setTimeout(() => {
@@ -78,26 +78,23 @@ router.post('/', async (ctx: Context) => {
     lastName,
     created: today,
     addedBy,
-    linkId: uuidv4()
+    linkId: uuidv4(),
   } as IInvitationRecord;
   try {
     const res = await client.insertRecord<IInvitationRecord>({
       collection: 'invitations',
-      record
+      record,
     });
 
     ctx.body = res;
 
-    try {
-      const mail = await emailSvc.mailInvite({
-        address: res.email,
-        url: `${publicUrl}validate?invite_token=${res.linkId}`
-      });
-    } catch (err) {
-      ctx.throw(500, 'failed to send email to ' + res.email);
-    }
+    const mail = await emailSvc.mailInvite({
+      address: res.email,
+      url: `${publicUrl}validate?invite_token=${res.linkId}`,
+    });
+    if (!mail) console.log('email failed to send', res.email);
   } catch (err) {
-    return ctx.throw('An internal server error occurred', 500);
+    console.log('email failed to send', err.message);
   } finally {
     clearTimeout(timer);
   }
@@ -107,7 +104,7 @@ router.get('/:id/validate/', async (ctx: Context) => {
   const linkId = ctx.params.id;
   const res = await client.getRecordByQuery({
     collection: 'invitations',
-    query: { linkId }
+    query: { linkId },
   });
   if (!res) return ctx.throw(404);
   if (!res.active) return ctx.throw(404);
@@ -128,9 +125,9 @@ router.post('/:id/renew/', async (ctx: Context) => {
       linkId: uuidv4(),
       expiry,
       updatedBy,
-      updatedAt: new Date()
+      updatedAt: new Date(),
     },
-    id
+    id,
   });
   ctx.body = res;
 });
@@ -150,9 +147,9 @@ router.post('/:id/revoke/', async (ctx: Context) => {
       expiry,
       active,
       updatedBy,
-      updatedAt: new Date()
+      updatedAt: new Date(),
     },
-    id
+    id,
   });
   ctx.body = res;
 });

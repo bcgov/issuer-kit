@@ -5,6 +5,7 @@ import { startWith, switchMap } from 'rxjs/operators';
 import { interval } from 'rxjs/internal/observable/interval';
 import { StateService } from 'src/app/services/state.service';
 import { Observable, of } from 'rxjs';
+import { ActionService } from 'src/app/services/action.service';
 
 @Component({
   selector: 'wap-credential-issuance',
@@ -86,7 +87,7 @@ import { Observable, of } from 'rxjs';
   styleUrls: ['./credential-issuance.component.scss']
 })
 export class CredentialIssuanceComponent implements OnInit {
-  @Input() connectionId: string;
+  @Input() credExId: string;
   $user: Observable<string>;
   step: number;
   progressValue: number;
@@ -100,40 +101,32 @@ export class CredentialIssuanceComponent implements OnInit {
       step: 2
     },
     credential_issued: {
-      state: 'credential_issued',
+      state: 'stored',
       step: 3
     }
   };
 
-  constructor(private http: HttpClient, private stateSvc: StateService) {}
+  constructor(private http: HttpClient, private stateSvc: StateService, private actionSvc: ActionService) {}
 
   private transactionStateURL: string;
 
   ngOnInit() {
-    this.connectionId = '123-456-789'; // TODO @SH: set the current connection id
-    this.transactionStateURL = `/api/state/${this.connectionId}`;
+     // TODO @SH: set the current connection id
+    // this.transactionStateURL = `/api/state/${this.credExId}`;
     this.step = 2;
-
+    
     interval(5000)
       .pipe(
         startWith(0),
-        switchMap(() => this.http.get('/assets/data/appConfig.json')) // TODO: @SH replace with this.transactionStateURL
+        switchMap(() => this.actionSvc.getCredentialById(this.credExId)) // TODO: @SH replace with this.transactionStateURL
       )
-      .subscribe(res => this.updateProgress(res));
-    setTimeout(() => (this.step = 3), 10000);
+      .subscribe(res => this.updateProgress(res.issued));
     // setTimeout(() => (this.step = 3), 20000);
     const user = this.stateSvc.user;
     if (user) this.$user = of(`${user.firstName}`);
   }
 
-  updateProgress(state: any) {
-    // Should look like:
-    // {
-    //   state: 'offer_sent'
-    // }
-    const newState = this.stateProgressMapping[state.state];
-    if (newState) {
-      this.step = newState.step;
-    }
+  updateProgress(issued: boolean) {
+    if (issued) this.step = 3;
   }
 }

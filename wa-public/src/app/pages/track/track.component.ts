@@ -18,9 +18,9 @@ import { ActivatedRoute } from '@angular/router';
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
-    <ion-content *ngIf="$id | async as connectionId" fullscreen>
+    <ion-content *ngIf="$id | async as credExId" fullscreen>
       <wap-credential-issuance
-        [connectionId]="connectionId"
+        [credExId]="credExId"
       ></wap-credential-issuance>
     </ion-content>
   `,
@@ -33,7 +33,7 @@ export class TrackComponent implements OnInit {
   constructor(public actionSvc: ActionService, private route: ActivatedRoute) {}
 
   ngOnInit() {
-    const connectionId = this.route.snapshot.paramMap.get('id');
-    this.$id.next(connectionId);
+    const credExId = this.route.snapshot.paramMap.get('id');
+    this.$id.next(credExId);
   }
 }

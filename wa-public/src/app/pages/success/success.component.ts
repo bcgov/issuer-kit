@@ -11,6 +11,7 @@ import { postalCodeValidator } from 'src/app/services/validators';
 import { Observable, of, interval, merge, Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 import { map, take, mergeMap } from 'rxjs/operators';
+import { encodeBase64 } from './encode.script';
 
 @Component({
   selector: 'wap-success',
@@ -56,7 +57,7 @@ import { map, take, mergeMap } from 'rxjs/operators';
                   alt="VON Network logo"
                   class="header-image"
                 />
-                <mat-card-title>Verified Claims Vallues</mat-card-title>
+                <mat-card-title>Verified Claims Values</mat-card-title>
                 <mat-card-subtitle>Validate claims</mat-card-subtitle>
               </mat-card-header>
               <mat-card-content [formGroup]="fg">
@@ -161,7 +162,7 @@ import { map, take, mergeMap } from 'rxjs/operators';
                   <ion-item lines="none">
                     <ion-label
                       ><ion-text class="ion-text-wrap"
-                        >lorem ipsum dolor sit amet...</ion-text
+                        >DISCLAIMER: lorem ipsum dolor sit amet...</ion-text
                       ></ion-label
                     >
                     <ion-checkbox
@@ -413,8 +414,11 @@ export class SuccessComponent implements OnInit, OnDestroy {
     const invitation = await this.actionSvc.getInvitation().toPromise();
     this.connectionId = invitation.connection_id;
     const stringVal = JSON.stringify(invitation.invitation);
+    console.log(stringVal)
+    const encoded = invitation.base
+    console.log(encoded)
     this.invite = invitation.invitation as any;
-    this.img = `https://chart.googleapis.com/chart?cht=qr&chs=300x300&chld=L|0&chl=${stringVal}`;
+    this.img = `https://chart.googleapis.com/chart?cht=qr&chs=300x300&chld=L|0&chl=${encoded}`;
     const previewData = of(this.setPreview(this.fg));
     this.$previewData = previewData;
     this.setIndex(0);
@@ -472,12 +476,10 @@ export class SuccessComponent implements OnInit, OnDestroy {
     this.subs.push(
       timer
         .pipe(
-          take(20),
+          take(50),
           mergeMap(() => this.actionSvc.getConnectionState(this.connectionId))
         )
         .subscribe(obs => {
-          console.log(obs);
-          console.log(this.connectionId);
           console.log(JSON.stringify(this.invite, null, 2));
           if (obs.state === 'active') {
             this.actionSvc
@@ -494,15 +496,14 @@ export class SuccessComponent implements OnInit, OnDestroy {
                   streetaddress: form.streetAddress,
                   postalcode: form.postalCode,
                   country: 'CA'
-                }
+                },
+                _id: this.stateSvc.user._id,
               })
               .toPromise()
               .then(res => {
-                console.log(res);
                 this.router.navigate([
                   `/issue-credential/${res.credential_exchange_id}`
                 ]);
-                // return this.router.navigate([])
               });
           }
         })

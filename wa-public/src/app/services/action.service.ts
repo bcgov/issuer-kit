@@ -3,6 +3,7 @@ import { KeycloakService } from 'keycloak-angular';
 import { StateService } from './state.service';
 import { environment } from 'src/environments/environment';
 import { HttpClient } from '@angular/common/http';
+import { IInvitationRecord } from '../interfaces/invitation-record';
 
 const apiUrl = '/api/';
 
@@ -10,6 +11,7 @@ export interface IInvitation {
   connection_id: string;
   invitation: Invitation;
   invitation_url: string;
+  base: string;
 }
 export interface Invitation {
   '@type': string;
@@ -34,6 +36,7 @@ export interface IConnectionResponse {
 export interface IssueCredential {
   claims: Claims;
   connectionId: string;
+  _id: string;
 }
 export interface Claims {
   userdisplayname: string;
@@ -125,7 +128,10 @@ export class ActionService {
   }
 
   issueCredentials(data: IssueCredential) {
-    console.log('data', data);
     return this.http.post<IssueResponse>(`${this._apiUrl}issues/`, data);
+  }
+
+  getCredentialById(id: string) {
+    return this.http.get<IInvitationRecord>(`${this._apiUrl}issues/${id}`)
   }
 }

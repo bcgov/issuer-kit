@@ -4,7 +4,6 @@ import * as Router from 'koa-router';
 import * as uuidv4 from 'uuid/v4';
 
 import { client } from '../../../index';
-import { ObjectId } from 'bson';
 import { validateInvitation } from '../../validations/invitation.validation';
 import { IInvitationRecord } from '../../models/interfaces/invitation-record';
 import { EmailService } from '../../services/email.service';
@@ -19,7 +18,7 @@ const emailSvc = new EmailService({
   host: host || '',
   port,
   user: user || '',
-  pass: pass || ''
+  pass: pass || '',
 });
 
 export interface IInvitationEvent {
@@ -28,7 +27,7 @@ export interface IInvitationEvent {
 }
 
 const routerOpts: Router.IRouterOptions = {
-  prefix: '/invitations'
+  prefix: '/invitations',
 };
 
 const router = new Router(routerOpts);
@@ -58,7 +57,7 @@ router.post('/', async (ctx: Context) => {
     jurisdiction,
     addedBy,
     firstName = '',
-    lastName = ''
+    lastName = '',
   } = data;
 
   const timer = setTimeout(() => {
@@ -79,26 +78,34 @@ router.post('/', async (ctx: Context) => {
     lastName,
     created: today,
     addedBy,
-    linkId: uuidv4()
+    linkId: uuidv4(),
   } as IInvitationRecord;
   try {
+    const exists = await client.getRecordByQuery({
+      collection: 'invitations',
+      query: { email },
+    });
+    if (exists != null) {
+      return (ctx.body.error = `User with email ${email} already exists`);
+    }
     const res = await client.insertRecord<IInvitationRecord>({
       collection: 'invitations',
-      record
+      record,
     });
+    if (!res) ctx.throw(500, 'user failed to add');
 
     ctx.body = res;
 
-    try {
-      const mail = await emailSvc.mailInvite({
-        address: res.email,
-        url: `${publicUrl}validate?invite_token=${res.linkId}`
-      });
-    } catch (err) {
-      ctx.throw(500, 'failed to send email to ' + res.email);
+    const mail = await emailSvc.mailInvite({
+      address: res.email,
+      url: `${publicUrl}validate?invite_token=${res.linkId}`,
+    });
+    if (!mail) {
+      console.log('email failed to send', res.email);
+      ctx.body.error = ['email failed to send'];
     }
   } catch (err) {
-    return ctx.throw('An internal server error occured', 500);
+    console.log(err.status, err.message);
   } finally {
     clearTimeout(timer);
   }
@@ -108,14 +115,13 @@ router.get('/:id/validate/', async (ctx: Context) => {
   const linkId = ctx.params.id;
   const res = await client.getRecordByQuery({
     collection: 'invitations',
-    query: { linkId }
+    query: { linkId },
   });
   if (!res) return ctx.throw(404);
   if (!res.active) return ctx.throw(404);
   if (res.expiry.getTime() <= Date.now())
     return (ctx.body = { validated: false });
-  console.log('result', res);
-  return (ctx.body = { validated: true });
+  return (ctx.body = { validated: true, _id: res._id });
 });
 
 router.post('/:id/renew/', async (ctx: Context) => {
@@ -130,9 +136,9 @@ router.post('/:id/renew/', async (ctx: Context) => {
       linkId: uuidv4(),
       expiry,
       updatedBy,
-      updatedAt: new Date()
+      updatedAt: new Date(),
     },
-    id
+    id,
   });
   ctx.body = res;
 });
@@ -152,9 +158,9 @@ router.post('/:id/revoke/', async (ctx: Context) => {
       expiry,
       active,
       updatedBy,
-      updatedAt: new Date()
+      updatedAt: new Date(),
     },
-    id
+    id,
   });
   ctx.body = res;
 });

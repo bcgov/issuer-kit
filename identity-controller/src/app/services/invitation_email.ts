@@ -1,4 +1,6 @@
-<p>
+export const emailTemplate = (url: string) => { 
+  
+  return `<p>
 You have received this invitation from name@email.com. If you have any
 questions please contact them by sending an email to <a href="mailto:name@email.com">name@email.com</a>. 
 </p>
@@ -87,4 +89,4 @@ diam. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere
 cubilia Curae; Morbi lacinia molestie dui. Praesent blandit dolor. Sed non quam.
 In vel mi sit amet augue congue elementum. Morbi in ipsum sit amet pede
 facilisis laoreet. Donec lacus nunc, viverra nec.
-</p>
+</p>`}

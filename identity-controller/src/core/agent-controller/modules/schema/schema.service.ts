@@ -12,7 +12,6 @@ export class SchemaService {
   */
   async postSchema(schema: ISchema) {
     try {
-      console.log('apiUrl', this._apiUrl);
       const res = await request.post(`${this._apiUrl}schemas`).send(schema);
       return res.body;
     } catch (err) {

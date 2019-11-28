@@ -3,7 +3,7 @@ import {
   ICredentialAttributes,
   IIssueSend,
   IIssueOffer,
-  IRecordsResult
+  IRecordsResult,
 } from '../../../interfaces/issue-credential.interface';
 
 export type IssueCredentialRecordStateType =
@@ -28,7 +28,7 @@ export class Issue {
   filterIssueCrendentials(
     key: IssueCredentialFilterType,
     val: IssueCredentialRecordStateType | string,
-    records: any[]
+    records: any[],
   ) {
     return records.filter(itm => itm[key] === val);
   }
@@ -37,7 +37,7 @@ export class Issue {
     connId: string,
     comment: string,
     attrs: ICredentialAttributes[],
-    credDefId: string
+    credDefId: string,
   ): IIssueSend | null {
     const formatAttrs = this.formatAttrs(attrs);
     if (Array.isArray(formatAttrs)) {
@@ -51,10 +51,10 @@ export class Issue {
         // attributes: formatAttrs
         // },
         credential_preview: {
-          attributes: formatAttrs
+          attributes: formatAttrs,
         },
         auto_issue: true,
-        auto_offer: true
+        auto_offer: true,
       };
     } else return null;
   }
@@ -64,18 +64,18 @@ export class Issue {
     comment: string,
     attributes: ICredentialAttributes[],
     credential_definition_id: string,
-    autoIssue: boolean = true
+    autoIssue: boolean = true,
   ): IIssueOffer {
     return {
       connection_id,
       comment,
       credential_definition_id,
       credential_preview: {
-        attributes: attributes
+        attributes: attributes,
         // '@type':
         // 'did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/issue-credential/1.0/credential-proposal',
       },
-      auto_issue: true
+      auto_issue: true,
     };
   }
 
@@ -91,7 +91,7 @@ export class Issue {
 
     return {
       name: attrs.name,
-      value: attrs.value
+      value: attrs.value,
     };
   }
 
@@ -130,10 +130,9 @@ export class Issue {
     connId: string,
     comment: string,
     attrs: ICredentialAttributes[],
-    credDefId: string
+    credDefId: string,
   ) {
     const cred = this.formatSendCred(connId, comment, attrs, credDefId);
-    console.log('formatted', JSON.stringify(cred, null, 2));
 
     try {
       if (cred != null) {
@@ -156,10 +155,9 @@ export class Issue {
     connId: string,
     comment: string,
     attrs: ICredentialAttributes[],
-    credDefId: string
+    credDefId: string,
   ) {
     const credOffer = this.formatSendOffer(connId, comment, attrs, credDefId);
-    console.log('formatted', JSON.stringify(credOffer, null, 2));
     try {
       if (credOffer != null) {
         const res = await this._issueSvc.sendOffer(credOffer);
@@ -205,20 +203,20 @@ export class Issue {
     attributes: ICredentialAttributes[],
     comment: string,
     // TODO: this is hard-coded until it becomes a problem
-    type: string = 'did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/issue-credential/1.0/credential-preview'
+    type: string = 'did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/issue-credential/1.0/credential-preview',
   ) {
     let credential_preview = {
       credential_preview: {
         '@type': type,
-        attributes
+        attributes,
       },
-      comment
+      comment,
     };
     try {
       let res = await this._issueSvc.postById(
         credExId,
         'issue',
-        credential_preview
+        credential_preview,
       );
       return res.body;
     } catch (err) {

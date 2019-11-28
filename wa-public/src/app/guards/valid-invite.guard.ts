@@ -28,6 +28,8 @@ export class ValidInviteGuard implements CanActivate {
     this.stateService
       .isValidToken(inviteToken)
       .then(res => {
+        this.stateService.user._id = res._id || '';
+        this.stateService.user.guid = inviteToken || '';
         res.validated
           ? this.router.navigate([`accept/${inviteToken}`])
           : this.router.navigate([`request/${inviteToken}`]);
@@ -37,4 +39,6 @@ export class ValidInviteGuard implements CanActivate {
     // token is valid, save state and continue
     return true;
   }
+
+  
 }

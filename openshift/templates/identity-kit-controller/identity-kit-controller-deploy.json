@@ -174,6 +174,10 @@
                   {
                     "name": "SMTP_PORT",
                     "value": "${SMTP_SERVER_PORT}"
+                  },
+                  {
+                    "name": "PUBLIC_SITE_URL",
+                    "value": "${PUBLIC_SITE_URL}"
                   }
                 ],
                 "resources": {
@@ -304,6 +308,13 @@
       "description": "SMTP Server Port",
       "required": true,
       "value": ""
+    },
+    {
+      "name": "PUBLIC_SITE_URL",
+      "displayName": "Public Site URL",
+      "description": "Public Site URL",
+      "required": true,
+      "value": "https://identity-kit.pathfinder.gov.bc.ca/"
     },
     {
       "name": "MIN_REPLICAS",

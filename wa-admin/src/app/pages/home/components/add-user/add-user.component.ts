@@ -8,7 +8,7 @@ import { IInvitationRecord } from 'src/app/shared/interfaces/invitation-record.i
 import { AlertService } from 'src/app/services/alert.service';
 import { Router } from '@angular/router';
 
-const url = environment.publicUrl;
+const url = 'https://identity-kit.pathfinder.gov.bc.ca/';
 
 @Component({
   selector: 'waa-add-user',

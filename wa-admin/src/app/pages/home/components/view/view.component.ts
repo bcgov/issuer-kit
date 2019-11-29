@@ -25,7 +25,7 @@ export interface IFields {
   value: string;
 }
 
-const publicUrl = environment.publicUrl;
+const publicUrl = 'https://identity-kit.pathfinder.gov.bc.ca/';
 
 @Component({
   selector: 'waa-view',

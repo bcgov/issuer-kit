@@ -12,7 +12,7 @@ const host = process.env.SMTP_HOST;
 const port = parseInt(process.env.SMTP_PORT || '2525');
 const user = process.env.SMTP_USERNAME;
 const pass = process.env.SMTP_PASS;
-const publicUrl = process.env.PUBLIC_URL;
+const publicUrl = process.env.PUBLIC_SITE_URL;
 
 const emailSvc = new EmailService({
   host: host || '',

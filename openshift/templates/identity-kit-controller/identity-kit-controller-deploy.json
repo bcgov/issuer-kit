@@ -31,12 +31,6 @@
             "port": "${{SERVICE_PORT}}",
             "protocol": "TCP",
             "targetPort": "${{SERVICE_PORT}}"
-          },
-          {
-            "name": "${HOOKS_PORT}-tcp",
-            "port": "${{HOOKS_PORT}}",
-            "protocol": "TCP",
-            "targetPort": "${{HOOKS_PORT}}"
           }
         ],
         "selector": {
@@ -103,10 +97,6 @@
                   {
                     "containerPort": "${{SERVICE_PORT}}",
                     "protocol": "TCP"
-                  },
-                  {
-                    "containerPort": "${{HOOKS_PORT}}",
-                    "protocol": "TCP"
                   }
                 ],
                 "readinessProbe": {
@@ -133,10 +123,6 @@
                   {
                     "name": "PORT",
                     "value": "${SERVICE_PORT}"
-                  },
-                  {
-                    "name": "HOOKS_PORT",
-                    "value": "${HOOKS_PORT}"
                   },
                   {
                     "name": "DB_SERVICE",
@@ -262,13 +248,6 @@
       "required": true,
       "description": "The port exposed by the controller.",
       "value": "8080"
-    },
-    {
-      "name": "HOOKS_PORT",
-      "displayName": "Hooks Port",
-      "required": true,
-      "description": "The port exposed by the controller that will be used as target for webhooks.",
-      "value": "8181"
     },
     {
       "name": "DB_SERVICE",

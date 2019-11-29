@@ -7,7 +7,6 @@ services:
     image: node:erbium
     environment:
       - PORT=${IDENTITY_CONTROLLER_PORT}
-      - HOOKS_PORT=${IDENTITY_CONTROLLER_HOOK_PORT}
       - AGENT_ADMIN_URL=${AGENT_ADMIN_URL}
       - DB_SERVICE=${DB_SERVICE}
       - DB_NAME=${MONGODB_DATABASE}
@@ -33,7 +32,6 @@ services:
     image: identity-kit-controller:latest
     environment:
       - PORT=${IDENTITY_CONTROLLER_PORT}
-      - HOOKS_PORT=${IDENTITY_CONTROLLER_HOOK_PORT}
       - AGENT_ADMIN_URL=${AGENT_ADMIN_URL}
       - DB_SERVICE=${DB_SERVICE}
       - DB_NAME=${MONGODB_DATABASE}

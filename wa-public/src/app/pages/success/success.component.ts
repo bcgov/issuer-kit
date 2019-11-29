@@ -485,6 +485,7 @@ export class SuccessComponent implements OnInit, OnDestroy {
     return map;
   }
   fakeConnection() {
+    if (!this.stateSvc._id) return this.hasId = false;
     const form = this.fg.getRawValue();
     const timer = interval(7000);
     this.subs.push(

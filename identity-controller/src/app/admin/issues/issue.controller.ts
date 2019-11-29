@@ -38,7 +38,7 @@ router.post('/', async (ctx: Context) => {
 
   const keys = Object.keys(data.claims);
   const claims = data.claims as any;
-  const mapped = keys.map(key => ({ name: key, value: claims[key] }));
+  const mapped = keys.map(key => ({ name: key, value: claims[key], 'mime-type': null }));
   async function wait(ms: number) {
     return new Promise(resolve => {
       setTimeout(resolve, ms);

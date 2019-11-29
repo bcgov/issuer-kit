@@ -168,6 +168,18 @@ router.post('/:id/revoke/', async (ctx: Context) => {
     id,
   });
   ctx.body = res;
+  const mail = await emailSvc.mailInvite({
+    address: res.email,
+    url: `${publicUrl}validate?invite_token=${res.linkId}`,
+  });
+  if (!mail) {
+    console.log('email failed to send', res.email);
+
+    ctx.throw(
+      500,
+      `${res.email} was added to the POC. They did not receive an e-mail invitation due to an internal server error.`,
+    );
+  }
 });
 
 router.get('/:id', async (ctx: Context) => {

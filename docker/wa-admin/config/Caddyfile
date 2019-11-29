@@ -20,8 +20,8 @@
 
     # Required for angular router to work
     rewrite {
-        regexp ^/(!?api)/?$
-        to {path} /
+        if {path} not_match ^/api
+        to {path} {path}/ /
     }
 
     proxy /api {%API_HOST%}:{%API_PORT%} {

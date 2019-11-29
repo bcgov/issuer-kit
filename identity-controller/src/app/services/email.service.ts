@@ -14,7 +14,11 @@ export class EmailService {
     const transport = nodemailer.createTransport({
       host: host,
       port: port,
-      secure: process.env.NODE_ENV === 'production' ? true : false,
+      tls: {
+        // do not fail on invalid certs
+        rejectUnauthorized: false,
+      },
+      logger: true,
     });
     this.transporter = transport;
   }
@@ -32,6 +36,5 @@ export class EmailService {
     } catch (err) {
       console.log(err);
     }
-
   }
 }

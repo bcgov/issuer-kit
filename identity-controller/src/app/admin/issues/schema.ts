@@ -15,7 +15,7 @@ const attributes = [
 const schemaDef = {
   attributes,
   schema_name: 'verified_person',
-  schema_version: '1.23',
+  schema_version: '1.22',
 };
 
 export default schemaDef;

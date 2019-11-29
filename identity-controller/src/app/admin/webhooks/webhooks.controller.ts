@@ -2,6 +2,7 @@ import * as Router from 'koa-router';
 import { Context } from 'koa';
 import { ICredHookResponse } from '../../../core/interfaces/cred-hook-response.interface';
 import { client } from '../../../index';
+import { Connection } from '../../../core/agent-controller/modules/connection/connection.model';
 
 export interface IConnectionActivity {
   created_at: string;
@@ -25,8 +26,18 @@ const routerOpts = {
 
 const router = new Router(routerOpts);
 
+const connCtrl = new Connection(
+  process.env.AGENT_ADMIN_URL || 'http://localhost:8024/',
+);
+
 router.post('/connections', async (ctx: Context) => {
   const data = ctx.request.body as IConnectionActivity;
+  const { state, connection_id: connectionId } = data;
+  if (state === 'response') {
+    console.log('connections response', data);
+    connCtrl.requestResponse(connectionId);
+    connCtrl.sendTrustPing(connectionId);
+  }
   return (ctx.status = 200);
 });
 

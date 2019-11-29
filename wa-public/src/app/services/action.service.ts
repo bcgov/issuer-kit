@@ -40,7 +40,7 @@ export interface IssueCredential {
 }
 export interface Claims {
   userdisplayname: string;
-  emailaddress: string;
+  email: string;
   surname: string;
   givenname: string;
   birthdate: string;

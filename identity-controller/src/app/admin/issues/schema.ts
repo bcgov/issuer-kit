@@ -1,6 +1,6 @@
 const attributes = [
   'userdisplayname',
-  'emailaddress',
+  'email',
   'surname',
   'givenname',
   'birthdate',
@@ -8,13 +8,14 @@ const attributes = [
   'locality',
   'stateorprovince',
   'postalcode',
-  'country'
+  'country',
+  'issued',
 ];
 
 const schemaDef = {
   attributes,
   schema_name: 'verified_person',
-  schema_version: '1.2'
+  schema_version: '1.23',
 };
 
 export default schemaDef;

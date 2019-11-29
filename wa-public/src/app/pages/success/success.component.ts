@@ -503,7 +503,7 @@ export class SuccessComponent implements OnInit, OnDestroy {
                   userdisplayname: `${form.firstName} ${form.lastName}`,
                   stateorprovince: 'BC',
                   locality: form.locality,
-                  emailaddress: form.emailAddress,
+                  email: form.emailAddress,
                   birthdate: form.dateOfBirth,
                   surname: form.lastName,
                   givenname: form.firstName,

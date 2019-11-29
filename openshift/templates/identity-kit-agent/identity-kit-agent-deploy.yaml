@@ -120,7 +120,7 @@ objects:
                 - name: GENESIS_URL
                   value: ${GENESIS_FILE_URL}
                 - name: AGENT_WALLET_NAME
-                  value: vc_oidc_agent-wallet
+                  value: identity_kit_agent-wallet
                 - name: WALLET_TYPE
                   value: ${WALLET_STORAGE_TYPE}
                 - name: POSTGRESQL_WALLET_HOST

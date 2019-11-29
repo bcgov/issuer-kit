@@ -47,7 +47,7 @@ export interface IRecordsResult {
 
 export interface ICredentialAttributes {
   name: string;
-  'mime-type'?: string | null;
+  'mime-type'?: string;
   value: string;
 }
 

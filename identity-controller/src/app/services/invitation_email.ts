@@ -1,8 +1,7 @@
-export const emailTemplate = (url: string) => { 
-  
+export const emailTemplate = (url: string, adminAddress: string) => {
   return `<p>
 You have received this invitation from name@email.com. If you have any
-questions please contact them by sending an email to <a href="mailto:name@email.com">name@email.com</a>. 
+questions please contact them by sending an email to <a href="mailto:${adminAddress}">${adminAddress}</a>. 
 </p>
 <p>
 This proof of concept is facilitated by the Digital ID and Authentication
@@ -48,12 +47,12 @@ Please install one of the following:
 Step 2: Obtain your proof of concept digital ID for verified person
 </p>
 <p>
-Use the following link <a href="${url}">Link</a>
+Use the following <a href="${url}">Link</a>
 </p>
 <p>
 You can use this link multiple times to allow for demonstrations you may want to
 do. If you find that the link has expired, please request a new invitation by
-sending an email to <a href="mailto:name@email.com">name@email.com</a>. 
+sending an email to <a href="mailto:${adminAddress}">${adminAddress}</a>. 
 </p>
 <p>
 Step 3: Use your proof of concept digital ID at proof of concept demonstration services. 
@@ -89,4 +88,5 @@ diam. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere
 cubilia Curae; Morbi lacinia molestie dui. Praesent blandit dolor. Sed non quam.
 In vel mi sit amet augue congue elementum. Morbi in ipsum sit amet pede
 facilisis laoreet. Donec lacus nunc, viverra nec.
-</p>`}
+</p>`;
+};

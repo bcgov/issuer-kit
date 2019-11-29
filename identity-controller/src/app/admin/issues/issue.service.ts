@@ -46,6 +46,7 @@ export class IssueService {
     attrs: ICredentialAttributes[];
   }) {
     const { connId, attrs } = args;
+
     try {
       const res = await this._issue.issueOfferSend(
         connId,

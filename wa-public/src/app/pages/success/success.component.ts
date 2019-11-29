@@ -28,7 +28,7 @@ import { encodeBase64 } from './encode.script';
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
-    <wap-view-wrapper>
+    <wap-view-wrapper *ngIf="hasId; else noIdHelper">
       <ion-grid *ngIf="index === 0">
         <ion-row>
           <ion-col>
@@ -250,12 +250,25 @@ import { encodeBase64 } from './encode.script';
         </mat-card>
       </mat-card>
     </wap-view-wrapper>
+    <ng-template #noIdHelper>
+      <wap-view-wrapper>
+        <mat-card>
+        <mat-card-title>
+         Please re-enter invitation link.
+        </mat-card-title>
+        <mat-card-content>
+          Your session has expired. Please re-enter the link from the POC Invitation email.
+        </mat-card-content>
+        </mat-card>
+      </wap-view-wrapper>
+    </ng-template>
   `,
   styleUrls: ['./success.component.scss']
 })
 export class SuccessComponent implements OnInit, OnDestroy {
   accepted = false;
   connectionId: string;
+  hasId = true;
   get formInvalid() {
     return !this.accepted || this.fg.invalid;
   }
@@ -371,6 +384,7 @@ export class SuccessComponent implements OnInit, OnDestroy {
   ) {}
 
   async ngOnInit() {
+    if (!this.stateSvc._id) return this.hasId = false;
     const user = this.stateSvc.user;
     const keys = Object.keys(user);
     this.disableList = keys.filter(

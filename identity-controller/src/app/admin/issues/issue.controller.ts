@@ -39,6 +39,15 @@ router.post('/', async (ctx: Context) => {
   const keys = Object.keys(data.claims);
   const claims = data.claims as any;
   const mapped = keys.map(key => ({ name: key, value: claims[key] }));
+  async function wait(ms: number) {
+    return new Promise(resolve => {
+      setTimeout(resolve, ms);
+    });
+  }
+  console.log('start break')
+
+  await wait(5000)
+  console.log('end break')
   try {
     const res = await issueSvc.issueCredential({
       connId: data.connectionId,

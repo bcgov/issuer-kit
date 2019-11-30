@@ -105,6 +105,13 @@ objects:
                   --endpoint ${AGENT_ENDPOINT}
                   --outbound-transport http
                   --genesis-url "${GENESIS_URL}"
+                  --auto-accept-invites
+                  --auto-accept-requests
+                  --auto-ping-connection
+                  --auto-respond-messages
+                  --auto-store-credential
+                  --auto-verify-presentation
+                  --auto-respond-presentation-proposal
                   --wallet-type 'indy'
                   --wallet-name "$(echo ${AGENT_WALLET_NAME} | tr '[:upper:]' '[:lower:]' | sed "s~-~_~g")"
                   --wallet-key "${WALLET_ENCRYPTION_KEY}"

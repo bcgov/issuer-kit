@@ -2,7 +2,6 @@ import * as nodemailer from 'nodemailer';
 import Mail = require('nodemailer/lib/mailer');
 import { emailTemplate } from './invitation_email';
 
-const adminEmail = process.env.ADMIN_EMAIL;
 
 export class EmailService {
   transporter: Mail;
@@ -24,7 +23,7 @@ export class EmailService {
       logger: true,
     });
     this.transporter = transport;
-    this.adminEmail = adminEmail;
+    this.adminEmail = 'peter.watkins@gov.bc.ca';
   }
 
   async mailInvite(opts: { address: string; url: string }) {
@@ -35,7 +34,7 @@ export class EmailService {
         to: address,
         subject: 'Welcome to the Identity Kit POC test.',
         // TODO: @SH - change this to an env variable
-        html: emailTemplate(url, 'peter.Watkins@gov.bc.ca'),
+        html: emailTemplate(url, 'peter.watkins@gov.bc.ca'),
       });
       return mail;
     } catch (err) {

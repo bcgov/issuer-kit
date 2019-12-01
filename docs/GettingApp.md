@@ -1,4 +1,4 @@
-# Getting an Mobile Wallet
+# Getting a Mobile Wallet
 
 Use these instructions to get a mobile app on your phone that can receive, hold and prove your verifiable credentials.
 

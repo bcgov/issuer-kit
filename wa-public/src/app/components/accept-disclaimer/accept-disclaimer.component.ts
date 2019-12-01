@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
+import { StateService } from 'src/app/services/state.service';
+import { ActionService } from 'src/app/services/action.service';
 
 @Component({
   selector: 'wap-accept-disclaimer',
@@ -9,7 +11,7 @@ import { Router } from '@angular/router';
         <ion-title>Accept Terms</ion-title>
       </ion-toolbar>
     </ion-header>
-    <wap-view-wrapper>
+    <wap-view-wrapper *ngIf="hasId; else noIdHelper">
       <mat-card>
         <mat-card-content>
           <ion-item lines="none">
@@ -36,14 +38,39 @@ import { Router } from '@angular/router';
         </mat-card-actions>
       </mat-card>
     </wap-view-wrapper>
+    <ng-template #noIdHelper>
+    <wap-view-wrapper>
+      <mat-card>
+      <mat-card-title>
+       Please re-enter invitation link.
+      </mat-card-title>
+      <mat-card-content>
+        Your session has expired. Please re-enter the link from the POC Invitation email.
+      </mat-card-content>
+      </mat-card>
+    </wap-view-wrapper>
+  </ng-template>
   `,
   styleUrls: ['./accept-disclaimer.component.scss']
 })
 export class AcceptDisclaimerComponent implements OnInit {
+  hasId = true;
   accepted = false;
-  constructor(private router: Router) {}
+  constructor(private router: Router, private stateSvc: StateService, private route: ActivatedRoute) {}
 
-  ngOnInit() {}
+  async ngOnInit() {
+    const token = this.route.snapshot.paramMap.get('id')
+
+    if (!this.stateSvc._id) {
+      try {
+      const res = await this.stateSvc.isValidToken(token)
+      res._id ? this.stateSvc._id = res._id : this.hasId = false
+      } catch {
+        this.hasId = false;
+      }
+
+    }
+  }
   submit() {
     this.router.navigate(['/success']);
   }

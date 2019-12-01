@@ -2,6 +2,8 @@ import * as Router from 'koa-router';
 import { Context } from 'koa';
 import { ICredHookResponse } from '../../../core/interfaces/cred-hook-response.interface';
 import { client } from '../../../index';
+import { Connection } from '../../../core/agent-controller/modules/connection/connection.model';
+import { Issue } from '../../../core/agent-controller/modules/issue/issue.model';
 
 export interface IConnectionActivity {
   created_at: string;
@@ -25,13 +27,51 @@ const routerOpts = {
 
 const router = new Router(routerOpts);
 
+const connCtrl = new Connection(
+  process.env.AGENT_ADMIN_URL || 'http://localhost:8024/',
+);
+const issueCtrl = new Issue(
+  process.env.AGENT_ADMIN_URL || 'http://localhost:8024/',
+);
+
 router.post('/connections', async (ctx: Context) => {
   const data = ctx.request.body as IConnectionActivity;
+  const { state, connection_id: connectionId } = data;
+  if (state === 'response') {
+    console.log('connections response', data);
+    connCtrl.requestResponse(connectionId);
+    connCtrl.sendTrustPing(connectionId);
+  }
   return (ctx.status = 200);
 });
 
 router.post('/issue_credential', async (ctx: Context) => {
   const data = ctx.request.body as ICredHookResponse;
+  console.log(data);
+  if (data.state === 'response_received') {
+    console.log('Credential has been store', data.credential_exchange_id);
+    const res = await client.getRecordByQuery({
+      collection: 'invitations',
+      query: { credExId: data.credential_exchange_id },
+    });
+    if (!res)
+      return console.log(
+        'something went wrong storing the credential',
+        data.credential_exchange_id,
+      );
+    const update = await client.updateRecord({
+      collection: 'invitations',
+      query: { issued: true, consumed: true },
+      id: res._id,
+    });
+    // issueCtrl.sendIssueById(data.credential_exchange_id)
+
+    if (!update)
+      return console.log(
+        'something went wrong saving the update to the user record',
+        data.credential_exchange_id,
+      );
+  }
   if (data.state === 'issued') {
     console.log('Credential has been issued', data.credential_exchange_id);
   }

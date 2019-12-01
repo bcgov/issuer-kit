@@ -53,8 +53,8 @@ export class Issue {
         credential_preview: {
           attributes: formatAttrs,
         },
-        auto_issue: true,
-        auto_offer: true,
+        auto_issue: false,
+        auto_offer: false,
       };
     } else return null;
   }

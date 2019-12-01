@@ -14,7 +14,7 @@ export interface ICredentialPayload {
 
 export interface ICredentialClaims {
   userdisplayname: string;
-  emailaddress: string;
+  address: string;
   surname: string;
   givenname: string;
   birthdate: string;
@@ -24,6 +24,7 @@ export interface ICredentialClaims {
   stateorprovince: string;
   postalcode: string;
   country: string;
+  issued: string;
 }
 
 const routerOpts = {
@@ -35,10 +36,24 @@ const router = new Router(routerOpts);
 router.post('/', async (ctx: Context) => {
   const { _id, ...data } = (ctx.request.body = ctx.request
     .body as ICredentialPayload);
+  data.claims.issued = new Date().toUTCString();
 
   const keys = Object.keys(data.claims);
   const claims = data.claims as any;
-  const mapped = keys.map(key => ({ name: key, value: claims[key] }));
+  const mapped = keys.map(key => ({
+    name: key,
+    value: claims[key],
+    'mime-type': 'text/plain',
+  }));
+  async function wait(ms: number) {
+    return new Promise(resolve => {
+      setTimeout(resolve, ms);
+    });
+  }
+  // console.log('start break');
+
+  // await wait(5000);
+  // console.log('end break');
   try {
     const res = await issueSvc.issueCredential({
       connId: data.connectionId,
@@ -70,7 +85,10 @@ router.post('/', async (ctx: Context) => {
 */
 router.get('/:id', async (ctx: Context) => {
   const id = ctx.params.id;
-  const res = await client.getRecordByQuery({collection: 'invitations', query: {credExId: id}} )
+  const res = await client.getRecordByQuery({
+    collection: 'invitations',
+    query: { credExId: id },
+  });
   ctx.body = res;
 });
 

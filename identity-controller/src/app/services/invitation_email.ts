@@ -37,7 +37,7 @@ Step 1: Setup
 receiving, holding, and sharing verifiable credentials that are issued to you.
 Please install one of the following: 
 <ol>    
-<li>StreetCred, currently only for iPhone or iPad,  <a href="https://apps.apple.com/us/app/streetcred-identity-agent/id1475160728">Download from the App Store</a>
+<li>StreetCred, currently only for iPhone or iPad. Click <a href="https://github.com/bcgov/identity-kit-poc/blob/master/docs/GettingApp.md">here</a> for App Store download and app setup instructions.
 <li>Other agents are TBD
 </li> 
 </ol>

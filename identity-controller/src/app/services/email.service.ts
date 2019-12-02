@@ -13,6 +13,7 @@ export class EmailService {
     pass: string;
   }) {
     const { host, port, user, pass } = opts;
+    if (process.env.NODE_ENV === 'production') {
     const transport = nodemailer.createTransport({
       host: host,
       port: port,
@@ -21,9 +22,26 @@ export class EmailService {
         rejectUnauthorized: false,
       },
       logger: true,
+      
     });
     this.transporter = transport;
     this.adminEmail = 'peter.watkins@gov.bc.ca';
+    } else {
+      const transport = nodemailer.createTransport({
+        host: 'pop3.mailtrap.io',
+        port: 2525,
+        auth: {
+          user: '6969c1013a75cd',
+          pass: '05e096d9af30c8',
+        },
+        logger: true,
+        secure: false,
+      });
+      this.transporter = transport;
+      this.adminEmail = 'sean.hamilton@quartech.com'
+      console.log('dev e-mail mode')
+    }
+
   }
 
   async mailInvite(opts: { address: string; url: string }) {

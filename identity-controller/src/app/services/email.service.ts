@@ -25,20 +25,20 @@ export class EmailService {
       
     });
     this.transporter = transport;
-    this.adminEmail = 'peter.watkins@gov.bc.ca';
+    this.adminEmail = process.env.ADMIN_EMAIL;
     } else {
       const transport = nodemailer.createTransport({
-        host: 'pop3.mailtrap.io',
-        port: 2525,
+        host: process.env.SMTP_HOST || '',
+        port: parseInt(process.env.SMTP_PORT || '2525'),
         auth: {
-          user: '6969c1013a75cd',
-          pass: '05e096d9af30c8',
+          user: process.env.SMTP_USERNAME || '',
+          pass: process.env.SMTP_PASS,
         },
         logger: true,
         secure: false,
       });
       this.transporter = transport;
-      this.adminEmail = 'sean.hamilton@quartech.com'
+      this.adminEmail = process.env.ADMIN_EMAIL
       console.log('dev e-mail mode')
     }
 

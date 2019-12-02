@@ -2,7 +2,7 @@
 
 Use these instructions to get a mobile app on your phone that can receive, hold and prove your verifiable credentials.
 
-Currently, there is only an IOS app available that as compatible with the Identity Kit credential issuer. If you have an IOS phone, please follow the instructions below to get the [Steetcred Identity Agent](#streetcred-identity-agent). If you have an Android device, we're sorry, but you are out of luck for now. Check back with us as we're expecting there will be an Android agent available Real Soon Now.
+Currently, there is only an IOS app available that as compatible with the Identity Kit credential issuer. If you have an IOS phone, please follow the instructions below to get the [Streetcred Identity Agent](#streetcred-identity-agent). If you have an Android device, we're sorry, but you are out of luck for now. Check back with us as we're expecting there will be an Android agent available Real Soon Now.
 
 ## Streetcred Identity Agent
 

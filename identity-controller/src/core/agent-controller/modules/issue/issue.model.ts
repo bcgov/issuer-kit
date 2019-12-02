@@ -107,24 +107,7 @@ export class Issue {
       throw new Error(err.message);
     }
   }
-  /*
-    This does not work correctly as a result of what appears to be an AcaPy bug.
 
-    {
-  "credential_preview": {
-    "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/issue-credential/1.0/credential-preview",
-    "attributes": [
-      {
-        "name": "favourite_drink",
-        "mime-type": "image/jpeg",
-        "value": "martini"
-      }
-    ]
-  },
-  "connection_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  "comment": "string",
-  "credential_definition_id": "WgWxqztrNooG92RXvxSTWv:3:CL:20:tag"
-  */
 
   async issueAndSendCred(
     connId: string,

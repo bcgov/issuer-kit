@@ -13,6 +13,7 @@ export class EmailService {
     pass: string;
   }) {
     const { host, port, user, pass } = opts;
+    if (process.env.NODE_ENV === 'production') {
     const transport = nodemailer.createTransport({
       host: host,
       port: port,
@@ -21,9 +22,26 @@ export class EmailService {
         rejectUnauthorized: false,
       },
       logger: true,
+      
     });
     this.transporter = transport;
-    this.adminEmail = 'peter.watkins@gov.bc.ca';
+    this.adminEmail = process.env.ADMIN_EMAIL;
+    } else {
+      const transport = nodemailer.createTransport({
+        host: process.env.SMTP_HOST || '',
+        port: parseInt(process.env.SMTP_PORT || '2525'),
+        auth: {
+          user: process.env.SMTP_USERNAME || '',
+          pass: process.env.SMTP_PASS,
+        },
+        logger: true,
+        secure: false,
+      });
+      this.transporter = transport;
+      this.adminEmail = process.env.ADMIN_EMAIL
+      console.log('dev e-mail mode')
+    }
+
   }
 
   async mailInvite(opts: { address: string; url: string }) {

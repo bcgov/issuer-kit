@@ -38,7 +38,6 @@ router.post('/connections', async (ctx: Context) => {
   const data = ctx.request.body as IConnectionActivity;
   const { state, connection_id: connectionId } = data;
   if (state === 'response') {
-    console.log('connections response', data);
     connCtrl.requestResponse(connectionId);
     connCtrl.sendTrustPing(connectionId);
   }
@@ -48,8 +47,8 @@ router.post('/connections', async (ctx: Context) => {
 router.post('/issue_credential', async (ctx: Context) => {
   const data = ctx.request.body as ICredHookResponse;
   console.log(data);
-  if (data.state === 'response_received') {
-    console.log('Credential has been store', data.credential_exchange_id);
+  if (data.state === 'request_received') {
+    console.info('Credential has been requested', data.credential_exchange_id);
     const res = await client.getRecordByQuery({
       collection: 'invitations',
       query: { credExId: data.credential_exchange_id },
@@ -75,6 +74,7 @@ router.post('/issue_credential', async (ctx: Context) => {
   if (data.state === 'issued') {
     console.log('Credential has been issued', data.credential_exchange_id);
   }
+  /*
   if (data.state === 'stored') {
     console.log('Credential has been store', data.credential_exchange_id);
     const res = await client.getRecordByQuery({
@@ -98,6 +98,7 @@ router.post('/issue_credential', async (ctx: Context) => {
         data.credential_exchange_id,
       );
   }
+  */
   return (ctx.status = 200);
 });
 

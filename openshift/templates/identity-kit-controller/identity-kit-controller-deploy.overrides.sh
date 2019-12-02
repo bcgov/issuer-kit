@@ -20,6 +20,7 @@ if createOperation; then
   # writeParameter "ADMIN_PASSWORD" $(generatePassword) "false"
 
   # Get the settings for delivering user feedback to the business
+  readParameter "ADMIN_EMAIL - Please provide the email address to be used as sender for outgoing messages.  The default is a blank string." ADMIN_EMAIL "false"
   readParameter "SMTP_SERVER_ADDRESS - Please provide the address of the outgoing smtp server.  The default is a blank string." SMTP_SERVER_ADDRESS "false"
   readParameter "SMTP_SERVER_PORT - Please provide the address of the outgoing smtp server PORT.  The default is a blank string." SMTP_SERVER_PORT "false"
 else
@@ -30,6 +31,7 @@ else
   # writeParameter "ADMIN_USER_ID" "generation_skipped" "false"
   # writeParameter "ADMIN_PASSWORD" "generation_skipped" "false"
 
+  writeParameter "ADMIN_EMAIL" "prompt_skipped" "false"
   writeParameter "SMTP_SERVER_ADDRESS" "prompt_skipped" "false"
   writeParameter "SMTP_SERVER_PORT" "prompt_skipped" "false"
 fi

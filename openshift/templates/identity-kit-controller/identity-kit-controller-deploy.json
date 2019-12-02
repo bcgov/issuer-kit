@@ -176,6 +176,10 @@
                     "value": "${SMTP_SERVER_PORT}"
                   },
                   {
+                    "name": "ADMIN_EMAIL",
+                    "value": "${ADMIN_EMAILs}"
+                  },
+                  {
                     "name": "PUBLIC_SITE_URL",
                     "value": "${PUBLIC_SITE_URL}"
                   }
@@ -306,6 +310,13 @@
       "name": "SMTP_SERVER_PORT",
       "displayName": "SMTP Server Port",
       "description": "SMTP Server Port",
+      "required": true,
+      "value": ""
+    },
+    {
+      "name": "ADMIN_EMAIL",
+      "displayName": "Admin Email",
+      "description": "The email address to be used as sender for outging messages.",
       "required": true,
       "value": ""
     },

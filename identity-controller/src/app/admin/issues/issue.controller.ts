@@ -50,10 +50,10 @@ router.post('/', async (ctx: Context) => {
       setTimeout(resolve, ms);
     });
   }
-  // console.log('start break');
+  console.log('start break');
 
-  // await wait(5000);
-  // console.log('end break');
+  await wait(5000);
+  console.log('end break');
   try {
     const res = await issueSvc.issueCredential({
       connId: data.connectionId,
@@ -70,10 +70,11 @@ router.post('/', async (ctx: Context) => {
       query: {
         connectionId: data.connectionId,
         credExId: res.credential_exchange_id,
+        issued: false,
+        consumed: true,
       },
       id: _id,
     });
-    console.log('record result', record);
     ctx.body = res;
   } catch (err) {
     ctx.throw(500, 'failed to create credential exchange record');

@@ -16,6 +16,9 @@ services:
       - SMTP_HOST=${SMTP_HOST}
       - SMTP_PORT=${SMTP_PORT}
       - PUBLIC_SITE_URL=${PUBLIC_SITE_URL}
+      - ADMIN_EMAIL=${ADMIN_EMAIL}
+      - SMTP_USERNAME=${SMTP_USERNAME}
+      - SMTP_PASS=${SMTP_PASS}
     volumes:
       - ../identity-controller:/usr/src/controller
       - identity-controller-node-cache:/usr/src/controller/node_modules
@@ -41,6 +44,7 @@ services:
       - SMTP_HOST=${SMTP_HOST}
       - SMTP_PORT=${SMTP_PORT}
       - PUBLIC_SITE_URL=${PUBLIC_SITE_URL}
+      - ADMIN_EMAIL=${ADMIN_EMAIL}
       - S2I_SCRIPTS_PATH=${STI_SCRIPTS_PATH}
     ports:
       - ${IDENTITY_CONTROLLER_PORT}:${IDENTITY_CONTROLLER_PORT}

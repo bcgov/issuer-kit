@@ -221,7 +221,6 @@ configureEnvironment() {
   export SMTP_HOST=""
   export SMTP_PORT=""
   export SMTP_USERNAME=""
-  export SMTP_USERNAME=""
   export SMTP_PASS=""
   export ADMIN_EMAIL=""
   export PUBLIC_SITE_URL=""

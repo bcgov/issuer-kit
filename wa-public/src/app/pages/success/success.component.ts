@@ -113,6 +113,18 @@ import { take, mergeMap } from 'rxjs/operators';
                   >
                   </wap-input>
                   <wap-input
+                  [fc]="fg.controls['postalCode']"
+                  placeholder="A1AA1A"
+                  label="Postal Code"
+                  error="Postal code must be in the format of A1A1A1"
+                  [invalid]="
+                    (invalid && fg.controls['postalCode'].invalid) ||
+                    (fg.controls['postalCode'].touched &&
+                      fg.controls['postalCode'].invalid)
+                  "
+                >
+                </wap-input>
+                  <wap-input
                     [fc]="fg.controls['locality']"
                     placeholder="Victoria"
                     label="Locality"
@@ -124,18 +136,7 @@ import { take, mergeMap } from 'rxjs/operators';
                     "
                   >
                   </wap-input>
-                  <wap-input
-                    [fc]="fg.controls['postalCode']"
-                    placeholder="A1AA1A"
-                    label="Postal Code"
-                    error="Postal code must be in the format of A1A1A1"
-                    [invalid]="
-                      (invalid && fg.controls['postalCode'].invalid) ||
-                      (fg.controls['postalCode'].touched &&
-                        fg.controls['postalCode'].invalid)
-                    "
-                  >
-                  </wap-input>
+
                   <ion-item lines="none">
                     <ion-label position="stacked"
                       >Date of Birth
@@ -434,11 +435,12 @@ export class SuccessComponent implements OnInit, OnDestroy {
     ]);
 
     const streetAddress = initFc('');
-    const locality = initFc('');
     const postalCode = new FormControl('', [
       Validators.required,
       postalCodeValidator()
     ]);
+    const locality = initFc('');
+
 
     const dateOfBirth = initFc('');
 
@@ -447,8 +449,8 @@ export class SuccessComponent implements OnInit, OnDestroy {
       lastName,
       emailAddress,
       streetAddress,
-      locality,
       postalCode,
+      locality,
       dateOfBirth
     });
 
@@ -498,14 +500,14 @@ export class SuccessComponent implements OnInit, OnDestroy {
         value: values['streetAddress'] || 'not defined'
       },
       {
-        label: 'Locality',
-        key: 'locality',
-        value: values['locality'] || 'not defined'
-      },
-      {
         label: 'Postal Code',
         key: 'postalCode',
         value: values['postalCode'] || 'not defined'
+      },
+      {
+        label: 'Locality',
+        key: 'locality',
+        value: values['locality'] || 'not defined'
       },
       {
         label: 'Date of Birth',

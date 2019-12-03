@@ -169,7 +169,7 @@ import { take, mergeMap } from 'rxjs/operators';
                   [ngClass]="
                   { 
                     'dp-border-warn': fg['controls'].dateOfBirth.touched && fg['controls'].dateOfBirth.invalid, 
-                  'dp-border-valid': fg['controls'].dateOfBirth.valid,
+                  'dp-border-valid': dobFocus && fg['controls'].dateOfBirth.valid,
                   'db-border-warn': dobFocus && fg['controls'].dateOfBirth.invalid,
                   'dp-border-focused':  dobFocus && fg['controls'].dateOfBirth.valid
                 }
@@ -304,6 +304,7 @@ export class SuccessComponent implements OnInit, OnDestroy {
   cardSubtitle = 'Sign-up for a verified credential';
   nextLabel = '';
   invite: any;
+  dobFocus: boolean;
 
   connectionId: string;
   get formInvalid() {
@@ -318,8 +319,8 @@ export class SuccessComponent implements OnInit, OnDestroy {
   img: string;
   disableList: string[];
 
-  dobChange(event) {
-    console.log(event)
+  dobChange(event: any) {
+    this.dobFocus = false;
   }
 
   setIndex(i: number) {

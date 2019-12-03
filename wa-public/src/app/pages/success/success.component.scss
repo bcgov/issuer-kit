@@ -31,3 +31,31 @@ mat-card {
     max-width: 660px;
   }
 }
+::ng-deep .mat-input-underline {
+  display: none !important;
+}
+
+.dp-border {
+  width: 100%;
+  border: .5px;
+  border-style: solid;
+  border-color: #ccd1e1;
+}
+.dp-border-focused {
+  border-style: solid;
+  width: 100%;
+  border: 1px;
+  border-color: #4E7A89;
+}
+.dp-border-valid {
+  border-style: solid;
+  width: 100%;
+  border: 1px;
+  border-color: #10dc60;
+}
+.dp-border-warn {
+  border-style: solid;
+  width: 100%;
+  border: 1px;
+  border-color: #f53d3d;
+}

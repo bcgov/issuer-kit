@@ -8,10 +8,9 @@ import {
   AbstractControl
 } from '@angular/forms';
 import { postalCodeValidator } from 'src/app/services/validators';
-import { Observable, of, interval, merge, Subscription } from 'rxjs';
+import { Observable, of, interval,  Subscription } from 'rxjs';
 import { Router } from '@angular/router';
-import { map, take, mergeMap } from 'rxjs/operators';
-import { encodeBase64 } from './encode.script';
+import { take, mergeMap } from 'rxjs/operators';
 
 @Component({
   selector: 'wap-success',
@@ -137,17 +136,47 @@ import { encodeBase64 } from './encode.script';
                     "
                   >
                   </wap-input>
-                  <ion-item>
+                  <ion-item lines="none">
                     <ion-label position="stacked"
                       >Date of Birth
                       <ion-text color="danger">*</ion-text></ion-label
                     >
+                    <!--
                     <ion-datetime
                       formControlName="dateOfBirth"
                       displayFormat="MMM DD YYYY"
                       placeholder="MMM DD YYYY"
                     ></ion-datetime>
+                    -->
+                    <mat-form-field appearance="none">
+                      <input style="display: hidden;" 
+                      matInput [matDatepicker]="picker" 
+                      placeholder="Choose a date"
+                      startView="multi-year"
+                      formControlName="dateOfBirth"
+                      (onFocus)="dobFocus = true" 
+                      (onBlur)="dobFocus = false"
+                      (change)="dobChange($event)"
+                      (click)="dobFocus = true"
+                      >
+                      <mat-datepicker-toggle matSuffix [for]="picker" 
+                     >
+                      </mat-datepicker-toggle>
+                      <mat-datepicker #picker startView="year" [startAt]="startAt"></mat-datepicker>
+                    </mat-form-field>
                   </ion-item>
+                  <div class="dp-border" style="border-style: solid;"
+                  [ngClass]="
+                  { 
+                    'dp-border-warn': fg['controls'].dateOfBirth.touched && fg['controls'].dateOfBirth.invalid, 
+                  'dp-border-valid': fg['controls'].dateOfBirth.valid,
+                  'db-border-warn': dobFocus && fg['controls'].dateOfBirth.invalid,
+                  'dp-border-focused':  dobFocus && fg['controls'].dateOfBirth.valid
+                }
+                  " 
+                  
+                  >
+                  </div>
                   <ion-note
                     *ngIf="
                       (invalid && fg['controls'].dateOfBirth.invalid) ||
@@ -266,32 +295,32 @@ import { encodeBase64 } from './encode.script';
   styleUrls: ['./success.component.scss']
 })
 export class SuccessComponent implements OnInit, OnDestroy {
-  accepted = false;
-  connectionId: string;
-  hasId = true;
-  get formInvalid() {
-    return !this.accepted || this.fg.invalid;
-  }
   index = 0;
-  user: IUser;
-  fg: FormGroup;
+  hasId = true;
+  accepted = false;
   invalid = false;
-  title = 'test';
-  $title: Observable<string>;
+  startAt = new Date(1980, 0, 1)
   cardTitle = '';
   cardSubtitle = 'Sign-up for a verified credential';
   nextLabel = '';
+  invite: any;
+
+  connectionId: string;
+  get formInvalid() {
+    return !this.accepted || this.fg.invalid;
+  }
+  user: IUser;
+  fg: FormGroup;
+  $title: Observable<string>;
+
   subs: Subscription[] = [];
   $previewData: Observable<{ key: string; value: any; label: string }[]>;
-  invite: {
-    '@type': string;
-    '@id': string;
-    serviceEndpoint: string;
-    label: string;
-    recipientKeys: string[];
-  };
   img: string;
   disableList: string[];
+
+  dobChange(event) {
+    console.log(event)
+  }
 
   setIndex(i: number) {
     const indexMap = [
@@ -384,7 +413,7 @@ export class SuccessComponent implements OnInit, OnDestroy {
   ) {}
 
   async ngOnInit() {
-    if (!this.stateSvc._id) return this.hasId = false;
+    // if (!this.stateSvc._id) return this.hasId = false;
     const user = this.stateSvc.user;
     const keys = Object.keys(user);
     this.disableList = keys.filter(
@@ -436,6 +465,8 @@ export class SuccessComponent implements OnInit, OnDestroy {
     const previewData = of(this.setPreview(this.fg));
     this.$previewData = previewData;
     this.setIndex(0);
+
+
   }
 
   ngOnDestroy() {

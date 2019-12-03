@@ -45,14 +45,18 @@ export class EmailService {
   }
 
   async mailInvite(opts: { address: string; url: string }) {
-    const { address, url } = opts;
+    const { address: to, url } = opts;
+    const html = emailTemplate(url, 'peter.watkins@gov.bc.ca')
+    const subject = 'Welcome to the Identity Kit POC test.'
+        
+    const from = 'Identity Kit POC <no-reply@gov.bc.ca>'
+    if (process.env.NODE_ENV !== 'production') console.log(html)
     try {
       const mail = await this.transporter.sendMail({
-        from: 'Identity Kit POC <no-reply@gov.bc.ca>',
-        to: address,
-        subject: 'Welcome to the Identity Kit POC test.',
-        // TODO: @SH - change this to an env variable
-        html: emailTemplate(url, 'peter.watkins@gov.bc.ca'),
+        html,
+        from,
+        to,
+        subject,
       });
       return mail;
     } catch (err) {

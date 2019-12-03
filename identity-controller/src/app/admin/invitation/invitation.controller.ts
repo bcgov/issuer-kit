@@ -135,7 +135,7 @@ router.post('/:id/renew/', async (ctx: Context) => {
   const today = new Date();
   const expiry = new Date();
   expiry.setDate(today.getDate() + 1);
-  const linkId = uuidv4()
+  const linkId = uuidv4();
   const res = await client.updateRecord<any>({
     collection: 'invitations',
     query: {
@@ -147,7 +147,7 @@ router.post('/:id/renew/', async (ctx: Context) => {
     id,
   });
   ctx.body = res.result;
-  const user = await client.getRecord({collection: 'invitations', id})
+  const user = await client.getRecord({ collection: 'invitations', id });
   const mail = await emailSvc.mailInvite({
     address: user.email,
     url: `${publicUrl}validate?invite_token=${linkId}`,
@@ -181,7 +181,6 @@ router.post('/:id/revoke/', async (ctx: Context) => {
     id,
   });
   ctx.body = res;
- 
 });
 
 router.get('/:id', async (ctx: Context) => {

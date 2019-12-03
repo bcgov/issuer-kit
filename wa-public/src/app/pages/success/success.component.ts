@@ -152,27 +152,29 @@ import { take, mergeMap } from 'rxjs/operators';
                     <mat-form-field appearance="none">
                       <input style="display: hidden;" 
                       matInput [matDatepicker]="picker" 
-                      placeholder="Choose a date"
-                      startView="multi-year"
+                      placeholder="MM/DD/YYYY"
                       formControlName="dateOfBirth"
                       (onFocus)="dobFocus = true" 
                       (onBlur)="dobFocus = false"
-                      (change)="dobChange($event)"
+                      (change)="dobFocus = false"
                       (click)="dobFocus = true"
+                      [min]="minDate" [max]="maxDate"
                       >
-                      <mat-datepicker-toggle matSuffix [for]="picker" 
+                      <mat-datepicker-toggle  matSuffix [for]="picker" 
                      >
                       </mat-datepicker-toggle>
-                      <mat-datepicker #picker startView="year" [startAt]="startAt"></mat-datepicker>
+                      <mat-datepicker #picker startView="multi-year" 
+                      [startAt]="startAt" ></mat-datepicker>
                     </mat-form-field>
                   </ion-item>
                   <div class="dp-border" style="border-style: solid;"
                   [ngClass]="
                   { 
                     'dp-border-warn': fg['controls'].dateOfBirth.touched && fg['controls'].dateOfBirth.invalid, 
-                  'dp-border-valid': dobFocus && fg['controls'].dateOfBirth.valid,
-                  'db-border-warn': dobFocus && fg['controls'].dateOfBirth.invalid,
-                  'dp-border-focused':  dobFocus && fg['controls'].dateOfBirth.valid
+                    'dp-border-grey': dobFocus === false,
+                    'dp-border-valid': dobFocus && fg['controls'].dateOfBirth.valid,
+                  
+                    'dp-border-focused':  dobFocus && fg['controls'].dateOfBirth.valid
                 }
                   " 
                   
@@ -186,7 +188,7 @@ import { take, mergeMap } from 'rxjs/operators';
                     "
                   >
                     <ion-text color="danger"
-                      >Invalid date of birth
+                      >Invalid date of birth. Date of birth must be in the format: MM/DD/YYYY
                     </ion-text></ion-note
                   >
                   <ion-item lines="none">
@@ -235,7 +237,7 @@ import { take, mergeMap } from 'rxjs/operators';
           *ngIf="$previewData | async as previewData"
           ><wap-issue-preview
             [values]="previewData"
-            position="missionary"
+            position="xzzxx"
           ></wap-issue-preview>
         </mat-card-content>
         <mat-card-actions>
@@ -301,11 +303,14 @@ export class SuccessComponent implements OnInit, OnDestroy {
   accepted = false;
   invalid = false;
   startAt = new Date(1980, 0, 1)
+  maxDate = new Date(2018, 0, 1)
+  minDate = new Date(1910, 0, 1)
+
   cardTitle = '';
   cardSubtitle = 'Sign-up for a verified credential';
   nextLabel = '';
   invite: any;
-  dobFocus: boolean;
+  dobFocus = false;
 
   connectionId: string;
   get formInvalid() {
@@ -423,7 +428,7 @@ export class SuccessComponent implements OnInit, OnDestroy {
     );
 
     if (!user) return;
-    const initFc = (val: string) =>
+    const initFc = (val: string | Date) =>
       new FormControl(val, [Validators.required, Validators.minLength(4)]);
 
     const firstName = initFc(user.firstName || '');

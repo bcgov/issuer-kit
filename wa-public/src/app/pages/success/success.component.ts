@@ -172,9 +172,8 @@ import { take, mergeMap } from 'rxjs/operators';
                   { 
                     'dp-border-warn': fg['controls'].dateOfBirth.touched && fg['controls'].dateOfBirth.invalid, 
                     'dp-border-grey': dobFocus === false,
-                    'dp-border-valid': dobFocus && fg['controls'].dateOfBirth.valid,
+                    'dp-border-valid': dobFocus && fg['controls'].dateOfBirth.valid
                   
-                    'dp-border-focused':  dobFocus && fg['controls'].dateOfBirth.valid
                 }
                   " 
                   
@@ -420,7 +419,7 @@ export class SuccessComponent implements OnInit, OnDestroy {
   ) {}
 
   async ngOnInit() {
-    // if (!this.stateSvc._id) return this.hasId = false;
+    if (!this.stateSvc._id) return this.hasId = false;
     const user = this.stateSvc.user;
     const keys = Object.keys(user);
     this.disableList = keys.filter(

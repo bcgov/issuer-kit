@@ -119,6 +119,13 @@ router.post('/', async (ctx: Context) => {
   }
 });
 
+router.post('/:id/request', async (ctx: Context) => {
+  const linkId = ctx.params.id;
+  const { email } = ctx.request.body;
+  await invitationSvc.requestToken({ email, linkId, emailSvc, client });
+  return (ctx.body = 200);
+});
+
 router.get('/:id/validate/', async (ctx: Context) => {
   const linkId = ctx.params.id;
   const res = await invitationSvc.validateToken(linkId, client);

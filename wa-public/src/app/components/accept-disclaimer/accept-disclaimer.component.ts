@@ -15,60 +15,58 @@ import { ActionService } from 'src/app/services/action.service';
       <mat-card>
         <mat-card-content>
           <ion-item lines="none">
-            <ion-label
-              ><ion-text class="ion-text-wrap"
-                >DISCLAIMER: lorem ipsum dolor sit amet...</ion-text
-              ></ion-label
-            >
-            <ion-checkbox
-              slot="start"
-              (click)="accepted = !accepted"
-            ></ion-checkbox>
+            <ion-label><ion-text class="ion-text-wrap">DISCLAIMER: lorem ipsum dolor sit amet...</ion-text></ion-label>
+            <ion-checkbox slot="start" (click)="accepted = !accepted"></ion-checkbox>
           </ion-item>
         </mat-card-content>
         <mat-card-actions>
-          <button
-            mat-raised-button
-            (click)="submit()"
-            [disabled]="!accepted"
-            color="primary"
-          >
+          <button mat-raised-button (click)="actionSvc.logout()" [disabled]="!accepted" color="warn">
+            Decline
+          </button>
+          <button mat-raised-button (click)="submit()" [disabled]="!accepted" color="primary">
             Confirm
           </button>
         </mat-card-actions>
       </mat-card>
     </wap-view-wrapper>
     <ng-template #noIdHelper>
-    <wap-view-wrapper>
-      <mat-card>
-      <mat-card-title>
-       Please re-enter invitation link.
-      </mat-card-title>
-      <mat-card-content>
-        Your session has expired. Please re-enter the link from the POC Invitation email.
-      </mat-card-content>
-      </mat-card>
-    </wap-view-wrapper>
-  </ng-template>
+      <wap-view-wrapper>
+        <mat-card>
+          <mat-card-title>
+            Please re-enter invitation link.
+          </mat-card-title>
+          <mat-card-content>
+            Your session has expired. Please re-enter the link from the POC Invitation email.
+          </mat-card-content>
+        </mat-card>
+      </wap-view-wrapper>
+    </ng-template>
   `,
-  styleUrls: ['./accept-disclaimer.component.scss']
+  styleUrls: ['./accept-disclaimer.component.scss'],
 })
 export class AcceptDisclaimerComponent implements OnInit {
   hasId = true;
   accepted = false;
-  constructor(private router: Router, private stateSvc: StateService, private route: ActivatedRoute) {}
+  constructor(
+    private router: Router,
+    private stateSvc: StateService,
+    public actionSvc: ActionService,
+    private route: ActivatedRoute,
+  ) {}
 
   async ngOnInit() {
-    const token = this.route.snapshot.paramMap.get('id')
+    const token = this.route.snapshot.paramMap.get('id');
 
     if (!this.stateSvc._id) {
       try {
-      const res = await this.stateSvc.isValidToken(token).toPromise()
-      res._id ? this.stateSvc._id = res._id : this.hasId = false
+        const res = await this.stateSvc.isValidToken(token).toPromise();
+        console.log(res);
+        res._id ? (this.stateSvc._id = res._id) : (this.hasId = false);
+        if (!res.active) return this.router.navigate(['']);
+        if (res.expired) return this.router.navigate([`request/${token}`]);
       } catch {
         this.hasId = false;
       }
-
     }
   }
   submit() {

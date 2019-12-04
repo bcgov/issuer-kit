@@ -2,7 +2,6 @@ import * as nodemailer from 'nodemailer';
 import Mail = require('nodemailer/lib/mailer');
 import { emailTemplate } from './invitation_email';
 
-
 export class EmailService {
   transporter: Mail;
   adminEmail: string | undefined;
@@ -14,18 +13,17 @@ export class EmailService {
   }) {
     const { host, port, user, pass } = opts;
     if (process.env.NODE_ENV === 'production') {
-    const transport = nodemailer.createTransport({
-      host: host,
-      port: port,
-      tls: {
-        // do not fail on invalid certs
-        rejectUnauthorized: false,
-      },
-      logger: true,
-      
-    });
-    this.transporter = transport;
-    this.adminEmail = process.env.ADMIN_EMAIL;
+      const transport = nodemailer.createTransport({
+        host: host,
+        port: port,
+        tls: {
+          // do not fail on invalid certs
+          rejectUnauthorized: false,
+        },
+        logger: true,
+      });
+      this.transporter = transport;
+      this.adminEmail = process.env.ADMIN_EMAIL;
     } else {
       const transport = nodemailer.createTransport({
         host: process.env.SMTP_HOST || '',
@@ -38,19 +36,18 @@ export class EmailService {
         secure: false,
       });
       this.transporter = transport;
-      this.adminEmail = process.env.ADMIN_EMAIL
-      console.log('dev e-mail mode')
+      this.adminEmail = process.env.ADMIN_EMAIL;
+      console.warn('dev e-mail mode');
     }
-
   }
 
   async mailInvite(opts: { address: string; url: string }) {
     const { address: to, url } = opts;
-    const html = emailTemplate(url, 'peter.watkins@gov.bc.ca')
-    const subject = 'Welcome to the Identity Kit POC test.'
-        
-    const from = 'Identity Kit POC <no-reply@gov.bc.ca>'
-    if (process.env.NODE_ENV !== 'production') console.log(html)
+    const html = emailTemplate(url, this.adminEmail || '');
+    const subject = 'Welcome to the Identity Kit POC test.';
+
+    const from = 'Identity Kit POC <no-reply@gov.bc.ca>';
+    if (process.env.NODE_ENV !== 'production') console.log(html);
     try {
       const mail = await this.transporter.sendMail({
         html,

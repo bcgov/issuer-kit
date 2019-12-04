@@ -9,6 +9,12 @@ export interface IUser extends Keycloak.KeycloakProfile {
   guid?: string;
 }
 
+export interface IValidateLink {
+  _id: string;
+  expired: boolean;
+  active: boolean;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -22,9 +28,9 @@ export class StateService {
   user: IUser = {};
   private _apiUrl: string;
 
-  async isValidToken(token: string) {
+  async isValidToken(token: string): Promise<IValidateLink> {
     const url = `${this._apiUrl}invitations/${token}/validate`;
-    return await this.http.get<{ validated: boolean, _id: string }>(url).toPromise();
+    return this.http.get<IValidateLink>(url).toPromise();
   }
 
   get isAuth() {

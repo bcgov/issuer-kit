@@ -25,18 +25,18 @@ export class ValidInviteGuard implements CanActivate {
     | UrlTree {
     const inviteToken = route.queryParamMap.get('invite_token');
 
-    this.stateService
-      .isValidToken(inviteToken)
+    this.stateService.isValidToken(inviteToken)
+      
       .then(res => {
         console.log(res)
         this.stateService._id = res._id || '';
         this.stateService.guid = inviteToken || '';
-        res.validated
-          ? this.router.navigate([`accept/${inviteToken}`])
-          : this.router.navigate([`request/${inviteToken}`]);
+        res.expired
+        ? this.router.navigate([`request/${inviteToken}`])
+
+          : this.router.navigate([`accept/${inviteToken}`])
       })
       .catch(() => this.router.navigate(['']));
-
     // token is valid, save state and continue
     return true;
   }

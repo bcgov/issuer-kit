@@ -150,33 +150,33 @@ import { take, mergeMap } from 'rxjs/operators';
                     ></ion-datetime>
                     -->
                     <mat-form-field appearance="none">
-                      <input style="display: hidden;" 
-                      matInput [matDatepicker]="picker" 
+                      <input style="display: hidden;"
+                      matInput [matDatepicker]="picker"
                       placeholder="MM/DD/YYYY"
                       formControlName="dateOfBirth"
-                      (onFocus)="dobFocus = true" 
+                      (onFocus)="dobFocus = true"
                       (onBlur)="dobFocus = false"
                       (change)="dobFocus = false"
                       (click)="dobFocus = true"
                       [min]="minDate" [max]="maxDate"
                       >
-                      <mat-datepicker-toggle  matSuffix [for]="picker" 
+                      <mat-datepicker-toggle  matSuffix [for]="picker"
                      >
                       </mat-datepicker-toggle>
-                      <mat-datepicker #picker startView="multi-year" 
+                      <mat-datepicker #picker startView="multi-year"
                       [startAt]="startAt" ></mat-datepicker>
                     </mat-form-field>
                   </ion-item>
                   <div class="dp-border" style="border-style: solid;"
                   [ngClass]="
-                  { 
-                    'dp-border-warn': fg['controls'].dateOfBirth.touched && fg['controls'].dateOfBirth.invalid, 
+                  {
+                    'dp-border-warn': fg['controls'].dateOfBirth.touched && fg['controls'].dateOfBirth.invalid,
                     'dp-border-grey': dobFocus === false,
                     'dp-border-valid': dobFocus && fg['controls'].dateOfBirth.valid
-                  
+
                 }
-                  " 
-                  
+                  "
+
                   >
                   </div>
                   <ion-note
@@ -301,9 +301,9 @@ export class SuccessComponent implements OnInit, OnDestroy {
   hasId = true;
   accepted = false;
   invalid = false;
-  startAt = new Date(1980, 0, 1)
-  maxDate = new Date(2018, 0, 1)
-  minDate = new Date(1910, 0, 1)
+  startAt = new Date(1980, 0, 1);
+  maxDate = new Date(2018, 0, 1);
+  minDate = new Date(1910, 0, 1);
 
   cardTitle = '';
   cardSubtitle = 'Sign-up for a verified credential';
@@ -390,16 +390,16 @@ export class SuccessComponent implements OnInit, OnDestroy {
       return fc.valid;
     }
     const indexOneCtrls = [
-      ctrls['firstName'],
-      ctrls['lastName'],
-      ctrls['emailAddress']
+      ctrls.firstName,
+      ctrls.lastName,
+      ctrls.emailAddress
     ];
     const indexTwoCtrls = [
-      ctrls['streetAddress'],
-      ctrls['postalCode'],
-      ctrls['locality']
+      ctrls.streetAddress,
+      ctrls.postalCode,
+      ctrls.locality
     ];
-    const indexThreeCtrls = [ctrls['dateOfBirth']];
+    const indexThreeCtrls = [ctrls.dateOfBirth];
 
     const ctrlMap = [indexOneCtrls, indexTwoCtrls, indexThreeCtrls];
 
@@ -464,9 +464,9 @@ export class SuccessComponent implements OnInit, OnDestroy {
     const invitation = await this.actionSvc.getInvitation().toPromise();
     this.connectionId = invitation.connection_id;
     const stringVal = JSON.stringify(invitation.invitation);
-    console.log(stringVal)
-    const encoded = invitation.base
-    console.log(encoded)
+    console.log(stringVal);
+    const encoded = invitation.base;
+    console.log(encoded);
     this.invite = invitation.invitation as any;
     this.img = `https://chart.googleapis.com/chart?cht=qr&chs=300x300&chld=L|0&chl=${encoded}`;
     const previewData = of(this.setPreview(this.fg));
@@ -486,37 +486,37 @@ export class SuccessComponent implements OnInit, OnDestroy {
       {
         label: 'First Name',
         key: 'firstName',
-        value: values['firstName'] || ''
+        value: values.firstName || ''
       },
       {
         label: 'Last Name',
         key: 'lastName',
-        value: values['lastName'] || ''
+        value: values.lastName || ''
       },
       {
         label: 'Email Address',
         key: 'emailAddress',
-        value: values['emailAddress'] || 'not defined'
+        value: values.emailAddress || 'not defined'
       },
       {
         label: 'Street Address',
         key: 'streetAddress',
-        value: values['streetAddress'] || 'not defined'
+        value: values.streetAddress || 'not defined'
       },
       {
         label: 'Postal Code',
         key: 'postalCode',
-        value: values['postalCode'] || 'not defined'
+        value: values.postalCode || 'not defined'
       },
       {
         label: 'Locality',
         key: 'locality',
-        value: values['locality'] || 'not defined'
+        value: values.locality || 'not defined'
       },
       {
         label: 'Date of Birth',
         key: 'dateOfBirth',
-        value: values['dateOfBirth'] || 'not defined'
+        value: values.dateOfBirth || 'not defined'
       }
     ];
 

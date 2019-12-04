@@ -8,10 +8,9 @@ import {
   AbstractControl
 } from '@angular/forms';
 import { postalCodeValidator } from 'src/app/services/validators';
-import { Observable, of, interval, merge, Subscription } from 'rxjs';
+import { Observable, of, interval,  Subscription } from 'rxjs';
 import { Router } from '@angular/router';
-import { map, take, mergeMap } from 'rxjs/operators';
-import { encodeBase64 } from './encode.script';
+import { take, mergeMap } from 'rxjs/operators';
 
 @Component({
   selector: 'wap-success',
@@ -114,6 +113,18 @@ import { encodeBase64 } from './encode.script';
                   >
                   </wap-input>
                   <wap-input
+                  [fc]="fg.controls['postalCode']"
+                  placeholder="A1AA1A"
+                  label="Postal Code"
+                  error="Postal code must be in the format of A1A1A1"
+                  [invalid]="
+                    (invalid && fg.controls['postalCode'].invalid) ||
+                    (fg.controls['postalCode'].touched &&
+                      fg.controls['postalCode'].invalid)
+                  "
+                >
+                </wap-input>
+                  <wap-input
                     [fc]="fg.controls['locality']"
                     placeholder="Victoria"
                     label="Locality"
@@ -125,29 +136,49 @@ import { encodeBase64 } from './encode.script';
                     "
                   >
                   </wap-input>
-                  <wap-input
-                    [fc]="fg.controls['postalCode']"
-                    placeholder="A1AA1A"
-                    label="Postal Code"
-                    error="Postal code must be in the format of A1A1A1"
-                    [invalid]="
-                      (invalid && fg.controls['postalCode'].invalid) ||
-                      (fg.controls['postalCode'].touched &&
-                        fg.controls['postalCode'].invalid)
-                    "
-                  >
-                  </wap-input>
-                  <ion-item>
+
+                  <ion-item lines="none">
                     <ion-label position="stacked"
                       >Date of Birth
                       <ion-text color="danger">*</ion-text></ion-label
                     >
+                    <!--
                     <ion-datetime
                       formControlName="dateOfBirth"
                       displayFormat="MMM DD YYYY"
                       placeholder="MMM DD YYYY"
                     ></ion-datetime>
+                    -->
+                    <mat-form-field appearance="none">
+                      <input style="display: hidden;" 
+                      matInput [matDatepicker]="picker" 
+                      placeholder="MM/DD/YYYY"
+                      formControlName="dateOfBirth"
+                      (onFocus)="dobFocus = true" 
+                      (onBlur)="dobFocus = false"
+                      (change)="dobFocus = false"
+                      (click)="dobFocus = true"
+                      [min]="minDate" [max]="maxDate"
+                      >
+                      <mat-datepicker-toggle  matSuffix [for]="picker" 
+                     >
+                      </mat-datepicker-toggle>
+                      <mat-datepicker #picker startView="multi-year" 
+                      [startAt]="startAt" ></mat-datepicker>
+                    </mat-form-field>
                   </ion-item>
+                  <div class="dp-border" style="border-style: solid;"
+                  [ngClass]="
+                  { 
+                    'dp-border-warn': fg['controls'].dateOfBirth.touched && fg['controls'].dateOfBirth.invalid, 
+                    'dp-border-grey': dobFocus === false,
+                    'dp-border-valid': dobFocus && fg['controls'].dateOfBirth.valid
+                  
+                }
+                  " 
+                  
+                  >
+                  </div>
                   <ion-note
                     *ngIf="
                       (invalid && fg['controls'].dateOfBirth.invalid) ||
@@ -156,7 +187,7 @@ import { encodeBase64 } from './encode.script';
                     "
                   >
                     <ion-text color="danger"
-                      >Invalid date of birth
+                      >Invalid date of birth. Date of birth must be in the format: MM/DD/YYYY
                     </ion-text></ion-note
                   >
                   <ion-item lines="none">
@@ -205,7 +236,7 @@ import { encodeBase64 } from './encode.script';
           *ngIf="$previewData | async as previewData"
           ><wap-issue-preview
             [values]="previewData"
-            position="missionary"
+            position="xzzxx"
           ></wap-issue-preview>
         </mat-card-content>
         <mat-card-actions>
@@ -266,32 +297,36 @@ import { encodeBase64 } from './encode.script';
   styleUrls: ['./success.component.scss']
 })
 export class SuccessComponent implements OnInit, OnDestroy {
-  accepted = false;
-  connectionId: string;
-  hasId = true;
-  get formInvalid() {
-    return !this.accepted || this.fg.invalid;
-  }
   index = 0;
-  user: IUser;
-  fg: FormGroup;
+  hasId = true;
+  accepted = false;
   invalid = false;
-  title = 'test';
-  $title: Observable<string>;
+  startAt = new Date(1980, 0, 1)
+  maxDate = new Date(2018, 0, 1)
+  minDate = new Date(1910, 0, 1)
+
   cardTitle = '';
   cardSubtitle = 'Sign-up for a verified credential';
   nextLabel = '';
+  invite: any;
+  dobFocus = false;
+
+  connectionId: string;
+  get formInvalid() {
+    return !this.accepted || this.fg.invalid;
+  }
+  user: IUser;
+  fg: FormGroup;
+  $title: Observable<string>;
+
   subs: Subscription[] = [];
   $previewData: Observable<{ key: string; value: any; label: string }[]>;
-  invite: {
-    '@type': string;
-    '@id': string;
-    serviceEndpoint: string;
-    label: string;
-    recipientKeys: string[];
-  };
   img: string;
   disableList: string[];
+
+  dobChange(event: any) {
+    this.dobFocus = false;
+  }
 
   setIndex(i: number) {
     const indexMap = [
@@ -392,7 +427,7 @@ export class SuccessComponent implements OnInit, OnDestroy {
     );
 
     if (!user) return;
-    const initFc = (val: string) =>
+    const initFc = (val: string | Date) =>
       new FormControl(val, [Validators.required, Validators.minLength(4)]);
 
     const firstName = initFc(user.firstName || '');
@@ -404,11 +439,12 @@ export class SuccessComponent implements OnInit, OnDestroy {
     ]);
 
     const streetAddress = initFc('');
-    const locality = initFc('');
     const postalCode = new FormControl('', [
       Validators.required,
       postalCodeValidator()
     ]);
+    const locality = initFc('');
+
 
     const dateOfBirth = initFc('');
 
@@ -417,8 +453,8 @@ export class SuccessComponent implements OnInit, OnDestroy {
       lastName,
       emailAddress,
       streetAddress,
-      locality,
       postalCode,
+      locality,
       dateOfBirth
     });
 
@@ -436,6 +472,8 @@ export class SuccessComponent implements OnInit, OnDestroy {
     const previewData = of(this.setPreview(this.fg));
     this.$previewData = previewData;
     this.setIndex(0);
+
+
   }
 
   ngOnDestroy() {
@@ -466,14 +504,14 @@ export class SuccessComponent implements OnInit, OnDestroy {
         value: values['streetAddress'] || 'not defined'
       },
       {
-        label: 'Locality',
-        key: 'locality',
-        value: values['locality'] || 'not defined'
-      },
-      {
         label: 'Postal Code',
         key: 'postalCode',
         value: values['postalCode'] || 'not defined'
+      },
+      {
+        label: 'Locality',
+        key: 'locality',
+        value: values['locality'] || 'not defined'
       },
       {
         label: 'Date of Birth',

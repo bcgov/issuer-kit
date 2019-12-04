@@ -29,6 +29,12 @@ import { TrackComponent } from './pages/track/track.component';
 import { MatListModule } from '@angular/material/list';
 import { RequestTokenComponent } from './components/request-token/request-token.component';
 import { AcceptDisclaimerComponent } from './components/accept-disclaimer/accept-disclaimer.component';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import {MatInputModule} from '@angular/material/input';
+import { MatNativeDateModule } from '@angular/material/core';
+
+
 
 const keycloakService = new KeycloakService();
 
@@ -42,7 +48,10 @@ const matModules = [
   MatButtonModule,
   MatMenuModule,
   ReactiveFormsModule,
-  MatListModule
+  MatListModule,
+  MatFormFieldModule,
+  MatDatepickerModule,
+  MatInputModule,
 ];
 
 const components = [
@@ -68,6 +77,7 @@ const components = [
     BrowserAnimationsModule,
     HttpClientModule,
     KeycloakAngularModule,
+    MatNativeDateModule,
     [...matModules],
     IonicModule.forRoot()
   ],

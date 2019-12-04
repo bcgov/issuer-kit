@@ -63,7 +63,7 @@ export class AcceptDisclaimerComponent implements OnInit {
 
     if (!this.stateSvc._id) {
       try {
-      const res = await this.stateSvc.isValidToken(token)
+      const res = await this.stateSvc.isValidToken(token).toPromise()
       res._id ? this.stateSvc._id = res._id : this.hasId = false
       } catch {
         this.hasId = false;

@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
+import { Observable } from 'rxjs';
 
 const apiUrl = '/api/';
 
@@ -28,9 +29,9 @@ export class StateService {
   user: IUser = {};
   private _apiUrl: string;
 
-  async isValidToken(token: string): Promise<IValidateLink> {
+  isValidToken(token: string): Observable<IValidateLink> {
     const url = `${this._apiUrl}invitations/${token}/validate`;
-    return this.http.get<IValidateLink>(url).toPromise();
+    return this.http.get<IValidateLink>(url);
   }
 
   get isAuth() {

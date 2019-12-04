@@ -34,6 +34,7 @@ const routerOpts: Router.IRouterOptions = {
 };
 
 const router = new Router(routerOpts);
+
 router.get('/', async (ctx: Context) => {
   const params = ctx.request.querystring;
   console.log(params);

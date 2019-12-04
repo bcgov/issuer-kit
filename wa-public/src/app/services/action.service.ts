@@ -133,4 +133,9 @@ export class ActionService {
   getCredentialById(id: string) {
     return this.http.get<IInvitationRecord>(`${this._apiUrl}issues/${id}`);
   }
+
+  requestRenewal(args: { email: string; id: string }) {
+    const { email, id } = args;
+    return this.http.post<any>(`${this._apiUrl}invitations/${id}/request`, { email });
+  }
 }

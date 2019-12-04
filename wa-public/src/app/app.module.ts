@@ -105,7 +105,7 @@ export class AppModule {
             checkLoginIframe: false,
           },
           // `/^\/validate\?invite_token=*([^\n\r]*)/gim`
-          bearerExcludedUrls: ['/assets', '/validate', '/accept', '/request'],
+          bearerExcludedUrls: ['/assets', '/validate', '/accept', '/renew', '/request'],
         })
         .then(() => {
           console.log('[ngDoBootstrap] bootstrap app');

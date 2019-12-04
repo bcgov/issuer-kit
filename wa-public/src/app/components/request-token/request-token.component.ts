@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { ActionService } from 'src/app/services/action.service';
 import { StateService } from 'src/app/services/state.service';
 import { FormControl, Validators } from '@angular/forms';
+import { LoadingController } from '@ionic/angular';
 
 @Component({
   selector: 'wap-request-token',
@@ -14,7 +15,7 @@ import { FormControl, Validators } from '@angular/forms';
     </ion-header>
     <wap-view-wrapper>
       <mat-card>
-        <mat-card-header class="main-header">
+        <mat-card-header class="main-header" *ngIf="!sent; else isSent">
           <img mat-card-avatar src="assets/VON-Logo.png" alt="VON Network logo" class="header-image" />
           <mat-card-title>Request Token</mat-card-title>
           <mat-card-subtitle
@@ -23,7 +24,7 @@ import { FormControl, Validators } from '@angular/forms';
           >
         </mat-card-header>
 
-        <mat-card-content>
+        <mat-card-content *ngIf="!sent">
           <wap-input
             [fc]="fc"
             [invalid]="fc.touched && fc.invalid"
@@ -32,7 +33,7 @@ import { FormControl, Validators } from '@angular/forms';
           >
           </wap-input>
         </mat-card-content>
-        <mat-card-actions>
+        <mat-card-actions *ngIf="!sent">
           <button mat-raised-button (click)="decline()" color="warn">
             No Thanks
           </button>
@@ -42,22 +43,48 @@ import { FormControl, Validators } from '@angular/forms';
         </mat-card-actions>
       </mat-card>
     </wap-view-wrapper>
+    <ng-template #isSent>
+      <mat-card-header class="main-header">
+        <img mat-card-avatar src="assets/VON-Logo.png" alt="VON Network logo" class="header-image" />
+        <mat-card-title>Request sent</mat-card-title>
+        <mat-card-subtitle
+          >We have submitted your request for a new token. Please check your email for a new token.</mat-card-subtitle
+        >
+      </mat-card-header>
+    </ng-template>
   `,
   styleUrls: ['./request-token.component.scss'],
 })
 export class RequestTokenComponent implements OnInit {
   fc: FormControl;
-  constructor(private router: Router, private actionSvc: ActionService, private stateSvc: StateService) {
+  sent = false;
+  constructor(
+    private router: Router,
+    private actionSvc: ActionService,
+    private route: ActivatedRoute,
+    private loadingCtrl: LoadingController,
+  ) {
     const fc = new FormControl('', [Validators.required, Validators.email]);
     this.fc = fc;
   }
 
   ngOnInit() {}
 
-  submit(fc: FormControl) {
+  async submit(fc: FormControl) {
     console.log('submit clicked');
-    const address = fc.value;
-    console.log(address);
+    const email = fc.value;
+    const id = this.route.snapshot.paramMap.get('id');
+    const load = await this.loadingCtrl.create({ message: 'Sending request', duration: 10000 });
+    await load.present();
+    try {
+      const res = await this.actionSvc.requestRenewal({ email, id }).toPromise();
+
+      await load.dismiss();
+      this.sent = true;
+    } catch (err) {
+      console.log(err);
+      await load.dismiss();
+    }
   }
 
   decline() {

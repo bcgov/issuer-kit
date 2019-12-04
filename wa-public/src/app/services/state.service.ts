@@ -17,20 +17,31 @@ export interface IValidateLink {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class StateService {
   private _isAuth = false;
   private _title = 'Identity Kit POC';
-  _id: string;
   guid: string;
 
+  get linkId() {
+    return localStorage.getItem('linkId');
+  }
+
+  get _id() {
+    return localStorage.getItem('id');
+  }
+
+  set _id(id: string) {
+    localStorage.setItem('id', id);
+  }
 
   user: IUser = {};
   private _apiUrl: string;
 
   isValidToken(token: string): Observable<IValidateLink> {
     const url = `${this._apiUrl}invitations/${token}/validate`;
+    localStorage.setItem('linkId', token);
     return this.http.get<IValidateLink>(url);
   }
 

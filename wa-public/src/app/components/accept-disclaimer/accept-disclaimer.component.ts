@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { StateService } from 'src/app/services/state.service';
+import { StateService, IValidateLink } from 'src/app/services/state.service';
 import { ActionService } from 'src/app/services/action.service';
 
 @Component({
@@ -20,7 +20,7 @@ import { ActionService } from 'src/app/services/action.service';
           </ion-item>
         </mat-card-content>
         <mat-card-actions>
-          <button mat-raised-button (click)="actionSvc.logout()" [disabled]="!accepted" color="warn">
+          <button mat-raised-button (click)="decline()" color="warn">
             Decline
           </button>
           <button mat-raised-button (click)="submit()" [disabled]="!accepted" color="primary">
@@ -56,20 +56,28 @@ export class AcceptDisclaimerComponent implements OnInit {
 
   async ngOnInit() {
     const token = this.route.snapshot.paramMap.get('id');
+    try {
+      const user = this.stateSvc.user;
+      console.log(this.stateSvc._id, user.email);
+      if (user.email && this.stateSvc._id) return this.router.navigate(['/success']);
 
-    if (!this.stateSvc._id) {
-      try {
-        const res = await this.stateSvc.isValidToken(token).toPromise();
-        console.log(res);
-        res._id ? (this.stateSvc._id = res._id) : (this.hasId = false);
-        if (!res.active) return this.router.navigate(['']);
-        if (res.expired) return this.router.navigate([`request/${token}`]);
-      } catch {
-        this.hasId = false;
-      }
+      const res = await this.stateSvc.isValidToken(token).toPromise();
+      this.validateToken(res, token);
+    } catch {
+      console.log('no user profile');
     }
   }
   submit() {
     this.router.navigate(['/success']);
+  }
+
+  decline() {
+    this.router.navigate(['/']);
+  }
+
+  validateToken(obj: IValidateLink, token) {
+    obj._id ? (this.stateSvc._id = obj._id) : (this.hasId = false);
+    if (!obj.active) return this.router.navigate(['']);
+    if (obj.expired) return this.router.navigate([`request/${token}`]);
   }
 }

@@ -4,6 +4,7 @@ import { StateService } from './state.service';
 import { environment } from 'src/environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { IInvitationRecord } from '../interfaces/invitation-record';
+import { Router } from '@angular/router';
 
 const apiUrl = '/api/';
 
@@ -94,7 +95,7 @@ export interface KeyCorrectnessProof {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ActionService {
   _apiUrl: string;
@@ -105,12 +106,11 @@ export class ActionService {
   constructor(
     private keyCloakSvc: KeycloakService,
     private stateSvc: StateService,
-    private http: HttpClient
+    private http: HttpClient,
+    private router: Router,
   ) {
     this._apiUrl = apiUrl;
-    this.keyCloakSvc
-      .loadUserProfile()
-      .then((res: Keycloak.KeycloakProfile) => (this.stateSvc.user = res));
+    this.keyCloakSvc.loadUserProfile().then((res: Keycloak.KeycloakProfile) => (this.stateSvc.user = res));
   }
 
   logout() {
@@ -122,17 +122,15 @@ export class ActionService {
   }
 
   getConnectionState(id: string) {
-    return this.http.get<IConnectionResponse>(
-      `${this._apiUrl}connections/${id}`
-    );
+    return this.http.get<IConnectionResponse>(`${this._apiUrl}connections/${id}`);
   }
 
   issueCredentials(data: IssueCredential) {
-    console.log('issue data', data)
+    console.log('issue data', data);
     return this.http.post<IssueResponse>(`${this._apiUrl}issues/`, data);
   }
 
   getCredentialById(id: string) {
-    return this.http.get<IInvitationRecord>(`${this._apiUrl}issues/${id}`)
+    return this.http.get<IInvitationRecord>(`${this._apiUrl}issues/${id}`);
   }
 }

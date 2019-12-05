@@ -396,7 +396,7 @@ export class SuccessComponent implements OnInit, OnDestroy {
     console.log(this.deeplink);
     const previewData = of(this.setPreview(this.fg));
     this.$previewData = previewData;
-    this.setIndex(2);
+    this.setIndex(0);
   }
 
   ngOnDestroy() {

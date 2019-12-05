@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
+import { Observable } from 'rxjs';
 
 const apiUrl = '/api/';
 
@@ -9,22 +10,39 @@ export interface IUser extends Keycloak.KeycloakProfile {
   guid?: string;
 }
 
+export interface IValidateLink {
+  _id: string;
+  expired: boolean;
+  active: boolean;
+}
+
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class StateService {
   private _isAuth = false;
   private _title = 'Identity Kit POC';
-  _id: string;
   guid: string;
 
+  get linkId() {
+    return localStorage.getItem('linkId');
+  }
+
+  get _id() {
+    return localStorage.getItem('id');
+  }
+
+  set _id(id: string) {
+    localStorage.setItem('id', id);
+  }
 
   user: IUser = {};
   private _apiUrl: string;
 
-  async isValidToken(token: string) {
+  isValidToken(token: string): Observable<IValidateLink> {
     const url = `${this._apiUrl}invitations/${token}/validate`;
-    return await this.http.get<{ validated: boolean, _id: string }>(url).toPromise();
+    localStorage.setItem('linkId', token);
+    return this.http.get<IValidateLink>(url);
   }
 
   get isAuth() {

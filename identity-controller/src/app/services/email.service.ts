@@ -5,6 +5,8 @@ import { emailTemplate } from './invitation_email';
 export class EmailService {
   transporter: Mail;
   adminEmail: string | undefined;
+
+  from = 'Identity Kit POC <no-reply@gov.bc.ca>';
   constructor(opts: {
     host: string;
     port: number;
@@ -56,6 +58,25 @@ export class EmailService {
         subject,
       });
       return mail;
+    } catch (err) {
+      console.log(err);
+    }
+  }
+  async requestInvite(opts: { address: string; signUpAddress: string }) {
+    const { address, signUpAddress } = opts;
+    const subject = 'New token request';
+    const text = `${address} has requested a new email token. They were signed up using the address: ${signUpAddress}`;
+    const from = this.from;
+    const to = this.adminEmail;
+    if (process.env.NODE_ENV !== 'production') console.log(text);
+    try {
+      const mail = await this.transporter.sendMail({
+        text,
+        from,
+        to,
+        subject,
+      });
+      console.log(mail);
     } catch (err) {
       console.log(err);
     }

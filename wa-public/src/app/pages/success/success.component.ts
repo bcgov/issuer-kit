@@ -1,14 +1,9 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { StateService, IUser } from 'src/app/services/state.service';
 import { ActionService } from 'src/app/services/action.service';
-import {
-  FormGroup,
-  FormControl,
-  Validators,
-  AbstractControl
-} from '@angular/forms';
+import { FormGroup, FormControl, Validators, AbstractControl } from '@angular/forms';
 import { postalCodeValidator } from 'src/app/services/validators';
-import { Observable, of, interval,  Subscription } from 'rxjs';
+import { Observable, of, interval, Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 import { take, mergeMap } from 'rxjs/operators';
 
@@ -33,12 +28,7 @@ import { take, mergeMap } from 'rxjs/operators';
           <ion-col>
             <mat-card class="form-card">
               <mat-card-header class="main-header">
-                <img
-                  mat-card-avatar
-                  src="assets/VON-Logo.png"
-                  alt="VON Network logo"
-                  class="header-image"
-                />
+                <img mat-card-avatar src="assets/VON-Logo.png" alt="VON Network logo" class="header-image" />
                 <mat-card-title>BC Services Card</mat-card-title>
                 <mat-card-subtitle>Attributes from your card</mat-card-subtitle>
               </mat-card-header>
@@ -50,12 +40,7 @@ import { take, mergeMap } from 'rxjs/operators';
           <ion-col>
             <mat-card class="form-card">
               <mat-card-header class="main-header">
-                <img
-                  mat-card-avatar
-                  src="assets/VON-Logo.png"
-                  alt="VON Network logo"
-                  class="header-image"
-                />
+                <img mat-card-avatar src="assets/VON-Logo.png" alt="VON Network logo" class="header-image" />
                 <mat-card-title>Verified Claims Values</mat-card-title>
                 <mat-card-subtitle>Validate claims</mat-card-subtitle>
               </mat-card-header>
@@ -68,8 +53,7 @@ import { take, mergeMap } from 'rxjs/operators';
                     error="First name is required"
                     [invalid]="
                       (invalid && fg.controls['firstName'].invalid) ||
-                      (fg.controls['firstName'].touched &&
-                        fg.controls['firstName'].invalid)
+                      (fg.controls['firstName'].touched && fg.controls['firstName'].invalid)
                     "
                     [disabled]="true"
                   >
@@ -81,8 +65,7 @@ import { take, mergeMap } from 'rxjs/operators';
                     error="Last name is required"
                     [invalid]="
                       (invalid && fg.controls['lastName'].invalid) ||
-                      (fg.controls['lastName'].touched &&
-                        fg.controls['lastName'].invalid)
+                      (fg.controls['lastName'].touched && fg.controls['lastName'].invalid)
                     "
                     [disabled]="true"
                   >
@@ -94,8 +77,7 @@ import { take, mergeMap } from 'rxjs/operators';
                     error="Email address is required"
                     [invalid]="
                       (invalid && fg.controls['emailAddress'].invalid) ||
-                      (fg.controls['emailAddress'].touched &&
-                        fg.controls['emailAddress'].invalid)
+                      (fg.controls['emailAddress'].touched && fg.controls['emailAddress'].invalid)
                     "
                     [disabled]="true"
                   >
@@ -107,23 +89,21 @@ import { take, mergeMap } from 'rxjs/operators';
                     error="Street address is required"
                     [invalid]="
                       (invalid && fg.controls['streetAddress'].invalid) ||
-                      (fg.controls['streetAddress'].touched &&
-                        fg.controls['streetAddress'].invalid)
+                      (fg.controls['streetAddress'].touched && fg.controls['streetAddress'].invalid)
                     "
                   >
                   </wap-input>
                   <wap-input
-                  [fc]="fg.controls['postalCode']"
-                  placeholder="A1AA1A"
-                  label="Postal Code"
-                  error="Postal code must be in the format of A1A1A1"
-                  [invalid]="
-                    (invalid && fg.controls['postalCode'].invalid) ||
-                    (fg.controls['postalCode'].touched &&
-                      fg.controls['postalCode'].invalid)
-                  "
-                >
-                </wap-input>
+                    [fc]="fg.controls['postalCode']"
+                    placeholder="A1AA1A"
+                    label="Postal Code"
+                    error="Postal code must be in the format of A1A1A1"
+                    [invalid]="
+                      (invalid && fg.controls['postalCode'].invalid) ||
+                      (fg.controls['postalCode'].touched && fg.controls['postalCode'].invalid)
+                    "
+                  >
+                  </wap-input>
                   <wap-input
                     [fc]="fg.controls['locality']"
                     placeholder="Victoria"
@@ -131,17 +111,13 @@ import { take, mergeMap } from 'rxjs/operators';
                     error="Locality is required"
                     [invalid]="
                       (invalid && fg.controls['locality'].invalid) ||
-                      (fg.controls['locality'].touched &&
-                        fg.controls['locality'].invalid)
+                      (fg.controls['locality'].touched && fg.controls['locality'].invalid)
                     "
                   >
                   </wap-input>
 
                   <ion-item lines="none">
-                    <ion-label position="stacked"
-                      >Date of Birth
-                      <ion-text color="danger">*</ion-text></ion-label
-                    >
+                    <ion-label position="stacked">Date of Birth <ion-text color="danger">*</ion-text></ion-label>
                     <!--
                     <ion-datetime
                       formControlName="dateOfBirth"
@@ -150,40 +126,36 @@ import { take, mergeMap } from 'rxjs/operators';
                     ></ion-datetime>
                     -->
                     <mat-form-field appearance="none">
-                      <input style="display: hidden;" 
-                      matInput [matDatepicker]="picker" 
-                      placeholder="MM/DD/YYYY"
-                      formControlName="dateOfBirth"
-                      (onFocus)="dobFocus = true" 
-                      (onBlur)="dobFocus = false"
-                      (change)="dobFocus = false"
-                      (click)="dobFocus = true"
-                      [min]="minDate" [max]="maxDate"
-                      >
-                      <mat-datepicker-toggle  matSuffix [for]="picker" 
-                     >
-                      </mat-datepicker-toggle>
-                      <mat-datepicker #picker startView="multi-year" 
-                      [startAt]="startAt" ></mat-datepicker>
+                      <input
+                        style="display: hidden;"
+                        matInput
+                        [matDatepicker]="picker"
+                        placeholder="MM/DD/YYYY"
+                        formControlName="dateOfBirth"
+                        (onFocus)="dobFocus = true"
+                        (onBlur)="dobFocus = false"
+                        (change)="dobFocus = false"
+                        (click)="dobFocus = true"
+                        [min]="minDate"
+                        [max]="maxDate"
+                      />
+                      <mat-datepicker-toggle matSuffix [for]="picker"> </mat-datepicker-toggle>
+                      <mat-datepicker #picker startView="multi-year" [startAt]="startAt"></mat-datepicker>
                     </mat-form-field>
                   </ion-item>
-                  <div class="dp-border" style="border-style: solid;"
-                  [ngClass]="
-                  { 
-                    'dp-border-warn': fg['controls'].dateOfBirth.touched && fg['controls'].dateOfBirth.invalid, 
-                    'dp-border-grey': dobFocus === false,
-                    'dp-border-valid': dobFocus && fg['controls'].dateOfBirth.valid
-                  
-                }
-                  " 
-                  
-                  >
-                  </div>
+                  <div
+                    class="dp-border"
+                    style="border-style: solid;"
+                    [ngClass]="{
+                      'dp-border-warn': fg['controls'].dateOfBirth.touched && fg['controls'].dateOfBirth.invalid,
+                      'dp-border-grey': dobFocus === false,
+                      'dp-border-valid': dobFocus && fg['controls'].dateOfBirth.valid
+                    }"
+                  ></div>
                   <ion-note
                     *ngIf="
                       (invalid && fg['controls'].dateOfBirth.invalid) ||
-                      (fg['controls'].dateOfBirth.touched &&
-                        fg['controls'].dateOfBirth.invalid)
+                      (fg['controls'].dateOfBirth.touched && fg['controls'].dateOfBirth.invalid)
                     "
                   >
                     <ion-text color="danger"
@@ -192,14 +164,9 @@ import { take, mergeMap } from 'rxjs/operators';
                   >
                   <ion-item lines="none">
                     <ion-label
-                      ><ion-text class="ion-text-wrap"
-                        >DISCLAIMER: lorem ipsum dolor sit amet...</ion-text
-                      ></ion-label
+                      ><ion-text class="ion-text-wrap">DISCLAIMER: lorem ipsum dolor sit amet...</ion-text></ion-label
                     >
-                    <ion-checkbox
-                      slot="start"
-                      (click)="accepted = !accepted"
-                    ></ion-checkbox>
+                    <ion-checkbox slot="start" (click)="accepted = !accepted"></ion-checkbox>
                   </ion-item>
                 </ion-list>
               </mat-card-content>
@@ -207,12 +174,7 @@ import { take, mergeMap } from 'rxjs/operators';
                 <button mat-raised-button color="primary" [disabled]="true">
                   Back
                 </button>
-                <button
-                  mat-raised-button
-                  color="primary"
-                  (click)="setIndex(index + 1)"
-                  [disabled]="formInvalid"
-                >
+                <button mat-raised-button color="primary" (click)="setIndex(index + 1)" [disabled]="formInvalid">
                   Preview
                 </button>
               </mat-card-actions>
@@ -222,88 +184,67 @@ import { take, mergeMap } from 'rxjs/operators';
       </ion-grid>
       <mat-card *ngIf="index === 1">
         <mat-card-header class="main-header">
-          <img
-            mat-card-avatar
-            src="assets/VON-Logo.png"
-            alt="VON Network logo"
-            class="header-image"
-          />
+          <img mat-card-avatar src="assets/VON-Logo.png" alt="VON Network logo" class="header-image" />
           <mat-card-title>{{ cardTitle }}</mat-card-title>
           <mat-card-subtitle>{{ cardSubtitle }}</mat-card-subtitle>
         </mat-card-header>
-        <mat-card-content
-          class="qr-wrapper"
-          *ngIf="$previewData | async as previewData"
-          ><wap-issue-preview
-            [values]="previewData"
-            position="xzzxx"
-          ></wap-issue-preview>
+        <mat-card-content class="qr-wrapper" *ngIf="$previewData | async as previewData"
+          ><wap-issue-preview [values]="previewData" position="xzzxx"></wap-issue-preview>
         </mat-card-content>
         <mat-card-actions>
-          <button
-            mat-raised-button
-            color="primary"
-            (click)="setIndex(index - 1)"
-          >
+          <button mat-raised-button color="primary" (click)="setIndex(index - 1)">
             Back
           </button>
-          <button
-            mat-raised-button
-            color="primary"
-            (click)="setIndex(index + 1)"
-          >
+          <button mat-raised-button color="primary" (click)="setIndex(index + 1)">
             Submit
           </button>
         </mat-card-actions>
       </mat-card>
       <mat-card *ngIf="index === 2">
         <mat-card-header class="main-header">
-          <img
-            mat-card-avatar
-            src="assets/VON-Logo.png"
-            alt="VON Network logo"
-            class="header-image"
-          />
+          <img mat-card-avatar src="assets/VON-Logo.png" alt="VON Network logo" class="header-image" />
           <mat-card-title>{{ cardTitle }}</mat-card-title>
           <mat-card-subtitle>{{ cardSubtitle }}</mat-card-subtitle>
         </mat-card-header>
-        <mat-card-content class="qr-wrapper"
-          ><img [src]="img" mat-card-img class="qr-code" />
+        <mat-card-content class="qr-wrapper">
+          <img [src]="img" mat-card-img class="qr-code" />
         </mat-card-content>
         <mat-card class="mat-elevation-z0">
           <mat-card-header>
             <mat-card-title>Connect Your Mobile Agent</mat-card-title>
-            <mat-card-subtitle>
-              Helper text on how you can do that or a link to somewhere you can
-              get one.</mat-card-subtitle
-            >
           </mat-card-header>
+          <mat-card-content>
+            <ion-item [href]="deeplink" lines="none" target="_blank">
+              <ion-icon slot="start" name="log-out" color="dark"> </ion-icon>
+              <ion-label>Open in Street Cred app (iOS device only) </ion-label>
+            </ion-item>
+          </mat-card-content>
         </mat-card>
       </mat-card>
     </wap-view-wrapper>
     <ng-template #noIdHelper>
       <wap-view-wrapper>
         <mat-card>
-        <mat-card-title>
-         Please re-enter invitation link.
-        </mat-card-title>
-        <mat-card-content>
-          Your session has expired. Please re-enter the link from the POC Invitation email.
-        </mat-card-content>
+          <mat-card-title>
+            Please re-enter invitation link.
+          </mat-card-title>
+          <mat-card-content>
+            Your session has expired. Please re-enter the link from the POC Invitation email.
+          </mat-card-content>
         </mat-card>
       </wap-view-wrapper>
     </ng-template>
   `,
-  styleUrls: ['./success.component.scss']
+  styleUrls: ['./success.component.scss'],
 })
 export class SuccessComponent implements OnInit, OnDestroy {
   index = 0;
   hasId = true;
   accepted = false;
   invalid = false;
-  startAt = new Date(1980, 0, 1)
-  maxDate = new Date(2018, 0, 1)
-  minDate = new Date(1910, 0, 1)
+  startAt = new Date(1980, 0, 1);
+  maxDate = new Date(2018, 0, 1);
+  minDate = new Date(1910, 0, 1);
 
   cardTitle = '';
   cardSubtitle = 'Sign-up for a verified credential';
@@ -312,6 +253,7 @@ export class SuccessComponent implements OnInit, OnDestroy {
   dobFocus = false;
 
   connectionId: string;
+  deeplink: string;
   get formInvalid() {
     return !this.accepted || this.fg.invalid;
   }
@@ -333,33 +275,33 @@ export class SuccessComponent implements OnInit, OnDestroy {
       {
         cardTitle: 'Welcome to VON',
         cardSubtitle: 'Authenticated',
-        nextLabel: 'Sign-up'
+        nextLabel: 'Sign-up',
       },
       {
         cardTitle: 'Preview',
         cardSubtitle: 'Preview Claims',
-        nextLabel: 'Submit'
+        nextLabel: 'Submit',
       },
       {
         cardTitle: 'Connect',
         cardSubtitle: 'Establish a connection with your mobile agent',
-        nextLabel: 'Next'
+        nextLabel: 'Next',
       },
       {
         cardTitle: 'Sign-up',
         cardSubtitle: 'Personal information',
-        nextLabel: 'Preview'
+        nextLabel: 'Preview',
       },
       {
         cardTitle: 'Preview Credential',
         cardSubtitle: 'Personal information',
-        nextLabel: 'Submit'
+        nextLabel: 'Submit',
       },
       {
         cardTitle: 'Connect',
         cardSubtitle: 'Connect your mobile agent',
-        nextLabel: 'Submit'
-      }
+        nextLabel: 'Submit',
+      },
     ];
     this.cardTitle = indexMap[i].cardTitle;
     this.cardSubtitle = indexMap[i].cardSubtitle;
@@ -389,17 +331,9 @@ export class SuccessComponent implements OnInit, OnDestroy {
     function validFc(fc: AbstractControl) {
       return fc.valid;
     }
-    const indexOneCtrls = [
-      ctrls['firstName'],
-      ctrls['lastName'],
-      ctrls['emailAddress']
-    ];
-    const indexTwoCtrls = [
-      ctrls['streetAddress'],
-      ctrls['postalCode'],
-      ctrls['locality']
-    ];
-    const indexThreeCtrls = [ctrls['dateOfBirth']];
+    const indexOneCtrls = [ctrls.firstName, ctrls.lastName, ctrls.emailAddress];
+    const indexTwoCtrls = [ctrls.streetAddress, ctrls.postalCode, ctrls.locality];
+    const indexThreeCtrls = [ctrls.dateOfBirth];
 
     const ctrlMap = [indexOneCtrls, indexTwoCtrls, indexThreeCtrls];
 
@@ -412,39 +346,28 @@ export class SuccessComponent implements OnInit, OnDestroy {
     return valid ? this.setIndex(i) : (this.invalid = true);
   }
 
-  constructor(
-    private stateSvc: StateService,
-    public actionSvc: ActionService,
-    private router: Router
-  ) {}
+  constructor(private stateSvc: StateService, public actionSvc: ActionService, private router: Router) {}
 
   async ngOnInit() {
-    if (!this.stateSvc._id) return this.hasId = false;
+    if (!this.stateSvc._id) return (this.hasId = false);
     const user = this.stateSvc.user;
     const keys = Object.keys(user);
-    this.disableList = keys.filter(
-      key => user[key] !== undefined || null || ''
-    );
+    this.disableList = keys.filter(key => user[key] !== undefined || null || '');
 
     if (!user) return;
-    const initFc = (val: string | Date) =>
-      new FormControl(val, [Validators.required, Validators.minLength(4)]);
+    const initFc = (val: string | Date) => new FormControl(val, [Validators.required, Validators.minLength(4)]);
 
     const firstName = initFc(user.firstName || '');
     const lastName = initFc(user.lastName || '');
     const emailAddress = new FormControl(user.email || '', [
       Validators.required,
       Validators.minLength(4),
-      Validators.email
+      Validators.email,
     ]);
 
     const streetAddress = initFc('');
-    const postalCode = new FormControl('', [
-      Validators.required,
-      postalCodeValidator()
-    ]);
+    const postalCode = new FormControl('', [Validators.required, postalCodeValidator()]);
     const locality = initFc('');
-
 
     const dateOfBirth = initFc('');
 
@@ -455,7 +378,7 @@ export class SuccessComponent implements OnInit, OnDestroy {
       streetAddress,
       postalCode,
       locality,
-      dateOfBirth
+      dateOfBirth,
     });
 
     this.fg.updateValueAndValidity();
@@ -464,16 +387,16 @@ export class SuccessComponent implements OnInit, OnDestroy {
     const invitation = await this.actionSvc.getInvitation().toPromise();
     this.connectionId = invitation.connection_id;
     const stringVal = JSON.stringify(invitation.invitation);
-    console.log(stringVal)
-    const encoded = invitation.base
-    console.log(encoded)
+    console.log(stringVal);
+    const encoded = invitation.base;
+    console.log(encoded);
     this.invite = invitation.invitation as any;
     this.img = `https://chart.googleapis.com/chart?cht=qr&chs=300x300&chld=L|0&chl=${encoded}`;
+    this.deeplink = `https://id.streetcred://invite?${invitation.invitation_url}`;
+    console.log(this.deeplink);
     const previewData = of(this.setPreview(this.fg));
     this.$previewData = previewData;
     this.setIndex(0);
-
-
   }
 
   ngOnDestroy() {
@@ -486,51 +409,51 @@ export class SuccessComponent implements OnInit, OnDestroy {
       {
         label: 'First Name',
         key: 'firstName',
-        value: values['firstName'] || ''
+        value: values.firstName || '',
       },
       {
         label: 'Last Name',
         key: 'lastName',
-        value: values['lastName'] || ''
+        value: values.lastName || '',
       },
       {
         label: 'Email Address',
         key: 'emailAddress',
-        value: values['emailAddress'] || 'not defined'
+        value: values.emailAddress || 'not defined',
       },
       {
         label: 'Street Address',
         key: 'streetAddress',
-        value: values['streetAddress'] || 'not defined'
+        value: values.streetAddress || 'not defined',
       },
       {
         label: 'Postal Code',
         key: 'postalCode',
-        value: values['postalCode'] || 'not defined'
+        value: values.postalCode || 'not defined',
       },
       {
         label: 'Locality',
         key: 'locality',
-        value: values['locality'] || 'not defined'
+        value: values.locality || 'not defined',
       },
       {
         label: 'Date of Birth',
         key: 'dateOfBirth',
-        value: values['dateOfBirth'] || 'not defined'
-      }
+        value: values.dateOfBirth || 'not defined',
+      },
     ];
 
     return map;
   }
   fakeConnection() {
-    if (!this.stateSvc._id) return this.hasId = false;
+    if (!this.stateSvc._id) return (this.hasId = false);
     const form = this.fg.getRawValue();
     const timer = interval(7000);
     this.subs.push(
       timer
         .pipe(
           take(50),
-          mergeMap(() => this.actionSvc.getConnectionState(this.connectionId))
+          mergeMap(() => this.actionSvc.getConnectionState(this.connectionId)),
         )
         .subscribe(obs => {
           console.log(JSON.stringify(this.invite, null, 2));
@@ -548,18 +471,16 @@ export class SuccessComponent implements OnInit, OnDestroy {
                   givenname: form.firstName,
                   streetaddress: form.streetAddress,
                   postalcode: form.postalCode,
-                  country: 'CA'
+                  country: 'CA',
                 },
                 _id: this.stateSvc._id,
               })
               .toPromise()
               .then(res => {
-                this.router.navigate([
-                  `/issue-credential/${res.credential_exchange_id}`
-                ]);
+                this.router.navigate([`/issue-credential/${res.credential_exchange_id}`]);
               });
           }
-        })
+        }),
     );
   }
 }

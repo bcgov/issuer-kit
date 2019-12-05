@@ -29,12 +29,10 @@ import { TrackComponent } from './pages/track/track.component';
 import { MatListModule } from '@angular/material/list';
 import { RequestTokenComponent } from './components/request-token/request-token.component';
 import { AcceptDisclaimerComponent } from './components/accept-disclaimer/accept-disclaimer.component';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import {MatDatepickerModule} from '@angular/material/datepicker';
-import {MatInputModule} from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatInputModule } from '@angular/material/input';
 import { MatNativeDateModule } from '@angular/material/core';
-
-
 
 const keycloakService = new KeycloakService();
 
@@ -66,7 +64,7 @@ const components = [
   CardListItemComponent,
   TrackComponent,
   RequestTokenComponent,
-  AcceptDisclaimerComponent
+  AcceptDisclaimerComponent,
 ];
 
 @NgModule({
@@ -79,15 +77,15 @@ const components = [
     KeycloakAngularModule,
     MatNativeDateModule,
     [...matModules],
-    IonicModule.forRoot()
+    IonicModule.forRoot(),
   ],
   providers: [
     {
       provide: KeycloakService,
-      useValue: keycloakService
-    }
+      useValue: keycloakService,
+    },
   ],
-  entryComponents: [AppComponent]
+  entryComponents: [AppComponent],
 })
 export class AppModule {
   ngDoBootstrap(app) {
@@ -100,22 +98,21 @@ export class AppModule {
           config: {
             url: config.keycloak.url,
             realm: config.keycloak.realm,
-            clientId: config.keycloak.clientId
+            clientId: config.keycloak.clientId,
           },
           initOptions: {
             onLoad: 'check-sso',
-            checkLoginIframe: false
+            checkLoginIframe: false,
           },
-          bearerExcludedUrls: ['/assets']
+          // `/^\/validate\?invite_token=*([^\n\r]*)/gim`
+          bearerExcludedUrls: ['/assets', '/validate', '/accept', '/renew', '/request'],
         })
         .then(() => {
           console.log('[ngDoBootstrap] bootstrap app');
 
           app.bootstrap(AppComponent);
         })
-        .catch(error =>
-          console.error('[ngDoBootstrap] init Keycloak failed', error)
-        );
+        .catch(error => console.error('[ngDoBootstrap] init Keycloak failed', error));
     });
   }
 }

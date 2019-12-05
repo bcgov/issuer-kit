@@ -7,6 +7,7 @@ import { client } from '../../../index';
 import { validateInvitation } from '../../validations/invitation.validation';
 import { IInvitationRecord } from '../../models/interfaces/invitation-record';
 import { EmailService } from '../../services/email.service';
+import { InvitationService } from './invitation.service';
 
 const host = process.env.SMTP_HOST;
 const port = parseInt(process.env.SMTP_PORT || '2525');
@@ -21,6 +22,8 @@ const emailSvc = new EmailService({
   pass: pass || '',
 });
 
+const invitationSvc = new InvitationService();
+
 export interface IInvitationEvent {
   _id: string;
   type: string;
@@ -31,6 +34,7 @@ const routerOpts: Router.IRouterOptions = {
 };
 
 const router = new Router(routerOpts);
+
 router.get('/', async (ctx: Context) => {
   const params = ctx.request.querystring;
   console.log(params);
@@ -116,17 +120,17 @@ router.post('/', async (ctx: Context) => {
   }
 });
 
+router.post('/:id/request', async (ctx: Context) => {
+  const linkId = ctx.params.id;
+  const { email } = ctx.request.body;
+  await invitationSvc.requestToken({ email, linkId, emailSvc, client });
+  return (ctx.body = 200);
+});
+
 router.get('/:id/validate/', async (ctx: Context) => {
   const linkId = ctx.params.id;
-  const res = await client.getRecordByQuery({
-    collection: 'invitations',
-    query: { linkId },
-  });
-  if (!res) return ctx.throw(404);
-  if (!res.active) return ctx.throw(404);
-  if (res.expiry.getTime() <= Date.now())
-    return (ctx.body = { validated: false });
-  return (ctx.body = { validated: true, _id: res._id });
+  const res = await invitationSvc.validateToken(linkId, client);
+  ctx.body = res;
 });
 
 router.post('/:id/renew/', async (ctx: Context) => {

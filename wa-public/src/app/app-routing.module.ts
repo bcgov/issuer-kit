@@ -11,33 +11,37 @@ import { RequestTokenComponent } from './components/request-token/request-token.
 
 const routes: Routes = [
   {
+    path: '',
+    component: PageNotFoundComponent,
+  },
+  {
     path: 'validate',
     component: HomeComponent,
-    canActivate: [ValidInviteGuard]
+    canActivate: [ValidInviteGuard],
   },
   {
     path: 'success',
     component: SuccessComponent,
-    canActivate: [KeycloakGuard]
+    canActivate: [KeycloakGuard],
   },
   {
     path: 'issue-credential/:id',
     component: TrackComponent,
-    canActivate: [KeycloakGuard]
+    canActivate: [KeycloakGuard],
   },
   {
     path: 'accept/:id',
-    component: AcceptDisclaimerComponent
+    component: AcceptDisclaimerComponent,
   },
   {
     path: 'request/:id',
-    component: RequestTokenComponent
+    component: RequestTokenComponent,
   },
-  { path: '**', component: PageNotFoundComponent }
+  { path: '**', component: PageNotFoundComponent },
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
 export class AppRoutingModule {}

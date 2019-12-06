@@ -5,8 +5,7 @@ import { ActionType } from 'src/app/shared/interfaces/actions.interface';
 import { AlertService } from 'src/app/services/alert.service';
 import { FormControl } from '@angular/forms';
 import { map } from 'rxjs/operators';
-import { IInvitationRecord } from 'src/app/shared/interfaces/invitation-record.interface';
-import { Observable, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { StateService } from 'src/app/services/state.service';
 
 @Component({
@@ -25,7 +24,7 @@ import { StateService } from 'src/app/services/state.service';
       </ion-toolbar>
     </ion-header>
 
-    <ion-content padding fullscreen color="light">
+    <ion-content padding color="light">
       <div class="view-wrapper">
         <ion-toolbar color="secondary">
           <ion-searchbar

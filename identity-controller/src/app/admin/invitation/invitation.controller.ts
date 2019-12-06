@@ -123,7 +123,11 @@ router.post('/', async (ctx: Context) => {
 router.post('/:id/request', async (ctx: Context) => {
   const linkId = ctx.params.id;
   const { email } = ctx.request.body;
-  await invitationSvc.requestToken({ email, linkId, emailSvc, client });
+  try {
+    await invitationSvc.requestToken({ email, linkId, emailSvc, client });
+  } catch (err) {
+    console.exception(err);
+  }
   return (ctx.body = 200);
 });
 

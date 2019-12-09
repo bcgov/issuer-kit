@@ -392,7 +392,7 @@ export class SuccessComponent implements OnInit, OnDestroy {
     console.log(encoded);
     this.invite = invitation.invitation as any;
     this.img = `https://chart.googleapis.com/chart?cht=qr&chs=300x300&chld=L|0&chl=${encoded}`;
-    this.deeplink = `id.streetcred://launch?c_i=${invitation.invitation}`;
+    this.deeplink = `id.streetcred://launch?d_m=${invitation.base}`;
     console.log(this.deeplink);
     const previewData = of(this.setPreview(this.fg));
     this.$previewData = previewData;

@@ -22,7 +22,6 @@ export interface IValidateLink {
 export class StateService {
   private _isAuth = false;
   private _title = 'Identity Kit POC';
-  guid: string;
 
   get linkId() {
     return localStorage.getItem('linkId');

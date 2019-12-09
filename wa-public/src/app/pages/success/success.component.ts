@@ -15,7 +15,7 @@ import { take, mergeMap } from 'rxjs/operators';
         <ion-title> {{ title }}</ion-title>
 
         <ion-buttons slot="primary">
-          <ion-button (click)="actionSvc.logout()">
+          <ion-button (click)="logout()">
             <ion-label>Logout</ion-label>
             <ion-icon name="log-out"></ion-icon>
           </ion-button>
@@ -393,7 +393,6 @@ export class SuccessComponent implements OnInit, OnDestroy {
     this.invite = invitation.invitation as any;
     this.img = `https://chart.googleapis.com/chart?cht=qr&chs=300x300&chld=L|0&chl=${encoded}`;
     this.deeplink = `id.streetcred://launch?d_m=${invitation.base}`;
-    console.log(this.deeplink);
     const previewData = of(this.setPreview(this.fg));
     this.$previewData = previewData;
     this.setIndex(0);
@@ -482,5 +481,8 @@ export class SuccessComponent implements OnInit, OnDestroy {
           }
         }),
     );
+  }
+  async logout() {
+    await this.actionSvc.logout()
   }
 }

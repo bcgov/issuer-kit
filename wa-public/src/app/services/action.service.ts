@@ -113,8 +113,8 @@ export class ActionService {
     this.keyCloakSvc.loadUserProfile().then((res: Keycloak.KeycloakProfile) => (this.stateSvc.user = res));
   }
 
-  logout() {
-    this.keyCloakSvc.logout();
+  async logout(uri?: string) {
+    return this.keyCloakSvc.logout(uri || '');
   }
 
   getInvitation() {

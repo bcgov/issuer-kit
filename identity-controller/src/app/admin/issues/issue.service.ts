@@ -61,6 +61,10 @@ export class IssueService {
   }
 }
 
-export function futureDate(year: number = 2099) {
-  return new Date(year)
+export function futureDate(offset: number = 99) {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = today.getMonth();
+  const day = today.getDate();
+  return new Date(year + offset, month, day)
 }

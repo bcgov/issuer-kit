@@ -9,7 +9,7 @@ export interface IValidateLink {
 }
 
 export class InvitationService {
-  constructor() {
+  constructor () {
     // this._client.connect();
   }
 
@@ -22,6 +22,7 @@ export class InvitationService {
       query: { linkId },
     });
     if (!res) return { _id: '', active: false, expired: true };
+    if (res.issued) return { _id: res._id, active: true, expired: false, email: res.email }
     return {
       _id: res._id,
       active: res.active,

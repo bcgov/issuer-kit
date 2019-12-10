@@ -19,8 +19,9 @@ import { LoadingController } from '@ionic/angular';
           <img mat-card-avatar src="assets/VON-Logo.png" alt="VON Network logo" class="header-image" />
           <mat-card-title>Request Token</mat-card-title>
           <mat-card-subtitle
-            >Your token has expired. To continue using the Identity Kit Proof of Concept please request a new token
-            below.</mat-card-subtitle
+            >Your token has expired. To continue using the Identity Kit Proof of Concept(POC) please request a new token
+            below. We've entered the email address that was originally signed up for the POC. If you'd like to use a
+            different address to receive your new invite please enter it here.</mat-card-subtitle
           >
         </mat-card-header>
 
@@ -63,8 +64,10 @@ export class RequestTokenComponent implements OnInit {
     private actionSvc: ActionService,
     private route: ActivatedRoute,
     private loadingCtrl: LoadingController,
+    private stateSvc: StateService,
   ) {
-    const fc = new FormControl('', [Validators.required, Validators.email]);
+    const email = this.stateSvc.email || '';
+    const fc = new FormControl(email, [Validators.required, Validators.email]);
     this.fc = fc;
   }
 

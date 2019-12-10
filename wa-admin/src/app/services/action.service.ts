@@ -83,7 +83,9 @@ export class ActionService {
           addedBy: this.stateSvc.user.username
         })
         .toPromise();
+
     }
+
   }
   async sendEmail(records: string[] | string) {
     if (Array.isArray(records)) {
@@ -107,7 +109,9 @@ export class ActionService {
           addedBy: this.stateSvc.user.username
         })
         .toPromise();
+
     }
+
   }
 
   changeAccess(records: string[]) {

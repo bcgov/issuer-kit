@@ -14,6 +14,7 @@ export interface IValidateLink {
   _id: string;
   expired: boolean;
   active: boolean;
+  email?: string;
 }
 
 @Injectable({
@@ -22,7 +23,6 @@ export interface IValidateLink {
 export class StateService {
   private _isAuth = false;
   private _title = 'Identity Kit POC';
-  guid: string;
 
   get linkId() {
     return localStorage.getItem('linkId');
@@ -34,6 +34,10 @@ export class StateService {
 
   set _id(id: string) {
     localStorage.setItem('id', id);
+  }
+
+  get email(): string {
+    return localStorage.getItem('email') || ''
   }
 
   user: IUser = {};
@@ -53,7 +57,7 @@ export class StateService {
     return this._title;
   }
 
-  constructor(private http: HttpClient) {
+  constructor (private http: HttpClient) {
     this._apiUrl = apiUrl;
   }
 }

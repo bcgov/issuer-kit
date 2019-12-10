@@ -33,6 +33,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
 import { MatNativeDateModule } from '@angular/material/core';
+import { CompletedComponent } from './pages/completed/completed.component';
 
 const keycloakService = new KeycloakService();
 
@@ -65,10 +66,11 @@ const components = [
   TrackComponent,
   RequestTokenComponent,
   AcceptDisclaimerComponent,
+  CompletedComponent
 ];
 
 @NgModule({
-  declarations: [AppComponent, [...components]],
+  declarations: [[...components], AppComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -105,7 +107,7 @@ export class AppModule {
             checkLoginIframe: false,
           },
           // `/^\/validate\?invite_token=*([^\n\r]*)/gim`
-          bearerExcludedUrls: ['/assets', '/validate', '/accept', '/renew', '/request'],
+          bearerExcludedUrls: ['/assets', '/validate', '/accept', '/renew', '/request', '/completed', '/logout'],
         })
         .then(() => {
           console.log('[ngDoBootstrap] bootstrap app');

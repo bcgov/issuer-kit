@@ -8,6 +8,7 @@ import { SuccessComponent } from './pages/success/success.component';
 import { TrackComponent } from './pages/track/track.component';
 import { AcceptDisclaimerComponent } from './components/accept-disclaimer/accept-disclaimer.component';
 import { RequestTokenComponent } from './components/request-token/request-token.component';
+import { CompletedComponent } from './pages/completed/completed.component';
 
 const routes: Routes = [
   {
@@ -36,6 +37,10 @@ const routes: Routes = [
   {
     path: 'request/:id',
     component: RequestTokenComponent,
+  },
+  {
+    path: 'completed',
+    component: CompletedComponent
   },
   { path: '**', component: PageNotFoundComponent },
 ];

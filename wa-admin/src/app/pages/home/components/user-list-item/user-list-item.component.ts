@@ -10,7 +10,6 @@ import { Router } from '@angular/router';
     <mat-card class="mat-elevation-z0">
       <ion-item>
         <mat-checkbox
-          *ngIf="!consumed"
           color="accent"
           [(ngModel)]="invitationRecord.changed"
           (change)="activeChange(_id)"

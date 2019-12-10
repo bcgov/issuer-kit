@@ -11,7 +11,7 @@ import { ActivatedRoute } from '@angular/router';
         <ion-title> {{ title }}</ion-title>
 
         <ion-buttons slot="primary">
-          <ion-button (click)="actionSvc.logout()">
+          <ion-button (click)="logout()">
             <ion-label>Logout</ion-label>
             <ion-icon name="log-out"></ion-icon>
           </ion-button>
@@ -35,5 +35,8 @@ export class TrackComponent implements OnInit {
   ngOnInit() {
     const credExId = this.route.snapshot.paramMap.get('id');
     this.$id.next(credExId);
+  }
+  async logout() {
+    await this.actionSvc.logout()
   }
 }

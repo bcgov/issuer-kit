@@ -50,6 +50,7 @@ router.get('/', async (ctx: Context) => {
     clearTimeout(timer);
   }
 });
+
 router.post('/', async (ctx: Context) => {
   const data = ctx.request.body;
   if (!data) return ctx.throw(400, 'no data to add');

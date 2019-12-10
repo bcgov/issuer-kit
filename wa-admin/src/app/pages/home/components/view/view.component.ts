@@ -154,7 +154,9 @@ export class ViewComponent implements OnInit {
       map(obs => {
         const accessLabel = obs.active ? 'Revoke Access' : 'Grant Access';
         return obs.consumed
-          ? []
+          ? [
+            { label: 'Send Email', key: 'email' }
+          ]
           : [
               { label: 'Send Email', key: 'email' },
               { label: accessLabel, key: 'revoke' }

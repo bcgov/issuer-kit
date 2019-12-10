@@ -6,6 +6,7 @@ import { interval } from 'rxjs/internal/observable/interval';
 import { StateService } from 'src/app/services/state.service';
 import { Observable, of, Subscription } from 'rxjs';
 import { ActionService } from 'src/app/services/action.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'wap-credential-issuance',
@@ -107,9 +108,7 @@ export class CredentialIssuanceComponent implements OnInit, OnDestroy {
     }
   };
 
-  constructor(private http: HttpClient, private stateSvc: StateService, private actionSvc: ActionService) {}
-
-  private transactionStateURL: string;
+  constructor(private router: Router, private stateSvc: StateService, private actionSvc: ActionService) {}
 
   ngOnInit() {
      // TODO @SH: set the current connection id
@@ -121,19 +120,26 @@ export class CredentialIssuanceComponent implements OnInit, OnDestroy {
         switchMap(() => this.actionSvc.getCredentialById(this.credExId)) // TODO: @SH replace with this.transactionStateURL
       )
       .subscribe(res => {
-        console.log(res)
-        if (!res) return
-        this.updateProgress(res.issued)
+        console.log(res);
+        if (!res) return;
+        if (this.step === 3) return this.completeProgress();
+
+        this.updateProgress(res.issued);
       }));
     // setTimeout(() => (this.step = 3), 20000);
     const user = this.stateSvc.user;
     if (user) this.$user = of(`${user.firstName}`);
   }
   ngOnDestroy() {
-    this.subs.forEach(sub => sub.unsubscribe())
+    this.subs.forEach(sub => sub.unsubscribe());
   }
 
   updateProgress(issued: boolean) {
     if (issued) this.step = 3;
+  }
+
+  async completeProgress() {
+    await this.actionSvc.logout('https://identity-kit.pathfinder.gov.bc/completed');
+    // this.router.navigate(['/completed']);
   }
 }

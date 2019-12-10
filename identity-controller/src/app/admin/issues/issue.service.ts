@@ -13,7 +13,7 @@ export class IssueService {
 
   apiUrl: string;
 
-  constructor(apiUrl: string) {
+  constructor (apiUrl: string) {
     console.log(apiUrl);
     this.apiUrl = apiUrl;
     const schema = new Schema(apiUrl);
@@ -59,4 +59,8 @@ export class IssueService {
       console.log('issue credential error', err);
     }
   }
+}
+
+export function futureDate(year: number = 2099) {
+  return new Date(year)
 }

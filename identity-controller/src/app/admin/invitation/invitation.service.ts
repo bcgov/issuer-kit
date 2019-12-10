@@ -5,6 +5,7 @@ export interface IValidateLink {
   _id: string;
   expired: boolean;
   active: boolean;
+  email?: string;
 }
 
 export class InvitationService {
@@ -25,6 +26,7 @@ export class InvitationService {
       _id: res._id,
       active: res.active,
       expired: res.expiry.getTime() <= Date.now(),
+      email: res.email
     };
   }
 

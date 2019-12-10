@@ -14,6 +14,7 @@ export interface IValidateLink {
   _id: string;
   expired: boolean;
   active: boolean;
+  email?: string;
 }
 
 @Injectable({
@@ -35,6 +36,10 @@ export class StateService {
     localStorage.setItem('id', id);
   }
 
+  get email(): string {
+    return localStorage.getItem('email') || ''
+  }
+
   user: IUser = {};
   private _apiUrl: string;
 
@@ -52,7 +57,7 @@ export class StateService {
     return this._title;
   }
 
-  constructor(private http: HttpClient) {
+  constructor (private http: HttpClient) {
     this._apiUrl = apiUrl;
   }
 }

@@ -1,6 +1,6 @@
 export const emailTemplate = (url: string, adminAddress: string) => {
   return `<p>
-You have received this invitation from name@email.com. If you have any
+You have received this invitation from ${adminAddress}. If you have any
 questions please contact them by sending an email to <a href="mailto:${adminAddress}">${adminAddress}</a>. 
 </p>
 <p>
@@ -13,11 +13,9 @@ the Pan-Canadian Trust Framework.
 There are three steps:
 </p>
 <ol>
-<li>Setup by installing a mobile app (personal agent) and complete other
+<li>Setup by installing a mobile app (personal agent) and completing other
 prerequisite activities
-<li>Obtain your proof of concept digital id using one of the DIACC members that
-is participating as an issuer for proof of concept digital id for a verified
-person
+<li>Obtain your proof of concept digital for a verified person from the BC POC issuing service
 <li>Use your digital ID at one or more of the proof of concept demonstration
 services that have been provided by participating DIACC members
 </li>
@@ -29,16 +27,18 @@ Step 1: Setup
 <li>You must have an active login account from one of the following: 
 <ol>
 <li>BC Government idir account
-<li>Github account - <a href="https://github.com/">Click here to sign for a free account</a>
-<li>...
+<li>Github account, please populate the name fields of your github account profile - <a href="https://github.com/">Click here to sign for a free account</a>
+<li>Other options are TBD...
 </li> 
 </ol>
 <li>Install a smartphone app that you will use as your personal agent for
 receiving, holding, and sharing verifiable credentials that are issued to you.
 Please install one of the following: 
 <ol>    
-<li>StreetCred, currently only for iPhone or iPad. Click <a href="https://github.com/bcgov/identity-kit-poc/blob/master/docs/GettingApp.md">here</a> for App Store download and app setup instructions.
-<li>Other agents are TBD
+<li>StreetCred, currently only for iPhone or iPad. Please make special note of
+the extra details for this step since the demo will not work unless you follow
+the app setup instructions <a href="https://github.com/bcgov/identity-kit-poc/blob/master/docs/GettingApp.md">here</a>.
+<li>Other agents are TBD and are expected to be created by POC participants.
 </li> 
 </ol>
 </li> 
@@ -47,12 +47,15 @@ Please install one of the following:
 Step 2: Obtain your proof of concept digital ID for verified person
 </p>
 <p>
-Use the following <a href="${url}">Link</a>
+This step works best if you have an additional device such as a laptop
+or tablet that can display the screens for the issuing service.
+Using your laptop or tablet click the following <a href="${url}">link</a> to
+start the process for issuing your digital ID for verifiable person.
 </p>
 <p>
-You can use this link multiple times to allow for demonstrations you may want to
-do. If you find that the link has expired, please request a new invitation by
-sending an email to <a href="mailto:${adminAddress}">${adminAddress}</a>. 
+You can use this link multiple times to allow for demonstrations you may want
+to do. If you find that the link has expired, please request a new invitation
+by sending an email to  <a href="mailto:${adminAddress}">${adminAddress}</a>. 
 </p>
 <p>
 Step 3: Use your proof of concept digital ID at proof of concept demonstration services. 
@@ -60,9 +63,16 @@ Step 3: Use your proof of concept digital ID at proof of concept demonstration s
 <p>
 Currently the following services are available:
 </p>
+<p>
+We have found it works best if you use a second device such as a laptop
+or tablet for running these demo services.
+</p>
 <ol>
-<li>Hello World Test Service - <i>Link to be added</i>
-<li>TBD
+<li>Demo Test Service - from your laptop or tablet click on the
+following link: <a href="https://law-society-demo.pathfinder.gov.bc.ca/">https://law-society-demo.pathfinder.gov.bc.ca/</a>. 
+After the page loads click the button for verifiable credential and scan the QR code with your personal
+agent app that you installed in Step 1: Setup above.
+<li>Others demo services are TBD with expectation that POC participants will provide examples.
 </li>
 </ol>
 <p>

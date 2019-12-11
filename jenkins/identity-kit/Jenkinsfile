@@ -128,8 +128,8 @@ node {
             def buildName = it.name().split("/")[1];
             def contextDir = config.APP_CONTEXT_DIRS[buildName];
             if(triggerBuild(contextDir)){
-                echo "Building the ${it.name()} image ..."
-                build(openshift, "${it.name()}", config.WAIT_TIMEOUT)
+                echo "Building the ${buildName} image ..."
+                build(openshift, "${buildName}", config.WAIT_TIMEOUT)
             }
           }
         }
@@ -149,8 +149,8 @@ node {
             def buildName = it.name().split("/")[1];
             def contextDir = config.APP_CONTEXT_DIRS[buildName];
             if(triggerBuild(contextDir)){
-                echo "Building the ${it.name()} image ..."
-                build(openshift, "${it.name()}", config.WAIT_TIMEOUT)
+                echo "Building the ${buildName} image ..."
+                build(openshift, "${buildName}", config.WAIT_TIMEOUT)
             }
           }
         }

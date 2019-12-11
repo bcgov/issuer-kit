@@ -13,8 +13,7 @@ the Pan-Canadian Trust Framework.
 There are three steps:
 </p>
 <ol>
-<li>Setup by installing a mobile app (personal agent) and completing other
-prerequisite activities
+<li>Setup by installing a mobile app (personal agent) and completing other prerequisite activities
 <li>Obtain your proof of concept digital for a verified person from the BC POC issuing service
 <li>Use your digital ID at one or more of the proof of concept demonstration
 services that have been provided by participating DIACC members
@@ -26,7 +25,6 @@ Step 1: Setup
 <ol>
 <li>You must have an active login account from one of the following: 
 <ol>
-<li>BC Government idir account
 <li>Github account, please populate the name fields of your github account profile - <a href="https://github.com/">Click here to sign for a free account</a>
 <li>Other options are TBD...
 </li> 
@@ -35,7 +33,7 @@ Step 1: Setup
 receiving, holding, and sharing verifiable credentials that are issued to you.
 Please install one of the following: 
 <ol>    
-<li>StreetCred, currently only for iPhone or iPad. Please make special note of
+<li>Streetcred, currently only for iPhone or iPad. Please make special note of
 the extra details for this step since the demo will not work unless you follow
 the app setup instructions <a href="https://github.com/bcgov/identity-kit-poc/blob/master/docs/GettingApp.md">here</a>.
 <li>Other agents are TBD and are expected to be created by POC participants.
@@ -49,8 +47,10 @@ Step 2: Obtain your proof of concept digital ID for verified person
 <p>
 This step works best if you have an additional device such as a laptop
 or tablet that can display the screens for the issuing service.
-Using your laptop or tablet click the following <a href="${url}">link</a> to
-start the process for issuing your digital ID for verifiable person.
+<b>Using your laptop or tablet click the following <a href="${url}">link</a> to
+start the process for issuing your digital ID for verifiable person.</b>
+</p>
+<p>Login using your github account and authorize the invitation service to connect to your account.
 </p>
 <p>
 You can use this link multiple times to allow for demonstrations you may want
@@ -65,7 +65,9 @@ Currently the following services are available:
 </p>
 <p>
 We have found it works best if you use a second device such as a laptop
-or tablet for running these demo services.
+or tablet for running these demo services. Please close and restart your
+browser to be sure that the github login is cleared away before running
+the demo services.
 </p>
 <ol>
 <li>Demo Test Service - from your laptop or tablet click on the

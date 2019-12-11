@@ -355,10 +355,10 @@ export class SuccessComponent implements OnInit, OnDestroy {
     this.disableList = keys.filter(key => user[key] !== undefined || null || '');
 
     if (!user) return;
-    const initFc = (val: string | Date) => new FormControl(val, [Validators.required, Validators.minLength(4)]);
+    const initFc = (val: string | Date, min: number = 4) => new FormControl(val, [Validators.required, Validators.minLength(min)]);
 
-    const firstName = initFc(user.firstName || '');
-    const lastName = initFc(user.lastName || '');
+    const firstName = initFc(user.firstName || '', 1);
+    const lastName = initFc(user.lastName || '', 1);
     const emailAddress = new FormControl(user.email || '', [
       Validators.required,
       Validators.minLength(4),

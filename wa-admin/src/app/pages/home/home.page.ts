@@ -36,7 +36,7 @@ import { StateService } from 'src/app/services/state.service';
               <mat-icon slot="icon-only">person_add</mat-icon>
             </ion-button>
           </ion-buttons>
-          <ion-buttons slot="primary" *ngIf="stateSvc.state === 'invited'">
+          <ion-buttons slot="primary">
             <ion-button slot="start" [matMenuTriggerFor]="menu">
               <mat-icon slot="icon-only">more_vert</mat-icon>
             </ion-button>
@@ -49,7 +49,6 @@ import { StateService } from 'src/app/services/state.service';
 
     <mat-menu #menu="matMenu">
       <button
-        *ngIf="stateSvc.state === 'invited'"
         mat-menu-item
         (click)="changeAction('email')"
         [disabled]="stateSvc.changeRecords.size < 1"

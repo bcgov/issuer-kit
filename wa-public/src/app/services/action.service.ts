@@ -103,7 +103,11 @@ export class ActionService {
     // TODO: @ES some authentication logic here
   }
 
-  constructor(
+  set email(addr: string) {
+    localStorage.setItem('email', addr);
+  }
+
+  constructor (
     private keyCloakSvc: KeycloakService,
     private stateSvc: StateService,
     private http: HttpClient,
@@ -113,8 +117,8 @@ export class ActionService {
     this.keyCloakSvc.loadUserProfile().then((res: Keycloak.KeycloakProfile) => (this.stateSvc.user = res));
   }
 
-  logout() {
-    this.keyCloakSvc.logout();
+  async logout(uri?: string) {
+    return this.keyCloakSvc.logout(uri || '');
   }
 
   getInvitation() {

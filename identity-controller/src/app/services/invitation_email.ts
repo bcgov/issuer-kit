@@ -47,9 +47,10 @@ Step 2: Obtain your proof of concept digital ID for verified person
 <p>
 This step works best if you have an additional device such as a laptop
 or tablet that can display the screens for the issuing service.
-<b>Using your laptop or tablet click the following <a href="${url}">link</a> to
-start the process for issuing your digital ID for verifiable person.</b>
+<b>Using your laptop or tablet click the following link to
+start the process for issuing your digital ID for verifiable person:</b>
 </p>
+<p><b><a href="${url}">${url}</a></b></p>
 <p>Login using your github account and authorize the invitation service to connect to your account.
 </p>
 <p>

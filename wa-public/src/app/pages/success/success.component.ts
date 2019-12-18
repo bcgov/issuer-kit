@@ -5,7 +5,9 @@ import { FormGroup, FormControl, Validators, AbstractControl } from '@angular/fo
 import { postalCodeValidator } from 'src/app/services/validators';
 import { Observable, of, interval, Subscription } from 'rxjs';
 import { Router } from '@angular/router';
-import { take, mergeMap } from 'rxjs/operators';
+import { take, mergeMap, debounce, debounceTime } from 'rxjs/operators';
+import { TypeaheadService } from 'src/app/services/typeahead.service';
+import { CpRequest } from 'src/app/models/cp-request';
 
 @Component({
   selector: 'wap-success',
@@ -346,7 +348,12 @@ export class SuccessComponent implements OnInit, OnDestroy {
     return valid ? this.setIndex(i) : (this.invalid = true);
   }
 
-  constructor(private stateSvc: StateService, public actionSvc: ActionService, private router: Router) {}
+  constructor(
+    private stateSvc: StateService,
+    public actionSvc: ActionService,
+    private router: Router,
+    private typeAheadSvc: TypeaheadService,
+  ) {}
 
   async ngOnInit() {
     if (!this.stateSvc._id) return (this.hasId = false);
@@ -355,7 +362,8 @@ export class SuccessComponent implements OnInit, OnDestroy {
     this.disableList = keys.filter(key => user[key] !== undefined || null || '');
 
     if (!user) return;
-    const initFc = (val: string | Date, min: number = 4) => new FormControl(val, [Validators.required, Validators.minLength(min)]);
+    const initFc = (val: string | Date, min: number = 4) =>
+      new FormControl(val, [Validators.required, Validators.minLength(min)]);
 
     const firstName = initFc(user.firstName || '', 1);
     const lastName = initFc(user.lastName || '', 1);
@@ -382,6 +390,10 @@ export class SuccessComponent implements OnInit, OnDestroy {
     });
 
     this.fg.updateValueAndValidity();
+    this.fg.valueChanges.pipe(debounceTime(50)).subscribe(obs => {
+      const req = new CpRequest(obs.streetAddress);
+      this.typeAheadSvc.queryCp(req);
+    });
     this.$title = of(`Issue Verified Person Digital ID`);
 
     const invitation = await this.actionSvc.getInvitation().toPromise();
@@ -483,6 +495,6 @@ export class SuccessComponent implements OnInit, OnDestroy {
     );
   }
   async logout() {
-    await this.actionSvc.logout()
+    await this.actionSvc.logout();
   }
 }

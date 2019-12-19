@@ -44,6 +44,48 @@ String getImageTagHash(OpenShiftDSL openshift, String imageName, String tag = ""
   return istag.out.tokenize('@')[1].trim()
 }
 
+void build(String imageSelector) {
+  //  Retrieve all build configurations based on the selector
+  def buildConfigsAll = openshift.selector("bc", [ "app-group" : "${imageSelector}" ])
+  echo "Found ${buildConfigsAll.count()} buildconfigs for app label (app-group=${imageSelector}): ${buildConfigsAll.names()}"
+
+  // Set 'run-build' label based on wether there have been changes in the context directory
+  buildConfigsAll.withEach {
+    def buildName = it.name().split("/")[1];
+    def contextDir = config.APP_CONTEXT_DIRS[buildName];
+    if(triggerBuild(contextDir)){
+        setRunBuildLabel(it, 'true');
+    }
+  }
+
+  // Retrieve all the build configs that need to be executed
+  def buildConfigsRun = openshift.selector("bc", [ "app-group" : "${imageSelector}", "run-build" : "true" ])
+  echo "Found ${buildConfigsRun.count()} buildconfigs for app label (app=${imageSelector}, run-build=true): ${buildConfigsRun.names()}"
+
+  // Kick off all the builds in parallel ...
+  def builds = buildConfigsRun.startBuild()
+  echo "Started ${builds.count()} builds: ${builds.names()}"
+
+  // Reset run-build label now that builds have started
+  buildConfigsRun.withEach {
+      setRunBuildLabel(it, 'false');
+  }
+
+  timeout(config.WAIT_TIMEOUT) {
+    // Wait for all the builds to complete ...
+    // This section will exit after the last build completes.
+    echo "Waiting for builds to complete ..."
+    builds.withEach {
+      // untilEach and watch - do not support watching multiple named resources,
+      // so we have to feed it one at a time.
+      it.untilEach(1) {
+          echo "${it.object().status.phase} - ${it.name()}"
+          return (it.object().status.phase == "Complete")
+      }
+    }
+  }
+}
+
 void deploy(String appName, String namespace, String envTag) {
   openshift.withCluster() {
     openshift.withProject() {
@@ -77,51 +119,12 @@ void setRunBuildLabel(OpenShiftDSL.OpenShiftResourceSelector  bc, String flagVal
 node {
   def config = load "../workspace@script/jenkins/config.groovy"
 
-  // Build base images, if necessary
+  // Build base images
   stage("Building base images...") {
     script {
       openshift.withCluster() {
         openshift.withProject() {
-          //  Retrieve all base image build configurations
-          def baseBuildConfigs = openshift.selector("bc", [ "app-group" : "${config.BASE_IMAGE_SELECTOR}" ])
-          echo "Found ${baseBuildConfigs.count()} buildconfigs for app label (app-group=${config.BASE_IMAGE_SELECTOR}): ${baseBuildConfigs.names()}"
-
-          // Set 'run-build' label based on wether there have been changes in the context directory
-          baseBuildConfigs.withEach {
-            def buildName = it.name().split("/")[1];
-            def contextDir = config.APP_CONTEXT_DIRS[buildName];
-            if(triggerBuild(contextDir)){
-                setRunBuildLabel(it, 'true');
-            }
-          }
-
-          // Retrieve all the base image build configs that need to be executed
-          def buildConfigs = openshift.selector("bc", [ "app-group" : "${config.BASE_IMAGE_SELECTOR}", "run-build" : "true" ])
-          echo "Found ${buildConfigs.count()} buildconfigs for app label (app=${config.BASE_IMAGE_SELECTOR}, run-build=true): ${buildConfigs.names()}"
-
-          // Kick off all the builds in parallel ...
-          def builds = buildConfigs.startBuild()
-          echo "Started ${builds.count()} builds: ${builds.names()}"
-
-          // Reset run-build label now that builds have started
-          buildConfigs.withEach {
-              setRunBuildLabel(it, 'false');
-          }
-
-          timeout(config.WAIT_TIMEOUT) {
-            // Wait for all the builds to complete ...
-            // This section will exit after the last build completes.
-            echo "Waiting for builds to complete ..."
-            builds.withEach {
-              // untilEach and watch - do not support watching multiple named resources,
-              // so we have to feed it one at a time.
-              it.untilEach(1) {
-                  echo "${it.object().status.phase} - ${it.name()}"
-                  return (it.object().status.phase == "Complete")
-              }
-            }
-          }
-        }
+          build(config.BASE_IMAGE_SELECTOR);
       }
     }
   }
@@ -131,44 +134,7 @@ node {
     script {
       openshift.withCluster() {
         openshift.withProject() {
-          //  Retrieve all runtime image build configurations
-          def runtimeBuildConfigs = openshift.selector("bc", [ "app-group" : "${config.RUNTIME_IMAGE_SELECTOR}" ])
-          echo "Found ${runtimeBuildConfigs.count()} buildconfigs for app-group label (app-group=${config.RUNTIME_IMAGE_SELECTOR}): ${runtimeBuildConfigs.names()}"
-
-          runtimeBuildConfigs.withEach {
-            def buildName = it.name().split("/")[1];
-            def contextDir = config.APP_CONTEXT_DIRS[buildName];
-            if(triggerBuild(contextDir)){
-                setRunBuildLabel(it, 'true');
-            }
-          }
-
-          // Retrieve all the runtime image build configs that need to be executed
-          def buildConfigs = openshift.selector("bc", [ "app-group" : "${config.RUNTIME_IMAGE_SELECTOR}", "run-build" : "true" ])
-          echo "Found ${buildConfigs.count()} buildconfigs for app label (app=${config.RUNTIME_IMAGE_SELECTOR}, run-build=true): ${buildConfigs.names()}"
-
-          // Kick off all the builds in parallel ...
-          def builds = buildConfigs.startBuild()
-          echo "Started ${builds.count()} builds: ${builds.names()}"
-
-          // Reset run-build label now that builds have started
-          buildConfigs.withEach {
-              setRunBuildLabel(it, 'false');
-          }
-
-          timeout(config.WAIT_TIMEOUT) {
-            // Wait for all the builds to complete ...
-            // This section will exit after the last build completes.
-            echo "Waiting for builds to complete ..."
-            builds.withEach {
-              // untilEach and watch - do not support watching multiple named resources,
-              // so we have to feed it one at a time.
-              it.untilEach(1) {
-                  echo "${it.object().status.phase} - ${it.name()}"
-                  return (it.object().status.phase == "Complete")
-              }s
-            }
-          }
+          build.(config.RUNTIME_IMAGE_SELECTOR);
         }
       }
     }

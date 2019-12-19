@@ -5,7 +5,9 @@ import { FormGroup, FormControl, Validators, AbstractControl } from '@angular/fo
 import { postalCodeValidator } from 'src/app/services/validators';
 import { Observable, of, interval, Subscription } from 'rxjs';
 import { Router } from '@angular/router';
-import { take, mergeMap } from 'rxjs/operators';
+import { take, mergeMap, debounce, debounceTime } from 'rxjs/operators';
+import { TypeaheadService, ICPItem } from 'src/app/services/typeahead.service';
+import { CpRequest } from 'src/app/models/cp-request';
 
 @Component({
   selector: 'wap-success',
@@ -45,130 +47,141 @@ import { take, mergeMap } from 'rxjs/operators';
                 <mat-card-subtitle>Validate claims</mat-card-subtitle>
               </mat-card-header>
               <mat-card-content [formGroup]="fg">
-                <ion-list>
-                  <wap-input
-                    [fc]="fg.controls['firstName']"
-                    placeholder="John"
-                    label="First Name"
-                    error="First name is required"
-                    [invalid]="
-                      (invalid && fg.controls['firstName'].invalid) ||
-                      (fg.controls['firstName'].touched && fg.controls['firstName'].invalid)
-                    "
-                    [disabled]="true"
-                  >
-                  </wap-input>
-                  <wap-input
-                    [fc]="fg.controls['lastName']"
-                    placeholder="Doe"
-                    label="Last Name"
-                    error="Last name is required"
-                    [invalid]="
-                      (invalid && fg.controls['lastName'].invalid) ||
-                      (fg.controls['lastName'].touched && fg.controls['lastName'].invalid)
-                    "
-                    [disabled]="true"
-                  >
-                  </wap-input>
-                  <wap-input
-                    [fc]="fg.controls['emailAddress']"
-                    placeholder="email@example.com"
-                    label="Email"
-                    error="Email address is required"
-                    [invalid]="
-                      (invalid && fg.controls['emailAddress'].invalid) ||
-                      (fg.controls['emailAddress'].touched && fg.controls['emailAddress'].invalid)
-                    "
-                    [disabled]="true"
-                  >
-                  </wap-input>
-                  <wap-input
-                    [fc]="fg.controls['streetAddress']"
-                    placeholder="123 Fake Street"
-                    label="Street Address"
-                    error="Street address is required"
-                    [invalid]="
-                      (invalid && fg.controls['streetAddress'].invalid) ||
-                      (fg.controls['streetAddress'].touched && fg.controls['streetAddress'].invalid)
-                    "
-                  >
-                  </wap-input>
-                  <wap-input
-                    [fc]="fg.controls['postalCode']"
-                    placeholder="A1AA1A"
-                    label="Postal Code"
-                    error="Postal code must be in the format of A1A1A1"
-                    [invalid]="
-                      (invalid && fg.controls['postalCode'].invalid) ||
-                      (fg.controls['postalCode'].touched && fg.controls['postalCode'].invalid)
-                    "
-                  >
-                  </wap-input>
-                  <wap-input
-                    [fc]="fg.controls['locality']"
-                    placeholder="Victoria"
-                    label="Locality"
-                    error="Locality is required"
-                    [invalid]="
-                      (invalid && fg.controls['locality'].invalid) ||
-                      (fg.controls['locality'].touched && fg.controls['locality'].invalid)
-                    "
-                  >
-                  </wap-input>
+                <wap-input
+                  [fc]="fg.controls['firstName']"
+                  placeholder="John"
+                  label="First Name"
+                  error="First name is required"
+                  [invalid]="
+                    (invalid && fg.controls['firstName'].invalid) ||
+                    (fg.controls['firstName'].touched && fg.controls['firstName'].invalid)
+                  "
+                  [disabled]="true"
+                >
+                </wap-input>
+                <wap-input
+                  [fc]="fg.controls['lastName']"
+                  placeholder="Doe"
+                  label="Last Name"
+                  error="Last name is required"
+                  [invalid]="
+                    (invalid && fg.controls['lastName'].invalid) ||
+                    (fg.controls['lastName'].touched && fg.controls['lastName'].invalid)
+                  "
+                  [disabled]="true"
+                >
+                </wap-input>
+                <wap-input
+                  [fc]="fg.controls['emailAddress']"
+                  placeholder="email@example.com"
+                  label="Email"
+                  error="Email address is required"
+                  [invalid]="
+                    (invalid && fg.controls['emailAddress'].invalid) ||
+                    (fg.controls['emailAddress'].touched && fg.controls['emailAddress'].invalid)
+                  "
+                  [disabled]="true"
+                >
+                </wap-input>
+                <wap-input
+                  [fc]="fg.controls['streetAddress']"
+                  placeholder="123 Fake Street"
+                  label="Street Address"
+                  error="Street address is required"
+                  [invalid]="
+                    (invalid && fg.controls['streetAddress'].invalid) ||
+                    (fg.controls['streetAddress'].touched && fg.controls['streetAddress'].invalid)
+                  "
+                >
+                </wap-input>
+                <div class="mat-elevation-z4 address-list" *ngIf="typeAheadSvc.$addresses | async as addresses">
+                  <ion-list *ngIf="addresses.length > 0">
+                    <ion-item
+                      class="address-item"
+                      *ngFor="let item of addresses"
+                      lines="none"
+                      (click)="setAddress(item)"
+                    >
+                      <ion-label> {{ item.Text }} - {{ item.Description }} </ion-label>
+                    </ion-item>
+                  </ion-list>
+                </div>
 
-                  <ion-item lines="none">
-                    <ion-label position="stacked">Date of Birth <ion-text color="danger">*</ion-text></ion-label>
-                    <!--
+                <wap-input
+                  [fc]="fg.controls['postalCode']"
+                  placeholder="A1AA1A"
+                  label="Postal Code"
+                  error="Postal code must be in the format of A1A1A1"
+                  [invalid]="
+                    (invalid && fg.controls['postalCode'].invalid) ||
+                    (fg.controls['postalCode'].touched && fg.controls['postalCode'].invalid)
+                  "
+                >
+                </wap-input>
+                <wap-input
+                  [fc]="fg.controls['locality']"
+                  placeholder="Victoria"
+                  label="Locality"
+                  error="Locality is required"
+                  [invalid]="
+                    (invalid && fg.controls['locality'].invalid) ||
+                    (fg.controls['locality'].touched && fg.controls['locality'].invalid)
+                  "
+                >
+                </wap-input>
+
+                <ion-item lines="none">
+                  <ion-label position="stacked">Date of Birth <ion-text color="danger">*</ion-text></ion-label>
+                  <!--
                     <ion-datetime
                       formControlName="dateOfBirth"
                       displayFormat="MMM DD YYYY"
                       placeholder="MMM DD YYYY"
                     ></ion-datetime>
                     -->
-                    <mat-form-field appearance="none">
-                      <input
-                        style="display: hidden;"
-                        matInput
-                        [matDatepicker]="picker"
-                        placeholder="MM/DD/YYYY"
-                        formControlName="dateOfBirth"
-                        (onFocus)="dobFocus = true"
-                        (onBlur)="dobFocus = false"
-                        (change)="dobFocus = false"
-                        (click)="dobFocus = true"
-                        [min]="minDate"
-                        [max]="maxDate"
-                      />
-                      <mat-datepicker-toggle matSuffix [for]="picker"> </mat-datepicker-toggle>
-                      <mat-datepicker #picker startView="multi-year" [startAt]="startAt"></mat-datepicker>
-                    </mat-form-field>
-                  </ion-item>
-                  <div
-                    class="dp-border"
-                    style="border-style: solid;"
-                    [ngClass]="{
-                      'dp-border-warn': fg['controls'].dateOfBirth.touched && fg['controls'].dateOfBirth.invalid,
-                      'dp-border-grey': dobFocus === false,
-                      'dp-border-valid': dobFocus && fg['controls'].dateOfBirth.valid
-                    }"
-                  ></div>
-                  <ion-note
-                    *ngIf="
-                      (invalid && fg['controls'].dateOfBirth.invalid) ||
-                      (fg['controls'].dateOfBirth.touched && fg['controls'].dateOfBirth.invalid)
-                    "
+                  <mat-form-field appearance="none">
+                    <input
+                      style="display: hidden;"
+                      matInput
+                      [matDatepicker]="picker"
+                      placeholder="MM/DD/YYYY"
+                      formControlName="dateOfBirth"
+                      (onFocus)="dobFocus = true"
+                      (onBlur)="dobFocus = false"
+                      (change)="dobFocus = false"
+                      (click)="dobFocus = true"
+                      [min]="minDate"
+                      [max]="maxDate"
+                    />
+                    <mat-datepicker-toggle matSuffix [for]="picker"> </mat-datepicker-toggle>
+                    <mat-datepicker #picker startView="multi-year" [startAt]="startAt"></mat-datepicker>
+                  </mat-form-field>
+                </ion-item>
+                <div
+                  class="dp-border"
+                  style="border-style: solid;"
+                  [ngClass]="{
+                    'dp-border-warn': fg['controls'].dateOfBirth.touched && fg['controls'].dateOfBirth.invalid,
+                    'dp-border-grey': dobFocus === false,
+                    'dp-border-valid': dobFocus && fg['controls'].dateOfBirth.valid
+                  }"
+                ></div>
+                <ion-note
+                  *ngIf="
+                    (invalid && fg['controls'].dateOfBirth.invalid) ||
+                    (fg['controls'].dateOfBirth.touched && fg['controls'].dateOfBirth.invalid)
+                  "
+                >
+                  <ion-text color="danger"
+                    >Invalid date of birth. Date of birth must be in the format: MM/DD/YYYY
+                  </ion-text></ion-note
+                >
+                <ion-item lines="none">
+                  <ion-label
+                    ><ion-text class="ion-text-wrap">DISCLAIMER: lorem ipsum dolor sit amet...</ion-text></ion-label
                   >
-                    <ion-text color="danger"
-                      >Invalid date of birth. Date of birth must be in the format: MM/DD/YYYY
-                    </ion-text></ion-note
-                  >
-                  <ion-item lines="none">
-                    <ion-label
-                      ><ion-text class="ion-text-wrap">DISCLAIMER: lorem ipsum dolor sit amet...</ion-text></ion-label
-                    >
-                    <ion-checkbox slot="start" (click)="accepted = !accepted"></ion-checkbox>
-                  </ion-item>
-                </ion-list>
+                  <ion-checkbox slot="start" (click)="accepted = !accepted"></ion-checkbox>
+                </ion-item>
               </mat-card-content>
               <mat-card-actions>
                 <button mat-raised-button color="primary" [disabled]="true">
@@ -254,6 +267,9 @@ export class SuccessComponent implements OnInit, OnDestroy {
 
   connectionId: string;
   deeplink: string;
+
+  addressVal = '';
+
   get formInvalid() {
     return !this.accepted || this.fg.invalid;
   }
@@ -266,10 +282,15 @@ export class SuccessComponent implements OnInit, OnDestroy {
   img: string;
   disableList: string[];
 
-  dobChange(event: any) {
-    this.dobFocus = false;
+  setAddress(cpItem: ICPItem) {
+    if (!cpItem.Description) return;
+    const addressDetail = cpItem.Description.split(',');
+    this.fg.controls.streetAddress.setValue(cpItem.Text);
+    this.fg.controls.locality.setValue(addressDetail[0]);
+    this.fg.controls.postalCode.setValue(addressDetail[2].replace(/^[ \t]+/, ''));
+    this.typeAheadSvc.$addresses = null;
+    this.addressVal = cpItem.Text
   }
-
   setIndex(i: number) {
     const indexMap = [
       {
@@ -346,7 +367,12 @@ export class SuccessComponent implements OnInit, OnDestroy {
     return valid ? this.setIndex(i) : (this.invalid = true);
   }
 
-  constructor(private stateSvc: StateService, public actionSvc: ActionService, private router: Router) {}
+  constructor(
+    private stateSvc: StateService,
+    public actionSvc: ActionService,
+    private router: Router,
+    public typeAheadSvc: TypeaheadService,
+  ) {}
 
   async ngOnInit() {
     if (!this.stateSvc._id) return (this.hasId = false);
@@ -355,7 +381,8 @@ export class SuccessComponent implements OnInit, OnDestroy {
     this.disableList = keys.filter(key => user[key] !== undefined || null || '');
 
     if (!user) return;
-    const initFc = (val: string | Date, min: number = 4) => new FormControl(val, [Validators.required, Validators.minLength(min)]);
+    const initFc = (val: string | Date, min: number = 4) =>
+      new FormControl(val, [Validators.required, Validators.minLength(min)]);
 
     const firstName = initFc(user.firstName || '', 1);
     const lastName = initFc(user.lastName || '', 1);
@@ -382,6 +409,13 @@ export class SuccessComponent implements OnInit, OnDestroy {
     });
 
     this.fg.updateValueAndValidity();
+    this.fg.controls.streetAddress.valueChanges.pipe(debounceTime(300)).subscribe(obs => {
+
+      if (obs === this.addressVal) return;
+      if (obs.length < 3) return (this.typeAheadSvc.$addresses = null);
+      const req = new CpRequest(obs);
+      this.typeAheadSvc.queryCp(req);
+    });
     this.$title = of(`Issue Verified Person Digital ID`);
 
     const invitation = await this.actionSvc.getInvitation().toPromise();
@@ -447,7 +481,7 @@ export class SuccessComponent implements OnInit, OnDestroy {
   fakeConnection() {
     if (!this.stateSvc._id) return (this.hasId = false);
     const form = this.fg.getRawValue();
-    const timer = interval(7000);
+    const timer = interval(1000);
     this.subs.push(
       timer
         .pipe(
@@ -475,14 +509,12 @@ export class SuccessComponent implements OnInit, OnDestroy {
                 _id: this.stateSvc._id,
               })
               .toPromise()
-              .then(res => {
-                this.router.navigate([`/issue-credential/${res.credential_exchange_id}`]);
-              });
+              .then(res => this.router.navigate([`/issue-credential/${res.credential_exchange_id}`]));
           }
         }),
     );
   }
   async logout() {
-    await this.actionSvc.logout()
+    await this.actionSvc.logout();
   }
 }

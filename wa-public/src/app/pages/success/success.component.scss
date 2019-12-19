@@ -66,3 +66,17 @@ mat-card {
   border-style: solid;
   border-color: #ccd1e1;
 }
+
+.address-list {
+  width: 90%;
+  z-index: 10;
+  background-color: #fff;
+  margin-left: 2%;
+  position: absolute;
+  padding: 0.2em;
+}
+
+.address-item:hover {
+  background-color: #ccd1e1;
+  cursor: pointer;
+}

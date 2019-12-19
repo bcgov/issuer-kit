@@ -76,20 +76,6 @@ export class CredentialIssuanceComponent implements OnInit, OnDestroy {
   step: number;
   progressValue: number;
   subs: Subscription[] = [];
-  private stateProgressMapping = {
-    connected: {
-      state: 'connected',
-      step: 1,
-    },
-    offer_sent: {
-      state: 'offer_sent',
-      step: 2,
-    },
-    credential_issued: {
-      state: 'stored',
-      step: 3,
-    },
-  };
 
   constructor(private router: Router, private stateSvc: StateService, private actionSvc: ActionService) {}
 
@@ -98,7 +84,7 @@ export class CredentialIssuanceComponent implements OnInit, OnDestroy {
     // this.transactionStateURL = `/api/state/${this.credExId}`;
     this.step = 2;
     this.subs.push(
-      interval(5000)
+      interval(1000)
         .pipe(
           startWith(0),
           switchMap(() => this.actionSvc.getCredentialById(this.credExId)), // TODO: @SH replace with this.transactionStateURL

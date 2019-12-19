@@ -107,7 +107,7 @@ export class ActionService {
     localStorage.setItem('email', addr);
   }
 
-  constructor (
+  constructor(
     private keyCloakSvc: KeycloakService,
     private stateSvc: StateService,
     private http: HttpClient,

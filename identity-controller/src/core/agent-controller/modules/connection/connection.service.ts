@@ -162,8 +162,8 @@ export class ConnectionService {
   async postById(id: string, subsegment: 'send-ping') {
     try {
       const res = await request.post(
-        `${this.apiUrl}${segment}${id}/${subsegment}`,
-      );
+        `${this.apiUrl}${segment}${id}/${subsegment}`
+      ).send({comment: 'Hello from identity-kit-agent'});
       return res;
     } catch (err) {
       throw new Error(err.message);

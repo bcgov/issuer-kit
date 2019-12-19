@@ -509,9 +509,7 @@ export class SuccessComponent implements OnInit, OnDestroy {
                 _id: this.stateSvc._id,
               })
               .toPromise()
-              .then(res => {
-                this.router.navigate([`/issue-credential/${res.credential_exchange_id}`]);
-              });
+              .then(res => this.router.navigate([`/issue-credential/${res.credential_exchange_id}`]));
           }
         }),
     );

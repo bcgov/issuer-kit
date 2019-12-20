@@ -12,6 +12,7 @@ export class IssueService {
   credDefId: string;
 
   apiUrl: string;
+  schemaSpec: { attributes: string[]; schema_name: string; schema_version: string; };
 
   constructor (apiUrl: string) {
     console.log(apiUrl);
@@ -24,10 +25,10 @@ export class IssueService {
     this._schema = schema;
     this._credDef = credDef;
     this._issue = issue;
-    const schemaSpec = schemaDef;
+    this.schemaSpec = schemaDef;
 
     this._schema
-      .createSchema(schemaSpec)
+      .createSchema(this.schemaSpec)
       .then(schema => {
         console.log('schemaId', schema);
         return schema.schema_id;
@@ -46,7 +47,11 @@ export class IssueService {
     attrs: ICredentialAttributes[];
   }) {
     const { connId, attrs } = args;
-
+    if (!this.credDefId) {
+      const res = await this._schema.createSchema(this.schemaSpec);
+      const credDefId = await this._credDef.createCredentialDefinition(res.schema_id);
+      this.credDefId = credDefId.credential_definition_id;
+    }
     try {
       const res = await this._issue.issueOfferSend(
         connId,
@@ -54,6 +59,7 @@ export class IssueService {
         attrs,
         this.credDefId,
       );
+      console.log('issue offer send result', res)
       return res;
     } catch (err) {
       console.log('issue credential error', err);

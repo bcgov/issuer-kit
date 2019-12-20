@@ -79,7 +79,7 @@ export interface IIssueOffer {
   auto_offer?: boolean;
   connection_id: string;
   comment: string;
-  credential_definition_id: string;
+  cred_def_id: string;
   credential_preview: ICredentialPreview;
 }
 

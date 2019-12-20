@@ -79,7 +79,7 @@ router.post('/', async (ctx: Context) => {
     });
     ctx.body = res;
   } catch (err) {
-    ctx.throw(500, 'failed to create credential exchange record');
+    ctx.throw(500, 'failed to create credential exchange record', err.text);
   }
 });
 /*

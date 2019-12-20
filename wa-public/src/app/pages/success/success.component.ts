@@ -269,6 +269,7 @@ export class SuccessComponent implements OnInit, OnDestroy {
   deeplink: string;
 
   addressVal = '';
+  submitting: boolean;
 
   get formInvalid() {
     return !this.accepted || this.fg.invalid;
@@ -333,7 +334,7 @@ export class SuccessComponent implements OnInit, OnDestroy {
     if (i === 1) {
       this.$previewData = of(this.setPreview(this.fg));
     }
-    if (i === 2) this.fakeConnection();
+    if (i === 2) this.connect();
   }
 
   validateAllIndex() {
@@ -478,10 +479,10 @@ export class SuccessComponent implements OnInit, OnDestroy {
 
     return map;
   }
-  fakeConnection() {
+  connect() {
     if (!this.stateSvc._id) return (this.hasId = false);
     const form = this.fg.getRawValue();
-    const timer = interval(1000);
+    const timer = interval(6000);
     this.subs.push(
       timer
         .pipe(
@@ -491,6 +492,8 @@ export class SuccessComponent implements OnInit, OnDestroy {
         .subscribe(obs => {
           console.log(JSON.stringify(this.invite, null, 2));
           if (obs.state === 'active') {
+            if (this.submitting) return;
+            this.submitting = true;
             this.actionSvc
               .issueCredentials({
                 connectionId: this.connectionId,

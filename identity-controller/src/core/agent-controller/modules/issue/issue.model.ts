@@ -63,19 +63,19 @@ export class Issue {
     connection_id: string,
     comment: string,
     attributes: ICredentialAttributes[],
-    credential_definition_id: string,
-    autoIssue: boolean = true,
+    cred_def_id: string,
+    autoIssue: boolean = false,
   ): IIssueOffer {
     return {
       connection_id,
       comment,
-      credential_definition_id,
+      cred_def_id,
       credential_preview: {
         attributes: attributes,
         // '@type':
         // 'did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/issue-credential/1.0/credential-proposal',
       },
-      auto_issue: true,
+      auto_issue: false,
     };
   }
 
@@ -141,9 +141,11 @@ export class Issue {
     credDefId: string,
   ) {
     const credOffer = this.formatSendOffer(connId, comment, attrs, credDefId);
+    console.log('the cred offer', JSON.stringify(credOffer, null, 2))
     try {
       if (credOffer != null) {
         const res = await this._issueSvc.sendOffer(credOffer);
+        console.log('the response', res)
         if (res.body) return res.body;
         throw new Error('no credential created');
       } else {

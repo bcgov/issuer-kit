@@ -55,11 +55,12 @@ export class AcceptDisclaimerComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
+    this.stateSvc._id = null;
     const token = this.route.snapshot.paramMap.get('id');
     try {
       const user = this.stateSvc.user;
-      console.log(this.stateSvc._id, user.email);
-      if (user.email && this.stateSvc._id) return this.router.navigate(['/success']);
+      // console.log(this.stateSvc._id, user.email);
+      // if (user.email && this.stateSvc._id) return this.router.navigate(['/success']);
 
       const res = await this.stateSvc.isValidToken(token).toPromise();
       this.validateToken(res, token);

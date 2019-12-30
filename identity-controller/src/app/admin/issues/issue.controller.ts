@@ -34,8 +34,7 @@ const routerOpts = {
 const router = new Router(routerOpts);
 
 router.post('/', async (ctx: Context) => {
-  const { _id, ...data } = (ctx.request.body = ctx.request
-    .body as ICredentialPayload);
+  const { _id, ...data } = ctx.request.body as ICredentialPayload;
   data.claims.issued = new Date().toUTCString();
 
   const keys = Object.keys(data.claims);
@@ -60,8 +59,8 @@ router.post('/', async (ctx: Context) => {
       attrs: mapped,
     });
     if (!res) {
-      console.log(
-        'EXCEPTION: Failed to create credex record. Check agent status',
+      console.error(
+        `${new Date().toDateString()} Failed to create credex record. Check agent status`,
       );
       return ctx.throw(500, 'failed to create credential exchange record');
     }
@@ -77,6 +76,12 @@ router.post('/', async (ctx: Context) => {
       },
       id: _id,
     });
+    if (!record) {
+      console.error(
+        `${new Date().toDateString()} Failed to store credex record in MongoDB.`,
+      );
+      return ctx.throw(500, 'failed to store credex record');
+    }
     ctx.body = res;
   } catch (err) {
     ctx.throw(500, 'failed to create credential exchange record', err.text);

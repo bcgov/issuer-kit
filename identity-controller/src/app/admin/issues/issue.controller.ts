@@ -2,6 +2,7 @@ import * as Router from 'koa-router';
 import { Context } from 'koa';
 import { IssueService, futureDate } from './issue.service';
 import { client } from '../../../index';
+import { wait } from '../../../core/utility'
 
 const apiUrl = process.env.AGENT_ADMIN_URL;
 const issueSvc = new IssueService(apiUrl || 'http://identity-kit-agent');
@@ -44,11 +45,7 @@ router.post('/', async (ctx: Context) => {
     value: claims[key],
     'mime-type': 'text/plain',
   }));
-  async function wait(ms: number) {
-    return new Promise(resolve => {
-      setTimeout(resolve, ms);
-    });
-  }
+
   console.log('start break');
 
   await wait(5000);

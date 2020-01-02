@@ -141,11 +141,9 @@ export class Issue {
     credDefId: string,
   ) {
     const credOffer = this.formatSendOffer(connId, comment, attrs, credDefId);
-    console.log('the cred offer', JSON.stringify(credOffer, null, 2))
     try {
       if (credOffer != null) {
         const res = await this._issueSvc.sendOffer(credOffer);
-        console.log('the response', res)
         if (res.body) return res.body;
         throw new Error('no credential created');
       } else {

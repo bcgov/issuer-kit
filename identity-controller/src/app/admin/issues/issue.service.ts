@@ -59,7 +59,6 @@ export class IssueService {
         attrs,
         this.credDefId,
       );
-      console.log('issue offer send result', res)
       return res;
     } catch (err) {
       console.log('issue credential error', err);

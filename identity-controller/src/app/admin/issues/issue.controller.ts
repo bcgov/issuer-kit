@@ -2,6 +2,7 @@ import * as Router from 'koa-router';
 import { Context } from 'koa';
 import { IssueService, futureDate } from './issue.service';
 import { client } from '../../../index';
+import { wait } from '../../../core/utility'
 
 const apiUrl = process.env.AGENT_ADMIN_URL;
 const issueSvc = new IssueService(apiUrl || 'http://identity-kit-agent');
@@ -34,8 +35,7 @@ const routerOpts = {
 const router = new Router(routerOpts);
 
 router.post('/', async (ctx: Context) => {
-  const { _id, ...data } = (ctx.request.body = ctx.request
-    .body as ICredentialPayload);
+  const { _id, ...data } = ctx.request.body as ICredentialPayload;
   data.claims.issued = new Date().toUTCString();
 
   const keys = Object.keys(data.claims);
@@ -45,11 +45,7 @@ router.post('/', async (ctx: Context) => {
     value: claims[key],
     'mime-type': 'text/plain',
   }));
-  async function wait(ms: number) {
-    return new Promise(resolve => {
-      setTimeout(resolve, ms);
-    });
-  }
+
   console.log('start break');
 
   await wait(5000);
@@ -60,8 +56,8 @@ router.post('/', async (ctx: Context) => {
       attrs: mapped,
     });
     if (!res) {
-      console.log(
-        'EXCEPTION: Failed to create credex record. Check agent status',
+      console.error(
+        `${new Date().toDateString()} Failed to create credex record. Check agent status`,
       );
       return ctx.throw(500, 'failed to create credential exchange record');
     }
@@ -77,6 +73,12 @@ router.post('/', async (ctx: Context) => {
       },
       id: _id,
     });
+    if (!record) {
+      console.error(
+        `${new Date().toDateString()} Failed to store credex record in MongoDB.`,
+      );
+      return ctx.throw(500, 'failed to store credex record');
+    }
     ctx.body = res;
   } catch (err) {
     ctx.throw(500, 'failed to create credential exchange record', err.text);

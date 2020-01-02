@@ -200,7 +200,7 @@ services:
     command: [
         "-c",
         "curl -d '{\"seed\":\"${AGENT_WALLET_SEED}\", \"role\":\"TRUST_ANCHOR\", \"alias\":\"${AGENT_NAME}\"}' -X POST ${LEDGER_URL}/register; \
-        sleep 2; \
+        sleep 10; \
         aca-py start \
         --inbound-transport http '0.0.0.0' ${AGENT_HTTP_INTERFACE_PORT} \
         --outbound-transport http \

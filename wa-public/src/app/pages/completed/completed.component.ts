@@ -38,7 +38,7 @@ export class CompletedComponent implements OnInit {
   pocLink: string;
 
   constructor(private stateSvc: StateService) {
-    this.pocLink = `https://law-society-demo.pathfinder.gov.bc.ca/`;
+    this.pocLink = `https://csb-audio.pathfinder.gov.bc.ca/`;
   }
 
   ngOnInit() {}

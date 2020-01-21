@@ -72,7 +72,7 @@ the demo services.
 </p>
 <ol>
 <li>Demo Test Service - from your laptop or tablet click on the
-following link: <a href="https://law-society-demo.pathfinder.gov.bc.ca/">https://law-society-demo.pathfinder.gov.bc.ca/</a>. 
+following link: <a href="https://csb-audio.pathfinder.gov.bc.ca/">https://csb-audio.pathfinder.gov.bc.ca/</a>. 
 After the page loads click the button for verifiable credential and scan the QR code with your personal
 agent app that you installed in Step 1: Setup above.
 <li>Others demo services are TBD with expectation that POC participants will provide examples.

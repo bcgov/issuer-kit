@@ -5,7 +5,8 @@
 #=========================================================
 NAME=identity-kit-db
 APP_NAME=identity-kit
-APP_GROUP=identity-kit
+APP_GROUP=identity-kit-db
+SUFFIX=-bc
 IMAGE_NAMESPACE=devex-von-tools
 SOURCE_IMAGE_NAME=identity-kit-db
 TAG_NAME=prod

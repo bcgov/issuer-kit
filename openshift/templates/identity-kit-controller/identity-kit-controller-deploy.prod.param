@@ -6,6 +6,7 @@
 # NAME=identity-kit-controller
 # APP_NAME=identity-kit
 # APP_GROUP=identity-kit-controller
+SUFFIX=-bc
 # IMAGE_NAMESPACE=devex-von-tools
 # SERVICE_PORT=8080
 # DB_SERVICE=identity-kit-db

@@ -4,7 +4,9 @@
 # Template File: ../openshift/templates/identity-kit-admin/identity-kit-admin-deploy.json
 #=========================================================
 # NAME=identity-kit-admin
-# APP_GROUP=identity-kit
+# APP_NAME=identity-kit
+# APP_GROUP=identity-kit-admin
+SUFFIX=-bc
 # IMAGE_NAMESPACE=devex-von-tools
 # CADDY_CONFIG_FILE_NAME=Caddyfile
 # CADDY_CONFIG_MAP_NAME=identity-kit-admin-caddy-conf

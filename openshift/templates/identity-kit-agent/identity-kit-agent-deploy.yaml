@@ -14,11 +14,11 @@ objects:
         app-group: ${APP_GROUP}
     spec:
       ports:
-        - name: ${NAME}${SUFFIX}-admin
+        - name: ${NAME}-admin
           port: ${{AGENT_ADMIN_PORT}}
           protocol: TCP
           targetPort: ${{AGENT_ADMIN_PORT}}
-        - name: ${NAME}${SUFFIX}-http
+        - name: ${NAME}-http
           port: ${{AGENT_HTTP_PORT}}
           protocol: TCP
           targetPort: ${{AGENT_HTTP_PORT}}
@@ -33,10 +33,12 @@ objects:
         name: ${NAME}${SUFFIX}
         app: ${APP_NAME}${SUFFIX}
         app-group: ${APP_GROUP}
+      annotations:
+        haproxy.router.openshift.io/timeout: ${ROUTE_TIMEOUT}
     spec:
       host: ${APPLICATION_DOMAIN}
       port:
-        targetPort: ${NAME}${SUFFIX}-http
+        targetPort: ${NAME}-http
       tls:
         insecureEdgeTerminationPolicy: Redirect
         termination: edge
@@ -48,7 +50,7 @@ objects:
   - kind: Secret
     apiVersion: v1
     metadata:
-      name: ${WALLET_CREDENTIAL_STORE_NAME}
+      name: ${WALLET_CREDENTIAL_STORE_NAME}${SUFFIX}
       labels:
         name: ${NAME}${SUFFIX}
         app: ${APP_NAME}${SUFFIX}
@@ -102,16 +104,15 @@ objects:
                 - -c
                 - $(echo aca-py start
                   --inbound-transport http '0.0.0.0' ${HTTP_INTERFACE_PORT}
-                  --endpoint ${AGENT_ENDPOINT}
                   --outbound-transport http
+                  --endpoint ${AGENT_ENDPOINT}
                   --genesis-url "${GENESIS_URL}"
                   --auto-accept-invites
                   --auto-accept-requests
                   --auto-ping-connection
                   --auto-respond-messages
-                  --auto-store-credential
+                  --auto-respond-credential-offer
                   --auto-verify-presentation
-                  --auto-respond-presentation-proposal
                   --wallet-type 'indy'
                   --wallet-name "$(echo ${AGENT_WALLET_NAME} | tr '[:upper:]' '[:lower:]' | sed "s~-~_~g")"
                   --wallet-key "${WALLET_ENCRYPTION_KEY}"
@@ -120,18 +121,19 @@ objects:
                   --wallet-storage-creds "$(eval echo \"${WALLET_STORAGE_CREDENTIALS}\")"
                   --seed "${INDY_WALLET_SEED}"
                   --admin '0.0.0.0' ${ADMIN_INTERFACE_PORT}
-                  --$([[ ! -z "${AGENT_ADMIN_API_KEY}" ]] && echo "admin-api-key ${AGENT_ADMIN_API_KEY}" || echo "admin-insecure-mode")
+                  $([ ! -z "${AGENT_ADMIN_API_KEY}" ] && echo "--admin-api-key ${AGENT_ADMIN_API_KEY}" || echo "--admin-insecure-mode")
                   --label "${AGENT_NAME}"
-                  --log-level ${AGENT_LOG_LEVEL});
+                  --log-level ${AGENT_LOG_LEVEL}
+                  $([ ! -z "${TIMING}" ] && echo "--timing" || echo ""));
               env:
                 - name: GENESIS_URL
                   value: ${GENESIS_FILE_URL}
                 - name: AGENT_WALLET_NAME
-                  value: identity_kit_agent-wallet
+                  value: ${NAME}${SUFFIX}-wallet
                 - name: WALLET_TYPE
                   value: ${WALLET_STORAGE_TYPE}
                 - name: POSTGRESQL_WALLET_HOST
-                  value: ${WALLET_HOST}
+                  value: ${WALLET_HOST}${SUFFIX}
                 - name: POSTGRESQL_WALLET_PORT
                   value: ${WALLET_HOST_PORT}
                 - name: WALLET_STORAGE_CONFIGURATION
@@ -141,32 +143,32 @@ objects:
                 - name: POSTGRESQL_WALLET_USER
                   valueFrom:
                     secretKeyRef:
-                      name: ${WALLET_HOST}
+                      name: ${WALLET_HOST}${SUFFIX}
                       key: database-user
                 - name: POSTGRESQL_WALLET_PASSWORD
                   valueFrom:
                     secretKeyRef:
-                      name: ${WALLET_HOST}
+                      name: ${WALLET_HOST}${SUFFIX}
                       key: database-password
                 - name: POSTGRESQL_WALLET_ADMIN_PASSWORD
                   valueFrom:
                     secretKeyRef:
-                      name: ${WALLET_HOST}
+                      name: ${WALLET_HOST}${SUFFIX}
                       key: admin-password
                 - name: WALLET_ENCRYPTION_KEY
                   valueFrom:
                     secretKeyRef:
-                      name: ${WALLET_CREDENTIAL_STORE_NAME}
+                      name: ${WALLET_CREDENTIAL_STORE_NAME}${SUFFIX}
                       key: key
                 - name: INDY_WALLET_SEED
                   valueFrom:
                     secretKeyRef:
-                      name: ${WALLET_CREDENTIAL_STORE_NAME}
+                      name: ${WALLET_CREDENTIAL_STORE_NAME}${SUFFIX}
                       key: seed
                 - name: WALLET_DID
                   valueFrom:
                     secretKeyRef:
-                      name: ${WALLET_CREDENTIAL_STORE_NAME}
+                      name: ${WALLET_CREDENTIAL_STORE_NAME}${SUFFIX}
                       key: did
                 - name: WEBHOOK_URL
                   value: ${WEBHOOK_URL}
@@ -185,6 +187,8 @@ objects:
                   value: ${AGENT_BASE_URL}
                 - name: AGENT_LOG_LEVEL
                   value: ${LOG_LEVEL}
+                - name: TIMING
+                  value: ${AGENT_TIMING}
               image:
               ports:
                 - containerPort: ${{AGENT_ADMIN_PORT}}
@@ -227,8 +231,23 @@ objects:
               - ${NAME}${SUFFIX}
             from:
               kind: ImageStreamTag
-              name: ${NAME}${SUFFIX}:${TAG_NAME}
+              name: ${NAME}:${TAG_NAME}
               namespace: ${IMAGE_NAMESPACE}
+
+  - kind: HorizontalPodAutoscaler
+    apiVersion: autoscaling/v1
+    metadata:
+      name: ${NAME}${SUFFIX}
+      labels:
+        name: ${NAME}${SUFFIX}
+        app: ${APP_NAME}${SUFFIX}
+        app-group: ${APP_GROUP}
+    spec:
+      scaleTargetRef:
+        kind: DeploymentConfig
+        name: ${NAME}${SUFFIX}
+      minReplicas: ${{MIN_REPLICAS}}
+      maxReplicas: ${{MAX_REPLICAS}}
 
 parameters:
   - name: NAME

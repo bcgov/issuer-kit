@@ -126,7 +126,7 @@
                   },
                   {
                     "name": "DB_SERVICE",
-                    "value": "${DB_SERVICE}"
+                    "value": "${DB_SERVICE}${SUFFIX}"
                   },
                   {
                     "name": "DB_PORT",
@@ -140,7 +140,7 @@
                     "name": "DB_USER",
                     "valueFrom": {
                       "secretKeyRef": {
-                        "name": "${DB_SERVICE}",
+                        "name": "${DB_SERVICE}${SUFFIX}",
                         "key": "database-user"
                       }
                     }
@@ -149,20 +149,20 @@
                     "name": "DB_PASSWORD",
                     "valueFrom": {
                       "secretKeyRef": {
-                        "name": "${DB_SERVICE}",
+                        "name": "${DB_SERVICE}${SUFFIX}",
                         "key": "database-password"
                       }
                     }
                   },
                   {
                     "name": "AGENT_ADMIN_URL",
-                    "value": "http://${AGENT_SERVICE_NAME}:${AGENT_ADMIN_PORT}"
+                    "value": "http://${AGENT_SERVICE_NAME}${SUFFIX}:${AGENT_ADMIN_PORT}"
                   },
                   {
                     "name": "AGENT_ADMIN_API_KEY",
                     "valueFrom": {
                       "secretKeyRef": {
-                        "name": "${AGENT_SERVICE_NAME}",
+                        "name": "${AGENT_SERVICE_NAME}${SUFFIX}",
                         "key": "admin-api-key"
                       }
                     }

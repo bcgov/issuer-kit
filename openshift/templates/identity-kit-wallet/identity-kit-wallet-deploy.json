@@ -346,9 +346,9 @@
     {
       "name": "PERSISTENT_VOLUME_CLASS",
       "displayName": "Persistent Volume Class name",
-      "description": "The class of the volume; gluster-file, gluster-block, gluster-file-db",
+      "description": "The class of the volume; gluster-file, gluster-block, gluster-file-db, netapp-file-standard",
       "required": false,
-      "value": "gluster-file-db"
+      "value": "netapp-file-standard"
     },
     {
       "name": "CPU_REQUEST",

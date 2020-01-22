@@ -5,8 +5,8 @@
 #=========================================================
 # NAME=identity-kit-wallet
 # APP_NAME=identity-kit
-# APP_GROUP=identity-kit-wallet
-SUFFIX=-bc
+# APP_GROUP=identity-kit
+# SUFFIX=-bc
 # IMAGE_NAMESPACE=devex-von-tools
 # SOURCE_IMAGE_NAME=identity-kit-wallet
 TAG_NAME=prod

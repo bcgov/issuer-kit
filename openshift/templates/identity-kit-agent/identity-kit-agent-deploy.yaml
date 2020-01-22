@@ -234,21 +234,6 @@ objects:
               name: ${NAME}:${TAG_NAME}
               namespace: ${IMAGE_NAMESPACE}
 
-  - kind: HorizontalPodAutoscaler
-    apiVersion: autoscaling/v1
-    metadata:
-      name: ${NAME}${SUFFIX}
-      labels:
-        name: ${NAME}${SUFFIX}
-        app: ${APP_NAME}${SUFFIX}
-        app-group: ${APP_GROUP}
-    spec:
-      scaleTargetRef:
-        kind: DeploymentConfig
-        name: ${NAME}${SUFFIX}
-      minReplicas: ${{MIN_REPLICAS}}
-      maxReplicas: ${{MAX_REPLICAS}}
-
 parameters:
   - name: NAME
     displayName: Name
@@ -269,7 +254,7 @@ parameters:
     displayName: Suffix
     description: A suffix applied to all the objects in this template.
     required: false
-    value: identity-kit-agent
+    value:
   - name: APPLICATION_DOMAIN
     displayName: Application Hostname
     description: The exposed hostname that will route to the service, if left blank a value will be defaulted.

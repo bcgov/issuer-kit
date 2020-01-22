@@ -10,7 +10,7 @@ fi
 # ------------------------------------------------------------------------
 # The generated config map is used to update the Backup configuration.
 # ========================================================================
-CONFIG_MAP_NAME=identity-kit-admin-caddy-conf
+CONFIG_MAP_NAME=identity-kit-public-caddy-conf
 SOURCE_FILE=$( dirname "$0" )/../../../docker/wa-public/config/Caddyfile
 
 OUTPUT_FORMAT=json

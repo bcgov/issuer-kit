@@ -23,7 +23,7 @@
       "spec": {
         "replicas": 2,
         "selector": {
-          "app": "${NAME}${SUFFIX}",
+          "name": "${NAME}${SUFFIX}",
           "deploymentconfig": "${NAME}${SUFFIX}"
         },
         "strategy": {
@@ -39,7 +39,7 @@
         "template": {
           "metadata": {
             "labels": {
-              "app": "${NAME}${SUFFIX}",
+              "app": "${APP_NAME}${SUFFIX}",
               "name": "${NAME}${SUFFIX}",
               "app-group": "${APP_GROUP}",
               "deploymentconfig": "${NAME}${SUFFIX}"
@@ -185,7 +185,7 @@
           }
         ],
         "selector": {
-          "app": "${NAME}${SUFFIX}",
+          "name": "${NAME}${SUFFIX}",
           "deploymentconfig": "${NAME}${SUFFIX}"
         },
         "sessionAffinity": "None",

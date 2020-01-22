@@ -23,7 +23,7 @@
       "spec": {
         "replicas": 2,
         "selector": {
-          "app": "${NAME}${SUFFIX}",
+          "name": "${NAME}${SUFFIX}",
           "deploymentconfig": "${NAME}${SUFFIX}"
         },
         "strategy": {
@@ -157,7 +157,7 @@
               "from": {
                 "kind": "ImageStreamTag",
                 "namespace": "${IMAGE_NAMESPACE}",
-                "name": "${NAME}${SUFFIX}:${TAG_NAME}"
+                "name": "${NAME}:${TAG_NAME}"
               }
             }
           }
@@ -185,7 +185,7 @@
           }
         ],
         "selector": {
-          "app": "${NAME}${SUFFIX}",
+          "name": "${NAME}${SUFFIX}",
           "deploymentconfig": "${NAME}${SUFFIX}"
         },
         "sessionAffinity": "None",

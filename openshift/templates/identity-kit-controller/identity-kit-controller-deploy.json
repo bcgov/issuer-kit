@@ -2,7 +2,7 @@
   "kind": "Template",
   "apiVersion": "v1",
   "metadata": {
-    "name": "${NAME}-deployment-template",
+    "name": "${NAME}${SUFFIX}-deployment-template",
     "annotations": {
       "description": "Deployment template for a NodeJS server connected to a MongoDB database.",
       "tags": "nodejs",
@@ -14,13 +14,13 @@
       "kind": "Service",
       "apiVersion": "v1",
       "metadata": {
-        "name": "${NAME}",
+        "name": "${NAME}${SUFFIX}",
         "annotations": {
           "description": "Exposes and load balances the application pods"
         },
         "labels": {
-          "name": "${NAME}",
-          "app": "${APP_NAME}",
+          "name": "${NAME}${SUFFIX}",
+          "app": "${APP_NAME}${SUFFIX}",
           "app-group": "${APP_GROUP}"
         }
       },
@@ -34,7 +34,7 @@
           }
         ],
         "selector": {
-          "name": "${NAME}"
+          "name": "${NAME}${SUFFIX}"
         }
       }
     },
@@ -42,13 +42,13 @@
       "kind": "DeploymentConfig",
       "apiVersion": "v1",
       "metadata": {
-        "name": "${NAME}",
+        "name": "${NAME}${SUFFIX}",
         "annotations": {
           "description": "Defines how to deploy the application server"
         },
         "labels": {
-          "name": "${NAME}",
-          "app": "${APP_NAME}",
+          "name": "${NAME}${SUFFIX}",
+          "app": "${APP_NAME}${SUFFIX}",
           "app-group": "${APP_GROUP}"
         }
       },
@@ -62,12 +62,12 @@
             "imageChangeParams": {
               "automatic": true,
               "containerNames": [
-                "${NAME}"
+                "${NAME}${SUFFIX}"
               ],
               "from": {
                 "kind": "ImageStreamTag",
                 "namespace": "${IMAGE_NAMESPACE}",
-                "name": "${NAME}:${TAG_NAME}"
+                "name": "${NAME}${SUFFIX}:${TAG_NAME}"
               }
             }
           },
@@ -77,21 +77,21 @@
         ],
         "replicas": 1,
         "selector": {
-          "name": "${NAME}"
+          "name": "${NAME}${SUFFIX}"
         },
         "template": {
           "metadata": {
-            "name": "${NAME}",
+            "name": "${NAME}${SUFFIX}",
             "labels": {
-              "name": "${NAME}",
-              "app": "${APP_NAME}",
+              "name": "${NAME}${SUFFIX}",
+              "app": "${APP_NAME}${SUFFIX}",
               "app-group": "${APP_GROUP}"
             }
           },
           "spec": {
             "containers": [
               {
-                "name": "${NAME}",
+                "name": "${NAME}${SUFFIX}",
                 "image": " ",
                 "ports": [
                   {
@@ -204,17 +204,17 @@
       "kind": "HorizontalPodAutoscaler",
       "apiVersion": "autoscaling/v1",
       "metadata": {
-        "name": "${NAME}",
+        "name": "${NAME}${SUFFIX}",
         "labels": {
-          "name": "${NAME}",
-          "app": "${APP_NAME}",
+          "name": "${NAME}${SUFFIX}",
+          "app": "${APP_NAME}${SUFFIX}",
           "app-group": "${APP_GROUP}"
         }
       },
       "spec": {
         "scaleTargetRef": {
           "kind": "DeploymentConfig",
-          "name": "${NAME}"
+          "name": "${NAME}${SUFFIX}"
         },
         "minReplicas": "${{MIN_REPLICAS}}",
         "maxReplicas": "${{MAX_REPLICAS}}"
@@ -242,6 +242,13 @@
       "description": "The name assigned to all of the deployments in this project.",
       "required": true,
       "value": "identity-kit-controller"
+    },
+    {
+      "name": "SUFFIX",
+      "displayName": "Suffix",
+      "description": "A suffix applied to all of the objects in this template.",
+      "required": false,
+      "value": ""
     },
     {
       "name": "IMAGE_NAMESPACE",

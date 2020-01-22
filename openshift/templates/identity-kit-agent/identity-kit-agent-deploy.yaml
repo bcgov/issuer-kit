@@ -2,47 +2,47 @@
 kind: Template
 apiVersion: v1
 metadata:
-  name: ${NAME}
+  name: ${NAME}${SUFFIX}
 objects:
   - kind: Service
     apiVersion: v1
     metadata:
-      name: ${NAME}
+      name: ${NAME}${SUFFIX}
       labels:
-        name: ${NAME}
-        app: ${APP_NAME}
+        name: ${NAME}${SUFFIX}
+        app: ${APP_NAME}${SUFFIX}
         app-group: ${APP_GROUP}
     spec:
       ports:
-        - name: ${NAME}-admin
+        - name: ${NAME}${SUFFIX}-admin
           port: ${{AGENT_ADMIN_PORT}}
           protocol: TCP
           targetPort: ${{AGENT_ADMIN_PORT}}
-        - name: ${NAME}-http
+        - name: ${NAME}${SUFFIX}-http
           port: ${{AGENT_HTTP_PORT}}
           protocol: TCP
           targetPort: ${{AGENT_HTTP_PORT}}
       selector:
-        name: ${NAME}
+        name: ${NAME}${SUFFIX}
 
   - kind: Route
     apiVersion: v1
     metadata:
-      name: ${NAME}
+      name: ${NAME}${SUFFIX}
       labels:
-        name: ${NAME}
-        app: ${APP_NAME}
+        name: ${NAME}${SUFFIX}
+        app: ${APP_NAME}${SUFFIX}
         app-group: ${APP_GROUP}
     spec:
       host: ${APPLICATION_DOMAIN}
       port:
-        targetPort: ${NAME}-http
+        targetPort: ${NAME}${SUFFIX}-http
       tls:
         insecureEdgeTerminationPolicy: Redirect
         termination: edge
       to:
         kind: Service
-        name: ${NAME}
+        name: ${NAME}${SUFFIX}
         weight: 100
 
   - kind: Secret
@@ -50,8 +50,8 @@ objects:
     metadata:
       name: ${WALLET_CREDENTIAL_STORE_NAME}
       labels:
-        name: ${NAME}
-        app: ${APP_NAME}
+        name: ${NAME}${SUFFIX}
+        app: ${APP_NAME}${SUFFIX}
         app-group: ${APP_GROUP}
     stringData:
       key: ${WALLET_KEY}
@@ -62,10 +62,10 @@ objects:
   - kind: Secret
     apiVersion: v1
     metadata:
-      name: ${NAME}
+      name: ${NAME}${SUFFIX}
       labels:
-        name: ${NAME}
-        app: ${APP_NAME}
+        name: ${NAME}${SUFFIX}
+        app: ${APP_NAME}${SUFFIX}
         app-group: ${APP_GROUP}
     stringData:
       admin-api-key: ${ADMIN_API_KEY}
@@ -74,27 +74,27 @@ objects:
   - kind: DeploymentConfig
     apiVersion: v1
     metadata:
-      name: ${NAME}
+      name: ${NAME}${SUFFIX}
       labels:
-        name: ${NAME}
-        app: ${APP_NAME}
+        name: ${NAME}${SUFFIX}
+        app: ${APP_NAME}${SUFFIX}
         app-group: ${APP_GROUP}
     spec:
       replicas: 1
       selector:
-        name: ${NAME}
+        name: ${NAME}${SUFFIX}
       strategy:
         type: Rolling
       template:
         metadata:
-          name: ${NAME}
+          name: ${NAME}${SUFFIX}
           labels:
-            name: ${NAME}
-            app: ${APP_NAME}
+            name: ${NAME}${SUFFIX}
+            app: ${APP_NAME}${SUFFIX}
             app-group: ${APP_GROUP}
         spec:
           containers:
-            - name: ${NAME}
+            - name: ${NAME}${SUFFIX}
               command:
                 # Note:
                 #  - The wallet-name cannot contain '-'s.
@@ -177,7 +177,7 @@ objects:
                 - name: AGENT_ADMIN_API_KEY
                   valueFrom:
                     secretKeyRef:
-                      name: ${NAME}
+                      name: ${NAME}${SUFFIX}
                       key: admin-api-key
                 - name: AGENT_NAME
                   value: ${AGENT_LABEL_NAME}
@@ -224,10 +224,10 @@ objects:
           imageChangeParams:
             automatic: true
             containerNames:
-              - ${NAME}
+              - ${NAME}${SUFFIX}
             from:
               kind: ImageStreamTag
-              name: ${NAME}:${TAG_NAME}
+              name: ${NAME}${SUFFIX}:${TAG_NAME}
               namespace: ${IMAGE_NAMESPACE}
 
 parameters:
@@ -245,6 +245,11 @@ parameters:
     displayName: App Group
     description: Used to group components together.
     required: true
+    value: identity-kit-agent
+  - name: SUFFIX
+    displayName: Suffix
+    description: A suffix applied to all the objects in this template.
+    required: false
     value: identity-kit-agent
   - name: APPLICATION_DOMAIN
     displayName: Application Hostname

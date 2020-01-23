@@ -58,6 +58,18 @@
                     }
                   ]
                 }
+              },
+              {
+                "name": "${NAME}${SUFFIX}-appconfig-volume",
+                "configMap": {
+                  "name": "${APPCONFIG_CONFIG_MAP_NAME}${SUFFIX}",
+                  "items": [
+                    {
+                      "key": "${APPCONFIG_CONFIG_FILE_NAME}",
+                      "path": "${APPCONFIG_CONFIG_FILE_NAME}"
+                    }
+                  ]
+                }
               }
             ],
             "containers": [
@@ -108,6 +120,11 @@
                     "name": "${NAME}${SUFFIX}-caddy-config-volume",
                     "mountPath": "${CADDY_CONFIG_MOUNT_PATH}${CADDY_CONFIG_FILE_NAME}",
                     "subPath": "${CADDY_CONFIG_FILE_NAME}"
+                  },
+                  {
+                    "name": "${NAME}${SUFFIX}-appconfig-volume",
+                    "mountPath": "${APPCONFIG_CONFIG_MOUNT_PATH}${APPCONFIG_CONFIG_FILE_NAME}",
+                    "subPath": "${APPCONFIG_CONFIG_FILE_NAME}"
                   }
                 ],
                 "livenessProbe": {
@@ -296,6 +313,27 @@
       "description": "The path to use to mount the config file.",
       "required": true,
       "value": "/etc/"
+    },
+    {
+      "name": "APPCONFIG_CONFIG_FILE_NAME",
+      "displayName": "appConfig.json Config File Name",
+      "description": "The name of the configuration file to be used for appConfig.json.",
+      "required": true,
+      "value": "config.json"
+    },
+    {
+      "name": "APPCONFIG_CONFIG_MAP_NAME",
+      "displayName": "appConfig.json Config Map Name",
+      "description": "The name of the configuration map holding the data to configure the Angular app.",
+      "required": true,
+      "value": "identity-kit-admin-appconfig"
+    },
+    {
+      "name": "APPCONFIG_CONFIG_MOUNT_PATH",
+      "displayName": "appConfig,json Mount Path",
+      "description": "The path to use to mount the config file.",
+      "required": true,
+      "value": "/srv/assets/config/"
     },
     {
       "name": "WEB_HOST_NAME",

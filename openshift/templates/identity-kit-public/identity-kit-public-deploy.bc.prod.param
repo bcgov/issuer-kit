@@ -11,6 +11,9 @@
 # CADDY_CONFIG_FILE_NAME=Caddyfile
 # CADDY_CONFIG_MAP_NAME=identity-kit-public-caddy-conf
 # CADDY_CONFIG_MOUNT_PATH=/etc/
+# APPCONFIG_CONFIG_FILE_NAME=appConfig.json
+# APPCONFIG_CONFIG_MAP_NAME=identity-kit-admin-appconfig
+# APPCONFIG_CONFIG_MOUNT_PATH=/srv/assets/config/
 # WEB_HOST_NAME=0.0.0.0
 # WEB_HOST_PORT=8080
 # WEB_HOST_TLS=off

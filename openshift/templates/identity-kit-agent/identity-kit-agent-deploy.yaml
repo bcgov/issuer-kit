@@ -228,7 +228,7 @@ objects:
               - ${NAME}${SUFFIX}
             from:
               kind: ImageStreamTag
-              name: ${NAME}:${TAG_NAME}
+              name: ${SOURCE_IMAGE_NAME}:${TAG_NAME}
               namespace: ${IMAGE_NAMESPACE}
 
 parameters:
@@ -261,6 +261,11 @@ parameters:
     displayName: Namespace containing application images.
     required: true
     value: devex-von-tools
+  - name: SOURCE_IMAGE_NAME
+    displayName: Source Image Name
+    description: The name of the source image to use for the service.
+    required: true
+    value: identity-kit-agent
   - name: TAG_NAME
     displayName: Environment TAG name
     description: The TAG name for this environment, e.g., dev, test, prod.

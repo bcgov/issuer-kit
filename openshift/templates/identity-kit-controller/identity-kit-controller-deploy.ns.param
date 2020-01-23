@@ -12,6 +12,7 @@ SERVICE_PORT=8080
 DB_SERVICE=ns-id-db
 DB_PORT=27017
 DB_NAME=ns_id_db
+SOURCE_IMAGE_NAME=identity-kit-controller
 TAG_NAME=prod
 AGENT_SERVICE_NAME=identity-kit-agent
 AGENT_ADMIN_PORT=8024

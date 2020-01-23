@@ -12,6 +12,7 @@
 # DB_SERVICE=identity-kit-db
 # DB_PORT=27017
 # DB_NAME=identity_kit_db
+# SOURCE_IMAGE_NAME=identity-kit-controller
 TAG_NAME=prod
 # AGENT_SERVICE_NAME=identity-kit-agent
 # AGENT_ADMIN_PORT=8024

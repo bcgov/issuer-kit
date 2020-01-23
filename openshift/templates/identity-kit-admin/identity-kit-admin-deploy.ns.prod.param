@@ -20,6 +20,7 @@ APP_GROUP=ns-id
 # API_HOST=ns-id-controller
 # API_PORT=8080
 APPLICATION_DOMAIN=ns-id-admin.pathfinder.gov.bc.ca
+# SOURCE_IMAGE_NAME=identity-kit-admin
 TAG_NAME=prod
 # CPU_REQUEST=10m
 # CPU_LIMIT=250m

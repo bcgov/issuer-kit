@@ -174,7 +174,7 @@
               "from": {
                 "kind": "ImageStreamTag",
                 "namespace": "${IMAGE_NAMESPACE}",
-                "name": "${NAME}:${TAG_NAME}"
+                "name": "${SOURCE_IMAGE_NAME}:${TAG_NAME}"
               }
             }
           }
@@ -375,6 +375,13 @@
       "displayName": "Application Hostname",
       "name": "APPLICATION_DOMAIN",
       "value": "identity-kit.pathfinder.gov.bc.ca"
+    },
+    {
+      "name": "SOURCE_IMAGE_NAME",
+      "displayName": "Source Image Name",
+      "description": "The name of the image to use for this resource.",
+      "required": true,
+      "value": "identity-kit-public"
     },
     {
       "description": "The TAG name for this environment, e.g., dev, test, prod",

@@ -67,7 +67,7 @@
               "from": {
                 "kind": "ImageStreamTag",
                 "namespace": "${IMAGE_NAMESPACE}",
-                "name": "${NAME}:${TAG_NAME}"
+                "name": "${SOURCE_IMAGE_NAME}:${TAG_NAME}"
               }
             }
           },
@@ -284,6 +284,13 @@
       "required": true,
       "description": "Name of the deployed database (see environment variables in deployed database).",
       "value": "identity_kit_db"
+    },
+    {
+      "name": "SOURCE_IMAGE_NAME",
+      "displayName": "Source Image Name",
+      "description": "The name of the image to use for this resource.",
+      "required": true,
+      "value": "identity-kit-controller"
     },
     {
       "name": "TAG_NAME",

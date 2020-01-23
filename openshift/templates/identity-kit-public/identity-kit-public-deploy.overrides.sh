@@ -9,13 +9,13 @@ fi
 OUTPUT_FORMAT=json
 
 # The generated config maps are used to replace Caddyfile and appConfig.json
-CADDY_CONFIG_MAP_NAME=ns-id-public-caddy-conf
+CADDY_CONFIG_MAP_NAME=identity-kit-public-caddy-conf
 CADDY_SOURCE_FILE=$( dirname "$0" )/../../../docker/wa-public/config/Caddyfile
 CADDY_OUTPUT_FILE=${CADDY_CONFIG_MAP_NAME}-configmap_DeploymentConfig.json
 printStatusMsg "Generating ConfigMap; ${CADDY_CONFIG_MAP_NAME} ..."
 generateConfigMap "${CADDY_CONFIG_MAP_NAME}" "${CADDY_SOURCE_FILE}" "${OUTPUT_FORMAT}" "${CADDY_OUTPUT_FILE}"
 
-APPCONFIG_CONFIG_MAP_NAME=ns-id-public-appconfig
+APPCONFIG_CONFIG_MAP_NAME=identity-kit-public-appconfig
 APPCONFIG_SOURCE_FILE=$( dirname "$0" )/../../../wa-public/src/assets/config/config.json
 APPCONFIG_OUTPUT_FILE=${APPCONFIG_CONFIG_MAP_NAME}-configmap_DeploymentConfig.json
 printStatusMsg "Generating ConfigMap; ${APPCONFIG_CONFIG_MAP_NAME} ..."

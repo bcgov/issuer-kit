@@ -3,8 +3,8 @@
   "apiServer": {
     "url": "http://localhost:5000"
   },
-  "publicSite": {
-    "url": "http://localhost:4251"
+  "csbAudio": {
+    "siteUrl": "https://csb-audio.pathfinder.gov.bc.ca"
   },
   "keycloak": {
     "url": "http://localhost:8180/auth",

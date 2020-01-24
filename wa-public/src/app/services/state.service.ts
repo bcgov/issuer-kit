@@ -1,9 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { environment } from 'src/environments/environment';
 import { Observable } from 'rxjs';
-
-const apiUrl = '/api/';
+import { AppConfigService } from './app-config.service';
 
 export interface IUser extends Keycloak.KeycloakProfile {
   _id?: string;
@@ -37,14 +35,14 @@ export class StateService {
   }
 
   get email(): string {
-    return localStorage.getItem('email') || ''
+    return localStorage.getItem('email') || '';
   }
 
   user: IUser = {};
   private _apiUrl: string;
 
   isValidToken(token: string): Observable<IValidateLink> {
-    const url = `${this._apiUrl}invitations/${token}/validate`;
+    const url = `${this._apiUrl}/invitations/${token}/validate`;
     localStorage.setItem('linkId', token);
     return this.http.get<IValidateLink>(url);
   }
@@ -57,7 +55,7 @@ export class StateService {
     return this._title;
   }
 
-  constructor (private http: HttpClient) {
-    this._apiUrl = apiUrl;
+  constructor(private http: HttpClient) {
+    this._apiUrl = AppConfigService.settings.apiServer.url;
   }
 }

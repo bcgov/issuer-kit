@@ -13,11 +13,6 @@
     # Openly exposed health check endpoint for OpenShift
     status 200 /health
 
-    #  Serve configuration file from the environment
-    rewrite /appconfig {
-        to /appConfig.json
-    }
-
     # Required for angular router to work
     rewrite {
         if {path} not_match ^/api

@@ -7,6 +7,7 @@ import { StateService } from 'src/app/services/state.service';
 import { Observable, of, Subscription } from 'rxjs';
 import { ActionService } from 'src/app/services/action.service';
 import { Router } from '@angular/router';
+import { AppConfigService } from 'src/app/services/app-config.service';
 
 @Component({
   selector: 'wap-credential-issuance',
@@ -110,7 +111,6 @@ export class CredentialIssuanceComponent implements OnInit, OnDestroy {
   }
 
   async completeProgress() {
-    await this.actionSvc.logout('https://identity-kit.pathfinder.gov.bc.ca/completed');
-    // this.router.navigate(['/completed']);
+    await this.actionSvc.logout(`${AppConfigService.settings.apiServer.url}/completed`);
   }
 }

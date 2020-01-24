@@ -29,6 +29,14 @@ function checkS2IPresent () {
   fi
 }
 
+function checkJQPresent () {
+  if [ -z $(type -P "$JQ_EXE") ]; then
+    echoError "The ${JQ_EXE} executable is needed and not on your path."
+    echoError "Installation instructions can be found here: https://stedolan.github.io/jq/download"
+    exit 1
+  fi
+}
+
 function customizeKeycloakConfig () {
   # Customize realm settings for development environment
   cp -f ./keycloak/config/realm-export.json ./keycloak/config/realm-export-docker.json
@@ -50,6 +58,7 @@ function customizeKeycloakConfig () {
 #
 
 S2I_EXE=s2i
+JQ_EXE=jq
 SCRIPT_HOME="$(cd "$(dirname "$0")" && pwd)"
 
 # =================================================================================================================
@@ -208,7 +217,7 @@ configureEnvironment() {
   export AGENT_WEBHOOK_URL="http://identity-controller-dev:5000"
   export AGENT_HTTP_INTERFACE_PORT=8021
   export AGENT_NAME="identity-kit-agent"
-  export AGENT_ENDPOINT=${AGENT_ENDPOINT:-http://$DOCKERHOST:$AGENT_HTTP_INTERFACE_PORT}
+  export AGENT_ENDPOINT=${NGROK_AGENT_ENDPOINT:-http://$DOCKERHOST:$AGENT_HTTP_INTERFACE_PORT}
   export AGENT_ADMIN_MODE="admin-insecure-mode"
   if [ ! -z "${AGENT_ADMIN_API_KEY}" ]; then
     AGENT_ADMIN_MODE="admin-api-key ${AGENT_ADMIN_API_KEY}"
@@ -343,12 +352,34 @@ case "${COMMAND}" in
     fi
     ;;
   start-prod)
+    unset LEDGER_URL
+    unset NGROK_AGENT_ENDPOINT
     configureEnvironment "$@"
     customizeKeycloakConfig
     docker-compose up -d ${_startupParams} ${DEFAULT_CONTAINERS} ${PROD_CONTAINERS}
     docker-compose logs -f
     ;;
   start-dev|start|up)
+    unset LEDGER_URL
+    unset NGROK_AGENT_ENDPOINT
+    configureEnvironment "$@"
+    customizeKeycloakConfig
+    docker-compose up -d ${_startupParams} ${DEFAULT_CONTAINERS} ${DEV_CONTAINERS}
+    docker-compose logs -f
+    ;;
+  start-demo)
+    checkJQPresent
+
+    export LEDGER_URL="http://test.bcovrin.vonx.io"
+    export NGROK_AGENT_ENDPOINT=$(curl http://localhost:4040/api/tunnels | ${JQ_EXE} --raw-output '.tunnels | map(select(.name | contains("identity-kit-agent"))) | .[0] | .public_url')
+    if [ -z "${NGROK_AGENT_ENDPOINT}" ]; then
+      echoError "It appears that ngrok tunneling is not enabled."
+      echoError "Please open another shell in the scripts folder and execute start-ngrok.sh before trying again."
+      exit 1
+    fi
+
+    echo "Running in demo mode, will use ${LEDGER_URL} as ledger and ${NGROK_AGENT_ENDPOINT} as the agent endpoint."
+
     configureEnvironment "$@"
     customizeKeycloakConfig
     docker-compose up -d ${_startupParams} ${DEFAULT_CONTAINERS} ${DEV_CONTAINERS}

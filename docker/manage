@@ -405,7 +405,7 @@ case "${COMMAND}" in
 
     configureEnvironment "$@"
     customizeKeycloakConfig
-    docker-compose up -d ${_startupParams} ${DEFAULT_CONTAINERS} ${DEV_CONTAINERS}
+    docker-compose up -d ${_startupParams} ${DEFAULT_CONTAINERS} ${PROD_CONTAINERS}
     docker-compose logs -f
     ;;
   stop)

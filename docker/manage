@@ -20,8 +20,19 @@ function echoWarning (){
   echo -e "${_yellow}${_msg}${_nc}"
 }
 
-function checkS2IPresent () {
-  if [ -z $(type -P "$S2I_EXE") ]; then
+function isInstalled () {
+  rtnVal=$(type "$1" >/dev/null 2>&1)
+  rtnCd=$?
+  if [ ${rtnCd} -ne 0 ]; then
+    return 1
+  else
+    return 0
+  fi
+}
+
+function isS2iInstalled () {
+  S2I_EXE=s2i
+  if ! isInstalled ${S2I_EXE}; then
     echoError "The ${S2I_EXE} executable is needed and not on your path."
     echoError "It can be downloaded from here: https://github.com/openshift/source-to-image/releases"
     echoError "Make sure you extract the binary and place it in a directory on your path."
@@ -29,10 +40,28 @@ function checkS2IPresent () {
   fi
 }
 
-function checkJQPresent () {
-  if [ -z $(type -P "$JQ_EXE") ]; then
-    echoError "The ${JQ_EXE} executable is needed and not on your path."
+function isJQInstalled () {
+  JQ_EXE=jq
+  if ! isInstalled ${JQ_EXE}; then
+    echoError "The ${JQ_EXE} executable is required and was not found on your path."
     echoError "Installation instructions can be found here: https://stedolan.github.io/jq/download"
+    exit 1
+  fi
+}
+
+function isCurlInstalled () {
+  CURL_EXE=curl
+  if ! isInstalled ${CURL_EXE}; then
+    echoError "The ${CURL_EXE} executable is required and was not found on your path."
+    echoError "If your shell of choice doesn't come with curl preinstalled, try installing it using either [Homebrew](https://brew.sh/) (MAC) or [Chocolatey](https://chocolatey.org/) (Windows)."
+    exit 1
+  fi
+}
+
+function checkNgrokTunnelActive () {
+  if [ -z "${NGROK_AGENT_ENDPOINT}" ]; then
+    echoError "It appears that ngrok tunneling is not enabled."
+    echoError "Please open another shell in the scripts folder and execute start-ngrok.sh before trying again."
     exit 1
   fi
 }
@@ -56,9 +85,6 @@ function customizeKeycloakConfig () {
 #
 # Global utility functions - END
 #
-
-S2I_EXE=s2i
-JQ_EXE=jq
 SCRIPT_HOME="$(cd "$(dirname "$0")" && pwd)"
 
 # =================================================================================================================
@@ -216,7 +242,7 @@ configureEnvironment() {
   export AGENT_WEBHOOK_PORT=8020
   export AGENT_WEBHOOK_URL="http://identity-controller-dev:5000"
   export AGENT_HTTP_INTERFACE_PORT=8021
-  export AGENT_NAME="identity-kit-agent"
+  export AGENT_NAME="identity-kit-demo"
   export AGENT_ENDPOINT=${NGROK_AGENT_ENDPOINT:-http://$DOCKERHOST:$AGENT_HTTP_INTERFACE_PORT}
   export AGENT_ADMIN_MODE="admin-insecure-mode"
   if [ ! -z "${AGENT_ADMIN_API_KEY}" ]; then
@@ -331,7 +357,7 @@ case "${COMMAND}" in
     docker-compose logs -f
     ;;
   build)
-    checkS2IPresent
+    isS2iInstalled
 
     configureEnvironment "$@"
 
@@ -368,16 +394,13 @@ case "${COMMAND}" in
     docker-compose logs -f
     ;;
   start-demo)
-    checkJQPresent
+    isJQInstalled
+    isCurlInstalled
 
     export LEDGER_URL="http://test.bcovrin.vonx.io"
     export NGROK_AGENT_ENDPOINT=$(curl http://localhost:4040/api/tunnels | ${JQ_EXE} --raw-output '.tunnels | map(select(.name | contains("identity-kit-agent"))) | .[0] | .public_url')
-    if [ -z "${NGROK_AGENT_ENDPOINT}" ]; then
-      echoError "It appears that ngrok tunneling is not enabled."
-      echoError "Please open another shell in the scripts folder and execute start-ngrok.sh before trying again."
-      exit 1
-    fi
-
+    
+    checkNgrokTunnelActive
     echo "Running in demo mode, will use ${LEDGER_URL} as ledger and ${NGROK_AGENT_ENDPOINT} as the agent endpoint."
 
     configureEnvironment "$@"

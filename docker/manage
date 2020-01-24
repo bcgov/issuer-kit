@@ -45,6 +45,7 @@ function isJQInstalled () {
   if ! isInstalled ${JQ_EXE}; then
     echoError "The ${JQ_EXE} executable is required and was not found on your path."
     echoError "Installation instructions can be found here: https://stedolan.github.io/jq/download"
+    echoError "Alternatively, a package manager such as Chocolatey (Windows) or Brew (Mac) can be used to install this dependecy."
     exit 1
   fi
 }
@@ -54,6 +55,16 @@ function isCurlInstalled () {
   if ! isInstalled ${CURL_EXE}; then
     echoError "The ${CURL_EXE} executable is required and was not found on your path."
     echoError "If your shell of choice doesn't come with curl preinstalled, try installing it using either [Homebrew](https://brew.sh/) (MAC) or [Chocolatey](https://chocolatey.org/) (Windows)."
+    exit 1
+  fi
+}
+
+function isNgrokInstalled () {
+  NGROK_EXE=ngrok
+  if ! isInstalled ${NGROK_EXE}; then
+    echoError "The ${NGROK_EXE} executable is needed and not on your path."
+    echoError "It can be downloaded from here: https://ngrok.com/download"
+    echoError "Alternatively, a package manager such as Chocolatey (Windows) or Brew (Mac) can be used to install this dependecy."
     exit 1
   fi
 }
@@ -377,7 +388,7 @@ case "${COMMAND}" in
       exit 1
     fi
     ;;
-  start-prod)
+  start|start|up)
     unset LEDGER_URL
     unset NGROK_AGENT_ENDPOINT
     configureEnvironment "$@"
@@ -385,7 +396,7 @@ case "${COMMAND}" in
     docker-compose up -d ${_startupParams} ${DEFAULT_CONTAINERS} ${PROD_CONTAINERS}
     docker-compose logs -f
     ;;
-  start-dev|start|up)
+  start-dev)
     unset LEDGER_URL
     unset NGROK_AGENT_ENDPOINT
     configureEnvironment "$@"
@@ -396,6 +407,7 @@ case "${COMMAND}" in
   start-demo)
     isJQInstalled
     isCurlInstalled
+    isNgrokInstalled
 
     export LEDGER_URL="http://test.bcovrin.vonx.io"
     export NGROK_AGENT_ENDPOINT=$(curl http://localhost:4040/api/tunnels | ${JQ_EXE} --raw-output '.tunnels | map(select(.name | contains("identity-kit-agent"))) | .[0] | .public_url')

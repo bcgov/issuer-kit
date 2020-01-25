@@ -1,4 +1,3 @@
-import { Schema } from '../schema/schema.model';
 import { CredentialDefinitionService } from './credential-definition.service';
 
 export class CredentialDefinition {

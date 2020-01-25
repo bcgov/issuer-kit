@@ -1,11 +1,13 @@
-import * as Router from 'koa-router';
 import { Context } from 'koa';
-import { IssueService, futureDate } from './issue.service';
+import * as Router from 'koa-router';
+import { wait } from '../../../core/utility';
 import { client } from '../../../index';
-import { wait } from '../../../core/utility'
+import { futureDate, IssueService } from './issue.service';
 
-const apiUrl = process.env.AGENT_ADMIN_URL;
-const issueSvc = new IssueService(apiUrl || 'http://identity-kit-agent');
+const agentAdminUrl =
+  process.env.AGENT_ADMIN_URL || 'http://identity-kit-agent';
+const existingSchemaId = process.env.EXISTING_SCHEMA_ID;
+const issueSvc = new IssueService(agentAdminUrl, existingSchemaId);
 
 export interface ICredentialPayload {
   claims: ICredentialClaims;

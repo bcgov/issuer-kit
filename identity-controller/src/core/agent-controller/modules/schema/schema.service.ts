@@ -4,7 +4,7 @@ import { ISchema } from '../../../interfaces/schema.interface';
 export class SchemaService {
   private _apiUrl: string;
   constructor(_apiUrl: string) {
-    this._apiUrl = _apiUrl + '/';
+    this._apiUrl = _apiUrl;
   }
 
   /*
@@ -12,7 +12,7 @@ export class SchemaService {
   */
   async postSchema(schema: ISchema) {
     try {
-      const res = await request.post(`${this._apiUrl}schemas`).send(schema);
+      const res = await request.post(`${this._apiUrl}/schemas`).send(schema);
       return res.body;
     } catch (err) {
       return err;
@@ -24,7 +24,7 @@ export class SchemaService {
   */
   async getSchemaById(id: string) {
     try {
-      const res = await request.get(`${this._apiUrl}schemas/${id}`);
+      const res = await request.get(`${this._apiUrl}/schemas/${id}`);
       return res.body;
     } catch (err) {
       throw new Error(err.message);

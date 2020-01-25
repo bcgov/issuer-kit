@@ -110,10 +110,14 @@ usage() {
     
       logs - Display the logs from the docker compose run (ctrl-c to exit).
 
-      start - Runs a live development version of the containers, with hot-reloading
-              enabled.
+      start - Runs the containers in production mode.
       up - Same as start.
-      start-dev - Same as start.
+      
+      start-dev - Runs a live development version of the containers, with hot-reloading
+              enabled.
+
+      start-demo - Runs the containers in production mode, using the BCovrin Test ledger and
+              exposing the agent to the Internet using ngrok.
 
       stop - Stops the services.  This is a non-destructive process.  The volumes and containers
              are not deleted so they will be reused the next time you run start.
@@ -389,6 +393,7 @@ case "${COMMAND}" in
     fi
     ;;
   start|start|up)
+    unset BCOVRIN_SCHEMA_ID
     unset LEDGER_URL
     unset NGROK_AGENT_ENDPOINT
     configureEnvironment "$@"
@@ -397,6 +402,7 @@ case "${COMMAND}" in
     docker-compose logs -f
     ;;
   start-dev)
+    unset BCOVRIN_SCHEMA_ID
     unset LEDGER_URL
     unset NGROK_AGENT_ENDPOINT
     configureEnvironment "$@"
@@ -409,6 +415,8 @@ case "${COMMAND}" in
     isCurlInstalled
     isNgrokInstalled
 
+    
+    export BCOVRIN_SCHEMA_ID="85459GxjNySJ8HwTTQ4vq7:2:verified_person:1.22"
     export LEDGER_URL="http://test.bcovrin.vonx.io"
     export NGROK_AGENT_ENDPOINT=$(curl http://localhost:4040/api/tunnels | ${JQ_EXE} --raw-output '.tunnels | map(select(.name | contains("identity-kit-agent"))) | .[0] | .public_url')
     

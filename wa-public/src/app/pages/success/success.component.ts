@@ -518,6 +518,6 @@ export class SuccessComponent implements OnInit, OnDestroy {
     );
   }
   async logout() {
-    await this.actionSvc.logout();
+    await this.actionSvc.logout('/completed');
   }
 }

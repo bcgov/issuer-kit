@@ -19,6 +19,7 @@ services:
       - ADMIN_EMAIL=${ADMIN_EMAIL}
       - SMTP_USERNAME=${SMTP_USERNAME}
       - SMTP_PASS=${SMTP_PASS}
+      - EXISTING_SCHEMA_ID=${BCOVRIN_SCHEMA_ID}
     volumes:
       - ../identity-controller:/usr/src/controller
       - identity-controller-node-cache:/usr/src/controller/node_modules
@@ -45,6 +46,7 @@ services:
       - SMTP_PORT=${SMTP_PORT}
       - PUBLIC_SITE_URL=${PUBLIC_SITE_URL}
       - ADMIN_EMAIL=${ADMIN_EMAIL}
+      - EXISTING_SCHEMA_ID=${BCOVRIN_SCHEMA_ID}
       - S2I_SCRIPTS_PATH=${STI_SCRIPTS_PATH}
     ports:
       - ${IDENTITY_CONTROLLER_PORT}:${IDENTITY_CONTROLLER_PORT}
@@ -55,7 +57,7 @@ services:
     command: >
       /bin/bash -c "
       echo waiting for database...;
-      sleep 10;
+      sleep 15;
       ${S2I_SCRIPTS_PATH}/run;"
 
   #
@@ -200,7 +202,7 @@ services:
     command: [
         "-c",
         "curl -d '{\"seed\":\"${AGENT_WALLET_SEED}\", \"role\":\"TRUST_ANCHOR\", \"alias\":\"${AGENT_NAME}\"}' -X POST ${LEDGER_URL}/register; \
-        sleep 10; \
+        sleep 5; \
         aca-py start \
         --inbound-transport http '0.0.0.0' ${AGENT_HTTP_INTERFACE_PORT} \
         --outbound-transport http \

@@ -8,7 +8,7 @@ fi
 
 OUTPUT_FORMAT=json
 
-# The generated config maps are used to replace Caddyfile and appConfig.json
+# The generated config maps are used to replace Caddyfile and config.json
 CADDY_CONFIG_MAP_NAME=identity-kit-public-caddy-conf
 CADDY_SOURCE_FILE=$( dirname "$0" )/../../../docker/wa-public/config/Caddyfile
 CADDY_OUTPUT_FILE=${CADDY_CONFIG_MAP_NAME}-configmap_DeploymentConfig.json

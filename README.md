@@ -111,4 +111,19 @@ While it is possible to provide a client id and token pair to use the GitHub int
 
 - to access the `wa-public` webapp, use the following username/password combination: `wa-user/wa-user`.
 
-**Please Note:** the `wa-admin` user can also access the public webapp, however `wa-public` will only be able to access the public site. When testing locally, it is recommended to open admin and public sites in two different browsers in order to prevent cookies to auto-login the amdin user onto the public site.
+**Please Note:** the `wa-admin` user can also access the public webapp, however `wa-public` will only be able to access the public site. When testing locally, it is recommended to open admin and public sites in two different browsers in order to prevent cookies to auto-login the admin user onto the public site.
+
+## Credential Schema
+
+The schema of the credential that will be issued by Identity Kit is defined in [this file](.identity-controller/src/app/admin/issues/schema.ts)
+
+When using Identity Kit in demo mode the controller will instruct the agent to use the schema definition that was published to the BCovrin Test Ledger by the BCGov issuer, and therefore issue credentials that match that definition. In most cases updating the schema definition should not be necessary, however if this was the case the following steps will be required to instruct the controller/agent to publish a new schema definition on the target ledger, and use it:
+
+* update the schema attributes in [schema.ts](.identity-controller/src/app/admin/issues/schema.ts) with the desired fields.
+
+* update the form in the public-facing web application to support the new fields. The public web application is contained in the [wa-public](./wa-public) folder.
+
+* unset the `EXISTING_SCHEMA_ID` environment variable from the `identity-controller` deployment/container. This will tell it to generate a new schema definition associated with the current DID.
+
+
+**Please Note:** if you are planning on using Identity Kit in your own production-like environment - regardless of wether you will be re-using the BCGov schema or creating your own - you may want to update the `AGENT_WALLET_SEED` environment variable with a unique value used only by your agent/organization rather than using the default value used for demo purposes.

@@ -1,14 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { ActionService } from 'src/app/services/action.service';
-import { StateService } from 'src/app/services/state.service';
-import { LoadingService } from 'src/app/services/loading.service';
-import { environment } from 'src/environments/environment';
-import { IInvitationRecord } from 'src/app/shared/interfaces/invitation-record.interface';
-import { AlertService } from 'src/app/services/alert.service';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { ActionService } from 'src/app/services/action.service';
+import { AlertService } from 'src/app/services/alert.service';
+import { AppConfigService } from 'src/app/services/app-config.service';
+import { LoadingService } from 'src/app/services/loading.service';
+import { StateService } from 'src/app/services/state.service';
 
-const url = 'https://identity-kit.pathfinder.gov.bc.ca/';
+const url = AppConfigService.settings.publicSite.url;
 
 @Component({
   selector: 'waa-add-user',
@@ -200,8 +199,8 @@ export class AddUserComponent implements OnInit {
 
   setFg() {
     this.fg = new FormGroup({
-      firstName: new FormControl(''),
-      lastName: new FormControl(''),
+      firstName: new FormControl('', [Validators.required]),
+      lastName: new FormControl('', [Validators.required]),
 
       email: new FormControl('', [
         Validators.required,
@@ -227,32 +226,35 @@ export class AddUserComponent implements OnInit {
     } else {
       const addedBy = this.stateSvc.user.username;
       try {
-      const response = await this.actionSvc
-        .createInvitation({
-          method,
-          jurisdiction,
-          email,
-          firstName,
-          lastName,
-          addedBy
-        })
-        .toPromise();
-      const created = new Date();
-      const expiry = new Date();
-      expiry.setDate(created.getDate() + 1);
+        const response = await this.actionSvc
+          .createInvitation({
+            method,
+            jurisdiction,
+            email,
+            firstName,
+            lastName,
+            addedBy
+          })
+          .toPromise();
+        const created = new Date();
+        const expiry = new Date();
+        expiry.setDate(created.getDate() + 1);
 
-      const res = await this.alertSvc.confirmBox({
-        header: 'Invitation Sent!',
-        message: 'Would you like to create another user?',
-        decline: 'Home',
-        confirm: 'Add another'
-      });
-      if (res) return this.resetState();
-      return this.router.navigate(['/']);
-    } catch(err) {
-      console.log(err)
-      this.alertSvc.error({header: 'An error occurred adding the user', message: err.error.error.message})
-    }
+        const res = await this.alertSvc.confirmBox({
+          header: 'Invitation Sent!',
+          message: 'Would you like to create another user?',
+          decline: 'Home',
+          confirm: 'Add another'
+        });
+        if (res) return this.resetState();
+        return this.router.navigate(['/']);
+      } catch (err) {
+        console.log(err);
+        this.alertSvc.error({
+          header: 'An error occurred adding the user',
+          message: err.error.error.message
+        });
+      }
     }
   }
 

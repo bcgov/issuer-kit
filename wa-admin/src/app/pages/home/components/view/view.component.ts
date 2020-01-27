@@ -9,6 +9,7 @@ import {
   ActionType
 } from 'src/app/shared/interfaces/actions.interface';
 import { environment } from 'src/environments/environment';
+import { AppConfigService } from 'src/app/services/app-config.service';
 
 export interface IViewRecord {
   name: string;
@@ -25,7 +26,7 @@ export interface IFields {
   value: string;
 }
 
-const publicUrl = 'https://identity-kit.pathfinder.gov.bc.ca/';
+const publicUrl = AppConfigService.settings.publicSite.url;
 
 @Component({
   selector: 'waa-view',
@@ -143,7 +144,7 @@ export class ViewComponent implements OnInit {
           _id,
           email,
           fields: values,
-          link: `${this.url}validate?invite_token=${r.linkId}`,
+          link: `${this.url}/validate?invite_token=${r.linkId}`,
           state,
           stateColor
         };

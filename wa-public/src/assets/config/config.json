@@ -1,0 +1,14 @@
+{
+  "env": "development",
+  "apiServer": {
+    "url": "http://localhost:5000"
+  },
+  "csbAudio": {
+    "siteUrl": "https://csb-audio.pathfinder.gov.bc.ca"
+  },
+  "keycloak": {
+    "url": "http://localhost:8180/auth",
+    "realm": "identity-kit",
+    "clientId": "identity-kit-public"
+  }
+}

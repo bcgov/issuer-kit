@@ -1,5 +1,11 @@
 {
-  "comment": "This is just a placeholder, replace with appropriate configuration.",
+  "env": "prod-like",
+  "apiServer": {
+    "url": "/api"
+  },
+  "publicSite": {
+    "url": "http://localhost:8082"
+  },
   "keycloak": {
     "url": "http://localhost:8180/auth",
     "realm": "identity-kit",

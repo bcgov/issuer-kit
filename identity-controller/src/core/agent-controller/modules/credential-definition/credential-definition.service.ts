@@ -8,7 +8,7 @@ const segment = 'credential-definitions';
 export class CredentialDefinitionService {
   private _apiUrl: string;
   constructor(apiUrl: string) {
-    this._apiUrl = apiUrl + '/';
+    this._apiUrl = apiUrl;
   }
 
   /*
@@ -20,7 +20,7 @@ export class CredentialDefinitionService {
   ): Promise<ICredDefSendResponse> {
     try {
       const res = await request
-        .post(`${this._apiUrl}${segment}`)
+        .post(`${this._apiUrl}/${segment}`)
         .send({ schema_id: schemaId, tag: 'default' });
       // if (!id) throw new Error('no credential id found');
       return res.body;
@@ -33,7 +33,7 @@ export class CredentialDefinitionService {
     get credential definition by id
   */
   async getCredentialDefinition(id: string) {
-    const path = `${this._apiUrl}${segment}/${id}`;
+    const path = `${this._apiUrl}/${segment}/${id}`;
     console.log(path);
     try {
       const res = await request.get(path);

@@ -2,15 +2,15 @@
 kind: Template
 apiVersion: v1
 metadata:
-  name: ${NAME}
+  name: ${NAME}${SUFFIX}
 objects:
   - kind: Service
     apiVersion: v1
     metadata:
-      name: ${NAME}
+      name: ${NAME}${SUFFIX}
       labels:
-        name: ${NAME}
-        app: ${APP_NAME}
+        name: ${NAME}${SUFFIX}
+        app: ${APP_NAME}${SUFFIX}
         app-group: ${APP_GROUP}
     spec:
       ports:
@@ -23,16 +23,18 @@ objects:
           protocol: TCP
           targetPort: ${{AGENT_HTTP_PORT}}
       selector:
-        name: ${NAME}
+        name: ${NAME}${SUFFIX}
 
   - kind: Route
     apiVersion: v1
     metadata:
-      name: ${NAME}
+      name: ${NAME}${SUFFIX}
       labels:
-        name: ${NAME}
-        app: ${APP_NAME}
+        name: ${NAME}${SUFFIX}
+        app: ${APP_NAME}${SUFFIX}
         app-group: ${APP_GROUP}
+      annotations:
+        haproxy.router.openshift.io/timeout: ${ROUTE_TIMEOUT}
     spec:
       host: ${APPLICATION_DOMAIN}
       port:
@@ -42,16 +44,16 @@ objects:
         termination: edge
       to:
         kind: Service
-        name: ${NAME}
+        name: ${NAME}${SUFFIX}
         weight: 100
 
   - kind: Secret
     apiVersion: v1
     metadata:
-      name: ${WALLET_CREDENTIAL_STORE_NAME}
+      name: ${WALLET_CREDENTIAL_STORE_NAME}${SUFFIX}
       labels:
-        name: ${NAME}
-        app: ${APP_NAME}
+        name: ${NAME}${SUFFIX}
+        app: ${APP_NAME}${SUFFIX}
         app-group: ${APP_GROUP}
     stringData:
       key: ${WALLET_KEY}
@@ -62,10 +64,10 @@ objects:
   - kind: Secret
     apiVersion: v1
     metadata:
-      name: ${NAME}
+      name: ${NAME}${SUFFIX}
       labels:
-        name: ${NAME}
-        app: ${APP_NAME}
+        name: ${NAME}${SUFFIX}
+        app: ${APP_NAME}${SUFFIX}
         app-group: ${APP_GROUP}
     stringData:
       admin-api-key: ${ADMIN_API_KEY}
@@ -74,27 +76,27 @@ objects:
   - kind: DeploymentConfig
     apiVersion: v1
     metadata:
-      name: ${NAME}
+      name: ${NAME}${SUFFIX}
       labels:
-        name: ${NAME}
-        app: ${APP_NAME}
+        name: ${NAME}${SUFFIX}
+        app: ${APP_NAME}${SUFFIX}
         app-group: ${APP_GROUP}
     spec:
       replicas: 1
       selector:
-        name: ${NAME}
+        name: ${NAME}${SUFFIX}
       strategy:
         type: Rolling
       template:
         metadata:
-          name: ${NAME}
+          name: ${NAME}${SUFFIX}
           labels:
-            name: ${NAME}
-            app: ${APP_NAME}
+            name: ${NAME}${SUFFIX}
+            app: ${APP_NAME}${SUFFIX}
             app-group: ${APP_GROUP}
         spec:
           containers:
-            - name: ${NAME}
+            - name: ${NAME}${SUFFIX}
               command:
                 # Note:
                 #  - The wallet-name cannot contain '-'s.
@@ -102,16 +104,15 @@ objects:
                 - -c
                 - $(echo aca-py start
                   --inbound-transport http '0.0.0.0' ${HTTP_INTERFACE_PORT}
-                  --endpoint ${AGENT_ENDPOINT}
                   --outbound-transport http
+                  --endpoint ${AGENT_ENDPOINT}
                   --genesis-url "${GENESIS_URL}"
                   --auto-accept-invites
                   --auto-accept-requests
                   --auto-ping-connection
                   --auto-respond-messages
-                  --auto-store-credential
+                  --auto-respond-credential-offer
                   --auto-verify-presentation
-                  --auto-respond-presentation-proposal
                   --wallet-type 'indy'
                   --wallet-name "$(echo ${AGENT_WALLET_NAME} | tr '[:upper:]' '[:lower:]' | sed "s~-~_~g")"
                   --wallet-key "${WALLET_ENCRYPTION_KEY}"
@@ -120,18 +121,18 @@ objects:
                   --wallet-storage-creds "$(eval echo \"${WALLET_STORAGE_CREDENTIALS}\")"
                   --seed "${INDY_WALLET_SEED}"
                   --admin '0.0.0.0' ${ADMIN_INTERFACE_PORT}
-                  --$([[ ! -z "${AGENT_ADMIN_API_KEY}" ]] && echo "admin-api-key ${AGENT_ADMIN_API_KEY}" || echo "admin-insecure-mode")
+                  $([ ! -z "${AGENT_ADMIN_API_KEY}" ] && echo "--admin-api-key ${AGENT_ADMIN_API_KEY}" || echo "--admin-insecure-mode")
                   --label "${AGENT_NAME}"
                   --log-level ${AGENT_LOG_LEVEL});
               env:
                 - name: GENESIS_URL
                   value: ${GENESIS_FILE_URL}
                 - name: AGENT_WALLET_NAME
-                  value: identity_kit_agent-wallet
+                  value: ${NAME}${SUFFIX}-wallet
                 - name: WALLET_TYPE
                   value: ${WALLET_STORAGE_TYPE}
                 - name: POSTGRESQL_WALLET_HOST
-                  value: ${WALLET_HOST}
+                  value: ${WALLET_HOST}${SUFFIX}
                 - name: POSTGRESQL_WALLET_PORT
                   value: ${WALLET_HOST_PORT}
                 - name: WALLET_STORAGE_CONFIGURATION
@@ -141,32 +142,32 @@ objects:
                 - name: POSTGRESQL_WALLET_USER
                   valueFrom:
                     secretKeyRef:
-                      name: ${WALLET_HOST}
+                      name: ${WALLET_HOST}${SUFFIX}
                       key: database-user
                 - name: POSTGRESQL_WALLET_PASSWORD
                   valueFrom:
                     secretKeyRef:
-                      name: ${WALLET_HOST}
+                      name: ${WALLET_HOST}${SUFFIX}
                       key: database-password
                 - name: POSTGRESQL_WALLET_ADMIN_PASSWORD
                   valueFrom:
                     secretKeyRef:
-                      name: ${WALLET_HOST}
+                      name: ${WALLET_HOST}${SUFFIX}
                       key: admin-password
                 - name: WALLET_ENCRYPTION_KEY
                   valueFrom:
                     secretKeyRef:
-                      name: ${WALLET_CREDENTIAL_STORE_NAME}
+                      name: ${WALLET_CREDENTIAL_STORE_NAME}${SUFFIX}
                       key: key
                 - name: INDY_WALLET_SEED
                   valueFrom:
                     secretKeyRef:
-                      name: ${WALLET_CREDENTIAL_STORE_NAME}
+                      name: ${WALLET_CREDENTIAL_STORE_NAME}${SUFFIX}
                       key: seed
                 - name: WALLET_DID
                   valueFrom:
                     secretKeyRef:
-                      name: ${WALLET_CREDENTIAL_STORE_NAME}
+                      name: ${WALLET_CREDENTIAL_STORE_NAME}${SUFFIX}
                       key: did
                 - name: WEBHOOK_URL
                   value: ${WEBHOOK_URL}
@@ -177,7 +178,7 @@ objects:
                 - name: AGENT_ADMIN_API_KEY
                   valueFrom:
                     secretKeyRef:
-                      name: ${NAME}
+                      name: ${NAME}${SUFFIX}
                       key: admin-api-key
                 - name: AGENT_NAME
                   value: ${AGENT_LABEL_NAME}
@@ -224,10 +225,10 @@ objects:
           imageChangeParams:
             automatic: true
             containerNames:
-              - ${NAME}
+              - ${NAME}${SUFFIX}
             from:
               kind: ImageStreamTag
-              name: ${NAME}:${TAG_NAME}
+              name: ${SOURCE_IMAGE_NAME}:${TAG_NAME}
               namespace: ${IMAGE_NAMESPACE}
 
 parameters:
@@ -246,6 +247,11 @@ parameters:
     description: Used to group components together.
     required: true
     value: identity-kit-agent
+  - name: SUFFIX
+    displayName: Suffix
+    description: A suffix applied to all the objects in this template.
+    required: false
+    value:
   - name: APPLICATION_DOMAIN
     displayName: Application Hostname
     description: The exposed hostname that will route to the service, if left blank a value will be defaulted.
@@ -255,6 +261,11 @@ parameters:
     displayName: Namespace containing application images.
     required: true
     value: devex-von-tools
+  - name: SOURCE_IMAGE_NAME
+    displayName: Source Image Name
+    description: The name of the source image to use for the service.
+    required: true
+    value: identity-kit-agent
   - name: TAG_NAME
     displayName: Environment TAG name
     description: The TAG name for this environment, e.g., dev, test, prod.

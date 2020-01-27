@@ -4,7 +4,7 @@ import { Component, OnInit } from '@angular/core';
   selector: 'waa-not-found',
   template: `
     <p>
-      not-found works!
+      This is not the page you're looking for...
     </p>
   `,
   styleUrls: ['./not-found.component.scss']

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { of } from 'rxjs';
 import { StateService } from 'src/app/services/state.service';
+import { AppConfigService } from 'src/app/services/app-config.service';
 
 @Component({
   selector: 'wap-completed',
@@ -38,7 +39,7 @@ export class CompletedComponent implements OnInit {
   pocLink: string;
 
   constructor(private stateSvc: StateService) {
-    this.pocLink = `https://csb-audio.pathfinder.gov.bc.ca/`;
+    this.pocLink = AppConfigService.settings.csbAudio.siteUrl;
   }
 
   ngOnInit() {}

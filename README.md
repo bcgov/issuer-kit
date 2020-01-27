@@ -73,7 +73,7 @@ Once started, the services will be exposed on localhost at the following endpoin
 
 - `identity-kit-agent`: http://localhost:8024
 
-**Please Note:** when running in default OR demo mode, changes to the code will not be reflected in the containers unless a rebuild using `./manage build` and restart using `./manage start` is performed.
+:information_source: When running in default OR demo mode, changes to the code will not be reflected in the containers unless a rebuild using `./manage build` and restart using `./manage start` is performed.
 
 
 ### Development Mode

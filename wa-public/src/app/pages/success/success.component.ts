@@ -8,6 +8,7 @@ import { Router } from '@angular/router';
 import { take, mergeMap, debounce, debounceTime } from 'rxjs/operators';
 import { TypeaheadService, ICPItem } from 'src/app/services/typeahead.service';
 import { CpRequest } from 'src/app/models/cp-request';
+import { AppConfigService } from 'src/app/services/app-config.service';
 
 @Component({
   selector: 'wap-success',
@@ -518,6 +519,6 @@ export class SuccessComponent implements OnInit, OnDestroy {
     );
   }
   async logout() {
-    await this.actionSvc.logout('/completed');
+    await this.actionSvc.logout(`${AppConfigService.settings.baseUrl}/completed`);
   }
 }

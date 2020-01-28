@@ -10,6 +10,8 @@ export interface IAppConfig {
     url: string;
   };
 
+  baseUrl: string;
+
   csbAudio: {
     siteUrl: string;
   };

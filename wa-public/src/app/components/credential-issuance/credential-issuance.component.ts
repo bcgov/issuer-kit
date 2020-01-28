@@ -111,6 +111,6 @@ export class CredentialIssuanceComponent implements OnInit, OnDestroy {
   }
 
   async completeProgress() {
-    await this.actionSvc.logout('/completed');
+    await this.actionSvc.logout(`${AppConfigService.settings.baseUrl}/completed`);
   }
 }

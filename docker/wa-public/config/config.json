@@ -3,6 +3,7 @@
   "apiServer": {
     "url": "/api"
   },
+  "baseUrl": "http://localhost:8082",
   "csbAudio": {
     "siteUrl": "https://csb-audio.pathfinder.gov.bc.ca"
   },

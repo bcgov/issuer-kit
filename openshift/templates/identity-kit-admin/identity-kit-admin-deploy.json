@@ -50,7 +50,7 @@
               {
                 "name": "${NAME}${SUFFIX}-caddy-config-volume",
                 "configMap": {
-                  "name": "${CADDY_CONFIG_MAP_NAME}${SUFFIX}",
+                  "name": "${CADDY_CONFIG_MAP_NAME}",
                   "items": [
                     {
                       "key": "${CADDY_CONFIG_FILE_NAME}",
@@ -62,7 +62,7 @@
               {
                 "name": "${NAME}${SUFFIX}-appconfig-volume",
                 "configMap": {
-                  "name": "${APPCONFIG_CONFIG_MAP_NAME}${SUFFIX}",
+                  "name": "${APPCONFIG_CONFIG_MAP_NAME}",
                   "items": [
                     {
                       "key": "${APPCONFIG_CONFIG_FILE_NAME}",

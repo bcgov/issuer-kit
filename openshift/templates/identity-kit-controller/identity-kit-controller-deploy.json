@@ -177,7 +177,7 @@
                   },
                   {
                     "name": "ADMIN_EMAIL",
-                    "value": "${ADMIN_EMAILs}"
+                    "value": "${ADMIN_EMAIL}"
                   },
                   {
                     "name": "PUBLIC_SITE_URL",

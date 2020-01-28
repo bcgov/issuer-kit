@@ -4,31 +4,30 @@ The Identity Kit Proof of Concept (IKP) architecture is presented in the diagram
 
 ![IKP Architecture](http://www.plantuml.com/plantuml/proxy?src=https://raw.githubusercontent.com/swcurran/identity-kit-poc/master/docs/architecture_and_flow.puml)
 
-## Approver Flow
+## Administrator Flow
 
-* The approver uses github authorization to access the list of approved participants.
-  * A white list managed within Keycloak has list of approvers.
+* The administrator uses github authorization to access the list of approved participants.
+  * A list of administrators is managed within Keycloak.
+  * Once an admin has used Keycloak to access the site, a Keycloak administrator must provide them access to the app
+  * The default user (wa-admin) has access.
 * The app is a list manager that allows authorized users to add, update, email and deactivate (see below) approved users. Likely fields:
   * Email Address
   * Name
   * Jurisdiction (selection - provinces, territories and Canada, default to "BC")
   * AuthProvider (selection - GitHub only for now, default to "GitHub")
   * GUID
-  * Active Until (or some field to indicate that the a GUID is time limited - configurable, likely 24 hours)
+  * Active Until (or some field to indicate that the a GUID is time limited - configurable, defaulting to 24 hours)
   * ActiveYN
   * Audit fields (e.g. Add By, Updated By, Added Time, Updated Time)
 * Associated with each approved user is a GUID and an "active until" time that is regenerated/reset each time a user record is updated and an email sent to the user.
 * Deactivating a user sets the "ActiveYN" to false.
 * Adding a user record sends an email to the user with a link to the Issuer App with the GUID and resets the "Active Until" field to a new time limit.
   * An additional "Email User" button per user allows the resending of the email, including resetting the "Active Until" field.
-* The app should be a basic list app, with search by email address (at least - ideally name as well), add and per row operations.
+* The app is be a basic list app, with search by email address (at least - ideally name as well), add and per row operations.
   * On first version, search could just use "Search in Page" in the browser, and a non-paged list of users.
-* The generated email should be a template such that in the **future** (not needed yet) we can tune it based on the parameters of the user record:
-  * Insert the email address, name and "active until" date/time
-  * Insert boilerplate text based on the Jurisdiction and the AuthProvider
-  * The link may be generated based on the Jurisdiction
+* The generated email is in a template can be tuned based on the parameters of the user record.
   
-## Participant Flow
+## Issuer Flow
 
 * A participant receives an email with instructions on how to prepare for the demo and a link to the Issuer app.
 * The Issuer app is protected by Keycloak using some number of IdPs - initially just GitHub.

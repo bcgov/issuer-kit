@@ -24,7 +24,7 @@ class config {
 
   // List of apps that will require to be deployed.
   // Databases are not included since they will not likely change often.
-  public static final String[] APPS = ['identity-kit-admin', 'identity-kit-public', 'identity-kit-controller', 'identity-kit-agent']
+  public static final String[] APPS = ['identity-kit-admin-bc', 'identity-kit-public-bc', 'identity-kit-controller-bc', 'identity-kit-agent-bc']
   public static final Map<String, String> APP_CONTEXT_DIRS = ['identity-kit-admin-angular':'wa-admin', 'identity-kit-admin':'wa-admin', 'identity-kit-public-angular':'wa-public', 'identity-kit-public':'wa-public', 'identity-kit-controller':'identity-controller', 'identity-kit-agent':'docker/agent']
 
   // Build configuration

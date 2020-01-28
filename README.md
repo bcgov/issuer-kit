@@ -82,7 +82,7 @@ To restart the applications:
 
 In Local Mode the entire application runs locally and uses a locally deployed Indy ledger. In Local Mode you cannot use the Streetcred agent because it is unable to access the ledger being used.
 
-To run in demo mode, open two shell/terminal sessions:
+To run in local mode, open two shell/terminal sessions:
 
 1. Follow the [instructions](https://github.com/bcgov/von-network#running-the-network-locally) to start `von-network` running locally
 2. Change to the Identity Kit [docker](./docker) folder:

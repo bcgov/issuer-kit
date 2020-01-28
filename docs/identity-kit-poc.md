@@ -21,10 +21,9 @@ The Identity Kit Proof of Concept (IKP) architecture is presented in the diagram
   * Audit fields (e.g. Add By, Updated By, Added Time, Updated Time)
 * Associated with each approved user is a GUID and an "active until" time that is regenerated/reset each time a user record is updated and an email sent to the user.
 * Deactivating a user sets the "ActiveYN" to false.
-* Adding a user record sends an email to the user with a link to the Issuer App with the GUID and resets the "Active Until" field to a new time limit.
+* Adding a user record sends an email (if an email server is configured) to the user with a link to the Issuer App with the GUID, and resets the "Active Until" field to a new time limit.
   * An additional "Email User" button per user allows the resending of the email, including resetting the "Active Until" field.
-* The app is be a basic list app, with search by email address (at least - ideally name as well), add and per row operations.
-  * On first version, search could just use "Search in Page" in the browser, and a non-paged list of users.
+* The app is a basic list app, with search by email address, add and per row operations.
 * The generated email is in a template can be tuned based on the parameters of the user record.
   
 ## Issuer Flow
@@ -60,6 +59,4 @@ The Identity Kit Proof of Concept (IKP) architecture is presented in the diagram
     * An "Issue Verifiable Credential" button
       * On click, initialize an issue process - QR invitation code, etc.
       * Display a progress screen for the issuance process (same as email verification service)
-    * On completion, put a "prove credential" button that initiates an ephemeral proof process (same as vc-authn-oidc uses).
-      * Display a progress screen for the issuance process that on completion shows claims from the proof.
-    * Where to go next is TBD.
+    * On completion, display a link to a demo site so the user can try their new verifiable credential.

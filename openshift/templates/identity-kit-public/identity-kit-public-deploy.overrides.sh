@@ -6,19 +6,17 @@ else
 fi
 
 OUTPUT_FORMAT=json
-read -r -p $"Please provide the name for the config map holding the Caddy configuration (it must match the name used in the template):" CADDY_CONFIG_MAP_NAME
-read -r -p $"Please provide the name for the config map holding the webapp configuration (it must match the name used in the template):" APPCONFIG_CONFIG_MAP_NAME
 
 # The generated config maps are used to replace Caddyfile and config.json
 CADDY_SOURCE_FILE=$( dirname "$0" )/../../../docker/wa-public/config/Caddyfile
 CADDY_OUTPUT_FILE=${CADDY_CONFIG_MAP_NAME}-configmap_DeploymentConfig.json
 printStatusMsg "Generating ConfigMap; ${CADDY_CONFIG_MAP_NAME} ..."
-generateConfigMap "${CADDY_CONFIG_MAP_NAME}" "${CADDY_SOURCE_FILE}" "${OUTPUT_FORMAT}" "${CADDY_OUTPUT_FILE}"
+generateConfigMap "${CADDY_CONFIG_MAP_NAME}${SUFFIX}" "${CADDY_SOURCE_FILE}" "${OUTPUT_FORMAT}" "${CADDY_OUTPUT_FILE}"
 
 APPCONFIG_SOURCE_FILE=$( dirname "$0" )/../../../wa-public/src/assets/config/config.json
 APPCONFIG_OUTPUT_FILE=${APPCONFIG_CONFIG_MAP_NAME}-configmap_DeploymentConfig.json
 printStatusMsg "Generating ConfigMap; ${APPCONFIG_CONFIG_MAP_NAME} ..."
-generateConfigMap "${APPCONFIG_CONFIG_MAP_NAME}" "${APPCONFIG_SOURCE_FILE}" "${OUTPUT_FORMAT}" "${APPCONFIG_OUTPUT_FILE}"
+generateConfigMap "${APPCONFIG_CONFIG_MAP_NAME}${SUFFIX}" "${APPCONFIG_SOURCE_FILE}" "${OUTPUT_FORMAT}" "${APPCONFIG_OUTPUT_FILE}"
 
 unset SPECIALDEPLOYPARMS
 echo ${SPECIALDEPLOYPARMS}

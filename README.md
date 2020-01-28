@@ -26,7 +26,7 @@ Need a mobile app to try? Instructions are available [here](../identity-kit-poc/
 
 - [von-network](https://github.com/bcgov/von-network) - Local Mode only (see below)
 
-For `jq` and `ngrok` are available on package manager systems for different platforms such as [Homebrew](https://brew.sh/) (Mac), [Chocolatey](https://chocolatey.org/) (Windows) and various Linux distribution package managers.
+`jq` and `ngrok` are available on package manager systems for different platforms such as [Homebrew](https://brew.sh/) (Mac), [Chocolatey](https://chocolatey.org/) (Windows) and various Linux distribution package managers.
 
 ## Running the Identity Kit
 

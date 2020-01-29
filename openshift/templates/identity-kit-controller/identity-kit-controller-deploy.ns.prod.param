@@ -6,7 +6,7 @@
 # NAME=ns-id-controller
 # APP_NAME=ns-id
 # APP_GROUP=ns-id
-# SUFFIX=
+SUFFIX=-prod
 # ROLE=controller
 # IMAGE_NAMESPACE=devex-von-tools
 # SERVICE_PORT=8080

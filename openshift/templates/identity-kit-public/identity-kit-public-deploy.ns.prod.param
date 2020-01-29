@@ -6,7 +6,7 @@
 # NAME=ns-id-public
 # APP_NAME=ns-id
 # APP_GROUP=ns-id
-# SUFFIX=
+SUFFIX=-prod
 # ROLE=public-frontend
 # IMAGE_NAMESPACE=devex-von-tools
 # CADDY_CONFIG_FILE_NAME=Caddyfile

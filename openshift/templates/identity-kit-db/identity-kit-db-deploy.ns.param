@@ -6,7 +6,8 @@
 NAME=ns-id-db
 APP_NAME=ns-id
 APP_GROUP=ns-id
-SUFFIX=
+SUFFIX=-dev
+ROLE=db
 IMAGE_NAMESPACE=devex-von-tools
 SOURCE_IMAGE_NAME=identity-kit-db
 TAG_NAME=prod

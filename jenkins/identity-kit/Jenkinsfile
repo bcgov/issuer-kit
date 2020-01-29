@@ -90,7 +90,7 @@ void build(String imageSelector, Map<String, String> APP_CONTEXT_DIRS, int WAIT_
   }
 }
 
-void deploy(String appName, String namespace, String envTag) {
+void deploy(String appName, String namespace, String envTag, Map<String, String[]> APP_MAPPINGS) {
   openshift.withCluster() {
     openshift.withProject() {
 
@@ -105,10 +105,14 @@ void deploy(String appName, String namespace, String envTag) {
 
     echo "Watching rollout of ${appName} in ${namespace}-${envTag} ..."
     openshift.withProject("${namespace}-${envTag}") {
-        def dc = openshift.selector('dc', "${appName}")
-        // Wait for the deployment to complete.
-        // This will wait until the desired replicas are all available
-        dc.rollout().status()
+        APP_MAPPINGS.keySet().each{
+          APP_MAPPINGS["${it}"].each{
+            def dc = openshift.selector('dc', "${it}")
+            // Wait for the deployment to complete.
+            // This will wait until the desired replicas are all available
+            dc.rollout().status()
+          }
+        }
     }
 
     echo "Deployment Complete."
@@ -140,8 +144,8 @@ node {
   // Deploying new images
   stage("Deploy images to ${config.PROD_ENV}") {
     script {
-      config.APPS.each{
-        deploy("${it}", "${config.NAME_SPACE}", "${config.PROD_ENV}")
+      config.APPS.keySet().each{
+        deploy("${it}", "${config.NAME_SPACE}", "${config.PROD_ENV}", config.APPS)
       }
     }
   }

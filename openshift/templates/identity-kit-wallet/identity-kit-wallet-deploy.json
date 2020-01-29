@@ -19,6 +19,8 @@
           "app": "${APP_NAME}${SUFFIX}",
           "name": "${NAME}${SUFFIX}",
           "app-group": "${APP_GROUP}",
+          "role": "${ROLE}",
+          "env": "${TAG_NAME}",
           "template": "${NAME}${SUFFIX}"
         }
       },
@@ -60,7 +62,9 @@
             "labels": {
               "app": "${APP_NAME}${SUFFIX}",
               "name": "${NAME}${SUFFIX}",
-              "app-group": "${APP_GROUP}"
+              "app-group": "${APP_GROUP}",
+              "role": "${ROLE}",
+              "env": "${TAG_NAME}"
             }
           },
           "spec": {
@@ -183,6 +187,8 @@
           "app": "${APP_NAME}${SUFFIX}",
           "name": "${NAME}${SUFFIX}",
           "app-group": "${APP_GROUP}",
+          "role": "${ROLE}",
+          "env": "${TAG_NAME}",
           "template": "${NAME}${SUFFIX}"
         }
       },
@@ -206,7 +212,9 @@
         "labels": {
           "app": "${APP_NAME}${SUFFIX}",
           "name": "${NAME}${SUFFIX}",
-          "app-group": "${APP_GROUP}"
+          "app-group": "${APP_GROUP}",
+          "role": "${ROLE}",
+          "env": "${TAG_NAME}"
         }
       },
       "stringData": {
@@ -225,16 +233,18 @@
           "app": "${APP_NAME}${SUFFIX}",
           "name": "${NAME}${SUFFIX}",
           "app-group": "${APP_GROUP}",
+          "role": "${ROLE}",
+          "env": "${TAG_NAME}",
           "template": "${NAME}${SUFFIX}"
         },
         "annotations": {
-          "template.openshift.io/expose-uri": "postgres://{.spec.clusterIP}:{.spec.ports[?(.name==\"postgresql\")].port}"
+          "template.openshift.io/expose-uri": "postgres://{.spec.clusterIP}:{.spec.ports[?(.name==\"${NAME}${SUFFIX}\")].port}"
         }
       },
       "spec": {
         "ports": [
           {
-            "name": "postgresql",
+            "name": "${NAME}${SUFFIX}",
             "protocol": "TCP",
             "port": 5432,
             "targetPort": 5432
@@ -276,6 +286,13 @@
       "description": "A suffix applied to all of the objects in this template.",
       "required": false,
       "value": ""
+    },
+    {
+      "name": "ROLE",
+      "displayName": "Role",
+      "description": "The role of this service within the application - used for Network Policies",
+      "required": true,
+      "value": "wallet"
     },
     {
       "name": "IMAGE_NAMESPACE",

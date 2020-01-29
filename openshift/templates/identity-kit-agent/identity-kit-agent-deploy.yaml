@@ -284,11 +284,11 @@ objects:
           - $namespace=${NAMESPACE_NAME}-${TAG_NAME}
 
       destination:
-        - - role=${PREFIX}wallet
+        - - role=wallet${SUFFIX}
           - app=${APP_NAME}
           - env=${TAG_NAME}
           - $namespace=${NAMESPACE_NAME}-${TAG_NAME}
-        - - role=${PREFIX}controller
+        - - role=controller${SUFFIX}
           - app=${APP_NAME}
           - env=${TAG_NAME}
           - $namespace=${NAMESPACE_NAME}-${TAG_NAME}

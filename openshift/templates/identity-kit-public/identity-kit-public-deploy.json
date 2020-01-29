@@ -275,7 +275,7 @@
           "name": "custom-${APP_NAME}-${NAME}-policy",
           "app": "${APP_NAME}",
           "app-group": "${APP_GROUP}",
-          "role": "${PREFIX}${ROLE}",
+          "role": "${ROLE}${SUFFIX}",
           "env": "${TAG_NAME}"
         }
       },
@@ -283,7 +283,7 @@
         "description": "Allow the public frontend to talk to the controller service.",
         "source": [
           [
-            "role=${PREFIX}${ROLE}",
+            "role=${ROLE}${SUFFIX}",
             "app=${APP_NAME}",
             "env=${TAG_NAME}",
             "$namespace=${NAMESPACE_NAME}-${TAG_NAME}"
@@ -291,7 +291,7 @@
         ],
         "destination": [
           [
-            "role=${PREFIX}controller",
+            "role=controller${SUFFIX}",
             "app=${APP_NAME}",
             "env=${TAG_NAME}",
             "$namespace=${NAMESPACE_NAME}-${TAG_NAME}"

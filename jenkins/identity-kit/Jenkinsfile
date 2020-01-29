@@ -105,10 +105,14 @@ void deploy(String appName, String namespace, String envTag) {
 
     echo "Watching rollout of ${appName} in ${namespace}-${envTag} ..."
     openshift.withProject("${namespace}-${envTag}") {
-        def dc = openshift.selector('dc', "${appName}")
-        // Wait for the deployment to complete.
-        // This will wait until the desired replicas are all available
-        dc.rollout().status()
+        config.APPS.keySet().each{
+          APPS["${it}"].each{
+            def dc = openshift.selector('dc', "${it}")
+            // Wait for the deployment to complete.
+            // This will wait until the desired replicas are all available
+            dc.rollout().status()
+          }
+        }
     }
 
     echo "Deployment Complete."
@@ -140,7 +144,7 @@ node {
   // Deploying new images
   stage("Deploy images to ${config.PROD_ENV}") {
     script {
-      config.APPS.each{
+      config.APPS.keySet().each{
         deploy("${it}", "${config.NAME_SPACE}", "${config.PROD_ENV}")
       }
     }

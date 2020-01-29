@@ -7,6 +7,7 @@ NAME=ns-id-wallet
 APP_NAME=ns-id
 APP_GROUP=ns-id
 SUFFIX=
+ROLE=wallet
 IMAGE_NAMESPACE=devex-von-tools
 SOURCE_IMAGE_NAME=identity-kit-wallet
 TAG_NAME=prod

@@ -8,12 +8,12 @@
 # APP_GROUP=ns-id
 SUFFIX=-prod
 # ROLE=agent
-APPLICATION_DOMAIN=ns-id-agent.pathfinder.gov.bc.ca
+APPLICATION_DOMAIN=ns-id-agent.vonx.io
 # IMAGE_NAMESPACE=devex-von-tools
 # SOURCE_IMAGE_NAME=identity-kit-agent
 TAG_NAME=prod
 AGENT_LABEL_NAME=NovaScotia-ID-Issuer
-AGENT_BASE_URL=https://ns-id-agent.pathfinder.gov.bc.ca
+AGENT_BASE_URL=https://ns-id-agent.vonx.io
 WEBHOOK_URL=http://ns-id-controller:8080
 # AGENT_ADMIN_PORT=8024
 # ADMIN_API_KEY=[a-zA-Z0-9]{16}

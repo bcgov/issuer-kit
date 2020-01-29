@@ -17,7 +17,7 @@
           "app": "${APP_NAME}${SUFFIX}",
           "name": "${NAME}${SUFFIX}",
           "app-group": "${APP_GROUP}",
-          "role": "${ROLE}${SUFFIX}",
+          "role": "${ROLE}",
           "env": "${TAG_NAME}"
         },
         "name": "${NAME}${SUFFIX}"
@@ -44,7 +44,7 @@
               "app": "${APP_NAME}${SUFFIX}",
               "name": "${NAME}${SUFFIX}",
               "app-group": "${APP_GROUP}",
-              "role": "${ROLE}${SUFFIX}",
+              "role": "${ROLE}",
               "env": "${TAG_NAME}",
               "deploymentconfig": "${NAME}${SUFFIX}"
             }
@@ -193,7 +193,7 @@
           "app": "${APP_NAME}${SUFFIX}",
           "name": "${NAME}${SUFFIX}",
           "app-group": "${APP_GROUP}",
-          "role": "${ROLE}${SUFFIX}",
+          "role": "${ROLE}",
           "env": "${TAG_NAME}"
         },
         "name": "${NAME}${SUFFIX}"
@@ -223,7 +223,7 @@
           "app": "${APP_NAME}${SUFFIX}",
           "name": "${NAME}${SUFFIX}",
           "app-group": "${APP_GROUP}",
-          "role": "${ROLE}${SUFFIX}",
+          "role": "${ROLE}",
           "env": "${TAG_NAME}"
         },
         "name": "${NAME}${SUFFIX}"
@@ -253,7 +253,7 @@
           "app": "${APP_NAME}${SUFFIX}",
           "name": "${NAME}${SUFFIX}",
           "app-group": "${APP_GROUP}",
-          "role": "${ROLE}${SUFFIX}",
+          "role": "${ROLE}",
           "env": "${TAG_NAME}"
         }
       },
@@ -275,7 +275,7 @@
           "name": "custom-${APP_NAME}-${NAME}-policy",
           "app": "${APP_NAME}",
           "app-group": "${APP_GROUP}",
-          "role": "${ROLE}${SUFFIX}",
+          "role": "${ROLE}",
           "env": "${TAG_NAME}"
         }
       },
@@ -283,7 +283,7 @@
         "description": "Allow the public frontend to talk to the controller service.",
         "source": [
           [
-            "role=${ROLE}${SUFFIX}",
+            "role=${ROLE}",
             "app=${APP_NAME}",
             "env=${TAG_NAME}",
             "$namespace=${NAMESPACE_NAME}-${TAG_NAME}"
@@ -291,7 +291,7 @@
         ],
         "destination": [
           [
-            "role=controller${SUFFIX}",
+            "role=controller",
             "app=${APP_NAME}",
             "env=${TAG_NAME}",
             "$namespace=${NAMESPACE_NAME}-${TAG_NAME}"

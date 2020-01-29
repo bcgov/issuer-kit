@@ -19,7 +19,7 @@
           "name": "${NAME}${SUFFIX}",
           "app": "${APP_NAME}${SUFFIX}",
           "app-group": "${APP_GROUP}",
-          "role": "${ROLE}${SUFFIX}",
+          "role": "${ROLE}",
           "env": "${TAG_NAME}",
           "template": "${NAME}${SUFFIX}"
         }
@@ -63,7 +63,7 @@
               "name": "${NAME}${SUFFIX}",
               "app": "${APP_NAME}${SUFFIX}",
               "app-group": "${APP_GROUP}",
-              "role": "${ROLE}${SUFFIX}",
+              "role": "${ROLE}",
               "env": "${TAG_NAME}"
             }
           },
@@ -187,7 +187,7 @@
           "name": "${NAME}${SUFFIX}",
           "app": "${APP_NAME}${SUFFIX}",
           "app-group": "${APP_GROUP}",
-          "role": "${ROLE}${SUFFIX}",
+          "role": "${ROLE}",
           "env": "${TAG_NAME}",
           "template": "${NAME}${SUFFIX}"
         }
@@ -213,7 +213,7 @@
           "name": "${NAME}${SUFFIX}",
           "app": "${APP_NAME}${SUFFIX}",
           "app-group": "${APP_GROUP}",
-          "role": "${ROLE}${SUFFIX}",
+          "role": "${ROLE}",
           "env": "${TAG_NAME}"
         }
       },
@@ -233,7 +233,7 @@
           "name": "${NAME}${SUFFIX}",
           "app": "${APP_NAME}${SUFFIX}",
           "app-group": "${APP_GROUP}",
-          "role": "${ROLE}${SUFFIX}",
+          "role": "${ROLE}",
           "env": "${TAG_NAME}",
           "template": "${NAME}${SUFFIX}"
         }

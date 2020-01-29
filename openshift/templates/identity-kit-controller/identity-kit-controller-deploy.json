@@ -22,7 +22,7 @@
           "name": "${NAME}${SUFFIX}",
           "app": "${APP_NAME}${SUFFIX}",
           "app-group": "${APP_GROUP}",
-          "role": "${ROLE}${SUFFIX}",
+          "role": "${ROLE}",
           "env": "${TAG_NAME}"
         }
       },
@@ -52,7 +52,7 @@
           "name": "${NAME}${SUFFIX}",
           "app": "${APP_NAME}${SUFFIX}",
           "app-group": "${APP_GROUP}",
-          "role": "${ROLE}${SUFFIX}",
+          "role": "${ROLE}",
           "env": "${TAG_NAME}"
         }
       },
@@ -90,7 +90,7 @@
               "name": "${NAME}${SUFFIX}",
               "app": "${APP_NAME}${SUFFIX}",
               "app-group": "${APP_GROUP}",
-              "role": "${ROLE}${SUFFIX}",
+              "role": "${ROLE}",
               "env": "${TAG_NAME}"
             }
           },
@@ -219,7 +219,7 @@
           "name": "${NAME}${SUFFIX}",
           "app": "${APP_NAME}${SUFFIX}",
           "app-group": "${APP_GROUP}",
-          "role": "${ROLE}${SUFFIX}",
+          "role": "${ROLE}",
           "env": "${TAG_NAME}"
         }
       },
@@ -241,7 +241,7 @@
           "name": "custom-${APP_NAME}-pods-to-api",
           "app": "${APP_NAME}",
           "app-group": "${APP_GROUP}",
-          "role": "${ROLE}${SUFFIX}",
+          "role": "${ROLE}",
           "env": "${TAG_NAME}"
         }
       },
@@ -268,7 +268,7 @@
           "name": "custom-${APP_NAME}-${NAME}-policy",
           "app": "${APP_NAME}",
           "app-group": "${APP_GROUP}",
-          "role": "${ROLE}${SUFFIX}",
+          "role": "${ROLE}",
           "env": "${TAG_NAME}"
         }
       },
@@ -276,7 +276,7 @@
         "description": "Allow the controller to talk to either the database or agent micro services.\n",
         "source": [
           [
-            "role=${ROLE}${SUFFIX}",
+            "role=${ROLE}",
             "app=${APP_NAME}",
             "env=${TAG_NAME}",
             "$namespace=${NAMESPACE_NAME}-${TAG_NAME}"
@@ -284,13 +284,13 @@
         ],
         "destination": [
           [
-            "role=db${SUFFIX}",
+            "role=db",
             "app=${APP_NAME}",
             "env=${TAG_NAME}",
             "$namespace=${NAMESPACE_NAME}-${TAG_NAME}"
           ],
           [
-            "role=agent${SUFFIX}",
+            "role=agent",
             "app=${APP_NAME}",
             "env=${TAG_NAME}",
             "$namespace=${NAMESPACE_NAME}-${TAG_NAME}"

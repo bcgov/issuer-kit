@@ -16,7 +16,9 @@
         "labels": {
           "app": "${APP_NAME}${SUFFIX}",
           "name": "${NAME}${SUFFIX}",
-          "app-group": "${APP_GROUP}"
+          "app-group": "${APP_GROUP}",
+          "role": "${ROLE}${SUFFIX}",
+          "env": "${TAG_NAME}"
         },
         "name": "${NAME}${SUFFIX}"
       },
@@ -42,6 +44,8 @@
               "app": "${APP_NAME}${SUFFIX}",
               "name": "${NAME}${SUFFIX}",
               "app-group": "${APP_GROUP}",
+              "role": "${ROLE}${SUFFIX}",
+              "env": "${TAG_NAME}",
               "deploymentconfig": "${NAME}${SUFFIX}"
             }
           },
@@ -188,7 +192,9 @@
         "labels": {
           "app": "${APP_NAME}${SUFFIX}",
           "name": "${NAME}${SUFFIX}",
-          "app-group": "${APP_GROUP}"
+          "app-group": "${APP_GROUP}",
+          "role": "${ROLE}${SUFFIX}",
+          "env": "${TAG_NAME}"
         },
         "name": "${NAME}${SUFFIX}"
       },
@@ -216,7 +222,9 @@
         "labels": {
           "app": "${APP_NAME}${SUFFIX}",
           "name": "${NAME}${SUFFIX}",
-          "app-group": "${APP_GROUP}"
+          "app-group": "${APP_GROUP}",
+          "role": "${ROLE}${SUFFIX}",
+          "env": "${TAG_NAME}"
         },
         "name": "${NAME}${SUFFIX}"
       },
@@ -244,7 +252,9 @@
         "labels": {
           "app": "${APP_NAME}${SUFFIX}",
           "name": "${NAME}${SUFFIX}",
-          "app-group": "${APP_GROUP}"
+          "app-group": "${APP_GROUP}",
+          "role": "${ROLE}${SUFFIX}",
+          "env": "${TAG_NAME}"
         }
       },
       "spec": {
@@ -254,6 +264,39 @@
         },
         "minReplicas": 1,
         "maxReplicas": 2
+      }
+    },
+    {
+      "kind": "NetworkSecurityPolicy",
+      "apiVersion": "secops.pathfinder.gov.bc.ca/v1alpha1",
+      "metadata": {
+        "name": "custom-${APP_NAME}-${NAME}-policy",
+        "labels": {
+          "name": "custom-${APP_NAME}-${NAME}-policy",
+          "app": "${APP_NAME}",
+          "app-group": "${APP_GROUP}",
+          "role": "${PREFIX}${ROLE}",
+          "env": "${TAG_NAME}"
+        }
+      },
+      "spec": {
+        "description": "Allow the public frontend to talk to the controller service.",
+        "source": [
+          [
+            "role=${PREFIX}${ROLE}",
+            "app=${APP_NAME}",
+            "env=${TAG_NAME}",
+            "$namespace=${NAMESPACE_NAME}-${TAG_NAME}"
+          ]
+        ],
+        "destination": [
+          [
+            "role=${PREFIX}controller",
+            "app=${APP_NAME}",
+            "env=${TAG_NAME}",
+            "$namespace=${NAMESPACE_NAME}-${TAG_NAME}"
+          ]
+        ]
       }
     }
   ],
@@ -285,6 +328,13 @@
       "description": "A suffix applied to all of the objects in this template.",
       "required": false,
       "value": ""
+    },
+    {
+      "name": "ROLE",
+      "displayName": "Role",
+      "description": "The role of this service within the application - used for Network Policies",
+      "required": true,
+      "value": "admin-frontend"
     },
     {
       "description": "The namespace where to get the above image name",

@@ -21,7 +21,9 @@
         "labels": {
           "name": "${NAME}${SUFFIX}",
           "app": "${APP_NAME}${SUFFIX}",
-          "app-group": "${APP_GROUP}"
+          "app-group": "${APP_GROUP}",
+          "role": "${ROLE}${SUFFIX}",
+          "env": "${TAG_NAME}"
         }
       },
       "spec": {
@@ -49,7 +51,9 @@
         "labels": {
           "name": "${NAME}${SUFFIX}",
           "app": "${APP_NAME}${SUFFIX}",
-          "app-group": "${APP_GROUP}"
+          "app-group": "${APP_GROUP}",
+          "role": "${ROLE}${SUFFIX}",
+          "env": "${TAG_NAME}"
         }
       },
       "spec": {
@@ -85,7 +89,9 @@
             "labels": {
               "name": "${NAME}${SUFFIX}",
               "app": "${APP_NAME}${SUFFIX}",
-              "app-group": "${APP_GROUP}"
+              "app-group": "${APP_GROUP}",
+              "role": "${ROLE}${SUFFIX}",
+              "env": "${TAG_NAME}"
             }
           },
           "spec": {
@@ -212,7 +218,9 @@
         "labels": {
           "name": "${NAME}${SUFFIX}",
           "app": "${APP_NAME}${SUFFIX}",
-          "app-group": "${APP_GROUP}"
+          "app-group": "${APP_GROUP}",
+          "role": "${ROLE}${SUFFIX}",
+          "env": "${TAG_NAME}"
         }
       },
       "spec": {
@@ -222,6 +230,72 @@
         },
         "minReplicas": "${{MIN_REPLICAS}}",
         "maxReplicas": "${{MAX_REPLICAS}}"
+      }
+    },
+    {
+      "kind": "NetworkSecurityPolicy",
+      "apiVersion": "secops.pathfinder.gov.bc.ca/v1alpha1",
+      "metadata": {
+        "name": "custom-${APP_NAME}-pods-to-api",
+        "labels": {
+          "name": "custom-${APP_NAME}-pods-to-api",
+          "app": "${APP_NAME}",
+          "app-group": "${APP_GROUP}",
+          "role": "${ROLE}${SUFFIX}",
+          "env": "${TAG_NAME}"
+        }
+      },
+      "spec": {
+        "description": "Allow pods to talk to the internal api so deployments work.\nThis only needs to be specified once per environment.\n",
+        "source": [
+          [
+            "$namespace=${NAMESPACE_NAME}-${TAG_NAME}"
+          ]
+        ],
+        "destination": [
+          [
+            "int:network=internal-cluster-api-endpoint"
+          ]
+        ]
+      }
+    },
+    {
+      "kind": "NetworkSecurityPolicy",
+      "apiVersion": "secops.pathfinder.gov.bc.ca/v1alpha1",
+      "metadata": {
+        "name": "custom-${APP_NAME}-${NAME}-policy",
+        "labels": {
+          "name": "custom-${APP_NAME}-${NAME}-policy",
+          "app": "${APP_NAME}",
+          "app-group": "${APP_GROUP}",
+          "role": "${ROLE}${SUFFIX}",
+          "env": "${TAG_NAME}"
+        }
+      },
+      "spec": {
+        "description": "Allow the controller to talk to either the database or agent micro services.\n",
+        "source": [
+          [
+            "role=${PREFIX}${ROLE}",
+            "app=${APP_NAME}",
+            "env=${TAG_NAME}",
+            "$namespace=${NAMESPACE_NAME}-${TAG_NAME}"
+          ]
+        ],
+        "destination": [
+          [
+            "role=${PREFIX}db",
+            "app=${APP_NAME}",
+            "env=${TAG_NAME}",
+            "$namespace=${NAMESPACE_NAME}-${TAG_NAME}"
+          ],
+          [
+            "role=${PREFIX}agent",
+            "app=${APP_NAME}",
+            "env=${TAG_NAME}",
+            "$namespace=${NAMESPACE_NAME}-${TAG_NAME}"
+          ]
+        ]
       }
     }
   ],
@@ -253,6 +327,13 @@
       "description": "A suffix applied to all of the objects in this template.",
       "required": false,
       "value": ""
+    },
+    {
+      "name": "ROLE",
+      "displayName": "Role",
+      "description": "The role of this service within the application - used for Network Policies",
+      "required": true,
+      "value": "controller"
     },
     {
       "name": "IMAGE_NAMESPACE",

@@ -7,6 +7,7 @@ NAME=identity-kit-public
 APP_NAME=identity-kit
 APP_GROUP=identity-kit
 SUFFIX=-bc
+ROLE=public-frontend
 IMAGE_NAMESPACE=devex-von-tools
 CADDY_CONFIG_FILE_NAME=Caddyfile
 CADDY_CONFIG_MAP_NAME=identity-kit-public-caddy-conf

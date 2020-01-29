@@ -12,6 +12,8 @@ objects:
         name: ${NAME}${SUFFIX}
         app: ${APP_NAME}${SUFFIX}
         app-group: ${APP_GROUP}
+        role: ${ROLE}${SUFFIX}
+        env: ${TAG_NAME}
     spec:
       ports:
         - name: ${NAME}-admin
@@ -33,6 +35,8 @@ objects:
         name: ${NAME}${SUFFIX}
         app: ${APP_NAME}${SUFFIX}
         app-group: ${APP_GROUP}
+        role: ${ROLE}${SUFFIX}
+        env: ${TAG_NAME}
       annotations:
         haproxy.router.openshift.io/timeout: ${ROUTE_TIMEOUT}
     spec:
@@ -55,6 +59,8 @@ objects:
         name: ${NAME}${SUFFIX}
         app: ${APP_NAME}${SUFFIX}
         app-group: ${APP_GROUP}
+        role: ${ROLE}${SUFFIX}
+        env: ${TAG_NAME}
     stringData:
       key: ${WALLET_KEY}
       seed: ${WALLET_SEED}
@@ -69,6 +75,8 @@ objects:
         name: ${NAME}${SUFFIX}
         app: ${APP_NAME}${SUFFIX}
         app-group: ${APP_GROUP}
+        role: ${ROLE}${SUFFIX}
+        env: ${TAG_NAME}
     stringData:
       admin-api-key: ${ADMIN_API_KEY}
     type: Opaque
@@ -81,6 +89,8 @@ objects:
         name: ${NAME}${SUFFIX}
         app: ${APP_NAME}${SUFFIX}
         app-group: ${APP_GROUP}
+        role: ${ROLE}${SUFFIX}
+        env: ${TAG_NAME}
     spec:
       replicas: 1
       selector:
@@ -94,6 +104,8 @@ objects:
             name: ${NAME}${SUFFIX}
             app: ${APP_NAME}${SUFFIX}
             app-group: ${APP_GROUP}
+            role: ${ROLE}${SUFFIX}
+            env: ${TAG_NAME}
         spec:
           containers:
             - name: ${NAME}${SUFFIX}
@@ -231,6 +243,56 @@ objects:
               name: ${SOURCE_IMAGE_NAME}:${TAG_NAME}
               namespace: ${IMAGE_NAMESPACE}
 
+  - kind: NetworkSecurityPolicy
+    apiVersion: secops.pathfinder.gov.bc.ca/v1alpha1
+    metadata:
+      name: custom-${APP_NAME}-${NAME}-to-external-network
+      labels:
+        name: custom-${APP_NAME}-${NAME}-to-external-network
+        app: ${APP_NAME}
+        app-group: ${APP_GROUP}
+        role: ${ROLE}${SUFFIX}
+        env: ${TAG_NAME}
+    spec:
+      description: |
+        Allow the agent to access the internet.
+      source:
+        - - role=${ROLE}${SUFFIX}
+          - app=${APP_NAME}
+          - env=${TAG_NAME}
+          - $namespace=${NAMESPACE_NAME}-${TAG_NAME}
+      destination:
+        - - ext:network=any
+
+  - kind: NetworkSecurityPolicy
+    apiVersion: secops.pathfinder.gov.bc.ca/v1alpha1
+    metadata:
+      name: custom-${APP_NAME}-${NAME}-policy
+      labels:
+        name: custom-${APP_NAME}-${NAME}-policy
+        app: ${APP_NAME}
+        app-group: ${APP_GROUP}
+        role: ${ROLE}${SUFFIX}
+        env: ${TAG_NAME}
+    spec:
+      description: |
+        Allow the agent to talk to either the wallet or controller micro services.
+      source:
+        - - role=${ROLE}${SUFFIX}
+          - app=${APP_NAME}
+          - env=${TAG_NAME}
+          - $namespace=${NAMESPACE_NAME}-${TAG_NAME}
+
+      destination:
+        - - role=${PREFIX}wallet
+          - app=${APP_NAME}
+          - env=${TAG_NAME}
+          - $namespace=${NAMESPACE_NAME}-${TAG_NAME}
+        - - role=${PREFIX}controller
+          - app=${APP_NAME}
+          - env=${TAG_NAME}
+          - $namespace=${NAMESPACE_NAME}-${TAG_NAME}
+
 parameters:
   - name: NAME
     displayName: Name
@@ -252,6 +314,11 @@ parameters:
     description: A suffix applied to all the objects in this template.
     required: false
     value:
+  - name: ROLE
+    displayName: Role
+    description: The role of this service within the application - used for Network Policies.
+    required: true
+    value: agent
   - name: APPLICATION_DOMAIN
     displayName: Application Hostname
     description: The exposed hostname that will route to the service, if left blank a value will be defaulted.

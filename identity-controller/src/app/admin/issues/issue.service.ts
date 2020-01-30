@@ -2,7 +2,9 @@ import { CredentialDefinition } from '../../../core/agent-controller/modules/cre
 import { Issue } from '../../../core/agent-controller/modules/issue/issue.model';
 import { Schema } from '../../../core/agent-controller/modules/schema/schema.model';
 import { ICredentialAttributes } from '../../../core/interfaces/issue-credential.interface';
-import schemaDef from './schema';
+import { DefaultSchemaDefinition, ISchemaDefinition } from './schema';
+
+import fs = require('fs');
 
 export class IssueService {
   _issue: Issue;
@@ -30,7 +32,7 @@ export class IssueService {
     this._schema = schema;
     this._credDef = credDef;
     this._issue = issue;
-    this.schemaSpec = schemaDef;
+    this.schemaSpec = this.loadSchemaDefinition();
 
     let schemaPromise;
     if (existingSchemaId) {
@@ -67,6 +69,39 @@ export class IssueService {
       })
       .then(id => this._credDef.createCredentialDefinition(id))
       .then(credDefId => (this.credDefId = credDefId.credential_definition_id));
+  }
+
+  loadSchemaDefinition() {
+    const defaultSchemaDef = new DefaultSchemaDefinition();
+
+    if (
+      process.env.USE_CUSTOM_SCHEMA?.toLowerCase() === 'true' &&
+      process.env.CUSTOM_SCHEMA_PATH
+    ) {
+      try {
+        console.log(
+          `Loading custom schema definition from ${process.env.CUSTOM_SCHEMA_PATH}`,
+        );
+        if (fs.existsSync(process.env.CUSTOM_SCHEMA_PATH)) {
+          const rawdata = fs.readFileSync(
+            process.env.CUSTOM_SCHEMA_PATH,
+            'utf-8',
+          );
+          return JSON.parse(rawdata) as ISchemaDefinition;
+        } else {
+          console.warn(
+            `The specified file path '${process.env.CUSTOM_SCHEMA_PATH}' does not exist, the default schema definition will be used.`,
+          );
+        }
+      } catch (e) {
+        console.error(
+          'An exception occurred when trying to read the custom schema definition: ',
+          e,
+        );
+      }
+    }
+    // No custom schema definition provided/loaded
+    return defaultSchemaDef;
   }
 
   async credentialStatus(id: string) {

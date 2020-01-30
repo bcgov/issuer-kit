@@ -1,21 +1,30 @@
-const attributes = [
-  'userdisplayname',
-  'email',
-  'surname',
-  'givenname',
-  'birthdate',
-  'streetaddress',
-  'locality',
-  'stateorprovince',
-  'postalcode',
-  'country',
-  'issued',
-];
+export interface ISchemaDefinition {
+  attributes: string[];
+  schema_name: string;
+  schema_version: string;
+}
 
-const schemaDef = {
-  attributes,
-  schema_name: 'verified_person',
-  schema_version: '1.22',
-};
+export class DefaultSchemaDefinition implements ISchemaDefinition {
+  attributes: string[];
+  schema_name: string;
+  schema_version: string;
 
-export default schemaDef;
+  constructor() {
+    this.attributes = [
+      'userdisplayname',
+      'email',
+      'surname',
+      'givenname',
+      'birthdate',
+      'streetaddress',
+      'locality',
+      'stateorprovince',
+      'postalcode',
+      'country',
+      'issued',
+    ];
+
+    this.schema_name = 'verified_person';
+    this.schema_version = '1.22';
+  }
+}

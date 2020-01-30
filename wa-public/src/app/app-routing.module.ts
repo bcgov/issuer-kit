@@ -33,10 +33,12 @@ const routes: Routes = [
   {
     path: 'accept/:id',
     component: AcceptDisclaimerComponent,
+    canActivate: [KeycloakGuard],
   },
   {
     path: 'request/:id',
     component: RequestTokenComponent,
+    canActivate: [KeycloakGuard],
   },
   {
     path: 'completed',

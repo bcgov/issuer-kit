@@ -396,6 +396,7 @@ case "${COMMAND}" in
     unset BCOVRIN_SCHEMA_ID
     unset LEDGER_URL
     unset NGROK_AGENT_ENDPOINT
+    unset AGENT_WEBHOOK_URL
     configureEnvironment "$@"
     customizeKeycloakConfig
     docker-compose up -d ${_startupParams} ${DEFAULT_CONTAINERS} ${PROD_CONTAINERS}
@@ -416,7 +417,7 @@ case "${COMMAND}" in
     isCurlInstalled
     isNgrokInstalled
 
-    
+    unset AGENT_WEBHOOK_URL
     export BCOVRIN_SCHEMA_ID="85459GxjNySJ8HwTTQ4vq7:2:verified_person:1.22"
     export LEDGER_URL="http://test.bcovrin.vonx.io"
     export NGROK_AGENT_ENDPOINT=$(${CURL_EXE} http://localhost:4040/api/tunnels | ${JQ_EXE} --raw-output '.tunnels | map(select(.name | contains("identity-kit-agent"))) | .[0] | .public_url')

@@ -274,6 +274,9 @@ configureEnvironment() {
   export SMTP_PASS=""
   export ADMIN_EMAIL=""
   export PUBLIC_SITE_URL=""
+  export EXISTING_SCHEMA_ID=${BCOVRIN_SCHEMA_ID:-}
+  export USE_CUSTOM_SCHEMA=${USE_CUSTOM_SCHEMA:-}
+  export CUSTOM_SCHEMA_PATH=${CUSTOM_SCHEMA_PATH:-}
 }
 
 getInputParams() {

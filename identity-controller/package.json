@@ -9,7 +9,7 @@
     "serve": "node src/index.js",
     "test:watch": "nodemon --exec npm test",
     "start": "nodemon -L",
-    "start-docker": "npm install && nodemon -L -e ts -x ts-node src/index.ts",
+    "start-docker": "nodemon -L -e ts -x ts-node src/index.ts",
     "debug": "node -r dotenv/config config.js -r ts-node/register src/index.ts",
     "config": "node -r dotenv/config config.js dotenv_config_path=/custom/path/to/your/env/vars"
   },

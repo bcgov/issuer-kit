@@ -116,11 +116,7 @@ export class AppModule {
         bearerExcludedUrls: [
           '/assets',
           '/validate',
-          '/accept',
-          '/renew',
-          '/request',
           '/completed',
-          '/logout',
           'https://ws1.postescanada-canadapost.ca/AddressComplete/Interactive/AutoComplete/v1.00/json3.ws',
         ],
       })

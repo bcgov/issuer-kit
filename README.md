@@ -118,7 +118,7 @@ To restart the applications:
 
 Development mode runs the admin frontend, public frontend and the controller in development mode with hot-reloading enabled. This means that any change to the code in the `src` directories of `wa-admin`, `wa-public` and `identity-controller` will automatically trigger a rebuild and reload of the associated service.
 
-To run in development mode, uses the same steps as `Local Mode` above, but use `./manage start-dev` in place of the `./manage start` command in the second shell.
+To run in development mode, run `npm install` in each one of the `wa-admin`, `wa-public` and `identity-controller` directories and then run the same steps as `Local Mode` above, but use `./manage start-dev` in place of the `./manage start` command in the second shell.
 
 The services will be running at the following endpoints:
 

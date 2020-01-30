@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "start-docker": "npm install && ng serve --host 0.0.0.0 --port 4250 --poll 2000 --disable-host-check",
+    "start-docker": "ng serve --host 0.0.0.0 --port 4250 --poll 2000 --disable-host-check",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",

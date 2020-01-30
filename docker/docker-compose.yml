@@ -22,7 +22,6 @@ services:
       - EXISTING_SCHEMA_ID=${BCOVRIN_SCHEMA_ID}
     volumes:
       - ../identity-controller:/usr/src/controller
-      - identity-controller-node-cache:/usr/src/controller/node_modules
     ports:
       - ${IDENTITY_CONTROLLER_PORT}:${IDENTITY_CONTROLLER_PORT}
     networks:
@@ -67,7 +66,6 @@ services:
     image: node:erbium
     volumes:
       - ../wa-admin:/usr/src/wa-admin
-      - wa-admin-node-cache:/usr/src/wa-admin/node_modules
     working_dir: /usr/src/wa-admin
     ports:
       - ${WA_ADMIN_PORT}:${WA_ADMIN_PORT}
@@ -112,7 +110,6 @@ services:
     image: node:erbium
     volumes:
       - ../wa-public:/usr/src/wa-public
-      - wa-public-node-cache:/usr/src/wa-public/node_modules
     working_dir: /usr/src/wa-public
     ports:
       - ${WA_PUBLIC_PORT}:${WA_PUBLIC_PORT}
@@ -251,6 +248,3 @@ volumes:
   keycloak-db-data:
   identity-kit-wallet-data:
   wa-db-data:
-  wa-admin-node-cache:
-  wa-public-node-cache:
-  identity-controller-node-cache:

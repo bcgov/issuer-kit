@@ -11,21 +11,15 @@ import { EmailService } from '../../services/email.service';
 import { validateInvitation } from '../../validations/invitation.validation';
 import { InvitationService } from './invitation.service';
 
-const host = AppConfigurationService.getSetting(APP_SETTINGS.SMTP_HOST);
-const port = parseInt(
-  AppConfigurationService.getSetting(APP_SETTINGS.SMTP_PORT),
-);
-const user = AppConfigurationService.getSetting(APP_SETTINGS.SMTP_USERNAME);
-const pass = AppConfigurationService.getSetting(APP_SETTINGS.SMTP_PASS);
 const publicUrl = AppConfigurationService.getSetting(
   APP_SETTINGS.PUBLIC_SITE_URL,
 );
 
 const emailSvc = new EmailService({
-  host: host || '',
-  port,
-  user: user || '',
-  pass: pass || '',
+  host: AppConfigurationService.getSetting(APP_SETTINGS.SMTP_HOST),
+  port: Number(AppConfigurationService.getSetting(APP_SETTINGS.SMTP_PORT)),
+  user: AppConfigurationService.getSetting(APP_SETTINGS.SMTP_USERNAME),
+  pass: AppConfigurationService.getSetting(APP_SETTINGS.SMTP_PASS),
 });
 
 const invitationSvc = new InvitationService();

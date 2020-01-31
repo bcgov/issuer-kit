@@ -20,9 +20,8 @@ export class ConnectionService {
   readonly segment: string = 'connections';
 
   constructor() {
-    const appConfig = new AppConfigurationService();
-    this.agentAdminUrl = appConfig.getSetting(APP_SETTINGS.AGENT_ADMIN_URL);
-    this.agentAdminApiKey = appConfig.getSetting(
+    this.agentAdminUrl = AppConfigurationService.getSetting(APP_SETTINGS.AGENT_ADMIN_URL);
+    this.agentAdminApiKey = AppConfigurationService.getSetting(
       APP_SETTINGS.AGENT_ADMIN_API_KEY,
     );
   }

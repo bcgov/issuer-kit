@@ -11,8 +11,6 @@ import { DefaultSchemaDefinition, ISchemaDefinition } from './schema';
 import fs = require('fs');
 
 export class IssueService {
-  appConfigService: AppConfigurationService;
-
   _issue: Issue;
   _credDef: CredentialDefinition;
   _schema: Schema;
@@ -26,8 +24,6 @@ export class IssueService {
   };
 
   constructor() {
-    this.appConfigService = new AppConfigurationService();
-
     const schema = new Schema();
     const credDef = new CredentialDefinition();
     const issue = new Issue();
@@ -37,7 +33,7 @@ export class IssueService {
     this._issue = issue;
     this.schemaSpec = this.loadSchemaDefinition();
 
-    const existingSchemaId = this.appConfigService.getSetting(
+    const existingSchemaId = AppConfigurationService.getSetting(
       APP_SETTINGS.EXISTING_SCHEMA_ID,
     );
     let schemaPromise;
@@ -70,7 +66,9 @@ export class IssueService {
 
     schemaPromise
       .then(schema => {
-        console.log('schemaId', schema);
+        console.log(
+          `The following schema id will be used to issue credentials: ${schema.schema_id}`,
+        );
         return schema.schema_id;
       })
       .then(id => this._credDef.createCredentialDefinition(id))
@@ -81,22 +79,32 @@ export class IssueService {
     const defaultSchemaDef = new DefaultSchemaDefinition();
 
     if (
-      process.env.USE_CUSTOM_SCHEMA?.toLowerCase() === 'true' &&
-      process.env.CUSTOM_SCHEMA_PATH
+      AppConfigurationService.getSetting(
+        APP_SETTINGS.USE_CUSTOM_SCHEMA,
+      ).toLowerCase() === 'true' &&
+      AppConfigurationService.getSetting(APP_SETTINGS.CUSTOM_SCHEMA_PATH)
     ) {
       try {
         console.log(
-          `Loading custom schema definition from ${process.env.CUSTOM_SCHEMA_PATH}`,
+          `Loading custom schema definition from ${AppConfigurationService.getSetting(
+            APP_SETTINGS.CUSTOM_SCHEMA_PATH,
+          )}`,
         );
-        if (fs.existsSync(process.env.CUSTOM_SCHEMA_PATH)) {
+        if (
+          fs.existsSync(
+            AppConfigurationService.getSetting(APP_SETTINGS.CUSTOM_SCHEMA_PATH),
+          )
+        ) {
           const rawdata = fs.readFileSync(
-            process.env.CUSTOM_SCHEMA_PATH,
+            AppConfigurationService.getSetting(APP_SETTINGS.CUSTOM_SCHEMA_PATH),
             'utf-8',
           );
           return JSON.parse(rawdata) as ISchemaDefinition;
         } else {
           console.warn(
-            `The specified file path '${process.env.CUSTOM_SCHEMA_PATH}' does not exist, the default schema definition will be used.`,
+            `The specified file path '${AppConfigurationService.getSetting(
+              APP_SETTINGS.CUSTOM_SCHEMA_PATH,
+            )}' does not exist, the default schema definition will be used.`,
           );
         }
       } catch (e) {

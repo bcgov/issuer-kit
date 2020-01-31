@@ -1,6 +1,6 @@
 import * as nodemailer from 'nodemailer';
-import Mail = require('nodemailer/lib/mailer');
 import { emailTemplate } from './invitation_email';
+import Mail = require('nodemailer/lib/mailer');
 
 export class EmailService {
   transporter: Mail;

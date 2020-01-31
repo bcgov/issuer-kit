@@ -4,7 +4,7 @@ import { ICredHookResponse } from '../../../core/interfaces/cred-hook-response.i
 import { client } from '../../../index';
 import { Connection } from '../../../core/agent-controller/modules/connection/connection.model';
 import { Issue } from '../../../core/agent-controller/modules/issue/issue.model';
-import { wait } from '../../../core/utility'
+import { wait } from '../../../core/utility';
 
 export interface IConnectionActivity {
   created_at: string;
@@ -27,13 +27,8 @@ const routerOpts = {
 };
 
 const router = new Router(routerOpts);
-
-const connCtrl = new Connection(
-  process.env.AGENT_ADMIN_URL || 'http://localhost:8024/',
-);
-const issueCtrl = new Issue(
-  process.env.AGENT_ADMIN_URL || 'http://localhost:8024/',
-);
+const connCtrl = new Connection();
+const issueCtrl = new Issue();
 
 router.post('/connections', async (ctx: Context) => {
   const data = ctx.request.body as IConnectionActivity;
@@ -48,7 +43,7 @@ router.post('/connections', async (ctx: Context) => {
 
 router.post('/issue_credential', async (ctx: Context) => {
   const data = ctx.request.body as ICredHookResponse;
-  
+
   if (data.state === 'request_received') {
     console.info('Credential has been requested', data.credential_exchange_id);
     const res = await client.getRecordByQuery({
@@ -63,12 +58,23 @@ router.post('/issue_credential', async (ctx: Context) => {
       );
 
     const records = await issueCtrl.records();
-    const issue = await issueCtrl.filterIssueCrendentials('credential_exchange_id', data.credential_exchange_id, records);
-    const attributes = issue[0].credential_proposal_dict.credential_proposal.attributes;
-    const result = await issueCtrl.sendIssueById(data.credential_exchange_id, attributes, 'issued by Identity Kit POC')
+    const issue = await issueCtrl.filterIssueCrendentials(
+      'credential_exchange_id',
+      data.credential_exchange_id,
+      records,
+    );
+    const attributes =
+      issue[0].credential_proposal_dict.credential_proposal.attributes;
+    const result = await issueCtrl.sendIssueById(
+      data.credential_exchange_id,
+      attributes,
+      'issued by Identity Kit POC',
+    );
     if (!result) {
-      console.error(`${new Date().toDateString()} - Failed to issue the credential, check agent status & db to ensure CredExId is correct`)
-      return ctx.throw(500, 'something went wrong issuing the credential')
+      console.error(
+        `${new Date().toDateString()} - Failed to issue the credential, check agent status & db to ensure CredExId is correct`,
+      );
+      return ctx.throw(500, 'something went wrong issuing the credential');
     }
 
     const update = await client.updateRecord({
@@ -76,7 +82,6 @@ router.post('/issue_credential', async (ctx: Context) => {
       query: { issued: true, consumed: true },
       id: res._id,
     });
-
 
     if (!update)
       return console.log(

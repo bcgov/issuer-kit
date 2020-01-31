@@ -1,20 +1,29 @@
 import {
-  IInvitationRequestResponse,
-  IInvitationRequest,
-  IReceiveInvitationRequestResponse,
-} from '../../../interfaces/invitation-request.interface';
-import request = require('superagent');
-import {
   IConnectionParams,
   IConnectionsResult,
 } from '../../../interfaces/connection.interface';
-
-const segment = 'connections/';
+import {
+  IInvitationRequest,
+  IInvitationRequestResponse,
+  IReceiveInvitationRequestResponse,
+} from '../../../interfaces/invitation-request.interface';
+import {
+  AppConfigurationService,
+  APP_SETTINGS,
+} from '../../../services/app-configuration-service';
+import request = require('superagent');
 
 export class ConnectionService {
-  apiUrl: string;
-  constructor(apiUrl: string) {
-    this.apiUrl = apiUrl + '/';
+  agentAdminUrl: string;
+  agentAdminApiKey: string;
+
+  readonly segment: string = 'connections';
+
+  constructor() {
+    this.agentAdminUrl = AppConfigurationService.getSetting(APP_SETTINGS.AGENT_ADMIN_URL);
+    this.agentAdminApiKey = AppConfigurationService.getSetting(
+      APP_SETTINGS.AGENT_ADMIN_API_KEY,
+    );
   }
 
   /*
@@ -22,11 +31,12 @@ export class ConnectionService {
   */
 
   async createInvitation(): Promise<IInvitationRequestResponse> {
-    console.log('api Url', this.apiUrl);
+    console.log('api Url', this.agentAdminUrl);
     try {
       const res = await request
-        .post(`${this.apiUrl}connections/create-invitation`)
-        .set('Content-Type', 'application/json');
+        .post(`${this.agentAdminUrl}/connections/create-invitation`)
+        .set('Content-Type', 'application/json')
+        .set('x-api-key', this.agentAdminApiKey);
       if (res.status === 200) return res.body as IInvitationRequestResponse;
       throw new Error('Create invitation failed');
     } catch (err) {
@@ -44,8 +54,9 @@ export class ConnectionService {
     params?: IConnectionParams,
   ): Promise<IReceiveInvitationRequestResponse> {
     const res = await request
-      .post(`${this.apiUrl}connections/receive-invitation`)
-      .send(invitation);
+      .post(`${this.agentAdminUrl}/connections/receive-invitation`)
+      .send(invitation)
+      .set('x-api-key', this.agentAdminApiKey);
     return res.body;
   }
 
@@ -57,9 +68,9 @@ export class ConnectionService {
 
   async acceptInvitation(id: string) {
     try {
-      const res = await request.post(
-        `${this.apiUrl}connections/${id}/accept-invitation`,
-      );
+      const res = await request
+        .post(`${this.agentAdminUrl}/connections/${id}/accept-invitation`)
+        .set('x-api-key', this.agentAdminApiKey);
 
       return res.body;
     } catch (err) {
@@ -74,9 +85,9 @@ export class ConnectionService {
 
   async acceptRequest(id: string) {
     try {
-      const res = await request.post(
-        `${this.apiUrl}connections/${id}/accept-request`,
-      );
+      const res = await request
+        .post(`${this.agentAdminUrl}/connections/${id}/accept-request`)
+        .set('x-api-key', this.agentAdminApiKey);
       return res.body;
     } catch (err) {
       throw new Error(err.message);
@@ -95,8 +106,13 @@ export class ConnectionService {
     try {
       const res =
         id != null
-          ? await request.get(`${this.apiUrl}connections/${id}`)
-          : await request.get(`${this.apiUrl}connections`).query(params);
+          ? await request
+              .get(`${this.agentAdminUrl}/connections/${id}`)
+              .set('x-api-key', this.agentAdminApiKey)
+          : await request
+              .get(`${this.agentAdminUrl}/connections`)
+              .set('x-api-key', this.agentAdminApiKey)
+              .query(params);
       return res.body.results || res.body;
     } catch (err) {
       throw new Error('connections call failed');
@@ -122,7 +138,7 @@ export class ConnectionService {
   async sendMessage(id: string) {
     try {
       const res = await request.get(
-        `${this.apiUrl}connections/${id}/send-message`,
+        `${this.agentAdminUrl}/connections/${id}/send-message`,
       );
       return res.body;
     } catch (err) {
@@ -135,8 +151,10 @@ export class ConnectionService {
   */
   async sendRemoveConnection(id: string): Promise<any> {
     try {
-      const url = `${this.apiUrl}${segment}${id}/remove`;
-      const res = await request.post(url);
+      const url = `${this.agentAdminUrl}/${this.segment}/${id}/remove`;
+      const res = await request
+        .post(url)
+        .set('x-api-key', this.agentAdminApiKey);
       return res.body;
     } catch (err) {
       return err;
@@ -161,9 +179,10 @@ export class ConnectionService {
 
   async postById(id: string, subsegment: 'send-ping') {
     try {
-      const res = await request.post(
-        `${this.apiUrl}${segment}${id}/${subsegment}`
-      ).send({comment: 'Hello from identity-kit-agent'});
+      const res = await request
+        .post(`${this.agentAdminUrl}/${this.segment}/${id}/${subsegment}`)
+        .send({ comment: 'Hello from identity-kit-agent' })
+        .set('x-api-key', this.agentAdminApiKey);
       return res;
     } catch (err) {
       throw new Error(err.message);

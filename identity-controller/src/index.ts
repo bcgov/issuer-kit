@@ -1,19 +1,30 @@
 import admin from './app/admin/admin';
-import Router = require('koa-router');
-
 import { DBClient } from './app/models/database/database.model';
 import watchers from './core/watchers/database.watchers';
+import {
+  AppConfigurationService,
+  APP_SETTINGS,
+} from './core/services/app-configuration-service';
 
-let dbOptions = {
-  uri: `mongodb://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_SERVICE}:${process.env.DB_PORT}/${process.env.DB_NAME}`
+const dbUser = AppConfigurationService.getSetting(APP_SETTINGS.DB_USER);
+const dbPassword = AppConfigurationService.getSetting(APP_SETTINGS.DB_PASSWORD);
+const dbService = AppConfigurationService.getSetting(APP_SETTINGS.DB_SERVICE);
+const dbPort = AppConfigurationService.getSetting(APP_SETTINGS.DB_PORT);
+const dbName = AppConfigurationService.getSetting(APP_SETTINGS.DB_NAME);
+const dbOptions = {
+  uri: `mongodb://${dbUser}:${dbPassword}@${dbService}:${dbPort}/${dbName}`,
 };
 
 export const client = DBClient.getInstance(dbOptions);
 
 client.connect().then(() => {
   console.log(`DB connected on ${dbOptions.uri}`);
-  admin.listen(process.env.PORT, () => {
-    console.log(`Listening on port: ${process.env.PORT}`);
+  admin.listen(AppConfigurationService.getSetting(APP_SETTINGS.PORT), () => {
+    console.log(
+      `Listening on port: ${AppConfigurationService.getSetting(
+        APP_SETTINGS.PORT,
+      )}`,
+    );
   });
 });
 

@@ -1,13 +1,9 @@
-import * as Router from 'koa-router';
-import { Context } from 'koa';
-import { Connection } from '../../../core/agent-controller/modules/connection/connection.model';
 import base64url from 'base64url';
+import { Context } from 'koa';
+import * as Router from 'koa-router';
+import { Connection } from '../../../core/agent-controller/modules/connection/connection.model';
 
-const apiUrl = process.env.AGENT_ADMIN_URL;
-
-console.log('api Url', apiUrl);
-
-const connection = new Connection(apiUrl || '');
+const connection = new Connection();
 
 const routerOpts = {
   prefix: '/connections',

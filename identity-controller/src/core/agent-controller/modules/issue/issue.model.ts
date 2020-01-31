@@ -1,10 +1,10 @@
-import { IssueService } from './issue.service';
 import {
   ICredentialAttributes,
-  IIssueSend,
   IIssueOffer,
+  IIssueSend,
   IRecordsResult,
 } from '../../../interfaces/issue-credential.interface';
+import { IssueService } from './issue.service';
 
 export type IssueCredentialRecordStateType =
   | 'offer_sent'
@@ -95,8 +95,8 @@ export class Issue {
     };
   }
 
-  constructor(url: string) {
-    this._issueSvc = new IssueService(url);
+  constructor() {
+    this._issueSvc = new IssueService();
   }
 
   async records(): Promise<IRecordsResult[]> {
@@ -107,7 +107,6 @@ export class Issue {
       throw new Error(err.message);
     }
   }
-
 
   async issueAndSendCred(
     connId: string,

@@ -1,8 +1,12 @@
 import * as request from 'superagent';
 import {
+  IIssueOffer,
   IIssueSend,
-  IIssueOffer
 } from '../../../interfaces/issue-credential.interface';
+import {
+  AppConfigurationService,
+  APP_SETTINGS,
+} from '../../../services/app-configuration-service';
 
 export type IssueCredByIdRouteType =
   | 'send-offer'
@@ -12,16 +16,23 @@ export type IssueCredByIdRouteType =
   | 'remove';
 
 export class IssueService {
-  private _url: string;
-  private _segment: string = 'issue-credential/';
+  agentAdminUrl: string;
+  agentAdminApiKey: string;
 
-  constructor(url: string) {
-    this._url = url + '/';
+  readonly _segment: string = 'issue-credential';
+
+  constructor() {
+    this.agentAdminUrl = AppConfigurationService.getSetting(APP_SETTINGS.AGENT_ADMIN_URL);
+    this.agentAdminApiKey = AppConfigurationService.getSetting(
+      APP_SETTINGS.AGENT_ADMIN_API_KEY,
+    );
   }
 
   async getIssueCredentialRecords() {
     try {
-      return await request.get(`${this._url}${this._segment}records`);
+      return await request
+        .get(`${this.agentAdminUrl}/${this._segment}/records`)
+        .set('x-api-key', this.agentAdminApiKey);
     } catch (err) {
       throw new Error(err.message);
     }
@@ -29,7 +40,10 @@ export class IssueService {
 
   async issueCredentialSend(cred: IIssueSend) {
     try {
-      return await request.post(`${this._url}${this._segment}send`).send(cred);
+      return await request
+        .post(`${this.agentAdminUrl}/${this._segment}/send`)
+        .set('x-api-key', this.agentAdminApiKey)
+        .send(cred);
     } catch (err) {
       return err;
     }
@@ -38,7 +52,8 @@ export class IssueService {
   async sendOffer(cred: IIssueOffer) {
     try {
       return await request
-        .post(`${this._url}${this._segment}send-offer`)
+        .post(`${this.agentAdminUrl}/${this._segment}/send-offer`)
+        .set('x-api-key', this.agentAdminApiKey)
         .send(cred);
     } catch (err) {
       throw new Error(err.message);
@@ -48,13 +63,16 @@ export class IssueService {
   async postById(
     credExId: string,
     route: IssueCredByIdRouteType,
-    params?: any
+    params?: any,
   ) {
-    const path = `${this._url}${this._segment}records/${credExId}/${route}`;
+    const path = `${this.agentAdminUrl}/${this._segment}/records/${credExId}/${route}`;
     try {
       return params
-        ? await request.post(path).send(params)
-        : await request.post(path);
+        ? await request
+            .post(path)
+            .set('x-api-key', this.agentAdminApiKey)
+            .send(params)
+        : await request.post(path).set('x-api-key', this.agentAdminApiKey);
     } catch (err) {
       throw new Error(err.message);
     }

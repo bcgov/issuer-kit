@@ -1,25 +1,25 @@
 import { Context } from 'koa';
 import * as Router from 'koa-router';
-
 import * as uuidv4 from 'uuid/v4';
-
+import {
+  AppConfigurationService,
+  APP_SETTINGS,
+} from '../../../core/services/app-configuration-service';
 import { client } from '../../../index';
-import { validateInvitation } from '../../validations/invitation.validation';
 import { IInvitationRecord } from '../../models/interfaces/invitation-record';
 import { EmailService } from '../../services/email.service';
+import { validateInvitation } from '../../validations/invitation.validation';
 import { InvitationService } from './invitation.service';
 
-const host = process.env.SMTP_HOST;
-const port = parseInt(process.env.SMTP_PORT || '2525');
-const user = process.env.SMTP_USERNAME;
-const pass = process.env.SMTP_PASS;
-const publicUrl = process.env.PUBLIC_SITE_URL;
+const publicUrl = AppConfigurationService.getSetting(
+  APP_SETTINGS.PUBLIC_SITE_URL,
+);
 
 const emailSvc = new EmailService({
-  host: host || '',
-  port,
-  user: user || '',
-  pass: pass || '',
+  host: AppConfigurationService.getSetting(APP_SETTINGS.SMTP_HOST),
+  port: Number(AppConfigurationService.getSetting(APP_SETTINGS.SMTP_PORT)),
+  user: AppConfigurationService.getSetting(APP_SETTINGS.SMTP_USERNAME),
+  pass: AppConfigurationService.getSetting(APP_SETTINGS.SMTP_PASS),
 });
 
 const invitationSvc = new InvitationService();

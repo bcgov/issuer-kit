@@ -192,6 +192,10 @@
                   {
                     "name": "EXISTING_SCHEMA_ID",
                     "value": "${EXISTING_SCHEMA_ID}"
+                  },
+                  {
+                    "name": "CUSTOM_SCHEMA_PATH",
+                    "value": "${CUSTOM_SCHEMA_PATH}"
                   }
                 ],
                 "resources": {
@@ -430,6 +434,13 @@
       "name": "EXISTING_SCHEMA_ID",
       "displayName": "Existing Schema ID",
       "description": "Specifies the id of a schema that has already been published to the target ledger and should be used rather than creating a new schema.",
+      "required": false,
+      "value": ""
+    },
+    {
+      "name": "CUSTOM_SCHEMA_PATH",
+      "displayName": "Custom Schema Path",
+      "description": "Specifies the path to a file containing a custom schema definition. If set, the controller will try to use this schema instead of the default one.",
       "required": false,
       "value": ""
     },

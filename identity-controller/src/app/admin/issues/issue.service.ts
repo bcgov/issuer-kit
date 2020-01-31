@@ -78,12 +78,7 @@ export class IssueService {
   loadSchemaDefinition() {
     const defaultSchemaDef = new DefaultSchemaDefinition();
 
-    if (
-      AppConfigurationService.getSetting(
-        APP_SETTINGS.USE_CUSTOM_SCHEMA,
-      ).toLowerCase() === 'true' &&
-      AppConfigurationService.getSetting(APP_SETTINGS.CUSTOM_SCHEMA_PATH)
-    ) {
+    if (AppConfigurationService.getSetting(APP_SETTINGS.CUSTOM_SCHEMA_PATH)) {
       try {
         console.log(
           `Loading custom schema definition from ${AppConfigurationService.getSetting(

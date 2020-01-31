@@ -33,7 +33,7 @@ export class EmailService {
         port: Number(AppConfigurationService.getSetting(APP_SETTINGS.SMTP_PORT)),
         auth: {
           user: AppConfigurationService.getSetting(APP_SETTINGS.SMTP_USERNAME),
-          pass: AppConfigurationService.getSetting(APP_SETTINGS.SMTP_PASS,
+          pass: AppConfigurationService.getSetting(APP_SETTINGS.SMTP_PASS)
         },
         logger: true,
         secure: false,

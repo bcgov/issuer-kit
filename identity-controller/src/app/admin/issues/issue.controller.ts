@@ -4,11 +4,6 @@ import { wait } from '../../../core/utility';
 import { client } from '../../../index';
 import { futureDate, IssueService } from './issue.service';
 
-const agentAdminUrl =
-  process.env.AGENT_ADMIN_URL || 'http://identity-kit-agent';
-const existingSchemaId = process.env.EXISTING_SCHEMA_ID;
-const issueSvc = new IssueService(agentAdminUrl, existingSchemaId);
-
 export interface ICredentialPayload {
   claims: ICredentialClaims;
   connectionId: string;
@@ -48,12 +43,11 @@ router.post('/', async (ctx: Context) => {
     'mime-type': 'text/plain',
   }));
 
-  console.log('start break');
-
+  console.debug('Giving the mobile agent a few seconds to catch-up with the request...');
   await wait(5000);
-  console.log('end break');
+
   try {
-    const res = await issueSvc.issueCredential({
+    const res = await new IssueService().issueCredential({
       connId: data.connectionId,
       attrs: mapped,
     });

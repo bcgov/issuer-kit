@@ -3,8 +3,9 @@ import { SchemaService } from './schema.service';
 
 export class Schema {
   private _schemaSvc: SchemaService;
-  constructor(_apiUrl: string) {
-    this._schemaSvc = new SchemaService(_apiUrl);
+
+  constructor() {
+    this._schemaSvc = new SchemaService();
   }
 
   // creates a schema and if none is created then it will return an error

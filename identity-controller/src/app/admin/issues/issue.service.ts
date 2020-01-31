@@ -2,38 +2,44 @@ import { CredentialDefinition } from '../../../core/agent-controller/modules/cre
 import { Issue } from '../../../core/agent-controller/modules/issue/issue.model';
 import { Schema } from '../../../core/agent-controller/modules/schema/schema.model';
 import { ICredentialAttributes } from '../../../core/interfaces/issue-credential.interface';
+import {
+  AppConfigurationService,
+  APP_SETTINGS,
+} from '../../../core/services/app-configuration-service';
 import { DefaultSchemaDefinition, ISchemaDefinition } from './schema';
 
 import fs = require('fs');
 
 export class IssueService {
+  appConfigService: AppConfigurationService;
+
   _issue: Issue;
   _credDef: CredentialDefinition;
   _schema: Schema;
 
   credDefId: string;
 
-  apiUrl: string;
   schemaSpec: {
     attributes: string[];
     schema_name: string;
     schema_version: string;
   };
 
-  constructor(apiUrl: string, existingSchemaId?: string) {
-    this.apiUrl = apiUrl;
+  constructor() {
+    this.appConfigService = new AppConfigurationService();
 
-    const schema = new Schema(apiUrl);
-
-    const credDef = new CredentialDefinition(apiUrl);
-
-    const issue = new Issue(apiUrl);
+    const schema = new Schema();
+    const credDef = new CredentialDefinition();
+    const issue = new Issue();
 
     this._schema = schema;
     this._credDef = credDef;
     this._issue = issue;
     this.schemaSpec = this.loadSchemaDefinition();
 
+    const existingSchemaId = this.appConfigService.getSetting(
+      APP_SETTINGS.EXISTING_SCHEMA_ID,
+    );
     let schemaPromise;
     if (existingSchemaId) {
       console.log(

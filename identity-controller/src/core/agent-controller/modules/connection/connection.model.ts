@@ -1,14 +1,14 @@
-import { ConnectionService } from './connection.service';
-import {
-  IInvitationRequestResponse,
-  IReceiveInvitationRequestResponse,
-  IAcceptApplicationRequestResponse,
-  IInvitation
-} from '../../../interfaces/invitation-request.interface';
 import {
   IConnectionParams,
-  IConnectionsResult
+  IConnectionsResult,
 } from '../../../interfaces/connection.interface';
+import {
+  IAcceptApplicationRequestResponse,
+  IInvitation,
+  IInvitationRequestResponse,
+  IReceiveInvitationRequestResponse,
+} from '../../../interfaces/invitation-request.interface';
+import { ConnectionService } from './connection.service';
 
 export class Connection {
   private connectionSvc: ConnectionService;
@@ -19,13 +19,13 @@ export class Connection {
       '@id': body.invitation['@id'],
       serviceEndpoint: body.invitation.serviceEndpoint,
       label: body.invitation.label,
-      recipientKeys: body.invitation.recipientKeys
+      recipientKeys: body.invitation.recipientKeys,
     };
     return invitation;
   }
 
-  constructor(apiUrl: string) {
-    this.connectionSvc = new ConnectionService(apiUrl);
+  constructor() {
+    this.connectionSvc = new ConnectionService();
   }
 
   /*
@@ -33,7 +33,7 @@ export class Connection {
   */
   async getConnections(
     params: IConnectionParams = {},
-    id?: string | null
+    id?: string | null,
   ): Promise<IConnectionsResult | IConnectionsResult[]> {
     try {
       const res = id
@@ -63,12 +63,12 @@ export class Connection {
   async invitationResponse(
     invitation: IInvitation,
     autoAccept: boolean = true,
-    accept?: boolean
+    accept?: boolean,
   ): Promise<IReceiveInvitationRequestResponse> {
     try {
       const res = await this.connectionSvc.receiveInvitation(
         invitation,
-        autoAccept
+        autoAccept,
       );
       return res;
     } catch (err) {
@@ -79,7 +79,7 @@ export class Connection {
 
   async acceptInvitation(
     id: string,
-    accept = true
+    accept = true,
   ): Promise<IAcceptApplicationRequestResponse> {
     try {
       const res = await this.connectionSvc.acceptInvitation(id);

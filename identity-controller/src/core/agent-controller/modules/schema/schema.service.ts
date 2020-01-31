@@ -1,10 +1,20 @@
 import * as request from 'superagent';
 import { ISchema } from '../../../interfaces/schema.interface';
+import {
+  AppConfigurationService,
+  APP_SETTINGS,
+} from '../../../services/app-configuration-service';
 
 export class SchemaService {
-  private _apiUrl: string;
-  constructor(_apiUrl: string) {
-    this._apiUrl = _apiUrl;
+  agentAdminUrl: string;
+  agentAdminApiKey: string;
+
+  constructor() {
+    const appConfig = new AppConfigurationService();
+    this.agentAdminUrl = appConfig.getSetting(APP_SETTINGS.AGENT_ADMIN_URL);
+    this.agentAdminApiKey = appConfig.getSetting(
+      APP_SETTINGS.AGENT_ADMIN_API_KEY,
+    );
   }
 
   /*
@@ -12,7 +22,10 @@ export class SchemaService {
   */
   async postSchema(schema: ISchema) {
     try {
-      const res = await request.post(`${this._apiUrl}/schemas`).send(schema);
+      const res = await request
+        .post(`${this.agentAdminUrl}/schemas`)
+        .set('x-api-key', this.agentAdminApiKey)
+        .send(schema);
       return res.body;
     } catch (err) {
       return err;
@@ -24,7 +37,9 @@ export class SchemaService {
   */
   async getSchemaById(id: string) {
     try {
-      const res = await request.get(`${this._apiUrl}/schemas/${id}`);
+      const res = await request
+        .get(`${this.agentAdminUrl}/schemas/${id}`)
+        .set('x-api-key', this.agentAdminApiKey);
       return res.body;
     } catch (err) {
       throw new Error(err.message);

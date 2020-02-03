@@ -1,13 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ActionService } from 'src/app/services/action.service';
 import { AlertService } from 'src/app/services/alert.service';
 import { AppConfigService } from 'src/app/services/app-config.service';
-import { LoadingService } from 'src/app/services/loading.service';
 import { StateService } from 'src/app/services/state.service';
-
-const url = AppConfigService.settings.publicSite.url;
+import formTemplate from 'src/assets/config/form-template';
 
 @Component({
   selector: 'waa-add-user',
@@ -15,128 +13,62 @@ const url = AppConfigService.settings.publicSite.url;
     <waa-item-header title="Invite"> </waa-item-header>
     <waa-view-wrapper>
       <div class="view-wrapper">
-        <mat-card [formGroup]="fg" *ngIf="index === 0; else preview">
-          <waa-card-toolbar title="Invite User"> </waa-card-toolbar>
-          <ion-item>
-            <ion-label position="stacked"
-              >Email Address <ion-text color="danger">*</ion-text></ion-label
-            >
-            <ion-input
-              formControlName="email"
-              placeholder="email@example.com"
-              (keyup.enter)="submit(fg)"
-            >
-            </ion-input>
-            <ion-note
-              *ngIf="
-                (invalid && fg['controls'].email.invalid) ||
-                (fg['controls'].email.touched && fg['controls'].email.invalid)
-              "
-            >
-              <ion-text color="danger"
-                >Invalid email address
-              </ion-text></ion-note
-            >
-          </ion-item>
-          <ion-item>
-            <ion-label position="stacked">First Name</ion-label>
-            <ion-input
-              formControlName="firstName"
-              placeholder="John"
-              (keyup.enter)="submit(fg)"
-            >
-            </ion-input>
-          </ion-item>
-          <ion-item>
-            <ion-label position="stacked">Last Name</ion-label>
-            <ion-input
-              formControlName="lastName"
-              placeholder="Doe"
-              (keyup.enter)="submit(fg)"
-            >
-            </ion-input>
-          </ion-item>
 
-          <ion-item>
-            <ion-label position="stacked"
-              >Jurisdiction <ion-text color="danger">*</ion-text></ion-label
-            >
-            <!-- in case i use a select in future
-            <ion-select
-              required
-              interface="popover"
-              formControlName="jurisdiction"
-              placeholder="Select a jurisdiction"
-            >
-              <ion-select-option>BC</ion-select-option>
-            </ion-select>
-            -->
-            <ion-radio-group no-padding formControlName="jurisdiction">
-              <ion-item lines="none">
-                <ion-radio value="BC" slot="start"></ion-radio>
-                <ion-label>BC</ion-label>
-              </ion-item>
-            </ion-radio-group>
-            <ion-note
-              *ngIf="
-                (invalid && fg['controls'].jurisdiction.invalid) ||
-                (fg['controls'].jurisdiction.touched &&
-                  fg['controls'].jurisdiction.invalid)
-              "
-            >
-              <ion-text color="danger"
-                >Invalid jurisdiction
-              </ion-text></ion-note
-            >
-          </ion-item>
-          <ion-item>
-            <ion-label position="stacked"
-              >Authentication <ion-text color="danger">*</ion-text></ion-label
-            >
-            <ion-radio-group no-padding formControlName="method">
-              <ion-item lines="none">
-                <ion-radio value="github" slot="start"></ion-radio>
-                <ion-icon name="logo-github"></ion-icon>
-              </ion-item>
-            </ion-radio-group>
-            <ion-note
-              *ngIf="
-                (invalid && fg['controls'].method.invalid) ||
-                (fg['controls'].method.touched && fg['controls'].method.invalid)
-              "
-            >
-              <ion-text color="danger"
-                >Invalid authentication
-              </ion-text></ion-note
-            >
-          </ion-item>
+        <mat-card [formGroup]="formGroup" *ngIf="index === 0; else preview">
+            <waa-card-toolbar title="Invite User"> </waa-card-toolbar>
+
+            <div *ngFor="let form_elem of formTemplate">
+              <div [ngSwitch]="form_elem.type">
+                  <ion-item>
+                    <ion-label position="stacked">{{form_elem.label}}<ion-text color="danger">*</ion-text></ion-label>
+
+                    <div *ngSwitchCase="'textInput'">
+                      <ion-input formControlName="{{form_elem.fieldName}}" placeholder="{{form_elem.placeholder}}" (keyup.enter)="submit(formGroup)"></ion-input>
+                    </div>
+                    <div *ngSwitchCase="'radio'">
+                      <ion-radio-group no-padding formControlName="{{form_elem.fieldName}}">
+                        <ion-item lines="none" *ngFor="let radioElement of form_elem.options">
+                          <ion-radio value="{{radioElement.value}}" slot="start"></ion-radio>
+                          <ion-label *ngIf="radioElement.label">{{radioElement.label}}</ion-label>
+                          <ion-icon *ngIf="radioElement.logo" name="{{radioElement.logo}}"></ion-icon>
+                        </ion-item>
+                      </ion-radio-group>
+                    </div>
+
+                  <ion-note *ngIf="(invalid && formGroup['controls'][form_elem.fieldName].invalid) || (formGroup['controls'][form_elem.fieldName].touched && formGroup['controls'][form_elem.fieldName].invalid)">
+                    <ion-text color="danger">Invalid {{form_elem.label}}</ion-text>
+                  </ion-note>
+                </ion-item>
+              </div>
+            </div>
         </mat-card>
-        <ion-footer>
-          <ion-toolbar color="secondary">
-            <ion-buttons slot="secondary" *ngIf="this.index">
-              <ion-button (click)="this.index = 0">
-                <mat-icon>arrow_back_ios</mat-icon>
 
-                <ion-label>Back</ion-label>
-              </ion-button>
-            </ion-buttons>
-            <ion-buttons slot="primary">
-              <ion-button (click)="submit(fg)">
-                <ion-label slot="start">{{ nextLabel }}</ion-label>
-                <mat-icon>arrow_forward_ios</mat-icon>
-              </ion-button>
-            </ion-buttons>
-          </ion-toolbar>
-        </ion-footer>
+          <ion-footer>
+            <ion-toolbar color="secondary">
+              <ion-buttons slot="secondary" *ngIf="this.index">
+                <ion-button (click)="this.index = 0">
+                  <mat-icon>arrow_back_ios</mat-icon>
+                  <ion-label>Back</ion-label>
+                </ion-button>
+              </ion-buttons>
+              <ion-buttons slot="primary">
+                <ion-button (click)="submit(formGroup)">
+                  <ion-label slot="start">{{ nextLabel }}</ion-label>
+                  <mat-icon>arrow_forward_ios</mat-icon>
+                </ion-button>
+              </ion-buttons>
+            </ion-toolbar>
+          </ion-footer>
+
       </div>
     </waa-view-wrapper>
 
     <ng-template #preview>
       <waa-add-user-preview
-        [email]="fg.value['email']"
-        [firstName]="fg.value['firstName']"
-        [lastName]="fg.value['lastName']"
-        link="{{ url }}new-link"
+        [email]="formGroup.value['email']"
+        [firstName]="formGroup.value['firstName']"
+        [lastName]="formGroup.value['lastName']"
+        link="{{ url }}/new-link"
         state="unsubmitted"
         [fields]="fields"
       >
@@ -146,95 +78,55 @@ const url = AppConfigService.settings.publicSite.url;
   styleUrls: ['./add-user.component.scss']
 })
 export class AddUserComponent implements OnInit {
-  title = 'Add user';
-  fg: FormGroup;
+  formGroup: FormGroup;
+  formTemplate: any = formTemplate;
   index = 0;
   invalid: boolean;
   url: string;
 
-  get nextLabel() {
-    return !this.index ? 'Next' : 'Submit';
-  }
-
-  get fields() {
-    const created = new Date();
-    const expiry = new Date(created);
-    expiry.setDate(created.getDate() + 1);
-    return [
-      {
-        key: 'method',
-        value: this.fg.value['method']
-      },
-      {
-        key: 'jurisdiction',
-        value: this.fg.value['jurisdiction']
-      },
-      {
-        key: 'expiry',
-        value: expiry
-      },
-      {
-        key: 'created',
-        value: created
-      },
-      {
-        key: 'addedBy',
-        value: this.stateSvc.user.email
-      }
-    ];
-  }
-
   constructor(
     private actionSvc: ActionService,
     private stateSvc: StateService,
-    private loadingSvc: LoadingService,
     private alertSvc: AlertService,
     private router: Router
   ) {
-    this.setFg();
-    this.url = url;
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.url = AppConfigService.settings.publicSite.url;
 
-  setFg() {
-    this.fg = new FormGroup({
-      firstName: new FormControl('', [Validators.required]),
-      lastName: new FormControl('', [Validators.required]),
+    this.buildFormFromTemplate();
+  }
 
-      email: new FormControl('', [
-        Validators.required,
-        Validators.minLength(4),
-        Validators.email
-      ]),
-      method: new FormControl('github', [Validators.required]),
-      jurisdiction: new FormControl('BC', Validators.required)
+  buildFormFromTemplate() {
+    let formGroup = {};
+    formTemplate.forEach(formItem => {
+      formGroup[formItem.fieldName] = new FormControl('', formItem.validators);
     });
+    this.formGroup = new FormGroup(formGroup);
   }
 
-  async submit(fg) {
-    if (fg.invalid) {
-      fg.markAsTouched();
-      fg.updateValueAndValidity();
+  async submit(formGroup) {
+    if (formGroup.invalid) {
+      formGroup.markAsTouched();
+      formGroup.updateValueAndValidity();
       this.invalid = true;
-      return (this.fg = fg);
+      return (this.formGroup = formGroup);
     }
 
-    const { method, jurisdiction, email, firstName, lastName } = this.fg.value;
+    const formFields = {
+      addedBy: this.stateSvc.user.username
+    };
+    formTemplate.forEach( formItem => {
+      formFields[formItem.fieldName] = this.formGroup.value[formItem.fieldName];
+    });
+
     if (this.index === 0) {
       this.index = 1;
     } else {
-      const addedBy = this.stateSvc.user.username;
       try {
-        const response = await this.actionSvc
-          .createInvitation({
-            method,
-            jurisdiction,
-            email,
-            firstName,
-            lastName,
-            addedBy
-          })
+        await this.actionSvc
+          .createInvitation(formFields)
           .toPromise();
         const created = new Date();
         const expiry = new Date();
@@ -259,7 +151,35 @@ export class AddUserComponent implements OnInit {
   }
 
   resetState() {
-    this.setFg();
+    this.buildFormFromTemplate();
     this.index = 0;
+  }
+
+  get nextLabel() {
+    return !this.index ? 'Next' : 'Submit';
+  }
+
+  get fields() {
+    const created = new Date();
+    const expiry = new Date(created);
+    expiry.setDate(created.getDate() + 1);
+    const fields = [
+      {
+        key: 'expiry',
+        value: expiry
+      },
+      {
+        key: 'created',
+        value: created
+      },
+      {
+        key: 'addedBy',
+        value: this.stateSvc.user.email
+      }
+    ];
+    formTemplate.forEach( formItem => {
+      fields.push({ key: formItem.fieldName, value: this.formGroup.value[formItem.fieldName] });
+    });
+    return fields;
   }
 }

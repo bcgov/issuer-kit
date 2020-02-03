@@ -19,30 +19,26 @@ import formTemplate from 'src/assets/config/form-template';
 
             <div *ngFor="let form_elem of formTemplate">
               <div [ngSwitch]="form_elem.type">
-                <div *ngSwitchCase="'textInput'">
                   <ion-item>
                     <ion-label position="stacked">{{form_elem.label}}<ion-text color="danger">*</ion-text></ion-label>
-                    <ion-input formControlName="{{form_elem.label}}" placeholder="{{form_elem.placeholder}}" (keyup.enter)="submit(formGroup)"></ion-input>
-                    <ion-note *ngIf="(invalid && formGroup['controls'][form_elem.label].invalid) || (formGroup['controls'][form_elem.label].touched && formGroup['controls'][form_elem.label].invalid)">
-                      <ion-text color="danger">Invalid {{form_elem.label}}</ion-text>
-                    </ion-note>
-                  </ion-item>
-                </div>
-                <div *ngSwitchCase="'radio'">
-                  <ion-item>
-                    <ion-label position="stacked">{{form_elem.label}}<ion-text color="danger">*</ion-text></ion-label>
-                    <ion-radio-group no-padding formControlName="method">
-                      <ion-item lines="none" *ngFor="let radioElement of form_elem.options">
-                        <ion-radio value="{{radioElement.value}}" slot="start"></ion-radio>
-                        <ion-label *ngIf="radioElement.label">{{radioElement.label}}</ion-label>
-                        <ion-icon *ngIf="radioElement.logo" name="{{radioElement.logo}}"></ion-icon>
-                      </ion-item>
-                    </ion-radio-group>
-                    <ion-note *ngIf="(invalid && formGroup['controls'][form_elem.label].invalid) || (formGroup['controls'][form_elem.label].touched && formGroup['controls'][form_elem.label].invalid)">
-                      <ion-text color="danger">Invalid {{form_elem.label}}</ion-text>
-                    </ion-note>
-                  </ion-item>
-                </div>
+
+                    <div *ngSwitchCase="'textInput'">
+                      <ion-input formControlName="{{form_elem.label}}" placeholder="{{form_elem.placeholder}}" (keyup.enter)="submit(formGroup)"></ion-input>
+                    </div>
+                    <div *ngSwitchCase="'radio'">
+                      <ion-radio-group no-padding formControlName="method">
+                        <ion-item lines="none" *ngFor="let radioElement of form_elem.options">
+                          <ion-radio value="{{radioElement.value}}" slot="start"></ion-radio>
+                          <ion-label *ngIf="radioElement.label">{{radioElement.label}}</ion-label>
+                          <ion-icon *ngIf="radioElement.logo" name="{{radioElement.logo}}"></ion-icon>
+                        </ion-item>
+                      </ion-radio-group>
+                    </div>
+
+                  <ion-note *ngIf="(invalid && formGroup['controls'][form_elem.label].invalid) || (formGroup['controls'][form_elem.label].touched && formGroup['controls'][form_elem.label].invalid)">
+                    <ion-text color="danger">Invalid {{form_elem.label}}</ion-text>
+                  </ion-note>
+                </ion-item>
               </div>
             </div>
         </mat-card>

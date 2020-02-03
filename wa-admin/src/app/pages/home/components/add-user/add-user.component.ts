@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ActionService } from 'src/app/services/action.service';
 import { AlertService } from 'src/app/services/alert.service';
@@ -23,10 +23,10 @@ import formTemplate from 'src/assets/config/form-template';
                     <ion-label position="stacked">{{form_elem.label}}<ion-text color="danger">*</ion-text></ion-label>
 
                     <div *ngSwitchCase="'textInput'">
-                      <ion-input formControlName="{{form_elem.label}}" placeholder="{{form_elem.placeholder}}" (keyup.enter)="submit(formGroup)"></ion-input>
+                      <ion-input formControlName="{{form_elem.fieldName}}" placeholder="{{form_elem.placeholder}}" (keyup.enter)="submit(formGroup)"></ion-input>
                     </div>
                     <div *ngSwitchCase="'radio'">
-                      <ion-radio-group no-padding formControlName="method">
+                      <ion-radio-group no-padding formControlName="{{form_elem.fieldName}}">
                         <ion-item lines="none" *ngFor="let radioElement of form_elem.options">
                           <ion-radio value="{{radioElement.value}}" slot="start"></ion-radio>
                           <ion-label *ngIf="radioElement.label">{{radioElement.label}}</ion-label>
@@ -35,7 +35,7 @@ import formTemplate from 'src/assets/config/form-template';
                       </ion-radio-group>
                     </div>
 
-                  <ion-note *ngIf="(invalid && formGroup['controls'][form_elem.label].invalid) || (formGroup['controls'][form_elem.label].touched && formGroup['controls'][form_elem.label].invalid)">
+                  <ion-note *ngIf="(invalid && formGroup['controls'][form_elem.fieldName].invalid) || (formGroup['controls'][form_elem.fieldName].touched && formGroup['controls'][form_elem.fieldName].invalid)">
                     <ion-text color="danger">Invalid {{form_elem.label}}</ion-text>
                   </ion-note>
                 </ion-item>
@@ -68,7 +68,7 @@ import formTemplate from 'src/assets/config/form-template';
         [email]="formGroup.value['email']"
         [firstName]="formGroup.value['firstName']"
         [lastName]="formGroup.value['lastName']"
-        link="{{ url }}new-link"
+        link="{{ url }}/new-link"
         state="unsubmitted"
         [fields]="fields"
       >
@@ -78,7 +78,6 @@ import formTemplate from 'src/assets/config/form-template';
   styleUrls: ['./add-user.component.scss']
 })
 export class AddUserComponent implements OnInit {
-  // title = 'Add user';
   formGroup: FormGroup;
   formTemplate: any = formTemplate;
   index = 0;
@@ -102,7 +101,7 @@ export class AddUserComponent implements OnInit {
   buildFormFromTemplate() {
     let formGroup = {};
     formTemplate.forEach(formItem => {
-      formGroup[formItem.label] = new FormControl('', formItem.validators);
+      formGroup[formItem.fieldName] = new FormControl('', formItem.validators);
     });
     this.formGroup = new FormGroup(formGroup);
   }

@@ -9,12 +9,20 @@ import { AppComponent } from './app.component';
 import { NotFoundComponent } from './components/not-found/not-found.component';
 import { AppConfigService } from './services/app-config.service';
 import { SharedModule } from './shared/shared.module';
+import { FormConfigService } from './services/form-config.service';
 
 const keycloakService = new KeycloakService();
 
-export function initializeApp(appConfigService: AppConfigService) {
-  return () => appConfigService.load();
+export function initializeApp(
+  appConfigService: AppConfigService,
+  formConfigService: FormConfigService
+) {
+  return () =>
+    appConfigService.load().then(success => {
+      return formConfigService.load();
+    });
 }
+
 @NgModule({
   declarations: [AppComponent, NotFoundComponent],
   imports: [
@@ -32,10 +40,11 @@ export function initializeApp(appConfigService: AppConfigService) {
       useValue: keycloakService
     },
     AppConfigService,
+    FormConfigService,
     {
       provide: APP_INITIALIZER,
       useFactory: initializeApp,
-      deps: [AppConfigService],
+      deps: [AppConfigService, FormConfigService],
       multi: true
     }
   ],

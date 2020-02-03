@@ -114,21 +114,19 @@ export class AddUserComponent implements OnInit {
       return (this.formGroup = formGroup);
     }
 
-    const { method, jurisdiction, email, firstName, lastName } = this.formGroup.value;
+    const formFields = {
+      addedBy: this.stateSvc.user.username
+    };
+    formTemplate.forEach( formItem => {
+      formFields[formItem.fieldName] = this.formGroup.value[formItem.fieldName];
+    });
+
     if (this.index === 0) {
       this.index = 1;
     } else {
-      const addedBy = this.stateSvc.user.username;
       try {
-        const response = await this.actionSvc
-          .createInvitation({
-            method,
-            jurisdiction,
-            email,
-            firstName,
-            lastName,
-            addedBy
-          })
+        await this.actionSvc
+          .createInvitation(formFields)
           .toPromise();
         const created = new Date();
         const expiry = new Date();
@@ -165,15 +163,7 @@ export class AddUserComponent implements OnInit {
     const created = new Date();
     const expiry = new Date(created);
     expiry.setDate(created.getDate() + 1);
-    return [
-      {
-        key: 'method',
-        value: this.formGroup.value['method']
-      },
-      {
-        key: 'jurisdiction',
-        value: this.formGroup.value['jurisdiction']
-      },
+    const fields = [
       {
         key: 'expiry',
         value: expiry
@@ -187,5 +177,9 @@ export class AddUserComponent implements OnInit {
         value: this.stateSvc.user.email
       }
     ];
+    formTemplate.forEach( formItem => {
+      fields.push({ key: formItem.fieldName, value: this.formGroup.value[formItem.fieldName] });
+    });
+    return fields;
   }
 }

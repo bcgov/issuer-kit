@@ -1,5 +1,12 @@
 import { Validators } from '@angular/forms';
 
+/**
+ * The formTemplate objects allows the registration form to be configured.
+ * Each entry represents a form field, with all the relevant configuration items.
+ * Please note that currently only configuration changes of these items are supported,
+ * no items may be removed/added to the list (still a work-in-progress).
+ */
+
 const formTemplate = [
   {
     type: 'textInput',

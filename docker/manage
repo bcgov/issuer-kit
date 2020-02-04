@@ -273,7 +273,7 @@ configureEnvironment() {
   export SMTP_PORT=${SMTP_PORT}
   export SMTP_USERNAME=${SMTP_USERNAME}
   export SMTP_PASS=${SMTP_PASS}
-  export ADMIN_EMAIL=${ADMIN_EMAIL}
+  export ADMIN_EMAIL=${ADMIN_EMAIL:-"noreply@example.com"}
   if [ -z "${DEV_MODE}" ]; then
     export PUBLIC_SITE_URL=http://localhost:8082
   else

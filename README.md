@@ -158,7 +158,17 @@ When using Identity Kit in demo mode the controller will instruct the agent to u
 
 :information_source: If you are planning on using Identity Kit in your own production-like environment - regardless of wether you will be re-using the BCGov schema or creating your own - you may want to update the `AGENT_WALLET_SEED` environment variable with a unique value used only by your agent/organization rather than using the default value used for demo purposes.
 
-## SMTP Settings
+## App Configuration
+
+The identity-kit  controller, administrator and issuer applications can be configured by using a number of environment variables and settings stored in configuration files. The application is shipped with default configurations that work well when running in the provided dockerized environment, if settings need to be updated look for:
+
+  - `controller`: all the settings are injected via environment variables, take a look at the relevant sections in [docker/manage](./docker/manage) and [docker/docker-compose.yml](docker/docker-compose.yml). Some extra details are provided below for settings specific to NodeMailer.
+
+  - `wa-admin` Administrator app: the application is configured using [wa-admin/src/assets/config/config.json](wa-admin/src/assets/config/config.json). Overriding the file shipped with the application with your custom settings file at deployment time will cause the web application to pick up the settings.
+
+  - `wa-public` Issuer app: similarly to the Administrator app, the configuration is stored in [wa-public/src/assets/config/config.json](wa-public/src/assets/config/config.json) and can be overridden at deployment time.
+
+### SMTP Settings
 
 The controller uses [nodemailer](https://nodemailer.com) to send email invitations. When running in localhost the default behaviour is to not send emails and show an alert with the invite link instead.
 

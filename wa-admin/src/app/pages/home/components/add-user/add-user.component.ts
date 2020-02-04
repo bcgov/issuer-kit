@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ActionService } from 'src/app/services/action.service';
 import { AlertService } from 'src/app/services/alert.service';
 import { AppConfigService } from 'src/app/services/app-config.service';
+import { FormConfigService, IFormConfig } from 'src/app/services/form-config.service';
 import { StateService } from 'src/app/services/state.service';
-import formTemplate from 'src/assets/config/form-template';
 
 @Component({
   selector: 'waa-add-user',
@@ -17,17 +17,17 @@ import formTemplate from 'src/assets/config/form-template';
         <mat-card [formGroup]="formGroup" *ngIf="index === 0; else preview">
             <waa-card-toolbar title="Invite User"> </waa-card-toolbar>
 
-            <div *ngFor="let form_elem of formTemplate">
-              <div [ngSwitch]="form_elem.type">
+            <div *ngFor="let formElement of formTemplate">
+              <div [ngSwitch]="formElement.type">
                   <ion-item>
-                    <ion-label position="stacked">{{form_elem.label}}<ion-text color="danger">*</ion-text></ion-label>
+                    <ion-label position="stacked">{{formElement.label}}<ion-text color="danger">*</ion-text></ion-label>
 
                     <div *ngSwitchCase="'textInput'">
-                      <ion-input formControlName="{{form_elem.fieldName}}" placeholder="{{form_elem.placeholder}}" (keyup.enter)="submit(formGroup)"></ion-input>
+                      <ion-input formControlName="{{formElement.fieldName}}" placeholder="{{formElement.placeholder}}" (keyup.enter)="submit(formGroup)"></ion-input>
                     </div>
                     <div *ngSwitchCase="'radio'">
-                      <ion-radio-group no-padding formControlName="{{form_elem.fieldName}}">
-                        <ion-item lines="none" *ngFor="let radioElement of form_elem.options">
+                      <ion-radio-group no-padding formControlName="{{formElement.fieldName}}">
+                        <ion-item lines="none" *ngFor="let radioElement of formElement.options">
                           <ion-radio value="{{radioElement.value}}" slot="start"></ion-radio>
                           <ion-label *ngIf="radioElement.label">{{radioElement.label}}</ion-label>
                           <ion-icon *ngIf="radioElement.logo" name="{{radioElement.logo}}"></ion-icon>
@@ -35,8 +35,8 @@ import formTemplate from 'src/assets/config/form-template';
                       </ion-radio-group>
                     </div>
 
-                  <ion-note *ngIf="(invalid && formGroup['controls'][form_elem.fieldName].invalid) || (formGroup['controls'][form_elem.fieldName].touched && formGroup['controls'][form_elem.fieldName].invalid)">
-                    <ion-text color="danger">Invalid {{form_elem.label}}</ion-text>
+                  <ion-note *ngIf="(invalid && formGroup['controls'][formElement.fieldName].invalid) || (formGroup['controls'][formElement.fieldName].touched && formGroup['controls'][formElement.fieldName].invalid)">
+                    <ion-text color="danger">Invalid {{formElement.label}}</ion-text>
                   </ion-note>
                 </ion-item>
               </div>
@@ -79,7 +79,7 @@ import formTemplate from 'src/assets/config/form-template';
 })
 export class AddUserComponent implements OnInit {
   formGroup: FormGroup;
-  formTemplate: any = formTemplate;
+  formTemplate: IFormConfig[];
   index = 0;
   invalid: boolean;
   url: string;
@@ -94,14 +94,18 @@ export class AddUserComponent implements OnInit {
 
   ngOnInit() {
     this.url = AppConfigService.settings.publicSite.url;
-
+    this.formTemplate = FormConfigService.fields;
     this.buildFormFromTemplate();
   }
 
   buildFormFromTemplate() {
     let formGroup = {};
-    formTemplate.forEach(formItem => {
-      formGroup[formItem.fieldName] = new FormControl('', formItem.validators);
+    FormConfigService.fields.forEach((formItem: IFormConfig) => {
+      const validators = [];
+      formItem.validators.forEach(validator => {
+        validators.push(Validators[validator]);
+      });
+      formGroup[formItem.fieldName] = new FormControl('', validators);
     });
     this.formGroup = new FormGroup(formGroup);
   }
@@ -117,7 +121,7 @@ export class AddUserComponent implements OnInit {
     const formFields = {
       addedBy: this.stateSvc.user.username
     };
-    formTemplate.forEach( formItem => {
+    this.formTemplate.forEach( formItem => {
       formFields[formItem.fieldName] = this.formGroup.value[formItem.fieldName];
     });
 
@@ -177,7 +181,7 @@ export class AddUserComponent implements OnInit {
         value: this.stateSvc.user.email
       }
     ];
-    formTemplate.forEach( formItem => {
+    this.formTemplate.forEach( formItem => {
       fields.push({ key: formItem.fieldName, value: this.formGroup.value[formItem.fieldName] });
     });
     return fields;

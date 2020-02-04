@@ -134,7 +134,6 @@ The services will be running at the following endpoints:
 
 - `identity-kit-agent`: http://localhost:8024
 
-
 ## Keycloak Configuration and Users
 
 While it is possible to provide a client id and token pair to use the GitHub integration for Keycloak (follow the on-screen instructions when starting the apps), two default users  are shipped with the default Keycloak configuration:
@@ -158,3 +157,21 @@ When using Identity Kit in demo mode the controller will instruct the agent to u
 - unset the `EXISTING_SCHEMA_ID` environment variable from the `identity-controller` deployment/container. This will tell it to generate a new schema definition associated with the current DID.
 
 :information_source: If you are planning on using Identity Kit in your own production-like environment - regardless of wether you will be re-using the BCGov schema or creating your own - you may want to update the `AGENT_WALLET_SEED` environment variable with a unique value used only by your agent/organization rather than using the default value used for demo purposes.
+
+## SMTP Settings
+
+The controller uses [nodemailer](https://nodemailer.com) to send email invitations. When running in localhost the default behaviour is to not send emails and show an alert with the invite link instead.
+
+If you are running a deployment and require emails to be sent, set the following environment variables appropriately:
+
+  - *SMTP_HOST*: your SMTP server host.
+
+  - *SMTP_PORT*: the port used by your SMTP server.
+
+  - *SMTP_USERNAME*: the username to authenticate with SMTP server.
+
+  - *SMTP_PASS*: the password to authenticate with the SMTP server.
+  
+  - *ADMIN_EMAIL*: the email address that will be used as sender of your emails.
+
+If additional tweaks are required, the code responsible for email delivery is in [email.service.ts](identity-controller/src/app/services/email.service.ts).

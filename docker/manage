@@ -80,7 +80,7 @@ function checkNgrokTunnelActive () {
 function customizeKeycloakConfig () {
   # Customize realm settings for development environment
   cp -f ./keycloak/config/realm-export.json ./keycloak/config/realm-export-docker.json
-  if [ -z "$GITHUB_CLIENT_ID" ] || [ -z "$GITHUB_CLIENT_ID" ]; then
+  if [ -z "$GITHUB_CLIENT_ID" ] || [ -z "$GITHUB_CLIENT_SECRET" ]; then
     echoWarning "The client id and/or secret for the integration of GitHub as IDP for Keycloak were not provided."
     echoWarning "Please set the GITHUB_CLIENT_ID and GITHUB_CLIENT_SECRET environment variables to use GitHub as your IDP."
     echoWarning "To get your  client id/secret combination, please visit: https://github.com/settings/developers"

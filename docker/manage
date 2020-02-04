@@ -420,12 +420,14 @@ case "${COMMAND}" in
   start-demo)
     isJQInstalled
     isCurlInstalled
-    isNgrokInstalled
 
     unset AGENT_WEBHOOK_URL
     export BCOVRIN_SCHEMA_ID="85459GxjNySJ8HwTTQ4vq7:2:verified_person:1.22"
     export LEDGER_URL="http://test.bcovrin.vonx.io"
-    export NGROK_AGENT_ENDPOINT=$(${CURL_EXE} http://localhost:4040/api/tunnels | ${JQ_EXE} --raw-output '.tunnels | map(select(.name | contains("identity-kit-agent"))) | .[0] | .public_url')
+    if [ -z "$NGROK_AGENT_ENDPOINT" ]; then
+      isNgrokInstalled
+      export NGROK_AGENT_ENDPOINT=$(${CURL_EXE} http://localhost:4040/api/tunnels | ${JQ_EXE} --raw-output '.tunnels | map(select(.name | contains("identity-kit-agent"))) | .[0] | .public_url')
+    fi
     
     checkNgrokTunnelActive
     echo "Running in demo mode, will use ${LEDGER_URL} as ledger and ${NGROK_AGENT_ENDPOINT} as the agent endpoint."

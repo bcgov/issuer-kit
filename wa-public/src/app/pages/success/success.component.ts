@@ -32,8 +32,8 @@ import { AppConfigService } from 'src/app/services/app-config.service';
             <mat-card class="form-card">
               <mat-card-header class="main-header">
                 <img mat-card-avatar src="assets/VON-Logo.png" alt="VON Network logo" class="header-image" />
-                <mat-card-title>BC Services Card</mat-card-title>
-                <mat-card-subtitle>Attributes from your card</mat-card-subtitle>
+                <mat-card-title>Verified Person</mat-card-title>
+                <mat-card-subtitle>Attributes from the Identity Provider</mat-card-subtitle>
               </mat-card-header>
               <mat-card-content *ngIf="$previewData | async as previewData">
                 <wap-issue-preview [values]="previewData"></wap-issue-preview>
@@ -57,7 +57,7 @@ import { AppConfigService } from 'src/app/services/app-config.service';
                     (invalid && fg.controls['firstName'].invalid) ||
                     (fg.controls['firstName'].touched && fg.controls['firstName'].invalid)
                   "
-                  [disabled]="true"
+                  [disabled]="fg.controls['firstName'].valid"
                 >
                 </wap-input>
                 <wap-input
@@ -69,7 +69,7 @@ import { AppConfigService } from 'src/app/services/app-config.service';
                     (invalid && fg.controls['lastName'].invalid) ||
                     (fg.controls['lastName'].touched && fg.controls['lastName'].invalid)
                   "
-                  [disabled]="true"
+                  [disabled]="fg.controls['lastName'].valid"
                 >
                 </wap-input>
                 <wap-input
@@ -81,7 +81,7 @@ import { AppConfigService } from 'src/app/services/app-config.service';
                     (invalid && fg.controls['emailAddress'].invalid) ||
                     (fg.controls['emailAddress'].touched && fg.controls['emailAddress'].invalid)
                   "
-                  [disabled]="true"
+                  [disabled]="fg.controls['emailAddress'].valid"
                 >
                 </wap-input>
                 <wap-input
@@ -272,6 +272,13 @@ export class SuccessComponent implements OnInit, OnDestroy {
   addressVal = '';
   submitting: boolean;
 
+  constructor(
+    private stateSvc: StateService,
+    public actionSvc: ActionService,
+    private router: Router,
+    public typeAheadSvc: TypeaheadService,
+  ) {}
+
   get formInvalid() {
     return !this.accepted || this.fg.invalid;
   }
@@ -291,7 +298,7 @@ export class SuccessComponent implements OnInit, OnDestroy {
     this.fg.controls.locality.setValue(addressDetail[0]);
     this.fg.controls.postalCode.setValue(addressDetail[2].replace(/^[ \t]+/, ''));
     this.typeAheadSvc.$addresses = null;
-    this.addressVal = cpItem.Text
+    this.addressVal = cpItem.Text;
   }
   setIndex(i: number) {
     const indexMap = [
@@ -369,36 +376,29 @@ export class SuccessComponent implements OnInit, OnDestroy {
     return valid ? this.setIndex(i) : (this.invalid = true);
   }
 
-  constructor(
-    private stateSvc: StateService,
-    public actionSvc: ActionService,
-    private router: Router,
-    public typeAheadSvc: TypeaheadService,
-  ) {}
-
   async ngOnInit() {
     if (!this.stateSvc._id) return (this.hasId = false);
-    const user = this.stateSvc.user;
+    let user = this.stateSvc.user;
     const keys = Object.keys(user);
     this.disableList = keys.filter(key => user[key] !== undefined || null || '');
 
-    if (!user) return;
-    const initFc = (val: string | Date, min: number = 4) =>
-      new FormControl(val, [Validators.required, Validators.minLength(min)]);
+    if (!user || user.email.match('@identity-kit.org')) {
+      user = {
+        firstName: '',
+        lastName: '',
+        email: ''
+      };
+    }
 
-    const firstName = initFc(user.firstName || '', 1);
-    const lastName = initFc(user.lastName || '', 1);
-    const emailAddress = new FormControl(user.email || '', [
-      Validators.required,
-      Validators.minLength(4),
-      Validators.email,
-    ]);
+    const firstName = new FormControl(user.firstName, [Validators.required]);
+    const lastName = new FormControl(user.lastName, [Validators.required]);
+    const emailAddress = new FormControl(user.email, [Validators.required, Validators.email]);
 
-    const streetAddress = initFc('');
+    const streetAddress = new FormControl('', [Validators.required]);
     const postalCode = new FormControl('', [Validators.required, postalCodeValidator()]);
-    const locality = initFc('');
+    const locality = new FormControl('', [Validators.required]);
 
-    const dateOfBirth = initFc('');
+    const dateOfBirth = new FormControl('', [Validators.required]);
 
     this.fg = new FormGroup({
       firstName,
@@ -444,12 +444,12 @@ export class SuccessComponent implements OnInit, OnDestroy {
       {
         label: 'First Name',
         key: 'firstName',
-        value: values.firstName || '',
+        value: values.firstName || 'not defined',
       },
       {
         label: 'Last Name',
         key: 'lastName',
-        value: values.lastName || '',
+        value: values.lastName || 'not defined',
       },
       {
         label: 'Email Address',

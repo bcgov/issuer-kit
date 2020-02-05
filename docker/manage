@@ -277,7 +277,7 @@ configureEnvironment() {
   if [ -z "${DEV_MODE}" ]; then
     export PUBLIC_SITE_URL=http://localhost:8082
   else
-    export PUBLIC_SITE_URL=http://localhost:4051
+    export PUBLIC_SITE_URL=http://localhost:4251
   fi
   export EXISTING_SCHEMA_ID=${BCOVRIN_SCHEMA_ID}
   export CUSTOM_SCHEMA_PATH=${CUSTOM_SCHEMA_PATH}

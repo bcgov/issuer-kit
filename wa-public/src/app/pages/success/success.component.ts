@@ -57,7 +57,7 @@ import { AppConfigService } from 'src/app/services/app-config.service';
                     (invalid && fg.controls['firstName'].invalid) ||
                     (fg.controls['firstName'].touched && fg.controls['firstName'].invalid)
                   "
-                  [disabled]="fg.controls['firstName'].valid"
+                  [disabled]="validAuthenticatedUser"
                 >
                 </wap-input>
                 <wap-input
@@ -69,7 +69,7 @@ import { AppConfigService } from 'src/app/services/app-config.service';
                     (invalid && fg.controls['lastName'].invalid) ||
                     (fg.controls['lastName'].touched && fg.controls['lastName'].invalid)
                   "
-                  [disabled]="fg.controls['lastName'].valid"
+                  [disabled]="validAuthenticatedUser"
                 >
                 </wap-input>
                 <wap-input
@@ -81,7 +81,7 @@ import { AppConfigService } from 'src/app/services/app-config.service';
                     (invalid && fg.controls['emailAddress'].invalid) ||
                     (fg.controls['emailAddress'].touched && fg.controls['emailAddress'].invalid)
                   "
-                  [disabled]="fg.controls['emailAddress'].valid"
+                  [disabled]="validAuthenticatedUser"
                 >
                 </wap-input>
                 <wap-input
@@ -252,6 +252,8 @@ import { AppConfigService } from 'src/app/services/app-config.service';
   styleUrls: ['./success.component.scss'],
 })
 export class SuccessComponent implements OnInit, OnDestroy {
+  validAuthenticatedUser = true;
+
   index = 0;
   hasId = true;
   accepted = false;
@@ -388,6 +390,7 @@ export class SuccessComponent implements OnInit, OnDestroy {
         lastName: '',
         email: ''
       };
+      this.validAuthenticatedUser = false;
     }
 
     const firstName = new FormControl(user.firstName, [Validators.required]);
@@ -422,13 +425,13 @@ export class SuccessComponent implements OnInit, OnDestroy {
 
     const invitation = await this.actionSvc.getInvitation().toPromise();
     this.connectionId = invitation.connection_id;
-    const stringVal = JSON.stringify(invitation.invitation);
-    console.log(stringVal);
-    const encoded = invitation.base;
-    console.log(encoded);
+
+    console.log(JSON.stringify(invitation.invitation));
+
+    const inviteURL = `${AppConfigService.settings.baseUrl}?c_i=${invitation.base64}`;
     this.invite = invitation.invitation as any;
-    this.img = `https://chart.googleapis.com/chart?cht=qr&chs=300x300&chld=L|0&chl=${encoded}`;
-    this.deeplink = `id.streetcred://launch?d_m=${invitation.base}`;
+    this.img = `https://chart.googleapis.com/chart?cht=qr&chs=300x300&chld=L|0&chl=${inviteURL}`;
+    this.deeplink = `id.streetcred://launch?d_m=${invitation.base64}`;
     const previewData = of(this.setPreview(this.fg));
     this.$previewData = previewData;
     this.setIndex(0);

@@ -6,6 +6,10 @@ export interface IAppConfig {
     name: string;
   };
 
+  userList: {
+    enabled: boolean;
+  };
+
   apiServer: {
     url: string;
   };

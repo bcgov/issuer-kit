@@ -80,7 +80,7 @@ function checkNgrokTunnelActive () {
 function customizeKeycloakConfig () {
   # Customize realm settings for development environment
   cp -f ./keycloak/config/realm-export.json ./keycloak/config/realm-export-docker.json
-  if [ -z "$GITHUB_CLIENT_ID" ] || [ -z "$GITHUB_CLIENT_ID" ]; then
+  if [ -z "$GITHUB_CLIENT_ID" ] || [ -z "$GITHUB_CLIENT_SECRET" ]; then
     echoWarning "The client id and/or secret for the integration of GitHub as IDP for Keycloak were not provided."
     echoWarning "Please set the GITHUB_CLIENT_ID and GITHUB_CLIENT_SECRET environment variables to use GitHub as your IDP."
     echoWarning "To get your  client id/secret combination, please visit: https://github.com/settings/developers"
@@ -269,12 +269,16 @@ configureEnvironment() {
   export IDENTITY_CONTROLLER_PORT=5000
   export AGENT_ADMIN_URL=${AGENT_ADMIN_URL:-http://identity-kit-agent:$AGENT_ADMIN_PORT}
   export DB_SERVICE="wa-db"
-  export SMTP_HOST=""
-  export SMTP_PORT=""
-  export SMTP_USERNAME=""
-  export SMTP_PASS=""
-  export ADMIN_EMAIL=""
-  export PUBLIC_SITE_URL=""
+  export SMTP_HOST=${SMTP_HOST}
+  export SMTP_PORT=${SMTP_PORT}
+  export SMTP_USERNAME=${SMTP_USERNAME}
+  export SMTP_PASS=${SMTP_PASS}
+  export ADMIN_EMAIL=${ADMIN_EMAIL:-"noreply@example.com"}
+  if [ -z "${DEV_MODE}" ]; then
+    export PUBLIC_SITE_URL=http://localhost:8082
+  else
+    export PUBLIC_SITE_URL=http://localhost:4251
+  fi
   export EXISTING_SCHEMA_ID=${BCOVRIN_SCHEMA_ID}
   export CUSTOM_SCHEMA_PATH=${CUSTOM_SCHEMA_PATH}
 }
@@ -396,6 +400,7 @@ case "${COMMAND}" in
     fi
     ;;
   start|start|up)
+    unset DEV_MODE
     unset BCOVRIN_SCHEMA_ID
     unset LEDGER_URL
     unset NGROK_AGENT_ENDPOINT
@@ -410,6 +415,8 @@ case "${COMMAND}" in
     unset BCOVRIN_SCHEMA_ID
     unset LEDGER_URL
     unset NGROK_AGENT_ENDPOINT
+
+    export DEV_MODE=true
     export AGENT_WEBHOOK_URL="http://identity-controller-dev:5000"
 
     configureEnvironment "$@"
@@ -420,16 +427,18 @@ case "${COMMAND}" in
   start-demo)
     isJQInstalled
     isCurlInstalled
-    isNgrokInstalled
 
+    unset DEV_MODE
     unset AGENT_WEBHOOK_URL
     export BCOVRIN_SCHEMA_ID="85459GxjNySJ8HwTTQ4vq7:2:verified_person:1.22"
     export LEDGER_URL="http://test.bcovrin.vonx.io"
-    export NGROK_AGENT_ENDPOINT=$(${CURL_EXE} http://localhost:4040/api/tunnels | ${JQ_EXE} --raw-output '.tunnels | map(select(.name | contains("identity-kit-agent"))) | .[0] | .public_url')
+    if [ -z "$NGROK_AGENT_ENDPOINT" ]; then
+      isNgrokInstalled
+      export NGROK_AGENT_ENDPOINT=$(${CURL_EXE} http://localhost:4040/api/tunnels | ${JQ_EXE} --raw-output '.tunnels | map(select(.name | contains("identity-kit-agent"))) | .[0] | .public_url')
+    fi
     
     checkNgrokTunnelActive
     echo "Running in demo mode, will use ${LEDGER_URL} as ledger and ${NGROK_AGENT_ENDPOINT} as the agent endpoint."
-
     configureEnvironment "$@"
     customizeKeycloakConfig
     docker-compose up -d ${_startupParams} ${DEFAULT_CONTAINERS} ${PROD_CONTAINERS}

@@ -132,9 +132,6 @@ export class AddUserComponent implements OnInit {
         await this.actionSvc
           .createInvitation(formFields)
           .toPromise();
-        const created = new Date();
-        const expiry = new Date();
-        expiry.setDate(created.getDate() + 1);
 
         const res = await this.alertSvc.confirmBox({
           header: 'Invitation Sent!',
@@ -142,14 +139,17 @@ export class AddUserComponent implements OnInit {
           decline: 'Home',
           confirm: 'Add another'
         });
-        if (res) return this.resetState();
+        if (res || !AppConfigService.settings.userList.enabled) {
+          return this.resetState();
+        }
         return this.router.navigate(['/']);
       } catch (err) {
         console.log(err);
         this.alertSvc.error({
-          header: 'An error occurred adding the user',
+          header: 'The invitation email was not sent',
           message: err.error.error.message
         });
+        return this.resetState();
       }
     }
   }

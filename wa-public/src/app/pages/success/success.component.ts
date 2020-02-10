@@ -495,7 +495,7 @@ export class SuccessComponent implements OnInit, OnDestroy {
         )
         .subscribe(obs => {
           console.log(JSON.stringify(this.invite, null, 2));
-          if (obs.state === 'active') {
+          if (obs.state === 'active' || obs.state === 'response') {
             if (this.submitting) return;
             this.submitting = true;
             this.actionSvc

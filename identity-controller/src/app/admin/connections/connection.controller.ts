@@ -14,8 +14,8 @@ const router = new Router(routerOpts);
 router.get('/', async (ctx: Context) => {
   try {
     const invite = await connection.createInvitation();
-    const baseInvite = base64url(JSON.stringify(invite.invitation));
-    invite.base = baseInvite;
+    const base64Invite = base64url(JSON.stringify(invite.invitation));
+    invite.base64 = base64Invite;
     if (!invite) return ctx.throw(404);
     return (ctx.body = invite);
   } catch (err) {

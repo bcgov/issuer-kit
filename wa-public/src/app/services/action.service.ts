@@ -9,7 +9,7 @@ export interface IInvitation {
   connection_id: string;
   invitation: Invitation;
   invitation_url: string;
-  base: string;
+  base64: string;
 }
 export interface Invitation {
   '@type': string;

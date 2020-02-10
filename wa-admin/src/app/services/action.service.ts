@@ -37,14 +37,7 @@ export class ActionService {
     });
   }
 
-  createInvitation(params: {
-    method: string;
-jurisdiction:string;
-    email: string;
-    firstName: string;
-    lastName: string;
-    addedBy: string;
-  }) {
+  createInvitation(params: any) {
     return this.httpSvc.post<{ _id: string; error?: string }>(
       'invitations',
       params

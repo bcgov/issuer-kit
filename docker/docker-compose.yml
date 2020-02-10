@@ -89,6 +89,7 @@ services:
       - API_PORT=${ADMIN_API_PORT}
     volumes:
       - ./wa-admin/config/Caddyfile:/etc/Caddyfile
+      - ./wa-admin/config/form-template.json:/src/assets/config/form-template.json
     ports:
       - ${ADMIN_WEB_HOST_PORT}:${ADMIN_WEB_HOST_PORT}
     networks:

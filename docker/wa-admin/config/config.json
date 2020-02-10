@@ -1,5 +1,8 @@
 {
   "env": "prod-like",
+  "userList": {
+    "enabled": true
+  },
   "apiServer": {
     "url": "/api"
   },

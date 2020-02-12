@@ -15,11 +15,7 @@ import { ActionService } from '../services/action.service';
   providedIn: 'root',
 })
 export class ValidInviteGuard implements CanActivate {
-  constructor(
-    private stateService: StateService,
-    private router: Router,
-    private actionSvc: ActionService,
-  ) {}
+  constructor(private stateService: StateService, private router: Router) {}
 
   canActivate(
     route: ActivatedRouteSnapshot,
@@ -32,7 +28,7 @@ export class ValidInviteGuard implements CanActivate {
     const inviteToken = route.queryParamMap.get('invite_token');
 
     return this.stateService.isValidToken(inviteToken).pipe(
-      tap(obs => (this.actionSvc.email = obs.email || '')),
+      tap(obs => (this.stateService.invitedUser = obs.user)),
       map(obs => {
         console.log(obs);
         if (!obs) return false;

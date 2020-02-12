@@ -12,7 +12,11 @@ export interface IValidateLink {
   _id: string;
   expired: boolean;
   active: boolean;
-  email?: string;
+  user?: {
+    firstName: string;
+    lastName: string;
+    email: string;
+  };
 }
 
 @Injectable({
@@ -21,6 +25,8 @@ export interface IValidateLink {
 export class StateService {
   private _isAuth = false;
   private _title = 'Identity Kit POC';
+  private _apiUrl: string;
+  user: IUser = {};
 
   get linkId() {
     return localStorage.getItem('linkId');
@@ -34,12 +40,13 @@ export class StateService {
     localStorage.setItem('id', id);
   }
 
-  get email(): string {
-    return localStorage.getItem('email') || '';
+  set invitedUser(user: any) {
+    localStorage.setItem('invitedUser', JSON.stringify(user));
   }
 
-  user: IUser = {};
-  private _apiUrl: string;
+  get invitedUser() {
+    return JSON.parse(localStorage.getItem('invitedUser'));
+  }
 
   isValidToken(token: string): Observable<IValidateLink> {
     const url = `${this._apiUrl}/invitations/${token}/validate`;

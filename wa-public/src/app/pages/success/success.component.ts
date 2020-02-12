@@ -386,11 +386,11 @@ export class SuccessComponent implements OnInit, OnDestroy {
 
     if (!user || user.email.match('@identity-kit.org')) {
       user = {
-        firstName: '',
-        lastName: '',
-        email: ''
+        firstName: this.stateSvc.invitedUser.firstName,
+        lastName: this.stateSvc.invitedUser.lastName,
+        email: this.stateSvc.invitedUser.email
       };
-      this.validAuthenticatedUser = false;
+      this.validAuthenticatedUser = (user.firstName !== '' && user.lastName !== '' && user.email !== '');
     }
 
     const firstName = new FormControl(user.firstName, [Validators.required]);

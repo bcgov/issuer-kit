@@ -384,7 +384,7 @@ export class SuccessComponent implements OnInit, OnDestroy {
     const keys = Object.keys(user);
     this.disableList = keys.filter(key => user[key] !== undefined || null || '');
 
-    if (!user || user.email.match('@identity-kit.org')) {
+    if (!user || user.email || user.email.match('@identity-kit.org')) {
       user = {
         firstName: this.stateSvc.invitedUser.firstName,
         lastName: this.stateSvc.invitedUser.lastName,

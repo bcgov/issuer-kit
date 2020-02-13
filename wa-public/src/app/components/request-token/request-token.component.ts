@@ -66,7 +66,7 @@ export class RequestTokenComponent implements OnInit {
     private loadingCtrl: LoadingController,
     private stateSvc: StateService,
   ) {
-    const email = this.stateSvc.email || '';
+    const email = this.stateSvc.invitedUser.user.email || '';
     const fc = new FormControl(email, [Validators.required, Validators.email]);
     this.fc = fc;
   }

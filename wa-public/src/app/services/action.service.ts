@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { KeycloakService } from 'keycloak-angular';
 import { IInvitationRecord } from '../interfaces/invitation-record';
 import { AppConfigService } from './app-config.service';
-import { StateService } from './state.service';
+import { StateService, IValidateLink } from './state.service';
 
 export interface IInvitation {
   connection_id: string;
@@ -96,13 +96,6 @@ export interface KeyCorrectnessProof {
 })
 export class ActionService {
   _apiUrl: string;
-  authenticate() {
-    // TODO: @ES some authentication logic here
-  }
-
-  set email(addr: string) {
-    localStorage.setItem('email', addr);
-  }
 
   constructor(
     private keyCloakSvc: KeycloakService,

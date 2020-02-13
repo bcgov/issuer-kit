@@ -5,7 +5,11 @@ export interface IValidateLink {
   _id: string;
   expired: boolean;
   active: boolean;
-  email?: string;
+  user?: {
+    firstName: string;
+    lastName: string;
+    email: string;
+  };
 }
 
 export class InvitationService {
@@ -22,12 +26,16 @@ export class InvitationService {
       query: { linkId },
     });
     if (!res) return { _id: '', active: false, expired: true };
-    if (res.issued) return { _id: res._id, active: true, expired: false, email: res.email }
+    if (res.issued) return { _id: res._id, active: true, expired: false, user: undefined }
     return {
       _id: res._id,
       active: res.active,
       expired: res.expiry.getTime() <= Date.now(),
-      email: res.email
+      user: {
+        firstName: res.firstName,
+        lastName: res.lastName,
+        email: res.email
+      }
     };
   }
 

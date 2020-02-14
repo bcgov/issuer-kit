@@ -144,8 +144,8 @@ node {
   // Deploying new images
   stage("Deploy images to ${config.TEST_ENV}") {
     script {
-      config.APPS.keySet().each{
-        deploy("${it}", "${config.NAME_SPACE}", "${config.TEST_ENV}", config.APPS)
+      config.TEST_APPS.keySet().each{
+        deploy("${it}", "${config.NAME_SPACE}", "${config.TEST_ENV}", config.TEST_APPS)
       }
     }
   }

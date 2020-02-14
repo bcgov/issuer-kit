@@ -24,7 +24,8 @@ class config {
 
   // List of apps that will require to be deployed.
   // The map binds an image with the set of deployments that are related to it
-  public static final Map<String, String[]> APPS = ['identity-kit-admin':['identity-kit-admin-bc', 'ns-id-admin'], 'identity-kit-public':['identity-kit-public-bc', 'ns-id-public'], 'identity-kit-controller':['identity-kit-controller-bc', 'ns-id-controller'], 'identity-kit-agent':['identity-kit-agent-bc', 'ns-id-agent']]
+  public static final Map<String, String[]> TEST_APPS = ['identity-kit-admin':['identity-kit-admin-bc'], 'identity-kit-public':['identity-kit-public-bc'], 'identity-kit-controller':['identity-kit-controller-bc'], 'identity-kit-agent':['identity-kit-agent-bc']]
+  public static final Map<String, String[]> PROD_APPS = ['identity-kit-admin':['identity-kit-admin-bc', 'ns-id-admin'], 'identity-kit-public':['identity-kit-public-bc', 'ns-id-public'], 'identity-kit-controller':['identity-kit-controller-bc', 'ns-id-controller'], 'identity-kit-agent':['identity-kit-agent-bc', 'ns-id-agent']]
   
   // Mapping for source code context directories
   public static final Map<String, String> APP_CONTEXT_DIRS = ['identity-kit-admin-angular':'wa-admin', 'identity-kit-admin':'wa-admin', 'identity-kit-public-angular':'wa-public', 'identity-kit-public':'wa-public', 'identity-kit-controller':'identity-controller', 'identity-kit-agent':'docker/agent']

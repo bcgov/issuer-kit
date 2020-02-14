@@ -142,10 +142,10 @@ node {
   }
 
   // Deploying new images
-  stage("Deploy images to ${config.PROD_ENV}") {
+  stage("Deploy images to ${config.TEST_ENV}") {
     script {
       config.APPS.keySet().each{
-        deploy("${it}", "${config.NAME_SPACE}", "${config.PROD_ENV}", config.APPS)
+        deploy("${it}", "${config.NAME_SPACE}", "${config.TEST_ENV}", config.APPS)
       }
     }
   }

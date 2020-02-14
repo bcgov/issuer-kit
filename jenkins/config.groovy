@@ -8,7 +8,7 @@ class config {
   // Deployment configuration
   public static final String[] DEPLOYMENT_ENVIRONMENT_TAGS = ['dev', 'test', 'prod']
   // public static final String DEV_ENV = "${DEPLOYMENT_ENVIRONMENT_TAGS[0]}"
-  // public static final String TEST_ENV = "${DEPLOYMENT_ENVIRONMENT_TAGS[1]}"
+  public static final String TEST_ENV = "${DEPLOYMENT_ENVIRONMENT_TAGS[1]}"
   public static final String PROD_ENV = "${DEPLOYMENT_ENVIRONMENT_TAGS[2]}"
 
   // The name of the project namespace(s).

@@ -26,7 +26,7 @@ export class StateService {
   private _isAuth = false;
   private _title = 'Identity Kit POC';
   private _apiUrl: string;
-  user: IUser = {};
+  userIdToken: any;
 
   get linkId() {
     return localStorage.getItem('linkId');

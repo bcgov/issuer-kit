@@ -9,6 +9,7 @@ import { take, mergeMap, debounce, debounceTime } from 'rxjs/operators';
 import { TypeaheadService, ICPItem } from 'src/app/services/typeahead.service';
 import { CpRequest } from 'src/app/models/cp-request';
 import { AppConfigService } from 'src/app/services/app-config.service';
+import * as moment from 'moment';
 
 @Component({
   selector: 'wap-success',
@@ -81,7 +82,7 @@ import { AppConfigService } from 'src/app/services/app-config.service';
                     (invalid && fg.controls['emailAddress'].invalid) ||
                     (fg.controls['emailAddress'].touched && fg.controls['emailAddress'].invalid)
                   "
-                  [disabled]="validAuthenticatedUser"
+                  [disabled]="false"
                 >
                 </wap-input>
                 <wap-input
@@ -145,7 +146,8 @@ import { AppConfigService } from 'src/app/services/app-config.service';
                       style="display: hidden;"
                       matInput
                       [matDatepicker]="picker"
-                      placeholder="MM/DD/YYYY"
+                      displayFormat="DD/MM/YYYY"
+                      placeholder="DD/MM/YYYY"
                       formControlName="dateOfBirth"
                       (onFocus)="dobFocus = true"
                       (onBlur)="dobFocus = false"
@@ -380,28 +382,28 @@ export class SuccessComponent implements OnInit, OnDestroy {
 
   async ngOnInit() {
     if (!this.stateSvc._id) return (this.hasId = false);
-    let user = this.stateSvc.user;
+    let user = this.stateSvc.userIdToken;
     const keys = Object.keys(user);
     this.disableList = keys.filter(key => user[key] !== undefined || null || '');
 
-    if (!user || user.email || user.email.match('@identity-kit.org')) {
+    if (!user || user.preferred_username.match('wa-')) {
       user = {
         firstName: this.stateSvc.invitedUser.firstName,
         lastName: this.stateSvc.invitedUser.lastName,
         email: this.stateSvc.invitedUser.email
       };
-      this.validAuthenticatedUser = (user.firstName !== '' && user.lastName !== '' && user.email !== '');
+      this.validAuthenticatedUser = (user.given_name !== '' && user.family_name !== '' && user.email !== '');
     }
 
-    const firstName = new FormControl(user.firstName, [Validators.required]);
-    const lastName = new FormControl(user.lastName, [Validators.required]);
+    const firstName = new FormControl(user.given_name, [Validators.required]);
+    const lastName = new FormControl(user.family_name, [Validators.required]);
     const emailAddress = new FormControl(user.email, [Validators.required, Validators.email]);
 
-    const streetAddress = new FormControl('', [Validators.required]);
-    const postalCode = new FormControl('', [Validators.required, postalCodeValidator()]);
-    const locality = new FormControl('', [Validators.required]);
+    const streetAddress = new FormControl(user.address.street_address, [Validators.required]);
+    const postalCode = new FormControl(user.address.postal_code, [Validators.required, postalCodeValidator()]);
+    const locality = new FormControl(user.address.locality, [Validators.required]);
 
-    const dateOfBirth = new FormControl('', [Validators.required]);
+    const dateOfBirth = new FormControl(moment(user.birthdate).toDate(), [Validators.required]);
 
     this.fg = new FormGroup({
       firstName,

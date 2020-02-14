@@ -3,11 +3,6 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AppConfigService } from './app-config.service';
 
-export interface IUser extends Keycloak.KeycloakProfile {
-  _id?: string;
-  guid?: string;
-}
-
 export interface IValidateLink {
   _id: string;
   expired: boolean;

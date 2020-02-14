@@ -105,13 +105,11 @@ void deploy(String appName, String namespace, String envTag, Map<String, String[
 
     echo "Watching rollout of ${appName} in ${namespace}-${envTag} ..."
     openshift.withProject("${namespace}-${envTag}") {
-        APP_MAPPINGS.keySet().each{
-          APP_MAPPINGS["${it}"].each{
-            def dc = openshift.selector('dc', "${it}")
-            // Wait for the deployment to complete.
-            // This will wait until the desired replicas are all available
-            dc.rollout().status()
-          }
+        APP_MAPPINGS.get("${appName}").each{
+          def dc = openshift.selector('dc', "${it}")
+          // Wait for the deployment to complete.
+          // This will wait until the desired replicas are all available
+          dc.rollout().status()
         }
     }
 
@@ -142,10 +140,10 @@ node {
   }
 
   // Deploying new images
-  stage("Deploy images to ${config.PROD_ENV}") {
+  stage("Deploy images to ${config.TEST_ENV}") {
     script {
-      config.APPS.keySet().each{
-        deploy("${it}", "${config.NAME_SPACE}", "${config.PROD_ENV}", config.APPS)
+      config.TEST_APPS.keySet().each{
+        deploy("${it}", "${config.NAME_SPACE}", "${config.TEST_ENV}", config.TEST_APPS)
       }
     }
   }

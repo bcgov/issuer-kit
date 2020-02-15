@@ -3,11 +3,6 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AppConfigService } from './app-config.service';
 
-export interface IUser extends Keycloak.KeycloakProfile {
-  _id?: string;
-  guid?: string;
-}
-
 export interface IValidateLink {
   _id: string;
   expired: boolean;
@@ -26,7 +21,7 @@ export class StateService {
   private _isAuth = false;
   private _title = 'Identity Kit POC';
   private _apiUrl: string;
-  user: IUser = {};
+  userIdToken: any;
 
   get linkId() {
     return localStorage.getItem('linkId');

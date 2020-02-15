@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { StateService, IUser } from 'src/app/services/state.service';
+import { StateService } from 'src/app/services/state.service';
 import { ActionService } from 'src/app/services/action.service';
 import {
   FormGroup,
@@ -480,11 +480,17 @@ export class SuccessComponent implements OnInit, OnDestroy {
       key => user[key] !== undefined || null || '',
     );
 
-    if (!user || user.preferred_username.match('wa-')) {
+    if (!user || user.preferred_username.startsWith('wa-')) {
       user = {
         given_name: this.stateSvc.invitedUser.firstName,
         family_name: this.stateSvc.invitedUser.lastName,
         email: this.stateSvc.invitedUser.email,
+        address: {
+          street_address: '',
+          locality: '',
+          postal_code: ''
+        },
+        birthdate: ''
       };
     }
 

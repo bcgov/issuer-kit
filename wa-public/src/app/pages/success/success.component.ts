@@ -230,7 +230,7 @@ import { AppConfigService } from 'src/app/services/app-config.service';
           <mat-card-content>
             <ion-item [href]="deeplink" lines="none" target="_blank">
               <ion-icon slot="start" name="log-out" color="dark"> </ion-icon>
-              <ion-label>Open in Street Cred app (iOS device only) </ion-label>
+              <ion-label>Open in a Trusted Digital Wallet</ion-label>
             </ion-item>
           </mat-card-content>
         </mat-card>
@@ -431,7 +431,7 @@ export class SuccessComponent implements OnInit, OnDestroy {
     const inviteURL = `${AppConfigService.settings.baseUrl}?c_i=${invitation.base64}`;
     this.invite = invitation.invitation as any;
     this.img = `https://chart.googleapis.com/chart?cht=qr&chs=300x300&chld=L|0&chl=${inviteURL}`;
-    this.deeplink = `id.streetcred://launch?d_m=${invitation.base64}`;
+    this.deeplink = `didcomm://launch?d_m=${invitation.base64}`;
     const previewData = of(this.setPreview(this.fg));
     this.$previewData = previewData;
     this.setIndex(0);

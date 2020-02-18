@@ -219,11 +219,7 @@ import * as moment from 'moment';
                   </ion-text></ion-note
                 >
                 <ion-item lines="none">
-                  <ion-label
-                    ><ion-text class="ion-text-wrap"
-                      >DISCLAIMER: lorem ipsum dolor sit amet...</ion-text
-                    ></ion-label
-                  >
+                  <ion-label><ion-text class="ion-text-wrap">I certify that the information above is correct, and that I want to proceed.</ion-text></ion-label>
                   <ion-checkbox
                     slot="start"
                     (click)="accepted = !accepted"

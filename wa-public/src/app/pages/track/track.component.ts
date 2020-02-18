@@ -7,18 +7,8 @@ import { AppConfigService } from 'src/app/services/app-config.service';
 @Component({
   selector: 'wap-track',
   template: `
-    <ion-header *ngIf="$title | async as title">
-      <ion-toolbar color="primary">
-        <ion-title> {{ title }}</ion-title>
+    <wap-header title="Issuing Credential"></wap-header>
 
-        <ion-buttons slot="primary">
-          <ion-button (click)="logout()">
-            <ion-label>Log Out</ion-label>
-            <ion-icon name="log-out"></ion-icon>
-          </ion-button>
-        </ion-buttons>
-      </ion-toolbar>
-    </ion-header>
     <ion-content *ngIf="$id | async as credExId" fullscreen>
       <wap-credential-issuance
         [credExId]="credExId"
@@ -28,7 +18,6 @@ import { AppConfigService } from 'src/app/services/app-config.service';
   styleUrls: ['./track.component.scss']
 })
 export class TrackComponent implements OnInit {
-  $title = new BehaviorSubject<string>('Issuing Credential');
   $id = new BehaviorSubject<string>(null);
 
   constructor(public actionSvc: ActionService, private route: ActivatedRoute) {}

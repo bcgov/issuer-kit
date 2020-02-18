@@ -35,6 +35,7 @@ import { SuccessComponent } from './pages/success/success.component';
 import { TrackComponent } from './pages/track/track.component';
 import { AppConfigService } from './services/app-config.service';
 import { TermsAndConditionsComponent } from './components/terms-and-conditions/terms-and-conditions.component';
+import { HeaderComponent } from './components/header/header.component';
 
 const keycloakService = new KeycloakService();
 
@@ -75,7 +76,7 @@ const components = [
 ];
 
 @NgModule({
-  declarations: [[...components], AppComponent, TermsAndConditionsComponent],
+  declarations: [[...components], AppComponent, TermsAndConditionsComponent, HeaderComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,

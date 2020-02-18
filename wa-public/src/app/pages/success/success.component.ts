@@ -19,18 +19,8 @@ import * as moment from 'moment';
 @Component({
   selector: 'wap-success',
   template: `
-    <ion-header *ngIf="$title | async as title">
-      <ion-toolbar color="primary">
-        <ion-title> {{ title }}</ion-title>
+    <wap-header title="Issue Verified Person Digital ID" [logoutUrl]="logoutUrl"></wap-header>
 
-        <ion-buttons slot="primary">
-          <ion-button (click)="logout()">
-            <ion-label>Log Out</ion-label>
-            <ion-icon name="log-out"></ion-icon>
-          </ion-button>
-        </ion-buttons>
-      </ion-toolbar>
-    </ion-header>
     <wap-view-wrapper *ngIf="hasId; else noIdHelper">
       <ion-grid *ngIf="index === 0">
         <ion-row>
@@ -320,6 +310,8 @@ import * as moment from 'moment';
   styleUrls: ['./success.component.scss'],
 })
 export class SuccessComponent implements OnInit, OnDestroy {
+  readonly logoutUrl: string = AppConfigService.settings.baseUrl;
+
   index = 0;
   hasId = true;
   accepted = false;
@@ -353,7 +345,6 @@ export class SuccessComponent implements OnInit, OnDestroy {
 
   user: any;
   fg: FormGroup;
-  $title: Observable<string>;
 
   subs: Subscription[] = [];
   $previewData: Observable<{ key: string; value: any; label: string }[]>;
@@ -527,7 +518,6 @@ export class SuccessComponent implements OnInit, OnDestroy {
         const req = new CpRequest(obs);
         this.typeAheadSvc.queryCp(req);
       });
-    this.$title = of(`Issue Verified Person Digital ID`);
 
     const invitation = await this.actionSvc.getInvitation().toPromise();
     this.connectionId = invitation.connection_id;
@@ -629,11 +619,6 @@ export class SuccessComponent implements OnInit, OnDestroy {
               );
           }
         }),
-    );
-  }
-  async logout() {
-    await this.actionSvc.logout(
-      `${AppConfigService.settings.baseUrl}`,
     );
   }
 }

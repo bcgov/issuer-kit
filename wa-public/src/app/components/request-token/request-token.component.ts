@@ -8,11 +8,7 @@ import { LoadingController } from '@ionic/angular';
 @Component({
   selector: 'wap-request-token',
   template: `
-    <ion-header>
-      <ion-toolbar color="primary">
-        <ion-title>Request Token</ion-title>
-      </ion-toolbar>
-    </ion-header>
+    <wap-header title="Request Token"></wap-header>
     <wap-view-wrapper>
       <mat-card>
         <mat-card-header class="main-header" *ngIf="!sent; else isSent">

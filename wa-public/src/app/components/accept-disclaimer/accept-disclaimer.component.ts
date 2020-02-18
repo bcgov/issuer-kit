@@ -9,9 +9,8 @@ import { AppConfigService } from 'src/app/services/app-config.service';
 @Component({
   selector: 'wap-accept-disclaimer',
   template: `
-    <ion-header>
-      <ion-toolbar color="primary"></ion-toolbar>
-    </ion-header>
+    <wap-header></wap-header>
+
     <wap-view-wrapper *ngIf="hasId; else noIdHelper">
       <ion-card>
         <ion-card-header>

@@ -6,11 +6,7 @@ import { AppConfigService } from 'src/app/services/app-config.service';
 @Component({
   selector: 'wap-completed',
   template: `
-    <ion-header *ngIf="$title | async as title">
-      <ion-toolbar color="primary">
-        <ion-title> {{ title }}</ion-title>
-      </ion-toolbar>
-    </ion-header>
+    <wap-header title="Identity Kit POC"></wap-header>
     <wap-view-wrapper>
       <mat-card>
         <mat-card-header>
@@ -35,7 +31,6 @@ import { AppConfigService } from 'src/app/services/app-config.service';
   styleUrls: ['./completed.component.scss'],
 })
 export class CompletedComponent implements OnInit {
-  $title = of('Identity Kit POC');
   pocLink: string;
 
   constructor(private stateSvc: StateService) {

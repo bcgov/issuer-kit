@@ -3,6 +3,8 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { StateService, IValidateLink } from 'src/app/services/state.service';
 import { ActionService } from 'src/app/services/action.service';
 import { HttpClient } from '@angular/common/http';
+import { KeycloakService } from 'keycloak-angular';
+import { AppConfigService } from 'src/app/services/app-config.service';
 
 @Component({
   selector: 'wap-accept-disclaimer',
@@ -69,7 +71,8 @@ export class AcceptDisclaimerComponent implements OnInit {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private stateSvc: StateService
+    private stateSvc: StateService,
+    private keycloakService: KeycloakService
   ) {
   }
 
@@ -85,7 +88,10 @@ export class AcceptDisclaimerComponent implements OnInit {
   }
 
   submit() {
-    this.router.navigate(['/success']);
+    const loginOptions: Keycloak.KeycloakLoginOptions = {
+      redirectUri: `${AppConfigService.settings.baseUrl}/success`
+    };
+    this.keycloakService.login(loginOptions);
   }
 
   decline() {

@@ -103,9 +103,7 @@ export class ActionService {
     private http: HttpClient,
   ) {
     this._apiUrl = AppConfigService.settings.apiServer.url;
-    this.keyCloakSvc
-      .loadUserProfile()
-      .then((res: Keycloak.KeycloakProfile) => (this.stateSvc.user = res));
+    this.stateSvc.userIdToken = this.keyCloakSvc.getKeycloakInstance().idTokenParsed;
   }
 
   async logout(uri?: string) {

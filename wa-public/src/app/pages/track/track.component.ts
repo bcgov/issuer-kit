@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { ActionService } from 'src/app/services/action.service';
 import { ActivatedRoute } from '@angular/router';
+import { AppConfigService } from 'src/app/services/app-config.service';
 
 @Component({
   selector: 'wap-track',
@@ -37,6 +38,6 @@ export class TrackComponent implements OnInit {
     this.$id.next(credExId);
   }
   async logout() {
-    await this.actionSvc.logout()
+    await this.actionSvc.logout(`${AppConfigService.settings.baseUrl}`);
   }
 }

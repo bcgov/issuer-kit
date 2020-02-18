@@ -6,13 +6,13 @@
 # NAME=identity-kit-agent
 # APP_NAME=identity-kit
 # APP_GROUP=identity-kit-agent
-# SUFFIX=-bc
+# SUFFIX=
 # ROLE=agent
-APPLICATION_DOMAIN=identity-kit-agent.pathfinder.gov.bc.ca
+APPLICATION_DOMAIN=identity-kit-agent-devex-von-test.pathfinder.gov.bc.ca
 # IMAGE_NAMESPACE=devex-von-tools
 # SOURCE_IMAGE_NAME=identity-kit-agent
-TAG_NAME=prod
-AGENT_LABEL_NAME=BCGov-POC-Issuer
+TAG_NAME=test
+# AGENT_LABEL_NAME=identity-kit-agent
 # AGENT_BASE_URL=https://identity-kit-agent.pathfinder.gov.bc.ca
 # WEBHOOK_URL=http://identity-kit-controller-bc:8080
 # AGENT_ADMIN_PORT=8024

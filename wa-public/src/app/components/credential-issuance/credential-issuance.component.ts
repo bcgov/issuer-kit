@@ -99,8 +99,8 @@ export class CredentialIssuanceComponent implements OnInit, OnDestroy {
         }),
     );
     // setTimeout(() => (this.step = 3), 20000);
-    const user = this.stateSvc.user;
-    if (user) this.$user = of(`${user.firstName}`);
+    const user = this.stateSvc.userIdToken;
+    if (user) this.$user = of(`${user.given_name}`);
   }
   ngOnDestroy() {
     this.subs.forEach(sub => sub.unsubscribe());
@@ -111,6 +111,6 @@ export class CredentialIssuanceComponent implements OnInit, OnDestroy {
   }
 
   async completeProgress() {
-    await this.actionSvc.logout(`${AppConfigService.settings.baseUrl}/completed`);
+    await this.actionSvc.logout(`${AppConfigService.settings.baseUrl}`);
   }
 }

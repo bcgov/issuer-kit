@@ -24,6 +24,7 @@ import * as moment from 'moment';
     <wap-view-wrapper *ngIf="hasId; else noIdHelper">
       <ion-grid *ngIf="index === 0">
         <ion-row>
+
           <ion-col>
             <mat-card class="form-card">
               <mat-card-header class="main-header">
@@ -43,7 +44,8 @@ import * as moment from 'moment';
               </mat-card-content>
             </mat-card>
           </ion-col>
-          <ion-col>
+
+          <ion-col class="ion-align-self-center">
             <mat-card class="form-card">
               <mat-card-header class="main-header">
                 <img
@@ -208,27 +210,30 @@ import * as moment from 'moment';
                     MM/DD/YYYY
                   </ion-text></ion-note
                 >
+              </mat-card-content>
+            </mat-card>
+          </ion-col>
+        </ion-row>
+
+        <ion-row>
+          <ion-col></ion-col>
+          <ion-col>
+            <mat-card>
+              <ion-card-content>
                 <ion-item lines="none">
-                  <ion-label><ion-text class="ion-text-wrap">I certify that the information above is correct, and that I want to proceed.</ion-text></ion-label>
+                  <ion-label><ion-text class="ion-text-wrap">I certify that the above information is correct, and that I want to proceed.</ion-text></ion-label>
                   <ion-checkbox
                     slot="start"
                     (click)="accepted = !accepted"
                   ></ion-checkbox>
                 </ion-item>
-              </mat-card-content>
-              <mat-card-actions>
-                <button
-                  mat-raised-button
-                  color="primary"
-                  (click)="setIndex(index + 1)"
-                  [disabled]="formInvalid"
-                >
-                  Preview
-                </button>
-              </mat-card-actions>
+                <ion-button color="primary" (click)="setIndex(index + 1)" [disabled]="formInvalid">Preview</ion-button>
+              </ion-card-content>
             </mat-card>
           </ion-col>
+          <ion-col></ion-col>
         </ion-row>
+
       </ion-grid>
       <mat-card *ngIf="index === 1">
         <mat-card-header class="main-header">

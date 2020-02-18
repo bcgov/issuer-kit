@@ -45,8 +45,8 @@ import * as moment from 'moment';
             </mat-card>
           </ion-col>
 
-          <ion-col class="ion-align-self-center">
-            <mat-card class="form-card">
+          <ion-col>
+            <mat-card  class="form-card">
               <mat-card-header class="main-header">
                 <img
                   mat-card-avatar
@@ -216,22 +216,28 @@ import * as moment from 'moment';
         </ion-row>
 
         <ion-row>
-          <ion-col></ion-col>
           <ion-col>
             <mat-card>
               <ion-card-content>
-                <ion-item lines="none">
-                  <ion-label><ion-text class="ion-text-wrap">I certify that the above information is correct, and that I want to proceed.</ion-text></ion-label>
-                  <ion-checkbox
-                    slot="start"
-                    (click)="accepted = !accepted"
-                  ></ion-checkbox>
-                </ion-item>
-                <ion-button color="primary" (click)="setIndex(index + 1)" [disabled]="formInvalid">Preview</ion-button>
+                <ion-grid>
+                  <ion-row>
+                    <ion-col>
+                      <ion-item lines="none">
+                        <ion-label><ion-text class="ion-text-wrap">I certify that the above information is correct, and that I want to proceed.</ion-text></ion-label>
+                        <ion-checkbox
+                          slot="start"
+                          (click)="accepted = !accepted"
+                        ></ion-checkbox>
+                      </ion-item>
+                    </ion-col>
+                    <ion-col>
+                      <ion-button color="primary" (click)="setIndex(index + 1)" [disabled]="formInvalid" class="float-right">Preview</ion-button>
+                    </ion-col>
+                  </ion-row>
+                </ion-grid>
               </ion-card-content>
             </mat-card>
           </ion-col>
-          <ion-col></ion-col>
         </ion-row>
 
       </ion-grid>
@@ -254,7 +260,7 @@ import * as moment from 'moment';
             position="xzzxx"
           ></wap-issue-preview>
         </mat-card-content>
-        <mat-card-actions>
+        <mat-card-actions class="card-confirm-submission">
           <button
             mat-raised-button
             color="primary"
@@ -266,6 +272,7 @@ import * as moment from 'moment';
             mat-raised-button
             color="primary"
             (click)="setIndex(index + 1)"
+            class="float-right"
           >
             Submit
           </button>

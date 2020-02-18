@@ -21,6 +21,10 @@ const routes: Routes = [
     canActivate: [ValidInviteGuard],
   },
   {
+    path: 'accept/:id',
+    component: AcceptDisclaimerComponent,
+  },
+  {
     path: 'success',
     component: SuccessComponent,
     canActivate: [KeycloakGuard],
@@ -28,11 +32,6 @@ const routes: Routes = [
   {
     path: 'issue-credential/:id',
     component: TrackComponent,
-    canActivate: [KeycloakGuard],
-  },
-  {
-    path: 'accept/:id',
-    component: AcceptDisclaimerComponent,
     canActivate: [KeycloakGuard],
   },
   {

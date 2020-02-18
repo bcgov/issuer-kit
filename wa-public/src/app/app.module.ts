@@ -28,7 +28,7 @@ import { InputComponent } from './components/input/input.component';
 import { IssuePreviewComponent } from './components/issue-preview/issue-preview.component';
 import { RequestTokenComponent } from './components/request-token/request-token.component';
 import { ViewWrapperComponent } from './components/view-wrapper/view-wrapper.component';
-import { HomeComponent } from './home/home.component';
+import { HomeComponent } from './components/home/home.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { CompletedComponent } from './pages/completed/completed.component';
 import { SuccessComponent } from './pages/success/success.component';

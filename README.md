@@ -43,7 +43,7 @@ Identity Kit can be started in different (demo, local and developer) modes by ex
 
 ### Demo Mode
 
-Demo mode runs Identity Kit using the [BCovrin Test](http://test.bcovrin.vonx.io) ledger and uses `ngrok` to expose the agent running locally to the Internet. The Streetcred mobile agent can be used with Identity Kit if you use demo mode.
+Demo mode runs Identity Kit using the [BCovrin Test](http://test.bcovrin.vonx.io) ledger and uses `ngrok` to expose the agent running locally to the Internet. The Streetcred mobile agent (iOS and Android) can be used with Identity Kit if you use demo mode.
 
 To run in demo mode, open two shell/terminal sessions:
 

@@ -33,7 +33,7 @@ Step 1: Setup
 receiving, holding, and sharing verifiable credentials that are issued to you.
 Please install one of the following: 
 <ol>    
-<li>Streetcred, currently only for iPhone or iPad. Please make special note of
+<li>Streetcred, for iOS and Android. Please make special note of
 the extra details for this step since the demo will not work unless you follow
 the app setup instructions <a href="https://github.com/bcgov/identity-kit-poc/blob/master/docs/GettingApp.md">here</a>.
 <li>Other agents are TBD and are expected to be created by POC participants.

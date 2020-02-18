@@ -30,10 +30,16 @@ import { HttpClient } from '@angular/common/http';
             <ion-label><ion-text class="ion-text-wrap">I agree to the above terms of service.</ion-text></ion-label>
             <ion-checkbox slot="start" (click)="accepted = !accepted"></ion-checkbox>
           </ion-item>
-          <ion-item lines="none">
-            <ion-button (click)="decline()" (click)="decline()" color="danger" size="default">Leave</ion-button>
-            <ion-button (click)="submit()" [disabled]="!accepted" color="primary" size="default">Proceed</ion-button>
-          </ion-item>
+          <ion-grid>
+            <ion-row>
+              <ion-col class="ion-align-self-start">
+                <ion-button (click)="decline()" (click)="decline()" color="danger" size="default">Leave</ion-button>
+              </ion-col>
+              <ion-col class="ion-align-self-end">
+                <ion-button (click)="submit()" [disabled]="!accepted" color="primary" size="default" class="float-right">Proceed</ion-button>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
         </ion-card-content>
       </ion-card>
 

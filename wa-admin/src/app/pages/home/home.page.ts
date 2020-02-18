@@ -24,7 +24,7 @@ import { StateService } from 'src/app/services/state.service';
       </ion-toolbar>
     </ion-header>
 
-    <ion-content padding color="light">
+    <ion-content class="ion-padding" color="light">
       <div class="view-wrapper">
         <ion-toolbar color="secondary">
           <ion-searchbar

@@ -25,7 +25,7 @@ import * as moment from 'moment';
 
         <ion-buttons slot="primary">
           <ion-button (click)="logout()">
-            <ion-label>Logout</ion-label>
+            <ion-label>Log Out</ion-label>
             <ion-icon name="log-out"></ion-icon>
           </ion-button>
         </ion-buttons>
@@ -227,9 +227,6 @@ import * as moment from 'moment';
                 </ion-item>
               </mat-card-content>
               <mat-card-actions>
-                <button mat-raised-button color="primary" [disabled]="true">
-                  Back
-                </button>
                 <button
                   mat-raised-button
                   color="primary"

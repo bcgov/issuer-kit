@@ -13,7 +13,7 @@ import { AppConfigService } from 'src/app/services/app-config.service';
 
         <ion-buttons slot="primary">
           <ion-button (click)="logout()">
-            <ion-label>Logout</ion-label>
+            <ion-label>Log Out</ion-label>
             <ion-icon name="log-out"></ion-icon>
           </ion-button>
         </ion-buttons>

@@ -73,10 +73,12 @@ const components = [
   RequestTokenComponent,
   AcceptDisclaimerComponent,
   CompletedComponent,
+  TermsAndConditionsComponent,
+  HeaderComponent
 ];
 
 @NgModule({
-  declarations: [[...components], AppComponent, TermsAndConditionsComponent, HeaderComponent],
+  declarations: [[...components], AppComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,

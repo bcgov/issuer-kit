@@ -1,15 +1,3 @@
-mat-card {
-  margin-bottom: 40px;
-}
-
-@media (min-width: 959px) {
-  .form-card {
-    max-width: 600px;
-  }
-}
-
-@media (min-width: 660px) {
-  mat-card {
-    max-width: 660px;
-  }
+.float-right {
+  float: right;
 }

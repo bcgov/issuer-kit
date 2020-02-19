@@ -19,21 +19,12 @@ import * as moment from 'moment';
 @Component({
   selector: 'wap-success',
   template: `
-    <ion-header *ngIf="$title | async as title">
-      <ion-toolbar color="primary">
-        <ion-title> {{ title }}</ion-title>
+    <wap-header title="Issue Verified Person Digital ID" [logoutUrl]="logoutUrl"></wap-header>
 
-        <ion-buttons slot="primary">
-          <ion-button (click)="logout()">
-            <ion-label>Logout</ion-label>
-            <ion-icon name="log-out"></ion-icon>
-          </ion-button>
-        </ion-buttons>
-      </ion-toolbar>
-    </ion-header>
     <wap-view-wrapper *ngIf="hasId; else noIdHelper">
       <ion-grid *ngIf="index === 0">
         <ion-row>
+
           <ion-col>
             <mat-card class="form-card">
               <mat-card-header class="main-header">
@@ -53,8 +44,9 @@ import * as moment from 'moment';
               </mat-card-content>
             </mat-card>
           </ion-col>
+
           <ion-col>
-            <mat-card class="form-card">
+            <mat-card  class="form-card">
               <mat-card-header class="main-header">
                 <img
                   mat-card-avatar
@@ -218,34 +210,36 @@ import * as moment from 'moment';
                     MM/DD/YYYY
                   </ion-text></ion-note
                 >
-                <ion-item lines="none">
-                  <ion-label
-                    ><ion-text class="ion-text-wrap"
-                      >DISCLAIMER: lorem ipsum dolor sit amet...</ion-text
-                    ></ion-label
-                  >
-                  <ion-checkbox
-                    slot="start"
-                    (click)="accepted = !accepted"
-                  ></ion-checkbox>
-                </ion-item>
               </mat-card-content>
-              <mat-card-actions>
-                <button mat-raised-button color="primary" [disabled]="true">
-                  Back
-                </button>
-                <button
-                  mat-raised-button
-                  color="primary"
-                  (click)="setIndex(index + 1)"
-                  [disabled]="formInvalid"
-                >
-                  Preview
-                </button>
-              </mat-card-actions>
             </mat-card>
           </ion-col>
         </ion-row>
+
+        <ion-row>
+          <ion-col>
+            <mat-card>
+              <ion-card-content>
+                <ion-grid>
+                  <ion-row>
+                    <ion-col>
+                      <ion-item lines="none">
+                        <ion-label><ion-text class="ion-text-wrap">I certify that the above information is correct, and that I want to proceed.</ion-text></ion-label>
+                        <ion-checkbox
+                          slot="start"
+                          (click)="accepted = !accepted"
+                        ></ion-checkbox>
+                      </ion-item>
+                    </ion-col>
+                    <ion-col>
+                      <ion-button color="primary" (click)="setIndex(index + 1)" [disabled]="formInvalid" class="float-right">Preview</ion-button>
+                    </ion-col>
+                  </ion-row>
+                </ion-grid>
+              </ion-card-content>
+            </mat-card>
+          </ion-col>
+        </ion-row>
+
       </ion-grid>
       <mat-card *ngIf="index === 1">
         <mat-card-header class="main-header">
@@ -266,7 +260,7 @@ import * as moment from 'moment';
             position="xzzxx"
           ></wap-issue-preview>
         </mat-card-content>
-        <mat-card-actions>
+        <mat-card-actions class="card-confirm-submission">
           <button
             mat-raised-button
             color="primary"
@@ -278,6 +272,7 @@ import * as moment from 'moment';
             mat-raised-button
             color="primary"
             (click)="setIndex(index + 1)"
+            class="float-right"
           >
             Submit
           </button>
@@ -327,6 +322,8 @@ import * as moment from 'moment';
   styleUrls: ['./success.component.scss'],
 })
 export class SuccessComponent implements OnInit, OnDestroy {
+  readonly logoutUrl: string = AppConfigService.settings.baseUrl;
+
   index = 0;
   hasId = true;
   accepted = false;
@@ -360,7 +357,6 @@ export class SuccessComponent implements OnInit, OnDestroy {
 
   user: any;
   fg: FormGroup;
-  $title: Observable<string>;
 
   subs: Subscription[] = [];
   $previewData: Observable<{ key: string; value: any; label: string }[]>;
@@ -534,7 +530,6 @@ export class SuccessComponent implements OnInit, OnDestroy {
         const req = new CpRequest(obs);
         this.typeAheadSvc.queryCp(req);
       });
-    this.$title = of(`Issue Verified Person Digital ID`);
 
     const invitation = await this.actionSvc.getInvitation().toPromise();
     this.connectionId = invitation.connection_id;
@@ -636,11 +631,6 @@ export class SuccessComponent implements OnInit, OnDestroy {
               );
           }
         }),
-    );
-  }
-  async logout() {
-    await this.actionSvc.logout(
-      `${AppConfigService.settings.baseUrl}`,
     );
   }
 }

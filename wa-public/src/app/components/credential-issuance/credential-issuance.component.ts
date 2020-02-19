@@ -1,13 +1,11 @@
-import { Component, OnInit, AfterViewInit, Input, OnDestroy } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-
-import { startWith, switchMap } from 'rxjs/operators';
-import { interval } from 'rxjs/internal/observable/interval';
-import { StateService } from 'src/app/services/state.service';
-import { Observable, of, Subscription } from 'rxjs';
-import { ActionService } from 'src/app/services/action.service';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { Observable, of, Subscription } from 'rxjs';
+import { interval } from 'rxjs/internal/observable/interval';
+import { startWith, switchMap } from 'rxjs/operators';
+import { ActionService } from 'src/app/services/action.service';
 import { AppConfigService } from 'src/app/services/app-config.service';
+import { StateService } from 'src/app/services/state.service';
 
 @Component({
   selector: 'wap-credential-issuance',
@@ -15,26 +13,41 @@ import { AppConfigService } from 'src/app/services/app-config.service';
     <div class="content">
       <h2>Issuing Identity Credential</h2>
       <ng-container>
-        <mat-progress-bar *ngIf="step !== 3" mode="indeterminate" value="{{ progressValue }}"></mat-progress-bar>
-        <mat-progress-bar *ngIf="step === 3" mode="determinate" value="100"></mat-progress-bar>
+        <mat-progress-bar
+          *ngIf="step !== 3"
+          mode="indeterminate"
+          value="{{ progressValue }}"
+        ></mat-progress-bar>
+        <mat-progress-bar
+          *ngIf="step === 3"
+          mode="determinate"
+          value="100"
+        ></mat-progress-bar>
       </ng-container>
       <mat-list id="issuing-steps">
         <!-- Connection formed -->
         <mat-list-item>
-          <mat-icon mat-list-icon class="material-icons issuing-step-success">check_circle_outline</mat-icon>
+          <mat-icon mat-list-icon class="material-icons issuing-step-success"
+            >check_circle_outline</mat-icon
+          >
           <h3 mat-line>
             Connection Formed
           </h3>
 
           <p mat-line *ngIf="$user | async as firstName">
-            {{ firstName }} you now have a connection with the Identity Kit agent.
+            {{ firstName }} you now have a connection with the Identity Kit
+            agent.
           </p>
         </mat-list-item>
         <mat-list-item>
           <mat-icon mat-list-icon *ngIf="step === 2">
             <mat-spinner class="inline-spinner" diameter="24"></mat-spinner>
           </mat-icon>
-          <mat-icon *ngIf="step > 2" mat-list-icon class="material-icons issuing-step-success">
+          <mat-icon
+            *ngIf="step > 2"
+            mat-list-icon
+            class="material-icons issuing-step-success"
+          >
             check_circle_outline</mat-icon
           >
           <h3 mat-line>
@@ -45,7 +58,9 @@ import { AppConfigService } from 'src/app/services/app-config.service';
         <ng-template [ngIf]="step > 2">
           <!-- Credential Issued -->
           <mat-list-item>
-            <mat-icon mat-list-icon class="material-icons issuing-step-success">check_circle_outline</mat-icon>
+            <mat-icon mat-list-icon class="material-icons issuing-step-success"
+              >check_circle_outline</mat-icon
+            >
 
             <h3 mat-line>
               Credential Issued
@@ -62,8 +77,8 @@ import { AppConfigService } from 'src/app/services/app-config.service';
         </mat-card-header>
         <mat-card-content>
           <p>
-            Congratulations! Your credential has been issued. You will receive a notification to store the credential in
-            your wallet.
+            Congratulations! Your credential has been issued. You will receive a
+            notification to store the credential in your wallet.
           </p>
         </mat-card-content>
       </mat-card>
@@ -73,12 +88,19 @@ import { AppConfigService } from 'src/app/services/app-config.service';
 })
 export class CredentialIssuanceComponent implements OnInit, OnDestroy {
   @Input() credExId: string;
+
+  readonly logoutUrl: string = `${AppConfigService.settings.baseUrl}/completed`;
+
   $user: Observable<string>;
   step: number;
   progressValue: number;
   subs: Subscription[] = [];
 
-  constructor(private router: Router, private stateSvc: StateService, private actionSvc: ActionService) {}
+  constructor(
+    private router: Router,
+    private stateSvc: StateService,
+    private actionSvc: ActionService,
+  ) {}
 
   ngOnInit() {
     // TODO @SH: set the current connection id
@@ -111,6 +133,7 @@ export class CredentialIssuanceComponent implements OnInit, OnDestroy {
   }
 
   async completeProgress() {
-    await this.actionSvc.logout(`${AppConfigService.settings.baseUrl}`);
+    // TODO: use header logout function rather than defining a helper here
+    await this.actionSvc.logout(this.logoutUrl);
   }
 }

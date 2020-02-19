@@ -3,8 +3,8 @@ import { KeycloakService } from 'keycloak-angular';
 
 @Component({
   selector: 'wap-header',
-  templateUrl: '../../../assets/components/header/header.component.html',
-  styleUrls: ['../../../assets/components/header/header.component.scss'],
+  templateUrl: './header.component.html',
+  styleUrls: ['./header.component.scss'],
 })
 export class HeaderComponent implements OnInit {
   @Input() logoUrl: string;

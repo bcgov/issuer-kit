@@ -7,7 +7,7 @@ import { AppConfigService } from 'src/app/services/app-config.service';
 @Component({
   selector: 'wap-track',
   template: `
-    <wap-header title="Issuing Credential"></wap-header>
+    <wap-header title="Issuing Credential" [logoutUrl]="logoutUrl"></wap-header>
 
     <ion-content *ngIf="$id | async as credExId" fullscreen>
       <wap-credential-issuance
@@ -18,6 +18,7 @@ import { AppConfigService } from 'src/app/services/app-config.service';
   styleUrls: ['./track.component.scss']
 })
 export class TrackComponent implements OnInit {
+  readonly logoutUrl: string = `${AppConfigService.settings.baseUrl}/completed`;
   $id = new BehaviorSubject<string>(null);
 
   constructor(public actionSvc: ActionService, private route: ActivatedRoute) {}
@@ -25,8 +26,5 @@ export class TrackComponent implements OnInit {
   ngOnInit() {
     const credExId = this.route.snapshot.paramMap.get('id');
     this.$id.next(credExId);
-  }
-  async logout() {
-    await this.actionSvc.logout(`${AppConfigService.settings.baseUrl}`);
   }
 }

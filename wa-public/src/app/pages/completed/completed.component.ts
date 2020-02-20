@@ -6,7 +6,7 @@ import { AppConfigService } from 'src/app/services/app-config.service';
 @Component({
   selector: 'wap-completed',
   template: `
-    <wap-header title="Identity Kit POC"></wap-header>
+    <wap-header></wap-header>
     <wap-view-wrapper>
       <mat-card>
         <mat-card-header>
@@ -22,7 +22,7 @@ import { AppConfigService } from 'src/app/services/app-config.service';
           <br />
           <p></p>
           <p>
-            To try out your new verified person credential please go to this <a [href]="pocLink">demo site</a>
+            To try out your new verified person credential please <a [href]="pocLink">click here</a>.
           </p></mat-card-content
         >
       </mat-card>

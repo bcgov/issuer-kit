@@ -39,7 +39,7 @@ import * as moment from 'moment';
                   >Attributes from the Identity Provider</mat-card-subtitle
                 >
               </mat-card-header>
-              <mat-card-content *ngIf="$previewData | async as previewData">
+              <mat-card-content *ngIf="$previewData | async as previewData" class="claim-data">
                 <wap-issue-preview [values]="previewData"></wap-issue-preview>
               </mat-card-content>
             </mat-card>
@@ -58,6 +58,7 @@ import * as moment from 'moment';
                 <mat-card-subtitle>Validate claims</mat-card-subtitle>
               </mat-card-header>
               <mat-card-content [formGroup]="fg">
+                <ion-list>
                 <wap-input
                   [fc]="fg.controls['firstName']"
                   placeholder="John"
@@ -163,7 +164,7 @@ import * as moment from 'moment';
                     >Date of Birth
                     <ion-text color="danger">*</ion-text></ion-label
                   >
-                  <mat-form-field appearance="none">
+                  <mat-form-field appearance="none" class="date-form-field">
                     <input
                       matInput
                       [matDatepicker]="picker"
@@ -188,7 +189,6 @@ import * as moment from 'moment';
                 </ion-item>
                 <div
                   class="dp-border"
-                  style="border-style: solid;"
                   [ngClass]="{
                     'dp-border-warn':
                       fg['controls'].dateOfBirth.touched &&
@@ -210,6 +210,7 @@ import * as moment from 'moment';
                     MM/DD/YYYY
                   </ion-text></ion-note
                 >
+                </ion-list>
               </mat-card-content>
             </mat-card>
           </ion-col>

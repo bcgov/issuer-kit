@@ -19,7 +19,7 @@ mat-card {
 }
 
 .form-card {
-  height: 550px;
+  height: 600px;
 }
 
 ::ng-deep .mat-input-underline {
@@ -28,32 +28,19 @@ mat-card {
 
 .dp-border {
   width: 100%;
-  border: 0.5px;
-  border-style: solid;
+  border-top: 1px solid;
   border-color: #ccd1e1;
 }
 .dp-border-focused {
-  border-style: solid;
-  width: 100%;
-  border: 1px;
   border-color: #4e7a89;
 }
 .dp-border-valid {
-  border-style: solid;
-  width: 100%;
-  border: 1px;
   border-color: #10dc60;
 }
 .dp-border-warn {
-  border-style: solid;
-  width: 100%;
-  border: 1px;
   border-color: #f53d3d;
 }
 .dp-border-grey {
-  width: 100%;
-  border: 0.5px;
-  border-style: solid;
   border-color: #ccd1e1;
 }
 
@@ -74,6 +61,13 @@ mat-card {
 .float-right {
   float: right;
 }
- .card-confirm-submission {
-   padding: 20px;
- }
+
+.card-confirm-submission {
+  padding: 20px;
+}
+
+.date-form-field {
+  margin-top: -10px;
+  height: 54px;
+  font-size: 13px;
+}

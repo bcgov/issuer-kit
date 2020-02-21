@@ -21,6 +21,8 @@ export interface IAppConfig {
     realm: string;
     clientId: string;
   };
+
+  disclaimer: string;
 }
 
 @Injectable({

@@ -38,7 +38,6 @@ export interface IssueCredential {
 }
 export interface Claims {
   userdisplayname: string;
-  email: string;
   surname: string;
   givenname: string;
   birthdate: string;
@@ -121,7 +120,7 @@ export class ActionService {
   }
 
   issueCredentials(data: IssueCredential) {
-    console.log('issue data', data);
+    console.log('Credential data: ', data);
     return this.http.post<IssueResponse>(`${this._apiUrl}/issues/`, data);
   }
 

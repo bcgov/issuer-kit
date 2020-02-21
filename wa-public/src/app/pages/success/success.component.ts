@@ -86,19 +86,6 @@ import * as moment from 'moment';
                 >
                 </wap-input>
                 <wap-input
-                  [fc]="fg.controls['emailAddress']"
-                  placeholder="email@example.com"
-                  label="Email"
-                  error="Email address is required"
-                  [invalid]="
-                    (invalid && fg.controls['emailAddress'].invalid) ||
-                    (fg.controls['emailAddress'].touched &&
-                      fg.controls['emailAddress'].invalid)
-                  "
-                  [disabled]="isProvidedValue('email')"
-                >
-                </wap-input>
-                <wap-input
                   [fc]="fg.controls['streetAddress']"
                   placeholder="123 Fake Street"
                   label="Street Address"
@@ -481,7 +468,6 @@ export class SuccessComponent implements OnInit, OnDestroy {
       user = {
         given_name: this.stateSvc.invitedUser.firstName,
         family_name: this.stateSvc.invitedUser.lastName,
-        email: this.stateSvc.invitedUser.email,
         address: {
           street_address: '',
           locality: '',
@@ -493,10 +479,6 @@ export class SuccessComponent implements OnInit, OnDestroy {
 
     const firstName = new FormControl(user.given_name, [Validators.required]);
     const lastName = new FormControl(user.family_name, [Validators.required]);
-    const emailAddress = new FormControl(user.email, [
-      Validators.required,
-      Validators.email,
-    ]);
 
     const streetAddress = new FormControl(user.address.street_address, [
       Validators.required,
@@ -515,7 +497,6 @@ export class SuccessComponent implements OnInit, OnDestroy {
     this.fg = new FormGroup({
       firstName,
       lastName,
-      emailAddress,
       streetAddress,
       postalCode,
       locality,
@@ -564,11 +545,6 @@ export class SuccessComponent implements OnInit, OnDestroy {
         value: values.lastName || 'not defined',
       },
       {
-        label: 'Email Address',
-        key: 'emailAddress',
-        value: values.emailAddress || 'not defined',
-      },
-      {
         label: 'Street Address',
         key: 'streetAddress',
         value: values.streetAddress || 'not defined',
@@ -614,7 +590,6 @@ export class SuccessComponent implements OnInit, OnDestroy {
                   userdisplayname: `${form.firstName} ${form.lastName}`,
                   stateorprovince: 'BC',
                   locality: form.locality,
-                  email: form.emailAddress,
                   birthdate: form.dateOfBirth,
                   surname: form.lastName,
                   givenname: form.firstName,

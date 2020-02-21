@@ -12,7 +12,6 @@ export class DefaultSchemaDefinition implements ISchemaDefinition {
   constructor() {
     this.attributes = [
       'userdisplayname',
-      'email',
       'surname',
       'givenname',
       'birthdate',
@@ -25,6 +24,6 @@ export class DefaultSchemaDefinition implements ISchemaDefinition {
     ];
 
     this.schema_name = 'verified_person';
-    this.schema_version = '1.22';
+    this.schema_version = '1.3.0';
   }
 }

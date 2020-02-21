@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { AppConfigService } from 'src/app/services/app-config.service';
 
 @Component({
   selector: 'wap-terms-and-conditions',
@@ -7,7 +8,11 @@ import { Component, OnInit } from '@angular/core';
 })
 export class TermsAndConditionsComponent implements OnInit {
 
-  constructor() { }
+  htmlContent: string;
+
+  constructor() {
+    this.htmlContent = AppConfigService.settings.disclaimer;
+   }
 
   ngOnInit() {
   }

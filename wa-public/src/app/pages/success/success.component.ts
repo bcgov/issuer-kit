@@ -145,7 +145,6 @@ import * as moment from 'moment';
 
                 <ion-item
                   lines="none"
-                  [disabled]="isProvidedValue('birthdate')"
                 >
                   <ion-label position="stacked"
                     >Date of Birth
@@ -164,8 +163,9 @@ import * as moment from 'moment';
                       (click)="dobFocus = true"
                       [min]="minDate"
                       [max]="maxDate"
+                      [readonly]="isProvidedValue('birthdate')"
                     />
-                    <mat-datepicker-toggle matSuffix [for]="picker">
+                    <mat-datepicker-toggle matSuffix [for]="picker" [disabled]="isProvidedValue('birthdate')">
                     </mat-datepicker-toggle>
                     <mat-datepicker
                       #picker

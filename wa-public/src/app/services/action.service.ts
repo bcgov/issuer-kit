@@ -103,6 +103,7 @@ export class ActionService {
   ) {
     this._apiUrl = AppConfigService.settings.apiServer.url;
     this.stateSvc.userIdToken = this.keyCloakSvc.getKeycloakInstance().idTokenParsed;
+    console.log('*****IDTOKEN: ', this.stateSvc.userIdToken);
   }
 
   async logout(uri?: string) {

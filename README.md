@@ -146,11 +146,11 @@ While it is possible to provide a client id and token pair to use the GitHub int
 
 ## Credential Schema
 
-The schema of the credential that will be issued by Identity Kit is defined in [this file](.identity-controller/src/app/admin/issues/schema.ts)
+The schema of the credential that will be issued by Identity Kit is defined in [this file](identity-controller/src/app/admin/issues/schema.ts)
 
 When using Identity Kit in demo mode the controller will instruct the agent to use the schema definition that was published to the BCovrin Test Ledger by the BCGov issuer, and therefore issue credentials that match that definition. In most cases updating the schema definition should not be necessary, however if this was the case the following steps will be required to instruct the controller/agent to publish a new schema definition on the target ledger, and use it:
 
-- update the schema attributes in [schema.ts](.identity-controller/src/app/admin/issues/schema.ts) with the desired fields.
+- update the schema attributes in [schema.ts](identity-controller/src/app/admin/issues/schema.ts) with the desired fields.
 
 - update the form in the public-facing web application to support the new fields. The public web application is contained in the [wa-public](./wa-public) folder.
 

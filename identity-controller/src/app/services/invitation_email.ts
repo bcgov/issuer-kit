@@ -20,7 +20,19 @@ services that have been provided by participating DIACC members
 </li>
 </ol>
 <p>
-Step 1: Setup
+Step 1: Obtain a Verified Email credential.
+</p>
+<p>
+This step works best if you have an additional device such as a laptop
+or tablet that can display the screens for the issuing service.
+<b>Using your laptop or tablet click the following link to
+start the process for issuing your Verified Email credential:</b>
+</p>
+<p><b><a href="https://email-verification.vonx.io/">https://email-verification.vonx.io/</a></b></p>
+<p>Follow the instructions on the screen.</p>
+<p>
+<p>
+Step 2: Setup
 </p>
 <ol>
 <li>You must have an active login account from one of the following: 
@@ -42,7 +54,7 @@ the app setup instructions <a href="https://github.com/bcgov/identity-kit-poc/bl
 </li> 
 </ol>
 <p>
-Step 2: Obtain your proof of concept digital ID for verified person
+Step 3: Obtain your proof of concept digital ID for verified person
 </p>
 <p>
 This step works best if you have an additional device such as a laptop
@@ -59,7 +71,7 @@ to do. If you find that the link has expired, please request a new invitation
 by sending an email to  <a href="mailto:${adminAddress}">${adminAddress}</a>. 
 </p>
 <p>
-Step 3: Use your proof of concept digital ID at proof of concept demonstration services. 
+Step 4: Use your proof of concept digital ID at proof of concept demonstration services. 
 </p>
 <p>
 Currently the following services are available:

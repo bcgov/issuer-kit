@@ -93,6 +93,25 @@ function customizeKeycloakConfig () {
     sed -i "s/%GITHUB_CLIENT_SECRET%/$GITHUB_CLIENT_SECRET/g" ./keycloak/config/realm-export-docker.json
   fi
 }
+
+function generateKey(){
+  (
+    _length=${1:-48}
+    # Format can be `-base64` or `-hex`
+    _format=${2:--base64}
+
+    echo $(openssl rand ${_format} ${_length})
+  )
+}
+
+function generateSeed(){
+  (
+    _prefix=${1}
+    _seed=$(echo "${_prefix}$(generateKey 32)" | fold -w 32 | head -n 1 )
+    _seed=$(echo -n "${_seed}")
+    echo ${_seed}
+  )
+}
 #
 # Global utility functions - END
 #
@@ -252,7 +271,7 @@ configureEnvironment() {
   export AGENT_WALLET_NAME="identity_kit_agent"
   export AGENT_WALLET_ENCRYPTION_KEY="key"
   export AGENT_STORAGE_WALLET_TYPE="postgres_storage"
-  export AGENT_WALLET_SEED="identity_kit_agent_0000000000001"
+  export AGENT_WALLET_SEED=$(generateSeed identity-kit-demo)
   export AGENT_ADMIN_PORT=8024
   export AGENT_WEBHOOK_PORT=8020
   export AGENT_WEBHOOK_URL=${AGENT_WEBHOOK_URL:-http://identity-controller:5000}

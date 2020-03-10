@@ -11,7 +11,7 @@
 <template>
   <v-container fluid>
     <v-card class="mx-auto my-2 lighten-4" max-width="800" tile>
-      <v-card-title>Review and Confirm</v-card-title>
+      <v-card-title class="headline mb-1">Review and Confirm</v-card-title>
 
       <v-list disabled>
         <v-list-item-group color="primary">

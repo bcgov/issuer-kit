@@ -151,8 +151,8 @@ EOF
 # Default Settings:
 # -----------------------------------------------------------------------------------------------------------------
 DEFAULT_CONTAINERS="wa-db identity-kit-agent identity-kit-wallet keycloak keycloak-db"
-PROD_CONTAINERS="identity-controller wa-admin wa-public"
-DEV_CONTAINERS="identity-controller-dev wa-admin-dev wa-public-dev"
+PROD_CONTAINERS="identity-controller wa-admin issuer-web"
+DEV_CONTAINERS="identity-controller-dev wa-admin-dev issuer-web-dev"
 # -----------------------------------------------------------------------------------------------------------------
 # Functions:
 # -----------------------------------------------------------------------------------------------------------------
@@ -173,17 +173,17 @@ build-wa-admin() {
     -f '../docker/wa-admin/Dockerfile.dockerprod' '../'
 }
 
-build-wa-public() {
-  echo -e "\nBuilding wa-public image..."
+build-issuer-web() {
+  echo -e "\nBuilding issuer-web image..."
   docker build \
-    -t 'wa-public' \
-    -f '../docker/wa-public/Dockerfile.dockerprod' '../'
+    -t 'issuer-web' \
+    -f '../docker/issuer-web/Dockerfile.dockerprod' '../'
 }
 
 build-all() {
   build-identity-controller
   build-wa-admin
-  build-wa-public
+  build-issuer-web
 }
 
 configureEnvironment() {
@@ -229,8 +229,8 @@ configureEnvironment() {
   export ADMIN_API_HOST=identity-controller
   export ADMIN_API_PORT=5000
 
-  # wa-public
-  export WA_PUBLIC_PORT=4251
+  # issuer-web
+  export ISSUER_WEB_PORT=4251
   export PUBLIC_WEB_HOST_NAME=0.0.0.0
   export PUBLIC_WEB_HOST_PORT=8082
   export PUBLIC_WEB_HOST_TLS=off

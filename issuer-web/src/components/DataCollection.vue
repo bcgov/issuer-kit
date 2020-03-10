@@ -91,6 +91,7 @@ export default class Header extends Vue {
         this.survey.getQuestionByName(key).readOnly = true;
       }
     } catch (e) {
+      // eslint-disable-next-line
       console.warn(
         `The provided key '${key}' is not a valid field and was skipped.`
       );

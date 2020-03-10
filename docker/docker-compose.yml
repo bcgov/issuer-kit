@@ -95,8 +95,8 @@ services:
     networks:
       - identity_kit
 
-  wa-public:
-    image: wa-public:latest
+  issuer-web:
+    image: issuer-web:latest
     environment:
       - WEB_HOST_NAME=${PUBLIC_WEB_HOST_NAME}
       - WEB_HOST_PORT=${PUBLIC_WEB_HOST_PORT}
@@ -104,7 +104,7 @@ services:
       - API_HOST=${PUBLIC_API_HOST}
       - API_PORT=${PUBLIC_API_PORT}
     volumes:
-      - ./wa-public/config/Caddyfile:/etc/Caddyfile
+      - ./issuer-web/config/Caddyfile:/etc/Caddyfile
     ports:
       - ${PUBLIC_WEB_HOST_PORT}:${PUBLIC_WEB_HOST_PORT}
     networks:
@@ -113,16 +113,16 @@ services:
   #
   # Public frontend with hot-reloading
   #
-  wa-public-dev:
+  issuer-web-dev:
     image: node:erbium
     volumes:
-      - ../wa-public:/usr/src/wa-public
-    working_dir: /usr/src/wa-public
+      - ../issuer-web:/usr/src/issuer-web
+    working_dir: /usr/src/issuer-web
     ports:
-      - ${WA_PUBLIC_PORT}:${WA_PUBLIC_PORT}
+      - ${ISSUER_WEB_PORT}:${ISSUER_WEB_PORT}
     networks:
       - identity_kit
-    command: npm run start-docker
+    command: npm run serve
 
   #
   # wa-db

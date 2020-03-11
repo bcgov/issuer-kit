@@ -32,10 +32,10 @@ import { mapActions, mapGetters } from "vuex";
 
 @Component({
   computed: {
-    ...mapGetters(["oidcUser"])
+    ...mapGetters("oidcStore", ["oidcUser"])
   },
   methods: {
-    ...mapActions(["signOutOidc"])
+    ...mapActions("oidcStore", ["signOutOidc"])
   }
 })
 export default class Header extends Vue {
@@ -43,7 +43,7 @@ export default class Header extends Vue {
   readonly config = config;
 
   mounted() {
-    const user = this.$store.getters["oidcUser"];
+    const user = this.$store.getters["oidcStore/oidcUser"];
     console.log("***User:", user);
   }
 }

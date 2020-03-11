@@ -1,9 +1,13 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/oidc-client/1.10.1/oidc-client.min.js"></script>
   </head>
   <body>
-    <!-- built files will be auto injected -->
+    <script>
+      new Oidc.UserManager()
+        .signinSilentCallback()
+        .catch(e => alert("storage:" + e));
+    </script>
   </body>
 </html>

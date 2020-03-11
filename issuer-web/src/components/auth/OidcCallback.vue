@@ -34,13 +34,13 @@ import { mapActions } from "vuex";
 
 @Component({
   methods: {
-    ...mapActions(["oidcSignInCallback"])
+    ...mapActions("oidcStore", ["oidcSignInCallback"])
   }
 })
 export default class OidcCallback extends Vue {
   mounted() {
     this.$store
-      .dispatch("oidcSignInCallback")
+      .dispatch("oidcStore/oidcSignInCallback")
       .then(redirectPath => {
         this.$router.push(redirectPath);
       })

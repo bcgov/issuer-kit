@@ -75,6 +75,6 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes
 });
-router.beforeEach(vuexOidcCreateRouterMiddleware(store));
+router.beforeEach(vuexOidcCreateRouterMiddleware(store, "oidcStore"));
 
 export default router;

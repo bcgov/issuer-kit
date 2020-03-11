@@ -145,7 +145,7 @@ services:
   # keycloak service
   #
   keycloak:
-    image: jboss/keycloak:7.0.0
+    image: jboss/keycloak:9.0.0
     environment:
       DB_VENDOR: ${KEYCLOAK_DB_VENDOR}
       DB_ADDR: ${KEYCLOAK_DB_ADDR}
@@ -158,7 +158,7 @@ services:
       ROOT_LOGLEVEL: ${KEYCLOAK_ROOT_LOGLEVEL}
       KEYCLOAK_IMPORT: ${KEYCLOAK_IMPORT}
     volumes:
-      - ../docker/keycloak/config:/tmp
+      - ../docker/keycloak/config/realm-export-docker.json:/tmp/realm-export-docker.json
     ports:
       - 8180:8080
     depends_on:

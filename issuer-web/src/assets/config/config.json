@@ -4,7 +4,7 @@
     "name": "Issuer Name"
   },
   "authentication": {
-    "enabled": true,
+    "enabled": false,
     "oidcSettings": {
       "authority": "http://localhost:8180/auth/realms/identity-kit",
       "clientId": "identity-kit-public",

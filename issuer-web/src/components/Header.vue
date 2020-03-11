@@ -41,11 +41,6 @@ import { mapActions, mapGetters } from "vuex";
 export default class Header extends Vue {
   @Prop() logoutUrl!: string;
   readonly config = config;
-
-  mounted() {
-    const user = this.$store.getters["oidcStore/oidcUser"];
-    console.log("***User:", user);
-  }
 }
 </script>
 

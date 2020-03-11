@@ -19,16 +19,6 @@ const storeOptions: StoreOptions<RootState> = {
       {
         namespaced: true,
         dispatchEventsOnWindow: true
-      },
-      // Optional OIDC event listeners
-      {
-        userLoaded: (user: any) => console.log("OIDC user is loaded:", user), // eslint-disable-line
-        userUnloaded: () => console.log("OIDC user is unloaded"),
-        accessTokenExpiring: () => console.log("Access token will expire"),
-        accessTokenExpired: () => console.log("Access token did expire"),
-        silentRenewError: () => console.log("OIDC user is unloaded"),
-        userSignedOut: () => console.log("OIDC user is signed out"),
-        oidcError: (payload: any) => console.log("OIDC error", payload) // eslint-disable-line
       }
     )
   }

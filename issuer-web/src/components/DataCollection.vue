@@ -17,7 +17,7 @@
 
 <template>
   <v-container class="claim-data-container">
-    <survey :survey="survey"></survey>
+    <survey :survey="survey" :key="surveyKey"></survey>
   </v-container>
 </template>
 
@@ -26,11 +26,17 @@ import { Component, Prop, Vue } from "vue-property-decorator";
 import * as SurveyVue from "survey-vue";
 import claimConfig from "@/assets/config/claim-config.json";
 import { Credential, Claim } from "../models/credential";
+import { mapGetters } from "vuex";
 
-@Component
+@Component({
+  computed: {
+    ...mapGetters("oidcStore", ["oidcUser"])
+  }
+})
 export default class Header extends Vue {
   @Prop({ default: "default" }) private themeName!: string;
   private survey!: SurveyVue.Model;
+  private surveyKey = 0;
 
   created() {
     SurveyVue.StylesManager.applyTheme(this.themeName);
@@ -51,6 +57,10 @@ export default class Header extends Vue {
       this.$router.push("confirm-data");
     });
 
+    this.refreshSurvey();
+  }
+
+  private refreshSurvey(): void {
     const credential = this.$store.getters[
       "credential/getCredential"
     ] as Credential;
@@ -61,28 +71,27 @@ export default class Header extends Vue {
     }
     // use values provided by OIDC token, if available
     // by doing this, any claim coming from OIDC will be disabled as well
-    // TODO: hook up with data coming from IdP/token
-    this.valuesFromToken({
-      given_names: "Emiliano", // eslint-disable-line
-      family_name: "Sune", // eslint-disable-line
-      birthdate: "2020-03-05" // eslint-disable-line
-    });
+    this.valuesFromToken(this.$store.getters["oidcStore/oidcUser"]);
+
+    this.surveyKey += 1;
   }
 
   // eslint-disable-next-line
-  private valuesFromToken(values: { [key: string]: any }) {
-    Object.entries(values).forEach(([key, value]) => {
-      this.setField(key, value, true);
-    });
+  private valuesFromToken(values: { [key: string]: any }): void {
+    if (values) {
+      Object.entries(values).forEach(([key, value]) => {
+        this.setField(key, value, true);
+      });
+    }
   }
 
-  private setExistingClaimValues(claims: Claim[]) {
+  private setExistingClaimValues(claims: Claim[]): void {
     claims.forEach(claim => {
       this.setField(claim.name, claim.value);
     });
   }
 
-  private setField(key: string, value: string, readonly = false) {
+  private setField(key: string, value: string, readonly = false): void {
     try {
       this.survey.getQuestionByName(key).setPropertyValue("value", value);
       this.survey.setValue(key, value);

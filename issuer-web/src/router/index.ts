@@ -3,12 +3,14 @@ import OidcCallbackError from "@/components/auth/OidcCallbackError.vue";
 import store from "@/store";
 import Home from "@/views/Home.vue";
 import Vue from "vue";
-import VueRouter from "vue-router";
+import VueRouter, { RouteConfig } from "vue-router";
 import { vuexOidcCreateRouterMiddleware } from "vuex-oidc";
+import config from "@/assets/config/config.json";
 
 Vue.use(VueRouter);
 
-const routes = [
+// Application routes
+const appRoutes = [
   {
     path: "/",
     name: "Home",
@@ -54,9 +56,13 @@ const routes = [
       import(
         /* webpackChunkName: "issue-credential" */ "../views/IssueCredential.vue"
       )
-  },
+  }
+] as RouteConfig[];
+
+// OIDC specific routes
+const oidcRoutes = [
   {
-    path: "/oidc-callback",
+    path: "/oidc-callback", // Needs to match redirectUri in you oidcSettings
     name: "oidcCallback",
     component: OidcCallback
   },
@@ -68,13 +74,19 @@ const routes = [
       isPublic: true
     }
   }
-];
+] as RouteConfig[];
 
 const router = new VueRouter({
   mode: "history",
   base: process.env.BASE_URL,
-  routes
+  routes: config.authentication.enabled
+    ? appRoutes.concat(oidcRoutes)
+    : appRoutes
 });
-router.beforeEach(vuexOidcCreateRouterMiddleware(store, "oidcStore"));
+
+if (config.authentication.enabled) {
+  // enable oidc middleware
+  router.beforeEach(vuexOidcCreateRouterMiddleware(store, "oidcStore"));
+}
 
 export default router;

@@ -15,22 +15,37 @@
 
     <v-spacer></v-spacer>
 
-    <v-btn href="https://www.canada.ca" target="_blank" text>
-      <span class="mr-2">Leave</span>
-      <v-icon>mdi-logout</v-icon>
-    </v-btn>
+    <div v-if="oidcUser">
+      Signed in as {{ oidcUser.given_name }} {{ oidcUser.family_name }}
+      <v-btn @click="signOutOidc" text>
+        <span class="mr-2">Leave</span>
+        <v-icon>mdi-logout</v-icon>
+      </v-btn>
+    </div>
   </v-app-bar>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
 import config from "@/assets/config/config.json";
+import { mapActions, mapGetters } from "vuex";
 
-@Component
+@Component({
+  computed: {
+    ...mapGetters(["oidcUser"])
+  },
+  methods: {
+    ...mapActions(["signOutOidc"])
+  }
+})
 export default class Header extends Vue {
   @Prop() logoutUrl!: string;
-
   readonly config = config;
+
+  mounted() {
+    const user = this.$store.getters["oidcUser"];
+    console.log("***User:", user);
+  }
 }
 </script>
 

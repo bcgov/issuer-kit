@@ -1,7 +1,9 @@
+import config from "@/assets/config/config.json";
 import { RootState } from "@/models/storeState";
+import { credential } from "@/store/modules/credential/credential";
 import Vue from "vue";
 import Vuex, { StoreOptions } from "vuex";
-import { credential } from "./modules/credential/credential";
+import { vuexOidcCreateStoreModule } from "vuex-oidc";
 
 Vue.use(Vuex);
 
@@ -10,7 +12,8 @@ const storeOptions: StoreOptions<RootState> = {
     version: "1.0.0" // a simple property
   },
   modules: {
-    credential
+    credential,
+    oidcStore: vuexOidcCreateStoreModule(config.authentication.oidcSettings)
   }
 };
 

@@ -12,3 +12,5 @@ declare module "vue-qrcode" {
   const qrcode: any;
   export default qrcode;
 }
+
+declare module 'vuex-oidc';

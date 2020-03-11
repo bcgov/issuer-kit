@@ -13,6 +13,7 @@
     "bootstrap": "^4.4.1",
     "core-js": "^3.6.4",
     "jquery": "^3.4.1",
+    "oidc-client": "^1.10.1",
     "qrcode": "^1.4.4",
     "roboto-fontface": "*",
     "survey-vue": "^1.5.13",
@@ -22,7 +23,8 @@
     "vue-qrcode": "^0.3.3",
     "vue-router": "^3.1.5",
     "vuetify": "^2.2.11",
-    "vuex": "^3.1.2"
+    "vuex": "^3.1.2",
+    "vuex-oidc": "^3.4.1"
   },
   "devDependencies": {
     "@fortawesome/fontawesome-free": "^5.12.1",

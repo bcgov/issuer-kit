@@ -39,7 +39,7 @@ export default class Header extends Vue {
     this.survey.completeText = "Request Credential";
   }
 
-  beforeMount() {
+  mounted() {
     this.survey.onComplete.add(result => {
       const credentialClaims = new Array<Claim>();
       Object.keys(result.data).forEach(key => {
@@ -62,7 +62,7 @@ export default class Header extends Vue {
     // use values provided by OIDC token, if available
     // by doing this, any claim coming from OIDC will be disabled as well
     // TODO: hook up with data coming from IdP/token
-    this.setOIDCValues({
+    this.valuesFromToken({
       given_names: "Emiliano", // eslint-disable-line
       family_name: "Sune", // eslint-disable-line
       birthdate: "2020-03-05" // eslint-disable-line
@@ -70,7 +70,7 @@ export default class Header extends Vue {
   }
 
   // eslint-disable-next-line
-  private setOIDCValues(values: { [key: string]: any }) {
+  private valuesFromToken(values: { [key: string]: any }) {
     Object.entries(values).forEach(([key, value]) => {
       this.setField(key, value, true);
     });
@@ -82,14 +82,11 @@ export default class Header extends Vue {
     });
   }
 
-  private setField(key: string, value: string, disabled = false) {
+  private setField(key: string, value: string, readonly = false) {
     try {
       this.survey.getQuestionByName(key).setPropertyValue("value", value);
       this.survey.setValue(key, value);
-
-      if (disabled) {
-        this.survey.getQuestionByName(key).readOnly = true;
-      }
+      this.survey.getQuestionByName(key).readOnly = readonly;
     } catch (e) {
       // eslint-disable-next-line
       console.warn(

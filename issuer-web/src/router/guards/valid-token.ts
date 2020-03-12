@@ -12,10 +12,18 @@ export default function validToken(to: Route, from: Route, next: Function) {
       }
     });
   } else {
-    const storedInvitation = localStorage.getItem("issuer-invitation") || "";
-    const invitation = storedInvitation
-      ? (JSON.parse(storedInvitation) as Invitation)
-      : new Invitation();
+    // Check localStorage in case we are coming from the IdP authentication
+    const localStorageInvitation =
+      localStorage.getItem("issuer-invitation") || "";
+    const storeInvitation = store.getters["invitation/getInvitation"];
+
+    // If there is a precessed invitation in the store use it, otherwise fall-back to localStorage
+    const invitation =
+      storeInvitation.status !== InvitationStatus.UNDEFINED
+        ? storeInvitation
+        : localStorageInvitation
+        ? (JSON.parse(localStorageInvitation) as Invitation)
+        : new Invitation();
     if (invitation.status === InvitationStatus.VALID) {
       next();
     } else {

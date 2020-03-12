@@ -3,10 +3,12 @@
 <template>
   <v-container fluid>
     <v-card class="mx-auto my-2 lighten-4" max-width="800" tile>
-      <v-card-title class="headline mb-1">Unauthorized</v-card-title>
-      <v-card-subtitle
-        >You are not authorized to access the resource</v-card-subtitle
-      >
+      <v-container>
+        <v-icon x-large color="error darken-2"
+          >fas fa-exclamation-triangle</v-icon
+        >
+        <p class="my-3">You are not authorized to access the resource</p>
+      </v-container>
     </v-card>
   </v-container>
 </template>

@@ -53,7 +53,7 @@
             <v-btn
               outlined
               color="error"
-              @click="$router.push('credential-data')"
+              @click="$router.push({ path: 'credential-data' })"
               >Back</v-btn
             >
           </v-col>
@@ -62,7 +62,7 @@
               outlined
               color="success"
               :disabled="!confirmed"
-              @click="$router.push('connect')"
+              @click="$router.push({ path: 'connect' })"
               >Proceed</v-btn
             >
           </v-col>

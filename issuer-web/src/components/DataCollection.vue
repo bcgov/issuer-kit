@@ -1,5 +1,5 @@
 <!-- Styles are NOT scoped to the component in order to override surveyJS defaults -->
-<style>
+<style lang="scss">
 .claim-data-container {
   display: inline-block;
   width: 100%;
@@ -54,7 +54,7 @@ export default class Header extends Vue {
       this.$store.commit("credential/updateClaims", credentialClaims);
 
       // Go to next page on successful completion
-      this.$router.push("confirm-data");
+      this.$router.push({ path: "confirm-data" });
     });
 
     this.refreshSurvey();

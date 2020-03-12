@@ -24,7 +24,7 @@
               outlined
               color="success"
               :disabled="!confirmed"
-              @click="$router.push('credential-data')"
+              @click="$router.push({ path: 'credential-data' })"
               >Agree</v-btn
             >
           </v-col>

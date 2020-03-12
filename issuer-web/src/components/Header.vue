@@ -1,3 +1,9 @@
+<style lang="scss">
+.v-toolbar__content {
+  border-bottom: 2px solid var(--v-secondary-base);
+}
+</style>
+
 <template>
   <v-app-bar app color="primary" dark>
     <div class="d-flex align-center">
@@ -43,6 +49,3 @@ export default class Header extends Vue {
   readonly config = config;
 }
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped lang="scss"></style>

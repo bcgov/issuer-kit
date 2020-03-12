@@ -1,11 +1,13 @@
+import config from "@/assets/config/config.json";
 import OidcCallback from "@/components/auth/OidcCallback.vue";
 import OidcCallbackError from "@/components/auth/OidcCallbackError.vue";
 import store from "@/store";
 import Home from "@/views/Home.vue";
+import Unauthorized from "@/views/Unauthorized.vue";
 import Vue from "vue";
 import VueRouter, { RouteConfig } from "vue-router";
 import { vuexOidcCreateRouterMiddleware } from "vuex-oidc";
-import config from "@/assets/config/config.json";
+import validToken from "./guards/valid-token";
 
 Vue.use(VueRouter);
 
@@ -17,7 +19,8 @@ const appRoutes = [
     component: Home,
     meta: {
       isPublic: true
-    }
+    },
+    beforeEnter: validToken
   },
   {
     path: "/credential-data",
@@ -26,7 +29,8 @@ const appRoutes = [
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () =>
-      import(/* webpackChunkName: "data-entry" */ "../views/DataEntry.vue")
+      import(/* webpackChunkName: "data-entry" */ "../views/DataEntry.vue"),
+    beforeEnter: validToken
   },
   {
     path: "/confirm-data",
@@ -35,7 +39,8 @@ const appRoutes = [
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () =>
-      import(/* webpackChunkName: "confirm-data" */ "../views/ConfirmData.vue")
+      import(/* webpackChunkName: "confirm-data" */ "../views/ConfirmData.vue"),
+    beforeEnter: validToken
   },
   {
     path: "/connect",
@@ -44,7 +49,8 @@ const appRoutes = [
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () =>
-      import(/* webpackChunkName: "connect" */ "../views/Connect.vue")
+      import(/* webpackChunkName: "connect" */ "../views/Connect.vue"),
+    beforeEnter: validToken
   },
   {
     path: "/issue-credential",
@@ -55,7 +61,16 @@ const appRoutes = [
     component: () =>
       import(
         /* webpackChunkName: "issue-credential" */ "../views/IssueCredential.vue"
-      )
+      ),
+    beforeEnter: validToken
+  },
+  {
+    path: "/unauthorized",
+    name: "Unauthorized",
+    component: Unauthorized,
+    meta: {
+      isPublic: true
+    }
   }
 ] as RouteConfig[];
 

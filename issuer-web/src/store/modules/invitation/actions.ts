@@ -37,7 +37,7 @@ export const actions: ActionTree<InvitationState, RootState> = {
         resolve(false);
       } else {
         // check token validity
-        Axios.get(`${config.apiServer}/invitations/${token}/validate`).then(
+        Axios.get(`${config.apiServer.url}/invitations/${token}/validate`).then(
           response => {
             const responseData = response.data as IssuerInvitationInterface;
             const invitationStatus = getInviteStatus({

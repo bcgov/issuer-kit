@@ -271,7 +271,11 @@ configureEnvironment() {
   export AGENT_WALLET_NAME="identity_kit_agent"
   export AGENT_WALLET_ENCRYPTION_KEY="key"
   export AGENT_STORAGE_WALLET_TYPE="postgres_storage"
-  export AGENT_WALLET_SEED=$(generateSeed identity-kit-demo)
+  if [ -z "${DEV_MODE}" ]; then
+    export AGENT_WALLET_SEED=$(generateSeed identity-kit-demo)
+  else
+    export AGENT_WALLET_SEED="identity_kit_0000000000000000000"
+  fi
   export AGENT_ADMIN_PORT=8024
   export AGENT_WEBHOOK_PORT=8020
   export AGENT_WEBHOOK_URL=${AGENT_WEBHOOK_URL:-http://identity-controller:5000}

@@ -103,12 +103,12 @@ router.post('/', async (ctx: Context) => {
 
     if (publicUrl.match('localhost')) {
       // development mode
-      ctx.throw(500, `Running in development mode: to use the invite, go to </br> ${publicUrl}/validate?invite_token=${res.linkId}`);
+      ctx.throw(500, `Running in development mode: to use the invite, go to </br> ${publicUrl}/?invite_token=${res.linkId}`);
     }
 
     const mail = await emailSvc.mailInvite({
       address: res.email,
-      url: `${publicUrl}/validate?invite_token=${res.linkId}`,
+      url: `${publicUrl}/?invite_token=${res.linkId}`,
     });
     if (!mail) {
       console.log('email failed to send', res.email);
@@ -116,7 +116,7 @@ router.post('/', async (ctx: Context) => {
       ctx.throw(
         500,
         `The invite email to ${email} could not be sent. If you expected the email to work please check your SMTP settings.<br/>
-         To use this invite, navigate to: ${publicUrl}/validate?invite_token=${res.linkId}`,
+         To use this invite, navigate to: ${publicUrl}/?invite_token=${res.linkId}`,
       );
     }
   } catch (err) {
@@ -165,7 +165,7 @@ router.post('/:id/renew/', async (ctx: Context) => {
   const user = await client.getRecord({ collection: 'invitations', id });
   const mail = await emailSvc.mailInvite({
     address: user.email,
-    url: `${publicUrl}/validate?invite_token=${linkId}`,
+    url: `${publicUrl}/?invite_token=${linkId}`,
   });
   if (!mail) {
     console.log('email failed to send', res.email);

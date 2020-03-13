@@ -50,10 +50,7 @@
         </v-row>
         <v-row align="center" justify="space-between" class="mr-2">
           <v-col cols="6" md="2">
-            <v-btn
-              outlined
-              color="error"
-              @click="$router.push({ path: 'credential-data' })"
+            <v-btn outlined color="error" :to="{ path: 'credential-data' }"
               >Back</v-btn
             >
           </v-col>
@@ -62,7 +59,7 @@
               outlined
               color="success"
               :disabled="!confirmed"
-              @click="$router.push({ path: 'connect' })"
+              :to="{ path: 'connect' }"
               >Proceed</v-btn
             >
           </v-col>

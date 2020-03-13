@@ -1,5 +1,6 @@
 import { Credential } from "@/models/credential";
 import { Invitation } from "./invitation";
+import { Connection } from "./connection";
 
 export enum StateType {
   NONE,
@@ -20,7 +21,7 @@ export interface CredentialState {
 }
 
 export interface ConnectionState {
-  credential: Credential;
+  connection: Connection;
   statusMessage: string;
   error: any; //eslint-disable-line
   stateType: StateType;

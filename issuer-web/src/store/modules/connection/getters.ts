@@ -1,20 +1,14 @@
-import { Credential } from "@/models/credential";
-import { CredentialState, RootState } from "@/models/storeState";
+import { Connection, ConnectionStatus } from "@/models/connection";
+import { ConnectionState, RootState } from "@/models/storeState";
 import { GetterTree } from "vuex";
 
-export const getters: GetterTree<CredentialState, RootState> = {
-  getCredential(state: CredentialState): Credential {
-    const { credential } = state;
-    return credential;
+export const getters: GetterTree<ConnectionState, RootState> = {
+  getConnection(state: ConnectionState): Connection {
+    const { connection } = state;
+    return connection;
   },
-  isIssued(state: CredentialState): boolean {
-    const { credential } = state;
-    return credential === undefined ? false : credential.isIssued;
-  },
-  getClaimByName(state: CredentialState, claimName: string): string {
-    const { credential } = state;
-    return credential === undefined
-      ? ""
-      : credential.claims.find(claim => claim.name === claimName)?.value || "";
+  getConnectionStatus(state: ConnectionState): ConnectionStatus {
+    const { connection } = state;
+    return connection.status;
   }
 };

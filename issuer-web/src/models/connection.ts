@@ -1,11 +1,14 @@
-export enum ConnectionState {
+import { AgentInvitationInterface } from "./api";
+
+export enum ConnectionStatus {
+  UNDEFINED,
   REQUEST = "request",
   RESPONSE = "response",
   ACTIVE = "active"
 }
 
 export class Connection {
-  public state!: ConnectionState;
+  public status = ConnectionStatus.UNDEFINED;
   public id!: string;
-  public invite!: string;
+  public invite!: AgentInvitationInterface;
 }

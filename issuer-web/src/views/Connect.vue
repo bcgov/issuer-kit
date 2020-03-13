@@ -15,7 +15,22 @@
         start automatically.
       </p>
 
-      <QRCode :value="textInvitation" :width="width" />
+      <v-progress-circular
+        v-if="qrKey === 0"
+        :indeterminate="true"
+        rotate="true"
+        size="32"
+        width="4"
+        color="secondary darken-2"
+        class="mx-3"
+      ></v-progress-circular>
+
+      <QRCode
+        v-if="qrKey > 0"
+        :value="base64Invitation"
+        :width="width"
+        :key="qrKey"
+      />
 
       <v-container>
         <v-btn color="white" :h="`didcomm://launch?d_m=${base64Invitation}`">
@@ -43,18 +58,26 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import QRCode from "@/components/QRCode.vue";
+import { Connection } from "../models/connection";
 
 @Component({ components: { QRCode } })
 export default class Connect extends Vue {
-  private textInvitation!: string;
+  private connection!: Connection;
   private base64Invitation!: string;
   private width!: number;
+  private qrKey = 0;
 
   created() {
-    // TODO: replace with invitation link
-    this.textInvitation = "https://www.google.ca";
-    this.base64Invitation = btoa(this.textInvitation);
     this.width = 200;
+    this.base64Invitation = "Loading invite...";
+
+    this.$store
+      .dispatch("connection/getNewConnection")
+      .then((result: Connection) => {
+        this.connection = result;
+        this.base64Invitation = btoa(JSON.stringify(this.connection.invite));
+        this.qrKey += 1; // force refresh of qrcode component
+      });
   }
 }
 </script>

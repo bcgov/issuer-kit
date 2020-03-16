@@ -1,3 +1,5 @@
+import { ConnectionStatus } from './connection';
+
 export interface IssuerInvitationInterface {
   _id: string;
   expired: boolean;
@@ -18,4 +20,16 @@ export interface AgentInvitationInterface {
   serviceEndpoint: string;
   recipientKeys?: string[] | null;
   label: string;
+}
+
+export interface AgentConnectionStatusInterface {
+  invitation_mode: string;
+  state: ConnectionStatus;
+  invitation_key: string;
+  accept: string;
+  routing_state: string;
+  created_at: string;
+  updated_at: string;
+  connection_id: string;
+  initiator: string;
 }

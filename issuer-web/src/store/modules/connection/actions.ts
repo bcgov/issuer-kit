@@ -1,14 +1,18 @@
 import config from "@/assets/config/config.json";
-import { AgentConnectionInterface } from "@/models/api";
+import {
+  AgentConnectionInterface,
+  AgentConnectionStatusInterface
+} from "@/models/api";
 import { Connection, ConnectionStatus } from "@/models/connection";
 import { ConnectionState, RootState } from "@/models/storeState";
-import store from "@/store";
 import Axios from "axios";
-import { ActionTree } from "vuex";
+import { ActionTree, ActionContext } from "vuex";
 
 export const actions: ActionTree<ConnectionState, RootState> = {
-  getNewConnection() {
-    return new Promise<Connection>(resolve => {
+  getNewConnection(
+    context: ActionContext<ConnectionState, RootState>
+  ): Promise<Connection> {
+    return new Promise<Connection>((resolve, reject) => {
       Axios.get(`${config.apiServer.url}/connections`)
         .then(response => {
           if (response.status === 200) {
@@ -17,7 +21,7 @@ export const actions: ActionTree<ConnectionState, RootState> = {
             connection.id = responseData.connection_id;
             connection.status = ConnectionStatus.REQUEST;
             connection.invite = responseData.invitation;
-            store.commit("connection/setConnection", connection);
+            context.commit("setConnection", connection);
             resolve(connection);
           } else {
             throw "An error occurred while fetching a new connection";
@@ -25,13 +29,29 @@ export const actions: ActionTree<ConnectionState, RootState> = {
         })
         .catch(error => {
           console.error(error);
+          reject(error);
+        });
+    });
+  },
+  getConnectionStatus(
+    context: ActionContext<ConnectionState, RootState>
+  ): Promise<ConnectionStatus> {
+    return new Promise<ConnectionStatus>((resolve, reject) => {
+      const id = context.getters["getConnection"].id;
+      Axios.get(`${config.apiServer.url}/connections/${id}`)
+        .then(response => {
+          if (response.status === 200) {
+            const responseData = response.data as AgentConnectionStatusInterface;
+            context.commit("setStatus", responseData.state);
+            resolve(responseData.state);
+          } else {
+            throw "An error occurred while fetching the connection status";
+          }
+        })
+        .catch(error => {
+          console.error(error);
+          reject(error);
         });
     });
   }
-  // getConnectionStatus(context: ActionContext<ConnectionState, RootState>) {
-  //   return new Promise<ConnectionStatus>(resolve => {});
-  // },
-  // setConnectionStatus(context: ActionContext<ConnectionState, RootState>) {
-  //   return new Promise<ConnectionStatus>(resolve => {});
-  // }
 };

@@ -1,7 +1,8 @@
 import { AgentInvitationInterface } from "./api";
 
 export enum ConnectionStatus {
-  UNDEFINED,
+  UNDEFINED = "undefined",
+  INVITATION = "invitation",
   REQUEST = "request",
   RESPONSE = "response",
   ACTIVE = "active"

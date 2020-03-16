@@ -44,7 +44,7 @@
       <v-container fluid>
         <v-row align="center" justify="space-between" class="mr-2">
           <v-col cols="6" md="2">
-            <v-btn outlined color="error" @click="$router.push('confirm-data')"
+            <v-btn outlined color="error" :to="{ path: 'confirm-data' }"
               >Back</v-btn
             >
           </v-col>
@@ -58,14 +58,14 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import QRCode from "@/components/QRCode.vue";
-import { Connection } from "../models/connection";
+import { Connection, ConnectionStatus } from "../models/connection";
 
 @Component({ components: { QRCode } })
 export default class Connect extends Vue {
-  private connection!: Connection;
   private base64Invitation!: string;
   private width!: number;
   private qrKey = 0;
+  private pollingAttempts: any[] = [];
 
   created() {
     this.width = 200;
@@ -74,10 +74,43 @@ export default class Connect extends Vue {
     this.$store
       .dispatch("connection/getNewConnection")
       .then((result: Connection) => {
-        this.connection = result;
-        this.base64Invitation = btoa(JSON.stringify(this.connection.invite));
+        this.base64Invitation = btoa(JSON.stringify(result.invite));
         this.qrKey += 1; // force refresh of qrcode component
       });
+  }
+
+  updated() {
+    this.handleConnect(this).then(result => {
+      this.$router.push({ path: "issue-credential" });
+    });
+  }
+
+  beforeDestroy() {
+    // clear polling attempts started by handleConnect
+    this.pollingAttempts.forEach(item => {
+      clearTimeout(item);
+    });
+  }
+
+  async handleConnect(context: any) {
+    // save context for accessing in recursive function
+    const $store = context.$store;
+    const retries = context.pollingAttempts;
+
+    async function checkConnectionStatus(resolve) {
+      const readyState = [ConnectionStatus.RESPONSE, ConnectionStatus.ACTIVE];
+      const progress = await $store.dispatch("connection/getConnectionStatus");
+      const connection: Connection = $store.getters["connection/getConnection"];
+
+      // if the state is not active, try again
+      if (readyState.indexOf(connection.status) < 0) {
+        const id = setTimeout(() => checkConnectionStatus(resolve), 2000);
+        retries.push(id);
+      } else {
+        resolve();
+      }
+    }
+    return new Promise(resolve => checkConnectionStatus(resolve));
   }
 }
 </script>

@@ -19,5 +19,6 @@
   },
   "apiServer": {
     "url": "http://localhost:5000"
-  }
+  },
+  "testLink": "https://csb-audio.pathfinder.gov.bc.ca"
 }

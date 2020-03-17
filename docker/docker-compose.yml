@@ -21,7 +21,6 @@ services:
       - SMTP_USERNAME=${SMTP_USERNAME}
       - SMTP_PASS=${SMTP_PASS}
       - EXISTING_SCHEMA_ID=${EXISTING_SCHEMA_ID}
-      - USE_CUSTOM_SCHEMA=${USE_CUSTOM_SCHEMA}
       - CUSTOM_SCHEMA_PATH=${CUSTOM_SCHEMA_PATH}
     volumes:
       - ../identity-controller:/usr/src/controller
@@ -50,7 +49,6 @@ services:
       - PUBLIC_SITE_URL=${PUBLIC_SITE_URL}
       - ADMIN_EMAIL=${ADMIN_EMAIL}
       - EXISTING_SCHEMA_ID=${EXISTING_SCHEMA_ID}
-      - USE_CUSTOM_SCHEMA=${USE_CUSTOM_SCHEMA}
       - CUSTOM_SCHEMA_PATH=${CUSTOM_SCHEMA_PATH}
       - S2I_SCRIPTS_PATH=${STI_SCRIPTS_PATH}
     ports:
@@ -105,6 +103,10 @@ services:
       - API_PORT=${PUBLIC_API_PORT}
     volumes:
       - ./issuer-web/config/Caddyfile:/etc/Caddyfile
+      - ./issuer-web/config/claim-config.json:/srv/assets/config/claim-config.json
+      - ./issuer-web/config/config.json:/srv/assets/config/config.json
+      - ./issuer-web/config/vuetify.json:/srv/assets/config/vuetify.json
+      - ./issuer-web/config/terms-and-conditions.html:/srv/terms-and-conditions.html
     ports:
       - ${PUBLIC_WEB_HOST_PORT}:${PUBLIC_WEB_HOST_PORT}
     networks:

@@ -5,25 +5,25 @@ import { client } from '../../../index';
 import { futureDate, IssueService } from './issue.service';
 
 export interface ICredentialPayload {
-  claims: ICredentialClaims;
+  claims: any;
   connectionId: string;
   _id: string;
 }
 
-export interface ICredentialClaims {
-  userdisplayname: string;
-  address: string;
-  surname: string;
-  givenname: string;
-  birthdate: string;
-  age: string;
-  streetaddress: string;
-  locality: string;
-  stateorprovince: string;
-  postalcode: string;
-  country: string;
-  issued: string;
-}
+// export interface ICredentialClaims {
+//   userdisplayname: string;
+//   address: string;
+//   surname: string;
+//   givenname: string;
+//   birthdate: string;
+//   age: string;
+//   streetaddress: string;
+//   locality: string;
+//   stateorprovince: string;
+//   postalcode: string;
+//   country: string;
+//   issued: string;
+// }
 
 const routerOpts = {
   prefix: '/issues',
@@ -33,13 +33,11 @@ const router = new Router(routerOpts);
 
 router.post('/', async (ctx: Context) => {
   const { _id, ...data } = ctx.request.body as ICredentialPayload;
-  data.claims.issued = new Date().toUTCString();
+  data.claims.push({ name: 'issued', value: new Date().toUTCString() });
 
-  const keys = Object.keys(data.claims);
-  const claims = data.claims as any;
-  const mapped = keys.map(key => ({
-    name: key,
-    value: claims[key],
+  const claims = data.claims.map((claim: any) => ({
+    name: claim.name,
+    value: claim.value,
     'mime-type': 'text/plain',
   }));
 
@@ -49,7 +47,7 @@ router.post('/', async (ctx: Context) => {
   try {
     const res = await new IssueService().issueCredential({
       connId: data.connectionId,
-      attrs: mapped,
+      attrs: claims,
     });
     if (!res) {
       console.error(
@@ -77,7 +75,7 @@ router.post('/', async (ctx: Context) => {
     }
     ctx.body = res;
   } catch (err) {
-    ctx.throw(500, 'failed to create credential exchange record', err.text);
+    ctx.throw(500, 'failed to issue credential', err.text);
   }
 });
 /*

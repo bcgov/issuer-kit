@@ -8,6 +8,4 @@ RUN npm run build
 
 # production stage
 FROM abiosoft/caddy:1.0.3-no-stats as production-stage
-COPY docker/issuer-web/config/Caddyfile /etc/Caddyfile
 COPY --from=build-stage /app/dist /srv
-COPY docker/issuer-web/config/config.json /srv/assets/config/config.json

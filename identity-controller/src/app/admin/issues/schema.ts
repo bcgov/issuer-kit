@@ -11,19 +11,18 @@ export class DefaultSchemaDefinition implements ISchemaDefinition {
 
   constructor() {
     this.attributes = [
-      'userdisplayname',
-      'surname',
-      'givenname',
+      'given_names',
+      'family_name',
       'birthdate',
-      'streetaddress',
+      'street_address',
+      'postal_code',
       'locality',
-      'stateorprovince',
-      'postalcode',
+      'region',
       'country',
       'issued',
     ];
 
     this.schema_name = 'verified_person';
-    this.schema_version = '1.3.0';
+    this.schema_version = '1.4.0';
   }
 }

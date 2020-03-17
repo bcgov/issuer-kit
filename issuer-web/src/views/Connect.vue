@@ -97,7 +97,7 @@ export default class Connect extends Vue {
     const $store = context.$store;
     const retries = context.pollingAttempts;
 
-    async function checkConnectionStatus(resolve) {
+    async function checkConnectionStatus(resolve: Function) {
       const readyState = [ConnectionStatus.RESPONSE, ConnectionStatus.ACTIVE];
       const progress = await $store.dispatch("connection/getConnectionStatus");
       const connection: Connection = $store.getters["connection/getConnection"];

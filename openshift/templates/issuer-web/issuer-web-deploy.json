@@ -306,7 +306,7 @@
       "displayName": "Name",
       "name": "NAME",
       "required": true,
-      "value": "identity-kit-public"
+      "value": "issuer-web"
     },
     {
       "name": "APP_NAME",
@@ -355,7 +355,7 @@
       "displayName": "Caddyfile Config Map Name",
       "description": "The name of the configuration map.",
       "required": true,
-      "value": "identity-kit-public-caddy-conf"
+      "value": "issuer-web-caddy-conf"
     },
     {
       "name": "CADDY_CONFIG_MOUNT_PATH",
@@ -376,7 +376,7 @@
       "displayName": "config.json Config Map Name",
       "description": "The name of the configuration map holding the data to configure the Angular app.",
       "required": true,
-      "value": "identity-kit-public-appconfig"
+      "value": "issuer-web-appconfig"
     },
     {
       "name": "APPCONFIG_CONFIG_MOUNT_PATH",
@@ -431,7 +431,7 @@
       "displayName": "Source Image Name",
       "description": "The name of the image to use for this resource.",
       "required": true,
-      "value": "identity-kit-public"
+      "value": "issuer-web"
     },
     {
       "description": "The TAG name for this environment, e.g., dev, test, prod",

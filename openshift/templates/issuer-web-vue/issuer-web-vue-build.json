@@ -78,7 +78,7 @@
       "displayName": "Name",
       "description": "The name assigned to all of the resources defined in this template.",
       "required": true,
-      "value": "identity-kit-public-angular"
+      "value": "issuer-web-vue"
     },
     {
       "name": "APP_NAME",
@@ -120,7 +120,7 @@
       "displayName": "Docker File Path",
       "description": "The path to the docker file defining the build.",
       "required": false,
-      "value": "docker/wa-public/Dockerfile"
+      "value": "docker/issuer-web/Dockerfile"
     },
     {
       "name": "OUTPUT_IMAGE_TAG",

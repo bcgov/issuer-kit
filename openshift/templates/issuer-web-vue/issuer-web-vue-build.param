@@ -3,13 +3,13 @@
 # Component: .
 # Template File: ../openshift/templates/identity-kit-public-angular/identity-kit-public-angular-build.json
 #=========================================================
-NAME=identity-kit-public-angular
+NAME=issuer-web-vue
 APP_NAME=identity-kit
 APP_GROUP=identity-kit-base-image
 GIT_REPO_URL=https://github.com/bcgov/identity-kit-poc.git
 GIT_REF=master
 SOURCE_CONTEXT_DIR=.
-DOCKER_FILE_PATH=docker/wa-public/Dockerfile
+DOCKER_FILE_PATH=docker/issuer-web/Dockerfile
 OUTPUT_IMAGE_TAG=latest
 CPU_LIMIT=1
 MEMORY_LIMIT=4Gi

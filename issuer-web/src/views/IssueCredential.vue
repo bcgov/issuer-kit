@@ -85,7 +85,7 @@ export default class Connect extends Vue {
 
   mounted() {
     this.requestCredentialIssuance().then(result => {
-      this.credExId = result.data;
+      this.credExId = result.data.credential_exchange_id;
       this.handleIssueCredential(this).then(() => {
         this.issued = true;
         this.clearPolling();
@@ -103,12 +103,12 @@ export default class Connect extends Vue {
     const retries = context.pollingAttempts;
 
     async function checkCredExStatus(resolve: Function) {
-      const response = (await Axios.get(
+      const response = await Axios.get(
         `${config.apiServer.url}/issues/${credExId}`
-      )) as IssuerInvitationInterface;
+      );
 
-      // if there is no object matching teh CRedExId, try again
-      if (!response) {
+      // if there is no object matching teh CredExId, try again
+      if (!response || !response.data.issued) {
         const id = setTimeout(() => checkCredExStatus(resolve), 2000);
         retries.push(id);
       } else {

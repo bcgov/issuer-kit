@@ -33,7 +33,7 @@ export const actions: ActionTree<InvitationState, RootState> = {
       if (!token) {
         // no token was provided
         invitation.status = InvitationStatus.INVALID;
-        this.commit("invitation/setStatus", InvitationStatus.INVALID);
+        context.commit("setStatus", InvitationStatus.INVALID);
         resolve(false);
       } else {
         // check token validity
@@ -57,7 +57,7 @@ export const actions: ActionTree<InvitationState, RootState> = {
             } else {
               isValid = false;
             }
-            store.commit("invitation/setInvitation", invitation);
+            context.commit("setInvitation", invitation);
             resolve(isValid);
           }
         );

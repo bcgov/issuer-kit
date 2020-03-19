@@ -1,4 +1,4 @@
-import { Invitation, InvitationStatus } from "@/models/invitation";
+import { Invitation } from "@/models/invitation";
 import { InvitationState, RootState, StateType } from "@/models/storeState";
 import { Module } from "vuex";
 import { actions } from "./actions";

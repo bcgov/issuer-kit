@@ -57,7 +57,7 @@
         </p>
         <p>
           To try out your new credential please
-          <a :href="link">click here</a>.
+          <a :href="config.testLink">click here</a>.
         </p>
       </v-container>
     </v-card>
@@ -66,21 +66,21 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import config from "@/assets/config/config.json";
-import { IssuerInvitationInterface } from "../models/api";
 import Axios from "axios";
 import { Connection } from "../models/connection";
 import { Credential } from "../models/credential";
+import * as ConfigService from "../services/config";
+import { AppConfig } from "../models/appConfig";
 
 @Component
 export default class Connect extends Vue {
-  private link!: string;
+  private config!: AppConfig;
   private issued = false;
   private pollingAttempts: any[] = [];
   private credExId!: string;
 
-  created() {
-    this.link = config.testLink;
+  async created() {
+    this.config = (await ConfigService.getAppConfig()) as AppConfig;
   }
 
   mounted() {
@@ -104,7 +104,7 @@ export default class Connect extends Vue {
 
     async function checkCredExStatus(resolve: Function) {
       const response = await Axios.get(
-        `${config.apiServer.url}/issues/${credExId}`
+        `${this.config.apiServer.url}/issues/${credExId}`
       );
 
       // if there is no object matching teh CredExId, try again
@@ -140,7 +140,7 @@ export default class Connect extends Vue {
       connectionId: connection.id,
       claims: credential.claims
     };
-    return Axios.post(`${config.apiServer.url}/issues/`, data);
+    return Axios.post(`${this.config.apiServer.url}/issues/`, data);
   }
 
   private clearPolling() {

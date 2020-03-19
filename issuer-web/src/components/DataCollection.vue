@@ -24,9 +24,9 @@
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
 import * as SurveyVue from "survey-vue";
-import claimConfig from "@/assets/config/claim-config.json";
 import { Credential, Claim } from "../models/credential";
 import { mapGetters } from "vuex";
+import * as ConfigService from "../services/config";
 
 @Component({
   computed: {
@@ -38,9 +38,9 @@ export default class Header extends Vue {
   private survey!: SurveyVue.Model;
   private surveyKey = 0;
 
-  created() {
+  async created() {
     SurveyVue.StylesManager.applyTheme(this.themeName);
-
+    const claimConfig = await ConfigService.getClaimConfig();
     this.survey = new SurveyVue.Model(claimConfig);
     this.survey.completeText = "Request Credential";
   }

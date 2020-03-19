@@ -1,11 +1,11 @@
-import { InvitationState, RootState } from "@/models/storeState";
-import { ActionTree, ActionContext } from "vuex";
-import { Route } from "vue-router";
-import config from "@/assets/config/config.json";
-import Axios from "axios";
 import { IssuerInvitationInterface } from "@/models/api";
+import { AppConfig } from "@/models/appConfig";
 import { Invitation, InvitationStatus } from "@/models/invitation";
-import store from "@/store";
+import { InvitationState, RootState } from "@/models/storeState";
+import * as ConfigService from "@/services/config";
+import Axios from "axios";
+import { Route } from "vue-router";
+import { ActionContext, ActionTree } from "vuex";
 
 function getInviteStatus(inviteData: {
   active: boolean;
@@ -21,10 +21,11 @@ function getInviteStatus(inviteData: {
 }
 
 export const actions: ActionTree<InvitationState, RootState> = {
-  isValidToken(
+  async isValidToken(
     context: ActionContext<InvitationState, RootState>,
     route: Route
   ) {
+    const config: AppConfig = await ConfigService.getAppConfig();
     return new Promise<boolean>(resolve => {
       let isValid = false;
       const token = route.query.invite_token as string;

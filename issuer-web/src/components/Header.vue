@@ -11,12 +11,12 @@
         alt="Issuer Logo"
         class="shrink mr-2"
         contain
-        src="../assets/logo.png"
+        src="logo.png"
         transition="scale-transition"
         width="40"
       />
 
-      <h1>{{ config.issuer.name }}</h1>
+      <h1 v-if="config">{{ issuerName }}</h1>
     </div>
 
     <v-spacer></v-spacer>
@@ -33,12 +33,16 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-import config from "@/assets/config/config.json";
 import { mapActions, mapGetters } from "vuex";
+import * as ConfigService from "../services/config";
+import { AppConfig } from "../models/appConfig";
 
 @Component({
   computed: {
-    ...mapGetters("oidcStore", ["oidcUser"])
+    ...mapGetters("oidcStore", ["oidcUser"]),
+    issuerName() {
+      return this.config.issuer.name;
+    }
   },
   methods: {
     ...mapActions("oidcStore", ["signOutOidc"])
@@ -46,6 +50,10 @@ import { mapActions, mapGetters } from "vuex";
 })
 export default class Header extends Vue {
   @Prop() logoutUrl!: string;
-  readonly config = config;
+  private config!: AppConfig;
+
+  async created() {
+    this.config = (await ConfigService.getAppConfig()) as AppConfig;
+  }
 }
 </script>

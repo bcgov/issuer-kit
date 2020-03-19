@@ -80,7 +80,7 @@ export default class Connect extends Vue {
   }
 
   updated() {
-    this.handleConnect(this).then(result => {
+    this.handleConnect(this).then(() => {
       this.$router.push({ path: "issue-credential" });
     });
   }
@@ -99,11 +99,12 @@ export default class Connect extends Vue {
 
     async function checkConnectionStatus(resolve: Function) {
       const readyState = [ConnectionStatus.RESPONSE, ConnectionStatus.ACTIVE];
-      const progress = await $store.dispatch("connection/getConnectionStatus");
-      const connection: Connection = $store.getters["connection/getConnection"];
+      const connectionStatus: ConnectionStatus = await $store.dispatch(
+        "connection/getConnectionStatus"
+      );
 
       // if the state is not active, try again
-      if (readyState.indexOf(connection.status) < 0) {
+      if (readyState.indexOf(connectionStatus) < 0) {
         const id = setTimeout(() => checkConnectionStatus(resolve), 2000);
         retries.push(id);
       } else {

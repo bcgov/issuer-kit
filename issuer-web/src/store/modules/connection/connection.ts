@@ -1,10 +1,9 @@
-import { Credential } from "@/models/credential";
+import { Connection } from "@/models/connection";
 import { ConnectionState, RootState, StateType } from "@/models/storeState";
 import { Module } from "vuex";
 import { actions } from "./actions";
 import { getters } from "./getters";
 import { mutations } from "./mutations";
-import { Connection } from "@/models/connection";
 
 export const state: ConnectionState = {
   statusMessage: "",

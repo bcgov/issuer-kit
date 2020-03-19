@@ -8,11 +8,16 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import config from "@/assets/config/config.json";
+import { AppConfig } from "../models/appConfig";
+import * as ConfigService from "../services/config";
 
 @Component
 export default class Footer extends Vue {
-  private config = config;
+  private config!: AppConfig;
+
+  async created() {
+    this.config = (await ConfigService.getAppConfig()) as AppConfig;
+  }
 }
 </script>
 

@@ -1,17 +1,19 @@
-import config from "@/assets/config/config.json";
 import {
   AgentConnectionInterface,
   AgentConnectionStatusInterface
 } from "@/models/api";
+import { AppConfig } from "@/models/appConfig";
 import { Connection, ConnectionStatus } from "@/models/connection";
 import { ConnectionState, RootState } from "@/models/storeState";
+import * as ConfigService from "@/services/config";
 import Axios from "axios";
-import { ActionTree, ActionContext } from "vuex";
+import { ActionContext, ActionTree } from "vuex";
 
 export const actions: ActionTree<ConnectionState, RootState> = {
-  getNewConnection(
+  async getNewConnection(
     context: ActionContext<ConnectionState, RootState>
   ): Promise<Connection> {
+    const config: AppConfig = await ConfigService.getAppConfig();
     return new Promise<Connection>((resolve, reject) => {
       Axios.get(`${config.apiServer.url}/connections`)
         .then(response => {
@@ -33,9 +35,10 @@ export const actions: ActionTree<ConnectionState, RootState> = {
         });
     });
   },
-  getConnectionStatus(
+  async getConnectionStatus(
     context: ActionContext<ConnectionState, RootState>
   ): Promise<ConnectionStatus> {
+    const config: AppConfig = await ConfigService.getAppConfig();
     return new Promise<ConnectionStatus>((resolve, reject) => {
       const id = context.getters["getConnection"].id;
       Axios.get(`${config.apiServer.url}/connections/${id}`)

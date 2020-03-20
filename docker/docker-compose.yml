@@ -21,7 +21,6 @@ services:
       - SMTP_USERNAME=${SMTP_USERNAME}
       - SMTP_PASS=${SMTP_PASS}
       - EXISTING_SCHEMA_ID=${EXISTING_SCHEMA_ID}
-      - USE_CUSTOM_SCHEMA=${USE_CUSTOM_SCHEMA}
       - CUSTOM_SCHEMA_PATH=${CUSTOM_SCHEMA_PATH}
     volumes:
       - ../identity-controller:/usr/src/controller
@@ -50,7 +49,6 @@ services:
       - PUBLIC_SITE_URL=${PUBLIC_SITE_URL}
       - ADMIN_EMAIL=${ADMIN_EMAIL}
       - EXISTING_SCHEMA_ID=${EXISTING_SCHEMA_ID}
-      - USE_CUSTOM_SCHEMA=${USE_CUSTOM_SCHEMA}
       - CUSTOM_SCHEMA_PATH=${CUSTOM_SCHEMA_PATH}
       - S2I_SCRIPTS_PATH=${STI_SCRIPTS_PATH}
     ports:
@@ -95,8 +93,8 @@ services:
     networks:
       - identity_kit
 
-  wa-public:
-    image: wa-public:latest
+  issuer-web:
+    image: issuer-web:latest
     environment:
       - WEB_HOST_NAME=${PUBLIC_WEB_HOST_NAME}
       - WEB_HOST_PORT=${PUBLIC_WEB_HOST_PORT}
@@ -104,7 +102,11 @@ services:
       - API_HOST=${PUBLIC_API_HOST}
       - API_PORT=${PUBLIC_API_PORT}
     volumes:
-      - ./wa-public/config/Caddyfile:/etc/Caddyfile
+      - ./issuer-web/config/Caddyfile:/etc/Caddyfile
+      - ./issuer-web/config/claim-config.json:/srv/config/claim-config.json
+      - ./issuer-web/config/config.json:/srv/config/config.json
+      - ./issuer-web/config/vuetify.json:/srv/config/vuetify.json
+      - ./issuer-web/config/terms-and-conditions.html:/srv/terms-and-conditions.html
     ports:
       - ${PUBLIC_WEB_HOST_PORT}:${PUBLIC_WEB_HOST_PORT}
     networks:
@@ -113,16 +115,16 @@ services:
   #
   # Public frontend with hot-reloading
   #
-  wa-public-dev:
+  issuer-web-dev:
     image: node:erbium
     volumes:
-      - ../wa-public:/usr/src/wa-public
-    working_dir: /usr/src/wa-public
+      - ../issuer-web:/usr/src/issuer-web
+    working_dir: /usr/src/issuer-web
     ports:
-      - ${WA_PUBLIC_PORT}:${WA_PUBLIC_PORT}
+      - ${ISSUER_WEB_PORT}:${ISSUER_WEB_PORT}
     networks:
       - identity_kit
-    command: npm run start-docker
+    command: npm run serve
 
   #
   # wa-db
@@ -145,7 +147,7 @@ services:
   # keycloak service
   #
   keycloak:
-    image: jboss/keycloak:7.0.0
+    image: jboss/keycloak:9.0.0
     environment:
       DB_VENDOR: ${KEYCLOAK_DB_VENDOR}
       DB_ADDR: ${KEYCLOAK_DB_ADDR}
@@ -158,7 +160,7 @@ services:
       ROOT_LOGLEVEL: ${KEYCLOAK_ROOT_LOGLEVEL}
       KEYCLOAK_IMPORT: ${KEYCLOAK_IMPORT}
     volumes:
-      - ../docker/keycloak/config:/tmp
+      - ../docker/keycloak/config/realm-export-docker.json:/tmp/realm-export-docker.json
     ports:
       - 8180:8080
     depends_on:

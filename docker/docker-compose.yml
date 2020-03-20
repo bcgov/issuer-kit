@@ -182,7 +182,7 @@ services:
   # Identity Kit Agent
   #
   identity-kit-agent:
-    image: bcgovimages/aries-cloudagent:py36-1.14-1_0.4.4
+    image: bcgovimages/aries-cloudagent:py36-1.14-1_0.4.5
     environment:
       - LEDGER_URL=${LEDGER_URL}
       - WALLET_TYPE=${WALLET_TYPE}

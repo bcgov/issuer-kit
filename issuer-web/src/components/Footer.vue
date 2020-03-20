@@ -1,7 +1,7 @@
 <template>
   <v-footer padless>
     <v-col class="text-center" cols="12">
-      {{ new Date().getFullYear() }} — <strong>{{ config.issuer.name }}</strong>
+      {{ new Date().getFullYear() }} — <strong>{{ issuerName }}</strong>
     </v-col>
   </v-footer>
 </template>
@@ -13,10 +13,12 @@ import * as ConfigService from "../services/config";
 
 @Component
 export default class Footer extends Vue {
-  private config!: AppConfig;
+  private issuerName = "";
 
-  async created() {
-    this.config = (await ConfigService.getAppConfig()) as AppConfig;
+  created() {
+    ConfigService.getAppConfig().then((appConfig: AppConfig) => {
+      this.issuerName = appConfig.issuer.name;
+    });
   }
 }
 </script>

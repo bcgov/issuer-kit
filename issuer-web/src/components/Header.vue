@@ -16,7 +16,7 @@
         width="40"
       />
 
-      <h1 v-if="config">{{ issuerName }}</h1>
+      <h1>{{ issuerName }}</h1>
     </div>
 
     <v-spacer></v-spacer>
@@ -39,10 +39,7 @@ import { AppConfig } from "../models/appConfig";
 
 @Component({
   computed: {
-    ...mapGetters("oidcStore", ["oidcUser"]),
-    issuerName() {
-      return this.config.issuer.name;
-    }
+    ...mapGetters("oidcStore", ["oidcUser"])
   },
   methods: {
     ...mapActions("oidcStore", ["signOutOidc"])
@@ -50,10 +47,12 @@ import { AppConfig } from "../models/appConfig";
 })
 export default class Header extends Vue {
   @Prop() logoutUrl!: string;
-  private config!: AppConfig;
+  private issuerName = "";
 
-  async created() {
-    this.config = (await ConfigService.getAppConfig()) as AppConfig;
+  created() {
+    ConfigService.getAppConfig().then((appConfig: AppConfig) => {
+      this.issuerName = appConfig.issuer.name;
+    });
   }
 }
 </script>

@@ -383,7 +383,7 @@
       "displayName": "appConfig,json Mount Path",
       "description": "The path to use to mount the config file.",
       "required": true,
-      "value": "/srv/assets/config/"
+      "value": "/srv/config/"
     },
     {
       "name": "WEB_HOST_NAME",

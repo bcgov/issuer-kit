@@ -35,29 +35,30 @@ import * as ConfigService from "../services/config";
 })
 export default class Header extends Vue {
   @Prop({ default: "default" }) private themeName!: string;
-  private survey!: SurveyVue.Model;
+  private survey = new SurveyVue.Model();
   private surveyKey = 0;
 
-  async created() {
+  created() {
     SurveyVue.StylesManager.applyTheme(this.themeName);
-    const claimConfig = await ConfigService.getClaimConfig();
-    this.survey = new SurveyVue.Model(claimConfig);
-    this.survey.completeText = "Request Credential";
   }
 
   mounted() {
-    this.survey.onComplete.add(result => {
-      const credentialClaims = new Array<Claim>();
-      Object.keys(result.data).forEach(key => {
-        credentialClaims.push({ name: key, value: result.data[key] });
+    ConfigService.getClaimConfig().then(claimConfig => {
+      this.survey = new SurveyVue.Model(claimConfig);
+      this.survey.completeText = "Request Credential";
+      this.survey.onComplete.add(result => {
+        const credentialClaims = new Array<Claim>();
+        Object.keys(result.data).forEach(key => {
+          credentialClaims.push({ name: key, value: result.data[key] });
+        });
+        this.$store.commit("credential/updateClaims", credentialClaims);
+
+        // Go to next page on successful completion
+        this.$router.push({ path: "confirm-data" });
       });
-      this.$store.commit("credential/updateClaims", credentialClaims);
 
-      // Go to next page on successful completion
-      this.$router.push({ path: "confirm-data" });
+      this.refreshSurvey();
     });
-
-    this.refreshSurvey();
   }
 
   private refreshSurvey(): void {

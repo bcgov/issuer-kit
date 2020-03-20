@@ -74,21 +74,18 @@ import { AppConfig } from "../models/appConfig";
 
 @Component
 export default class Connect extends Vue {
-  private config!: AppConfig;
   private issued = false;
   private pollingAttempts: any[] = [];
   private credExId!: string;
 
-  async created() {
-    this.config = (await ConfigService.getAppConfig()) as AppConfig;
-  }
-
   mounted() {
-    this.requestCredentialIssuance().then(result => {
-      this.credExId = result.data.credential_exchange_id;
-      this.handleIssueCredential(this).then(() => {
-        this.issued = true;
-        this.clearPolling();
+    ConfigService.getAppConfig().then((appConfig: AppConfig) => {
+      this.requestCredentialIssuance(appConfig).then(result => {
+        this.credExId = result.data.credential_exchange_id;
+        this.handleIssueCredential(this, appConfig).then(() => {
+          this.issued = true;
+          this.clearPolling();
+        });
       });
     });
   }
@@ -97,14 +94,14 @@ export default class Connect extends Vue {
     this.clearPolling();
   }
 
-  async handleIssueCredential(context: any) {
+  async handleIssueCredential(context: any, config: AppConfig) {
     // save context for accessing in recursive function
     const credExId = context.credExId;
     const retries = context.pollingAttempts;
 
     async function checkCredExStatus(resolve: Function) {
       const response = await Axios.get(
-        `${this.config.apiServer.url}/issues/${credExId}`
+        `${config.apiServer.url}/issues/${credExId}`
       );
 
       // if there is no object matching teh CredExId, try again
@@ -118,7 +115,7 @@ export default class Connect extends Vue {
     return new Promise(resolve => checkCredExStatus(resolve));
   }
 
-  private async requestCredentialIssuance(): Promise<any> {
+  private async requestCredentialIssuance(config: AppConfig): Promise<any> {
     const credential = (await this.$store.getters[
       "credential/getCredential"
     ]) as Credential;
@@ -140,7 +137,7 @@ export default class Connect extends Vue {
       connectionId: connection.id,
       claims: credential.claims
     };
-    return Axios.post(`${this.config.apiServer.url}/issues/`, data);
+    return Axios.post(`${config.apiServer.url}/issues/`, data);
   }
 
   private clearPolling() {

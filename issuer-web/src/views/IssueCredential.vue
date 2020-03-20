@@ -77,11 +77,11 @@ export default class Connect extends Vue {
   private issued = false;
   private pollingAttempts: any[] = [];
   private credExId!: string;
-  private testLInk = ";";
+  private testLink = "";
 
   mounted() {
     ConfigService.getAppConfig().then((appConfig: AppConfig) => {
-      this.testLInk = appConfig.testLink;
+      this.testLink = appConfig.testLink;
       this.requestCredentialIssuance(appConfig).then(result => {
         this.credExId = result.data.credential_exchange_id;
         this.handleIssueCredential(this, appConfig).then(() => {

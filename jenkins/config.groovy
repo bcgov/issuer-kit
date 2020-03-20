@@ -28,7 +28,7 @@ class config {
   public static final Map<String, String[]> PROD_APPS = ['identity-kit-admin':['identity-kit-admin-bc', 'ns-id-admin'], 'issuer-web':['issuer-web-bc', 'ns-id-public'], 'identity-kit-controller':['identity-kit-controller-bc', 'ns-id-controller'], 'identity-kit-agent':['identity-kit-agent-bc', 'ns-id-agent']]
   
   // Mapping for source code context directories
-  public static final Map<String, String> APP_CONTEXT_DIRS = ['identity-kit-admin-angular':'wa-admin', 'identity-kit-admin':'wa-admin', 'issuer-web-angular':'issuer-web', 'issuer-web':'issuer-web', 'identity-kit-controller':'identity-controller', 'identity-kit-agent':'docker/agent']
+  public static final Map<String, String> APP_CONTEXT_DIRS = ['identity-kit-admin-angular':'wa-admin', 'identity-kit-admin':'wa-admin', 'issuer-web-base-image':'issuer-web', 'issuer-web':'issuer-web', 'identity-kit-controller':'identity-controller', 'identity-kit-agent':'docker/agent']
 
 }
 

@@ -57,7 +57,7 @@
         </p>
         <p>
           To try out your new credential please
-          <a :href="config.testLink">click here</a>.
+          <a :href="testLink">click here</a>.
         </p>
       </v-container>
     </v-card>
@@ -77,9 +77,11 @@ export default class Connect extends Vue {
   private issued = false;
   private pollingAttempts: any[] = [];
   private credExId!: string;
+  private testLInk = ";";
 
   mounted() {
     ConfigService.getAppConfig().then((appConfig: AppConfig) => {
+      this.testLInk = appConfig.testLink;
       this.requestCredentialIssuance(appConfig).then(result => {
         this.credExId = result.data.credential_exchange_id;
         this.handleIssueCredential(this, appConfig).then(() => {

@@ -3,7 +3,7 @@
 # Component: .
 # Template File: ../openshift/templates/identity-kit-public-angular/identity-kit-public-angular-build.json
 #=========================================================
-NAME=issuer-web-vue
+NAME=issuer-web-base-image
 APP_NAME=identity-kit
 APP_GROUP=identity-kit-base-image
 GIT_REPO_URL=https://github.com/bcgov/identity-kit-poc.git

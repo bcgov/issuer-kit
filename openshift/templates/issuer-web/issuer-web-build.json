@@ -134,7 +134,7 @@
       "displayName": "Artifact Image Name",
       "description": "The name of the image containing the built artifacts.",
       "required": true,
-      "value": "issuer-web-vue"
+      "value": "issuer-web-base-image"
     },
     {
       "name": "ARTIFACT_IMAGE_TAG",

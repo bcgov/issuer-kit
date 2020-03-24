@@ -22,7 +22,7 @@ export class InvitationService {
       query: { linkId },
     });
     if (!res) return { _id: '', active: false, expired: true };
-    if (res.issued) return { _id: res._id, active: true, expired: false, data: undefined }
+    if (res.issued) return { _id: res._id, active: true, expired: false, data: res }
     return {
       _id: res._id,
       active: res.active,

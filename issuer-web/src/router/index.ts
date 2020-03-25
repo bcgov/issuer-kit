@@ -24,6 +24,16 @@ function router(config: AppConfig): VueRouter {
       beforeEnter: validToken
     },
     {
+      // required for backwards compatibility with old issuer app
+      path: "/validate",
+      name: "Validate",
+      component: Home,
+      meta: {
+        isPublic: true
+      },
+      beforeEnter: validToken
+    },
+    {
       path: "/credential-data",
       name: "Credential Data",
       // route level code-splitting
@@ -70,6 +80,14 @@ function router(config: AppConfig): VueRouter {
     {
       path: "/unauthorized",
       name: "Unauthorized",
+      component: Unauthorized,
+      meta: {
+        isPublic: true
+      }
+    },
+    {
+      path: "*",
+      name: "Undefined",
       component: Unauthorized,
       meta: {
         isPublic: true

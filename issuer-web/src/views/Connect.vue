@@ -65,7 +65,6 @@ export default class Connect extends Vue {
   private base64Invitation!: string;
   private width!: number;
   private qrKey = 0;
-  private pollingAttempts: any[] = [];
 
   created() {
     this.width = 200;
@@ -85,33 +84,13 @@ export default class Connect extends Vue {
     });
   }
 
-  beforeDestroy() {
-    // clear polling attempts started by handleConnect
-    this.pollingAttempts.forEach(item => {
-      clearTimeout(item);
-    });
-  }
-
   async handleConnect(context: any) {
     // save context for accessing in recursive function
     const $store = context.$store;
-    const retries = context.pollingAttempts;
-
-    async function checkConnectionStatus(resolve: Function) {
-      const readyState = [ConnectionStatus.RESPONSE, ConnectionStatus.ACTIVE];
-      const connectionStatus: ConnectionStatus = await $store.dispatch(
-        "connection/getConnectionStatus"
-      );
-
-      // if the state is not active, try again
-      if (readyState.indexOf(connectionStatus) < 0) {
-        const id = setTimeout(() => checkConnectionStatus(resolve), 2000);
-        retries.push(id);
-      } else {
-        resolve();
-      }
-    }
-    return new Promise(resolve => checkConnectionStatus(resolve));
+    return await $store.dispatch(
+      "connection/waitForConnectionStatus",
+      ConnectionStatus.ACTIVE
+    );
   }
 }
 </script>

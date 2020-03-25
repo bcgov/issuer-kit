@@ -25,12 +25,7 @@
         class="mx-3"
       ></v-progress-circular>
 
-      <QRCode
-        v-if="qrKey > 0"
-        :value="base64Invitation"
-        :width="width"
-        :key="qrKey"
-      />
+      <QRCode v-if="qrKey > 0" :value="inviteURL" :width="width" :key="qrKey" />
 
       <v-container>
         <v-btn color="white" :h="`didcomm://launch?d_m=${base64Invitation}`">
@@ -59,38 +54,46 @@
 import { Component, Vue } from "vue-property-decorator";
 import QRCode from "@/components/QRCode.vue";
 import { Connection, ConnectionStatus } from "../models/connection";
+import Axios, { CancelTokenSource } from "axios";
 
 @Component({ components: { QRCode } })
 export default class Connect extends Vue {
   private base64Invitation!: string;
+  private inviteURL!: string;
   private width!: number;
   private qrKey = 0;
+  private cancelToken!: CancelTokenSource;
 
   created() {
     this.width = 200;
     this.base64Invitation = "Loading invite...";
 
+    this.cancelToken = Axios.CancelToken.source();
+
     this.$store
       .dispatch("connection/getNewConnection")
       .then((result: Connection) => {
         this.base64Invitation = btoa(JSON.stringify(result.invite));
+        this.inviteURL =
+          window.location.origin + "?c_i=" + this.base64Invitation;
         this.qrKey += 1; // force refresh of qrcode component
       });
   }
 
   updated() {
-    this.handleConnect(this).then(() => {
-      this.$router.push({ path: "issue-credential" });
-    });
+    this.$store
+      .dispatch("connection/waitForConnectionStatus", {
+        status: ConnectionStatus.ACTIVE,
+        cancelToken: this.cancelToken
+      })
+      .then(() => {
+        this.$router.push({ path: "issue-credential" });
+      });
   }
 
-  async handleConnect(context: any) {
-    // save context for accessing in recursive function
-    const $store = context.$store;
-    return await $store.dispatch(
-      "connection/waitForConnectionStatus",
-      ConnectionStatus.ACTIVE
-    );
+  beforeDestroy() {
+    // cancelling pending requests, if any
+    this.cancelToken.cancel();
   }
 }
 </script>

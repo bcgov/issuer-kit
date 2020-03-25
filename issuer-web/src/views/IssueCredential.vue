@@ -66,7 +66,7 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import Axios from "axios";
+import Axios, { CancelTokenSource } from "axios";
 import { Connection } from "../models/connection";
 import { Credential } from "../models/credential";
 import * as ConfigService from "../services/config";
@@ -76,6 +76,11 @@ import { AppConfig } from "../models/appConfig";
 export default class Connect extends Vue {
   private issued = false;
   private testLink = "";
+  private cancelToken!: CancelTokenSource;
+
+  created() {
+    this.cancelToken = Axios.CancelToken.source();
+  }
 
   mounted() {
     ConfigService.getAppConfig().then((appConfig: AppConfig) => {
@@ -89,6 +94,11 @@ export default class Connect extends Vue {
         });
       });
     });
+  }
+
+  beforeDestroy() {
+    // cancelling pending requests, if any
+    this.cancelToken.cancel();
   }
 
   async handleIssueCredential(credExId: string, config: AppConfig) {
@@ -109,7 +119,9 @@ export default class Connect extends Vue {
       }
     );
 
-    return await Axios.get(`${config.apiServer.url}/issues/${credExId}`);
+    return await Axios.get(`${config.apiServer.url}/issues/${credExId}`, {
+      cancelToken: this.cancelToken.token
+    });
   }
 
   private async requestCredentialIssuance(config: AppConfig): Promise<any> {
@@ -134,7 +146,9 @@ export default class Connect extends Vue {
       connectionId: connection.id,
       claims: credential.claims
     };
-    return Axios.post(`${config.apiServer.url}/issues/`, data);
+    return Axios.post(`${config.apiServer.url}/issues/`, data, {
+      cancelToken: this.cancelToken.token
+    });
   }
 }
 </script>

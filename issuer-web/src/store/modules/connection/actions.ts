@@ -6,7 +6,7 @@ import { AppConfig } from "@/models/appConfig";
 import { Connection, ConnectionStatus } from "@/models/connection";
 import { ConnectionState, RootState } from "@/models/storeState";
 import * as ConfigService from "@/services/config";
-import Axios from "axios";
+import Axios, { CancelTokenSource } from "axios";
 import { ActionContext, ActionTree } from "vuex";
 
 export const actions: ActionTree<ConnectionState, RootState> = {
@@ -26,29 +26,9 @@ export const actions: ActionTree<ConnectionState, RootState> = {
             context.commit("setConnection", connection);
             resolve(connection);
           } else {
-            throw "An error occurred while fetching a new connection";
-          }
-        })
-        .catch(error => {
-          console.error(error);
-          reject(error);
-        });
-    });
-  },
-  async getConnectionStatus(
-    context: ActionContext<ConnectionState, RootState>
-  ): Promise<ConnectionStatus> {
-    const config: AppConfig = await ConfigService.getAppConfig();
-    return new Promise<ConnectionStatus>((resolve, reject) => {
-      const id = context.getters["getConnection"].id;
-      Axios.get(`${config.apiServer.url}/connections/${id}`)
-        .then(response => {
-          if (response.status === 200) {
-            const responseData = response.data as AgentConnectionStatusInterface;
-            context.commit("setStatus", responseData.state);
-            resolve(responseData.state);
-          } else {
-            throw "An error occurred while fetching the connection status";
+            throw new Error(
+              "An error occurred while fetching a new connection"
+            );
           }
         })
         .catch(error => {
@@ -59,7 +39,7 @@ export const actions: ActionTree<ConnectionState, RootState> = {
   },
   async waitForConnectionStatus(
     context: ActionContext<ConnectionState, RootState>,
-    status: ConnectionStatus
+    options: { status: ConnectionStatus; cancelToken: CancelTokenSource }
   ): Promise<ConnectionStatus> {
     const config: AppConfig = await ConfigService.getAppConfig();
     return new Promise<ConnectionStatus>((resolve, reject) => {
@@ -67,7 +47,7 @@ export const actions: ActionTree<ConnectionState, RootState> = {
       const retryInterceptor = Axios.interceptors.response.use(
         response => {
           const responseData = response.data as AgentConnectionStatusInterface;
-          if (responseData.state === status) {
+          if (responseData.state === options.status) {
             Axios.interceptors.request.eject(retryInterceptor);
             return response;
           } else {
@@ -81,14 +61,18 @@ export const actions: ActionTree<ConnectionState, RootState> = {
           return Promise.reject(error);
         }
       );
-      Axios.get(`${config.apiServer.url}/connections/${id}`)
+      Axios.get(`${config.apiServer.url}/connections/${id}`, {
+        cancelToken: options.cancelToken.token
+      })
         .then(response => {
           if (response.status === 200) {
             const responseData = response.data as AgentConnectionStatusInterface;
             context.commit("setStatus", responseData.state);
             resolve(responseData.state);
           } else {
-            throw "An error occurred while fetching the connection status";
+            throw new Error(
+              "An error occurred while fetching the connection status"
+            );
           }
         })
         .catch(error => {

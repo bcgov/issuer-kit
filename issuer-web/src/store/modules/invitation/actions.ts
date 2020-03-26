@@ -25,6 +25,8 @@ export const actions: ActionTree<InvitationState, RootState> = {
     context: ActionContext<InvitationState, RootState>,
     route: Route
   ) {
+    // This action can be called BEFORE the Vue store is initialized and the config is loaded,
+    // so we need to fetch the configuration to be sure we have it.
     const config: AppConfig = await ConfigService.getAppConfig();
     return new Promise<boolean>(resolve => {
       let isValid = false;

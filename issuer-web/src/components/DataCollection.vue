@@ -26,7 +26,6 @@ import { Component, Prop, Vue } from "vue-property-decorator";
 import * as SurveyVue from "survey-vue";
 import { Credential, Claim } from "../models/credential";
 import { mapGetters } from "vuex";
-import * as ConfigService from "../services/config";
 
 @Component({
   computed: {
@@ -43,22 +42,22 @@ export default class Header extends Vue {
   }
 
   mounted() {
-    ConfigService.getClaimConfig().then(claimConfig => {
-      this.survey = new SurveyVue.Model(claimConfig);
-      this.survey.completeText = "Request Credential";
-      this.survey.onComplete.add(result => {
-        const credentialClaims = new Array<Claim>();
-        Object.keys(result.data).forEach(key => {
-          credentialClaims.push({ name: key, value: result.data[key] });
-        });
-        this.$store.commit("credential/updateClaims", credentialClaims);
-
-        // Go to next page on successful completion
-        this.$router.push({ path: "confirm-data" });
+    const claimConfig = this.$store.getters["configuration/getConfiguration"]
+      .claims;
+    this.survey = new SurveyVue.Model(claimConfig);
+    this.survey.completeText = "Request Credential";
+    this.survey.onComplete.add(result => {
+      const credentialClaims = new Array<Claim>();
+      Object.keys(result.data).forEach(key => {
+        credentialClaims.push({ name: key, value: result.data[key] });
       });
+      this.$store.commit("credential/updateClaims", credentialClaims);
 
-      this.refreshSurvey();
+      // Go to next page on successful completion
+      this.$router.push({ path: "confirm-data" });
     });
+
+    this.refreshSurvey();
   }
 
   private refreshSurvey(): void {

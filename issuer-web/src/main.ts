@@ -15,15 +15,21 @@ Vue.config.productionTip = false;
 
 Promise.all([
   ConfigService.getAppConfig(),
-  ConfigService.getThemeConfig()
+  ConfigService.getThemeConfig(),
+  ConfigService.getClaimConfig()
 ]).then(values => {
   const config = values[0] as AppConfig;
   const themeConfig = values[1] as UserVuetifyPreset;
+  const claimConfig = values[2];
 
   new Vue({
     store: IssueStore.getInstance(config),
     router: router(config),
     vuetify: new Vuetify(themeConfig),
+    created: function() {
+      this.$store.commit("configuration/setAppConfig", config);
+      this.$store.commit("configuration/setClaimConfig", claimConfig);
+    },
     render: h => h(App)
   }).$mount("#app");
 });

@@ -34,8 +34,7 @@
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { mapActions, mapGetters } from "vuex";
-import * as ConfigService from "../services/config";
-import { AppConfig } from "../models/appConfig";
+import { Configuration } from "../models/appConfig";
 
 @Component({
   computed: {
@@ -50,9 +49,10 @@ export default class Header extends Vue {
   private issuerName = "";
 
   created() {
-    ConfigService.getAppConfig().then((appConfig: AppConfig) => {
-      this.issuerName = appConfig.issuer.name;
-    });
+    const appConfig = this.$store.getters[
+      "configuration/getConfiguration"
+    ] as Configuration;
+    this.issuerName = appConfig.app.issuer.name;
   }
 }
 </script>

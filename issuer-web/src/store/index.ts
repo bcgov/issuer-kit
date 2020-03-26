@@ -1,10 +1,11 @@
 import { AppConfig } from "@/models/appConfig";
 import { RootState } from "@/models/storeState";
+import { configuration } from "@/store/modules/configuration/configuration";
 import { connection } from "@/store/modules/connection/connection";
 import { credential } from "@/store/modules/credential/credential";
 import { invitation } from "@/store/modules/invitation/invitation";
 import Vue from "vue";
-import Vuex, { StoreOptions, Store } from "vuex";
+import Vuex, { Store, StoreOptions } from "vuex";
 import { vuexOidcCreateStoreModule } from "vuex-oidc";
 
 class IssuerStore extends Store<RootState> {
@@ -18,6 +19,7 @@ class IssuerStore extends Store<RootState> {
         version: "1.0.0" // a simple property
       },
       modules: {
+        configuration,
         credential,
         invitation,
         connection,

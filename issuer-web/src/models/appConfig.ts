@@ -22,3 +22,8 @@ export interface AppConfig {
   };
   testLink: string;
 }
+
+export class Configuration {
+  public app!: AppConfig;
+  public claims!: any;
+}

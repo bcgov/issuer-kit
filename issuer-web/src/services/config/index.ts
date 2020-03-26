@@ -12,6 +12,7 @@ export async function getThemeConfig(): Promise<UserVuetifyPreset> {
   return Promise.resolve(response.data as UserVuetifyPreset);
 }
 
+//eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function getClaimConfig(): Promise<any> {
   const response = await Axios.get("config/claim-config.json");
   return Promise.resolve(response.data);

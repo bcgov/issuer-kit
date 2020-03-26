@@ -2,10 +2,9 @@ import {
   AgentConnectionInterface,
   AgentConnectionStatusInterface
 } from "@/models/api";
-import { AppConfig } from "@/models/appConfig";
+import { Configuration } from "@/models/appConfig";
 import { Connection, ConnectionStatus } from "@/models/connection";
 import { ConnectionState, RootState } from "@/models/storeState";
-import * as ConfigService from "@/services/config";
 import Axios, { CancelToken } from "axios";
 import { ActionContext, ActionTree } from "vuex";
 
@@ -13,9 +12,11 @@ export const actions: ActionTree<ConnectionState, RootState> = {
   async getNewConnection(
     context: ActionContext<ConnectionState, RootState>
   ): Promise<Connection> {
-    const config: AppConfig = await ConfigService.getAppConfig();
+    const config = context.rootGetters[
+      "configuration/getConfiguration"
+    ] as Configuration;
     return new Promise<Connection>((resolve, reject) => {
-      Axios.get(`${config.apiServer.url}/connections`)
+      Axios.get(`${config.app.apiServer.url}/connections`)
         .then(response => {
           if (response.status === 200) {
             const responseData = response.data as AgentConnectionInterface;
@@ -41,7 +42,9 @@ export const actions: ActionTree<ConnectionState, RootState> = {
     context: ActionContext<ConnectionState, RootState>,
     options: { status: ConnectionStatus; cancelToken: CancelToken }
   ): Promise<ConnectionStatus> {
-    const config: AppConfig = await ConfigService.getAppConfig();
+    const config = context.rootGetters[
+      "configuration/getConfiguration"
+    ] as Configuration;
     return new Promise<ConnectionStatus>((resolve, reject) => {
       const id = context.getters["getConnection"].id;
       const retryInterceptor = Axios.interceptors.response.use(
@@ -60,7 +63,7 @@ export const actions: ActionTree<ConnectionState, RootState> = {
           return Promise.reject(error);
         }
       );
-      Axios.get(`${config.apiServer.url}/connections/${id}`, {
+      Axios.get(`${config.app.apiServer.url}/connections/${id}`, {
         cancelToken: options.cancelToken
       })
         .then(response => {

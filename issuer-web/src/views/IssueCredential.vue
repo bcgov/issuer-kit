@@ -69,8 +69,7 @@ import { Component, Vue } from "vue-property-decorator";
 import Axios, { CancelTokenSource } from "axios";
 import { Connection } from "../models/connection";
 import { Credential } from "../models/credential";
-import * as ConfigService from "../services/config";
-import { AppConfig } from "../models/appConfig";
+import { AppConfig, Configuration } from "../models/appConfig";
 
 @Component
 export default class Connect extends Vue {
@@ -83,15 +82,16 @@ export default class Connect extends Vue {
   }
 
   mounted() {
-    ConfigService.getAppConfig().then((appConfig: AppConfig) => {
-      this.testLink = appConfig.testLink;
-      this.requestCredentialIssuance(appConfig).then(result => {
-        this.handleIssueCredential(
-          result.data.credential_exchange_id,
-          appConfig
-        ).then(() => {
-          this.issued = true;
-        });
+    const appConfig = this.$store.getters[
+      "configuration/getConfiguration"
+    ] as Configuration;
+    this.testLink = appConfig.app.testLink;
+    this.requestCredentialIssuance(appConfig.app).then(result => {
+      this.handleIssueCredential(
+        result.data.credential_exchange_id,
+        appConfig.app
+      ).then(() => {
+        this.issued = true;
       });
     });
   }
@@ -125,6 +125,7 @@ export default class Connect extends Vue {
     });
   }
 
+  //eslint-disable-next-line @typescript-eslint/no-explicit-any
   private async requestCredentialIssuance(config: AppConfig): Promise<any> {
     const credential = (await this.$store.getters[
       "credential/getCredential"

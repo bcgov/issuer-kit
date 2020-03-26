@@ -48,7 +48,6 @@ export const actions: ActionTree<ConnectionState, RootState> = {
         response => {
           const responseData = response.data as AgentConnectionStatusInterface;
           if (responseData.state === options.status) {
-            Axios.interceptors.request.eject(retryInterceptor);
             return response;
           } else {
             // retry until the credential has not been issued
@@ -78,6 +77,9 @@ export const actions: ActionTree<ConnectionState, RootState> = {
         .catch(error => {
           console.error(error);
           reject(error);
+        })
+        .finally(() => {
+          Axios.interceptors.response.eject(retryInterceptor);
         });
     });
   }

@@ -105,7 +105,6 @@ export default class Connect extends Vue {
     const retryInterceptor = Axios.interceptors.response.use(
       response => {
         if (response.data.issued) {
-          Axios.interceptors.request.eject(retryInterceptor);
           return response;
         } else {
           // retry until the credential has not been issued
@@ -121,6 +120,8 @@ export default class Connect extends Vue {
 
     return await Axios.get(`${config.apiServer.url}/issues/${credExId}`, {
       cancelToken: this.cancelTokenSource.token
+    }).finally(() => {
+      Axios.interceptors.response.eject(retryInterceptor);
     });
   }
 

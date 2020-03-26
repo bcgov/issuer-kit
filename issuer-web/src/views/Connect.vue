@@ -83,7 +83,7 @@ export default class Connect extends Vue {
   updated() {
     this.$store
       .dispatch("connection/waitForConnectionStatus", {
-        status: ConnectionStatus.ACTIVE,
+        status: [ConnectionStatus.RESPONSE, ConnectionStatus.ACTIVE],
         cancelToken: this.cancelTokenSource.token
       })
       .then(() => {

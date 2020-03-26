@@ -70,6 +70,7 @@ import Axios, { CancelTokenSource } from "axios";
 import { Connection } from "../models/connection";
 import { Credential } from "../models/credential";
 import { AppConfig, Configuration } from "../models/appConfig";
+import { sleep } from "../utils";
 
 @Component
 export default class Connect extends Vue {
@@ -103,11 +104,12 @@ export default class Connect extends Vue {
 
   async handleIssueCredential(credExId: string, config: AppConfig) {
     const retryInterceptor = Axios.interceptors.response.use(
-      response => {
+      async response => {
         if (response.data.issued) {
           return response;
         } else {
-          // retry until the credential has not been issued
+          // retry every 500ms until the credential has not been issued
+          await sleep(500);
           return Axios.request(response.config);
         }
       },

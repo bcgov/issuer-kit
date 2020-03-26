@@ -66,7 +66,7 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import Axios from "axios";
+import Axios, { CancelTokenSource } from "axios";
 import { Connection } from "../models/connection";
 import { Credential } from "../models/credential";
 import * as ConfigService from "../services/config";
@@ -75,46 +75,54 @@ import { AppConfig } from "../models/appConfig";
 @Component
 export default class Connect extends Vue {
   private issued = false;
-  private pollingAttempts: any[] = [];
-  private credExId!: string;
   private testLink = "";
+  private cancelTokenSource!: CancelTokenSource;
+
+  created() {
+    this.cancelTokenSource = Axios.CancelToken.source();
+  }
 
   mounted() {
     ConfigService.getAppConfig().then((appConfig: AppConfig) => {
       this.testLink = appConfig.testLink;
       this.requestCredentialIssuance(appConfig).then(result => {
-        this.credExId = result.data.credential_exchange_id;
-        this.handleIssueCredential(this, appConfig).then(() => {
+        this.handleIssueCredential(
+          result.data.credential_exchange_id,
+          appConfig
+        ).then(() => {
           this.issued = true;
-          this.clearPolling();
         });
       });
     });
   }
 
   beforeDestroy() {
-    this.clearPolling();
+    // cancelling pending requests, if any
+    this.cancelTokenSource.cancel();
   }
 
-  async handleIssueCredential(context: any, config: AppConfig) {
-    // save context for accessing in recursive function
-    const credExId = context.credExId;
-    const retries = context.pollingAttempts;
-
-    async function checkCredExStatus(resolve: Function) {
-      const response = await Axios.get(
-        `${config.apiServer.url}/issues/${credExId}`
-      );
-
-      // if there is no object matching teh CredExId, try again
-      if (!response || !response.data.issued) {
-        const id = setTimeout(() => checkCredExStatus(resolve), 2000);
-        retries.push(id);
-      } else {
-        resolve(response);
+  async handleIssueCredential(credExId: string, config: AppConfig) {
+    const retryInterceptor = Axios.interceptors.response.use(
+      response => {
+        if (response.data.issued) {
+          return response;
+        } else {
+          // retry until the credential has not been issued
+          return Axios.request(response.config);
+        }
+      },
+      error => {
+        // Any status codes that falls outside the range of 2xx cause this function to trigger
+        // Do something with response error
+        return Promise.reject(error);
       }
-    }
-    return new Promise(resolve => checkCredExStatus(resolve));
+    );
+
+    return await Axios.get(`${config.apiServer.url}/issues/${credExId}`, {
+      cancelToken: this.cancelTokenSource.token
+    }).finally(() => {
+      Axios.interceptors.response.eject(retryInterceptor);
+    });
   }
 
   private async requestCredentialIssuance(config: AppConfig): Promise<any> {
@@ -139,12 +147,8 @@ export default class Connect extends Vue {
       connectionId: connection.id,
       claims: credential.claims
     };
-    return Axios.post(`${config.apiServer.url}/issues/`, data);
-  }
-
-  private clearPolling() {
-    this.pollingAttempts.forEach(item => {
-      clearTimeout(item);
+    return Axios.post(`${config.apiServer.url}/issues/`, data, {
+      cancelToken: this.cancelTokenSource.token
     });
   }
 }

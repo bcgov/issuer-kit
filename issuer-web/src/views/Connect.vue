@@ -25,12 +25,7 @@
         class="mx-3"
       ></v-progress-circular>
 
-      <QRCode
-        v-if="qrKey > 0"
-        :value="base64Invitation"
-        :width="width"
-        :key="qrKey"
-      />
+      <QRCode v-if="qrKey > 0" :value="inviteURL" :width="width" :key="qrKey" />
 
       <v-container>
         <v-btn color="white" :h="`didcomm://launch?d_m=${base64Invitation}`">
@@ -59,59 +54,46 @@
 import { Component, Vue } from "vue-property-decorator";
 import QRCode from "@/components/QRCode.vue";
 import { Connection, ConnectionStatus } from "../models/connection";
+import Axios, { CancelTokenSource } from "axios";
 
 @Component({ components: { QRCode } })
 export default class Connect extends Vue {
   private base64Invitation!: string;
+  private inviteURL!: string;
   private width!: number;
   private qrKey = 0;
-  private pollingAttempts: any[] = [];
+  private cancelTokenSource!: CancelTokenSource;
 
   created() {
     this.width = 200;
     this.base64Invitation = "Loading invite...";
 
+    this.cancelTokenSource = Axios.CancelToken.source();
+
     this.$store
       .dispatch("connection/getNewConnection")
       .then((result: Connection) => {
         this.base64Invitation = btoa(JSON.stringify(result.invite));
+        this.inviteURL =
+          window.location.origin + "?c_i=" + this.base64Invitation;
         this.qrKey += 1; // force refresh of qrcode component
       });
   }
 
   updated() {
-    this.handleConnect(this).then(() => {
-      this.$router.push({ path: "issue-credential" });
-    });
+    this.$store
+      .dispatch("connection/waitForConnectionStatus", {
+        status: ConnectionStatus.ACTIVE,
+        cancelToken: this.cancelTokenSource.token
+      })
+      .then(() => {
+        this.$router.push({ path: "issue-credential" });
+      });
   }
 
   beforeDestroy() {
-    // clear polling attempts started by handleConnect
-    this.pollingAttempts.forEach(item => {
-      clearTimeout(item);
-    });
-  }
-
-  async handleConnect(context: any) {
-    // save context for accessing in recursive function
-    const $store = context.$store;
-    const retries = context.pollingAttempts;
-
-    async function checkConnectionStatus(resolve: Function) {
-      const readyState = [ConnectionStatus.RESPONSE, ConnectionStatus.ACTIVE];
-      const connectionStatus: ConnectionStatus = await $store.dispatch(
-        "connection/getConnectionStatus"
-      );
-
-      // if the state is not active, try again
-      if (readyState.indexOf(connectionStatus) < 0) {
-        const id = setTimeout(() => checkConnectionStatus(resolve), 2000);
-        retries.push(id);
-      } else {
-        resolve();
-      }
-    }
-    return new Promise(resolve => checkConnectionStatus(resolve));
+    // cancelling pending requests, if any
+    this.cancelTokenSource.cancel();
   }
 }
 </script>

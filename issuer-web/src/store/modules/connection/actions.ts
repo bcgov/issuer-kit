@@ -6,7 +6,7 @@ import { AppConfig } from "@/models/appConfig";
 import { Connection, ConnectionStatus } from "@/models/connection";
 import { ConnectionState, RootState } from "@/models/storeState";
 import * as ConfigService from "@/services/config";
-import Axios, { CancelTokenSource } from "axios";
+import Axios, { CancelToken } from "axios";
 import { ActionContext, ActionTree } from "vuex";
 
 export const actions: ActionTree<ConnectionState, RootState> = {
@@ -39,7 +39,7 @@ export const actions: ActionTree<ConnectionState, RootState> = {
   },
   async waitForConnectionStatus(
     context: ActionContext<ConnectionState, RootState>,
-    options: { status: ConnectionStatus; cancelToken: CancelTokenSource }
+    options: { status: ConnectionStatus; cancelToken: CancelToken }
   ): Promise<ConnectionStatus> {
     const config: AppConfig = await ConfigService.getAppConfig();
     return new Promise<ConnectionStatus>((resolve, reject) => {
@@ -62,7 +62,7 @@ export const actions: ActionTree<ConnectionState, RootState> = {
         }
       );
       Axios.get(`${config.apiServer.url}/connections/${id}`, {
-        cancelToken: options.cancelToken.token
+        cancelToken: options.cancelToken
       })
         .then(response => {
           if (response.status === 200) {

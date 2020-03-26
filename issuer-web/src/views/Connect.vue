@@ -62,13 +62,13 @@ export default class Connect extends Vue {
   private inviteURL!: string;
   private width!: number;
   private qrKey = 0;
-  private cancelToken!: CancelTokenSource;
+  private cancelTokenSource!: CancelTokenSource;
 
   created() {
     this.width = 200;
     this.base64Invitation = "Loading invite...";
 
-    this.cancelToken = Axios.CancelToken.source();
+    this.cancelTokenSource = Axios.CancelToken.source();
 
     this.$store
       .dispatch("connection/getNewConnection")
@@ -84,7 +84,7 @@ export default class Connect extends Vue {
     this.$store
       .dispatch("connection/waitForConnectionStatus", {
         status: ConnectionStatus.ACTIVE,
-        cancelToken: this.cancelToken
+        cancelToken: this.cancelTokenSource.token
       })
       .then(() => {
         this.$router.push({ path: "issue-credential" });
@@ -93,7 +93,7 @@ export default class Connect extends Vue {
 
   beforeDestroy() {
     // cancelling pending requests, if any
-    this.cancelToken.cancel();
+    this.cancelTokenSource.cancel();
   }
 }
 </script>

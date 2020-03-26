@@ -76,10 +76,10 @@ import { AppConfig } from "../models/appConfig";
 export default class Connect extends Vue {
   private issued = false;
   private testLink = "";
-  private cancelToken!: CancelTokenSource;
+  private cancelTokenSource!: CancelTokenSource;
 
   created() {
-    this.cancelToken = Axios.CancelToken.source();
+    this.cancelTokenSource = Axios.CancelToken.source();
   }
 
   mounted() {
@@ -98,7 +98,7 @@ export default class Connect extends Vue {
 
   beforeDestroy() {
     // cancelling pending requests, if any
-    this.cancelToken.cancel();
+    this.cancelTokenSource.cancel();
   }
 
   async handleIssueCredential(credExId: string, config: AppConfig) {
@@ -120,7 +120,7 @@ export default class Connect extends Vue {
     );
 
     return await Axios.get(`${config.apiServer.url}/issues/${credExId}`, {
-      cancelToken: this.cancelToken.token
+      cancelToken: this.cancelTokenSource.token
     });
   }
 
@@ -147,7 +147,7 @@ export default class Connect extends Vue {
       claims: credential.claims
     };
     return Axios.post(`${config.apiServer.url}/issues/`, data, {
-      cancelToken: this.cancelToken.token
+      cancelToken: this.cancelTokenSource.token
     });
   }
 }

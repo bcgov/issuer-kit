@@ -7,6 +7,7 @@ import { Connection, ConnectionStatus } from "@/models/connection";
 import { ConnectionState, RootState } from "@/models/storeState";
 import Axios, { CancelToken } from "axios";
 import { ActionContext, ActionTree } from "vuex";
+import { sleep } from "@/utils";
 
 export const actions: ActionTree<ConnectionState, RootState> = {
   async getNewConnection(
@@ -40,7 +41,7 @@ export const actions: ActionTree<ConnectionState, RootState> = {
   },
   async waitForConnectionStatus(
     context: ActionContext<ConnectionState, RootState>,
-    options: { status: ConnectionStatus; cancelToken: CancelToken }
+    options: { status: ConnectionStatus[]; cancelToken: CancelToken }
   ): Promise<ConnectionStatus> {
     const config = context.rootGetters[
       "configuration/getConfiguration"
@@ -48,12 +49,13 @@ export const actions: ActionTree<ConnectionState, RootState> = {
     return new Promise<ConnectionStatus>((resolve, reject) => {
       const id = context.getters["getConnection"].id;
       const retryInterceptor = Axios.interceptors.response.use(
-        response => {
+        async response => {
           const responseData = response.data as AgentConnectionStatusInterface;
-          if (responseData.state === options.status) {
+          if (options.status.indexOf(responseData.state) > -1) {
             return response;
           } else {
-            // retry until the credential has not been issued
+            // retry every 500ms until the credential has not been issued
+            await sleep(500);
             return Axios.request(response.config);
           }
         },

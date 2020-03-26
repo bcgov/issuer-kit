@@ -10,6 +10,7 @@ export const mutations: MutationTree<ConfigurationState> = {
     state.statusMessage = "success";
     state.stateType = StateType.INITIALIZED;
   },
+  //eslint-disable-next-line @typescript-eslint/no-explicit-any
   setClaimConfig(state: ConfigurationState, claims: any) {
     Vue.set(state.configuration, "claims", claims);
     state.error = false;

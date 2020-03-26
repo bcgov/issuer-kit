@@ -25,5 +25,5 @@ export interface AppConfig {
 
 export class Configuration {
   public app!: AppConfig;
-  public claims!: any;
+  public claims!: any; //eslint-disable-line @typescript-eslint/no-explicit-any
 }

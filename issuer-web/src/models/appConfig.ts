@@ -3,6 +3,7 @@ export interface AppConfig {
   issuer: {
     name: string;
   };
+  inviteRequired: boolean;
   authentication: {
     enabled: boolean;
     oidcSettings: {

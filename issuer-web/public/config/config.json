@@ -3,6 +3,7 @@
   "issuer": {
     "name": "Issuer Name"
   },
+  "inviteRequired": false,
   "authentication": {
     "enabled": false,
     "oidcSettings": {

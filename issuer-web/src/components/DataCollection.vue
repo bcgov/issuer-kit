@@ -39,6 +39,7 @@ export default class Header extends Vue {
 
   created() {
     SurveyVue.StylesManager.applyTheme(this.themeName);
+    this.registerSurveyFunctions();
   }
 
   mounted() {
@@ -102,6 +103,15 @@ export default class Header extends Vue {
         `The provided key '${key}' is not a valid field and was skipped.`
       );
     }
+  }
+
+  private registerSurveyFunctions(): void {
+    // eslint-disable-next-line
+    // @ts-ignore: implicit any type
+    const surveyFunctions = window["surveyFunctions"] || [];
+    surveyFunctions.forEach((f: any) => { // eslint-disable-line
+      SurveyVue.FunctionFactory.Instance.register(f.name, f);
+    });
   }
 }
 </script>

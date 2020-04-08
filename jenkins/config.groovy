@@ -8,7 +8,7 @@ class config {
   // Deployment configuration
   public static final String[] DEPLOYMENT_ENVIRONMENT_TAGS = ['dev', 'test', 'prod']
   // public static final String DEV_ENV = "${DEPLOYMENT_ENVIRONMENT_TAGS[0]}"
-  // public static final String TEST_ENV = "${DEPLOYMENT_ENVIRONMENT_TAGS[1]}"
+  public static final String TEST_ENV = "${DEPLOYMENT_ENVIRONMENT_TAGS[1]}"
   public static final String PROD_ENV = "${DEPLOYMENT_ENVIRONMENT_TAGS[2]}"
 
   // The name of the project namespace(s).
@@ -23,13 +23,13 @@ class config {
   public static final String RUNTIME_IMAGE_SELECTOR = "${APP_LABEL}-runtime"
 
   // List of apps that will require to be deployed.
-  // Databases are not included since they will not likely change often.
-  public static final String[] APPS = ['identity-kit-admin', 'identity-kit-public', 'identity-kit-controller', 'identity-kit-agent']
-  public static final Map<String, String> APP_CONTEXT_DIRS = ['identity-kit-admin-angular':'wa-admin', 'identity-kit-admin':'wa-admin', 'identity-kit-public-angular':'wa-public', 'identity-kit-public':'wa-public', 'identity-kit-controller':'identity-controller', 'identity-kit-agent':'docker/agent']
+  // The map binds an image with the set of deployments that are related to it
+  public static final Map<String, String[]> TEST_APPS = ['identity-kit-admin':['identity-kit-admin-bc'], 'issuer-web':['issuer-web-bc'], 'identity-kit-controller':['identity-kit-controller-bc'], 'identity-kit-agent':['identity-kit-agent-bc']]
+  public static final Map<String, String[]> PROD_APPS = ['identity-kit-admin':['identity-kit-admin-bc', 'ns-id-admin'], 'issuer-web':['issuer-web-bc', 'ns-id-public'], 'identity-kit-controller':['identity-kit-controller-bc', 'ns-id-controller'], 'identity-kit-agent':['identity-kit-agent-bc', 'ns-id-agent']]
+  
+  // Mapping for source code context directories
+  public static final Map<String, String> APP_CONTEXT_DIRS = ['identity-kit-admin-angular':'wa-admin', 'identity-kit-admin':'wa-admin', 'issuer-web-base-image':'issuer-web', 'issuer-web':'issuer-web', 'identity-kit-controller':'identity-controller', 'identity-kit-agent':'docker/agent']
 
-  // Build configuration
-  public static final String  APP_NAME = "${this.APPS}"
-  public static final String[] BUILDS = ["${this.APPS}"]
 }
 
 return new config();

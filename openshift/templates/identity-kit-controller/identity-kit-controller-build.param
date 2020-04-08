@@ -6,6 +6,7 @@
 NAME=identity-kit-controller
 APP_NAME=identity-kit
 APP_GROUP=identity-kit-runtime
+ENV_NAME=tools
 GIT_REPO_URL=https://github.com/bcgov/identity-kit-poc.git
 GIT_REF=master
 SOURCE_CONTEXT_DIR=identity-controller

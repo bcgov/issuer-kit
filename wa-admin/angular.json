@@ -75,8 +75,7 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "wa-admin:build",
-            "proxyConfig": "src/proxy.conf.js"
+            "browserTarget": "wa-admin:build"
           },
           "configurations": {
             "production": {

@@ -2,7 +2,7 @@
   "kind": "Template",
   "apiVersion": "v1",
   "metadata": {
-    "name": "${NAME}-deployment-template",
+    "name": "${NAME}${SUFFIX}-deployment-template",
     "annotations": {
       "description": "Deployment template for a NodeJS server connected to a MongoDB database.",
       "tags": "nodejs",
@@ -14,14 +14,16 @@
       "kind": "Service",
       "apiVersion": "v1",
       "metadata": {
-        "name": "${NAME}",
+        "name": "${NAME}${SUFFIX}",
         "annotations": {
           "description": "Exposes and load balances the application pods"
         },
         "labels": {
-          "name": "${NAME}",
-          "app": "${APP_NAME}",
-          "app-group": "${APP_GROUP}"
+          "name": "${NAME}${SUFFIX}",
+          "app": "${APP_NAME}${SUFFIX}",
+          "app-group": "${APP_GROUP}",
+          "role": "${ROLE}",
+          "env": "${TAG_NAME}"
         }
       },
       "spec": {
@@ -34,7 +36,7 @@
           }
         ],
         "selector": {
-          "name": "${NAME}"
+          "name": "${NAME}${SUFFIX}"
         }
       }
     },
@@ -42,14 +44,16 @@
       "kind": "DeploymentConfig",
       "apiVersion": "v1",
       "metadata": {
-        "name": "${NAME}",
+        "name": "${NAME}${SUFFIX}",
         "annotations": {
           "description": "Defines how to deploy the application server"
         },
         "labels": {
-          "name": "${NAME}",
-          "app": "${APP_NAME}",
-          "app-group": "${APP_GROUP}"
+          "name": "${NAME}${SUFFIX}",
+          "app": "${APP_NAME}${SUFFIX}",
+          "app-group": "${APP_GROUP}",
+          "role": "${ROLE}",
+          "env": "${TAG_NAME}"
         }
       },
       "spec": {
@@ -62,12 +66,12 @@
             "imageChangeParams": {
               "automatic": true,
               "containerNames": [
-                "${NAME}"
+                "${NAME}${SUFFIX}"
               ],
               "from": {
                 "kind": "ImageStreamTag",
                 "namespace": "${IMAGE_NAMESPACE}",
-                "name": "${NAME}:${TAG_NAME}"
+                "name": "${SOURCE_IMAGE_NAME}:${TAG_NAME}"
               }
             }
           },
@@ -77,21 +81,23 @@
         ],
         "replicas": 1,
         "selector": {
-          "name": "${NAME}"
+          "name": "${NAME}${SUFFIX}"
         },
         "template": {
           "metadata": {
-            "name": "${NAME}",
+            "name": "${NAME}${SUFFIX}",
             "labels": {
-              "name": "${NAME}",
-              "app": "${APP_NAME}",
-              "app-group": "${APP_GROUP}"
+              "name": "${NAME}${SUFFIX}",
+              "app": "${APP_NAME}${SUFFIX}",
+              "app-group": "${APP_GROUP}",
+              "role": "${ROLE}",
+              "env": "${TAG_NAME}"
             }
           },
           "spec": {
             "containers": [
               {
-                "name": "${NAME}",
+                "name": "${NAME}${SUFFIX}",
                 "image": " ",
                 "ports": [
                   {
@@ -126,7 +132,7 @@
                   },
                   {
                     "name": "DB_SERVICE",
-                    "value": "${DB_SERVICE}"
+                    "value": "${DB_SERVICE}${SUFFIX}"
                   },
                   {
                     "name": "DB_PORT",
@@ -140,7 +146,7 @@
                     "name": "DB_USER",
                     "valueFrom": {
                       "secretKeyRef": {
-                        "name": "${DB_SERVICE}",
+                        "name": "${DB_SERVICE}${SUFFIX}",
                         "key": "database-user"
                       }
                     }
@@ -149,20 +155,20 @@
                     "name": "DB_PASSWORD",
                     "valueFrom": {
                       "secretKeyRef": {
-                        "name": "${DB_SERVICE}",
+                        "name": "${DB_SERVICE}${SUFFIX}",
                         "key": "database-password"
                       }
                     }
                   },
                   {
                     "name": "AGENT_ADMIN_URL",
-                    "value": "http://${AGENT_SERVICE_NAME}:${AGENT_ADMIN_PORT}"
+                    "value": "http://${AGENT_SERVICE_NAME}${SUFFIX}:${AGENT_ADMIN_PORT}"
                   },
                   {
                     "name": "AGENT_ADMIN_API_KEY",
                     "valueFrom": {
                       "secretKeyRef": {
-                        "name": "${AGENT_SERVICE_NAME}",
+                        "name": "${AGENT_SERVICE_NAME}${SUFFIX}",
                         "key": "admin-api-key"
                       }
                     }
@@ -177,11 +183,19 @@
                   },
                   {
                     "name": "ADMIN_EMAIL",
-                    "value": "${ADMIN_EMAILs}"
+                    "value": "${ADMIN_EMAIL}"
                   },
                   {
                     "name": "PUBLIC_SITE_URL",
                     "value": "${PUBLIC_SITE_URL}"
+                  },
+                  {
+                    "name": "EXISTING_SCHEMA_ID",
+                    "value": "${EXISTING_SCHEMA_ID}"
+                  },
+                  {
+                    "name": "CUSTOM_SCHEMA_PATH",
+                    "value": "${CUSTOM_SCHEMA_PATH}"
                   }
                 ],
                 "resources": {
@@ -204,20 +218,88 @@
       "kind": "HorizontalPodAutoscaler",
       "apiVersion": "autoscaling/v1",
       "metadata": {
-        "name": "${NAME}",
+        "name": "${NAME}${SUFFIX}",
         "labels": {
-          "name": "${NAME}",
-          "app": "${APP_NAME}",
-          "app-group": "${APP_GROUP}"
+          "name": "${NAME}${SUFFIX}",
+          "app": "${APP_NAME}${SUFFIX}",
+          "app-group": "${APP_GROUP}",
+          "role": "${ROLE}",
+          "env": "${TAG_NAME}"
         }
       },
       "spec": {
         "scaleTargetRef": {
           "kind": "DeploymentConfig",
-          "name": "${NAME}"
+          "name": "${NAME}${SUFFIX}"
         },
         "minReplicas": "${{MIN_REPLICAS}}",
         "maxReplicas": "${{MAX_REPLICAS}}"
+      }
+    },
+    {
+      "kind": "NetworkSecurityPolicy",
+      "apiVersion": "secops.pathfinder.gov.bc.ca/v1alpha1",
+      "metadata": {
+        "name": "custom-${APP_NAME}-pods-to-api",
+        "labels": {
+          "name": "custom-${APP_NAME}-pods-to-api",
+          "app": "${APP_NAME}",
+          "app-group": "${APP_GROUP}",
+          "role": "${ROLE}",
+          "env": "${TAG_NAME}"
+        }
+      },
+      "spec": {
+        "description": "Allow pods to talk to the internal api so deployments work.\nThis only needs to be specified once per environment.\n",
+        "source": [
+          [
+            "$namespace=${NAMESPACE_NAME}-${TAG_NAME}"
+          ]
+        ],
+        "destination": [
+          [
+            "int:network=internal-cluster-api-endpoint"
+          ]
+        ]
+      }
+    },
+    {
+      "kind": "NetworkSecurityPolicy",
+      "apiVersion": "secops.pathfinder.gov.bc.ca/v1alpha1",
+      "metadata": {
+        "name": "custom-${APP_NAME}-${NAME}-policy",
+        "labels": {
+          "name": "custom-${APP_NAME}-${NAME}-policy",
+          "app": "${APP_NAME}",
+          "app-group": "${APP_GROUP}",
+          "role": "${ROLE}",
+          "env": "${TAG_NAME}"
+        }
+      },
+      "spec": {
+        "description": "Allow the controller to talk to either the database or agent micro services.\n",
+        "source": [
+          [
+            "role=${ROLE}",
+            "app=${APP_NAME}",
+            "env=${TAG_NAME}",
+            "$namespace=${NAMESPACE_NAME}-${TAG_NAME}"
+          ]
+        ],
+        "destination": [
+          [
+            "role=db",
+            "app=${APP_NAME}",
+            "env=${TAG_NAME}",
+            "$namespace=${NAMESPACE_NAME}-${TAG_NAME}"
+          ],
+          [
+            "role=agent",
+            "app=${APP_NAME}",
+            "env=${TAG_NAME}",
+            "$namespace=${NAMESPACE_NAME}-${TAG_NAME}"
+          ]
+        ]
       }
     }
   ],
@@ -242,6 +324,20 @@
       "description": "The name assigned to all of the deployments in this project.",
       "required": true,
       "value": "identity-kit-controller"
+    },
+    {
+      "name": "SUFFIX",
+      "displayName": "Suffix",
+      "description": "A suffix applied to all of the objects in this template.",
+      "required": false,
+      "value": ""
+    },
+    {
+      "name": "ROLE",
+      "displayName": "Role",
+      "description": "The role of this service within the application - used for Network Policies",
+      "required": true,
+      "value": "controller"
     },
     {
       "name": "IMAGE_NAMESPACE",
@@ -277,6 +373,13 @@
       "required": true,
       "description": "Name of the deployed database (see environment variables in deployed database).",
       "value": "identity_kit_db"
+    },
+    {
+      "name": "SOURCE_IMAGE_NAME",
+      "displayName": "Source Image Name",
+      "description": "The name of the image to use for this resource.",
+      "required": true,
+      "value": "identity-kit-controller"
     },
     {
       "name": "TAG_NAME",
@@ -326,6 +429,20 @@
       "description": "Public Site URL",
       "required": true,
       "value": "https://identity-kit.pathfinder.gov.bc.ca/"
+    },
+    {
+      "name": "EXISTING_SCHEMA_ID",
+      "displayName": "Existing Schema ID",
+      "description": "Specifies the id of a schema that has already been published to the target ledger and should be used rather than creating a new schema.",
+      "required": false,
+      "value": ""
+    },
+    {
+      "name": "CUSTOM_SCHEMA_PATH",
+      "displayName": "Custom Schema Path",
+      "description": "Specifies the path to a file containing a custom schema definition. If set, the controller will try to use this schema instead of the default one.",
+      "required": false,
+      "value": ""
     },
     {
       "name": "MIN_REPLICAS",

@@ -4,22 +4,24 @@
   "metadata": {
     "annotations": {
       "description": "Deployment template for a postgresql server with persistent storage.",
-      "tags": "${NAME}"
+      "tags": "${NAME}${SUFFIX}"
     },
-    "name": "${NAME}-persistent-template"
+    "name": "${NAME}${SUFFIX}"
   },
   "objects": [
     {
       "kind": "DeploymentConfig",
       "apiVersion": "v1",
       "metadata": {
-        "name": "${NAME}",
+        "name": "${NAME}${SUFFIX}",
         "generation": 1,
         "labels": {
-          "name": "${NAME}",
-          "app": "${APP_NAME}",
+          "app": "${APP_NAME}${SUFFIX}",
+          "name": "${NAME}${SUFFIX}",
           "app-group": "${APP_GROUP}",
-          "template": "${NAME}-persistent-template"
+          "role": "${ROLE}",
+          "env": "${TAG_NAME}",
+          "template": "${NAME}${SUFFIX}"
         }
       },
       "spec": {
@@ -37,7 +39,7 @@
             "imageChangeParams": {
               "automatic": true,
               "containerNames": [
-                "${NAME}"
+                "${NAME}${SUFFIX}"
               ],
               "from": {
                 "kind": "ImageStreamTag",
@@ -53,28 +55,30 @@
         "replicas": 1,
         "test": false,
         "selector": {
-          "name": "${NAME}"
+          "name": "${NAME}${SUFFIX}"
         },
         "template": {
           "metadata": {
             "labels": {
-              "name": "${NAME}",
-              "app": "${APP_NAME}",
-              "app-group": "${APP_GROUP}"
+              "app": "${APP_NAME}${SUFFIX}",
+              "name": "${NAME}${SUFFIX}",
+              "app-group": "${APP_GROUP}",
+              "role": "${ROLE}",
+              "env": "${TAG_NAME}"
             }
           },
           "spec": {
             "volumes": [
               {
-                "name": "${NAME}-data",
+                "name": "${NAME}${SUFFIX}-data",
                 "persistentVolumeClaim": {
-                  "claimName": "${NAME}"
+                  "claimName": "${NAME}${SUFFIX}"
                 }
               }
             ],
             "containers": [
               {
-                "name": "${NAME}",
+                "name": "${NAME}${SUFFIX}",
                 "image": " ",
                 "ports": [
                   {
@@ -87,7 +91,7 @@
                     "name": "POSTGRESQL_USER",
                     "valueFrom": {
                       "secretKeyRef": {
-                        "name": "${NAME}",
+                        "name": "${NAME}${SUFFIX}",
                         "key": "database-user"
                       }
                     }
@@ -96,7 +100,7 @@
                     "name": "POSTGRESQL_PASSWORD",
                     "valueFrom": {
                       "secretKeyRef": {
-                        "name": "${NAME}",
+                        "name": "${NAME}${SUFFIX}",
                         "key": "database-password"
                       }
                     }
@@ -105,7 +109,7 @@
                     "name": "POSTGRESQL_ADMIN_PASSWORD",
                     "valueFrom": {
                       "secretKeyRef": {
-                        "name": "${NAME}",
+                        "name": "${NAME}${SUFFIX}",
                         "key": "admin-password"
                       }
                     }
@@ -127,7 +131,7 @@
                 },
                 "volumeMounts": [
                   {
-                    "name": "${NAME}-data",
+                    "name": "${NAME}${SUFFIX}-data",
                     "mountPath": "${MOUNT_PATH}"
                   }
                 ],
@@ -178,12 +182,14 @@
       "kind": "PersistentVolumeClaim",
       "apiVersion": "v1",
       "metadata": {
-        "name": "${NAME}",
+        "name": "${NAME}${SUFFIX}",
         "labels": {
-          "name": "${NAME}",
-          "app": "${APP_NAME}",
+          "app": "${APP_NAME}${SUFFIX}",
+          "name": "${NAME}${SUFFIX}",
           "app-group": "${APP_GROUP}",
-          "template": "${NAME}-persistent-template"
+          "role": "${ROLE}",
+          "env": "${TAG_NAME}",
+          "template": "${NAME}${SUFFIX}"
         }
       },
       "spec": {
@@ -202,11 +208,13 @@
       "kind": "Secret",
       "apiVersion": "v1",
       "metadata": {
-        "name": "${NAME}",
+        "name": "${NAME}${SUFFIX}",
         "labels": {
-          "name": "${NAME}",
-          "app": "${APP_NAME}",
-          "app-group": "${APP_GROUP}"
+          "app": "${APP_NAME}${SUFFIX}",
+          "name": "${NAME}${SUFFIX}",
+          "app-group": "${APP_GROUP}",
+          "role": "${ROLE}",
+          "env": "${TAG_NAME}"
         }
       },
       "stringData": {
@@ -220,28 +228,30 @@
       "kind": "Service",
       "apiVersion": "v1",
       "metadata": {
-        "name": "${NAME}",
+        "name": "${NAME}${SUFFIX}",
         "labels": {
-          "name": "${NAME}",
-          "app": "${APP_NAME}",
+          "app": "${APP_NAME}${SUFFIX}",
+          "name": "${NAME}${SUFFIX}",
           "app-group": "${APP_GROUP}",
-          "template": "${NAME}-persistent-template"
+          "role": "${ROLE}",
+          "env": "${TAG_NAME}",
+          "template": "${NAME}${SUFFIX}"
         },
         "annotations": {
-          "template.openshift.io/expose-uri": "postgres://{.spec.clusterIP}:{.spec.ports[?(.name==\"postgresql\")].port}"
+          "template.openshift.io/expose-uri": "postgres://{.spec.clusterIP}:{.spec.ports[?(.name==\"${NAME}${SUFFIX}\")].port}"
         }
       },
       "spec": {
         "ports": [
           {
-            "name": "postgresql",
+            "name": "${NAME}${SUFFIX}",
             "protocol": "TCP",
             "port": 5432,
             "targetPort": 5432
           }
         ],
         "selector": {
-          "name": "${NAME}"
+          "name": "${NAME}${SUFFIX}"
         },
         "type": "ClusterIP",
         "sessionAffinity": "None"
@@ -269,6 +279,20 @@
       "description": "The name assigned to all of the deployments in this project.",
       "required": true,
       "value": "identity-kit"
+    },
+    {
+      "name": "SUFFIX",
+      "displayName": "Suffix",
+      "description": "A suffix applied to all of the objects in this template.",
+      "required": false,
+      "value": ""
+    },
+    {
+      "name": "ROLE",
+      "displayName": "Role",
+      "description": "The role of this service within the application - used for Network Policies",
+      "required": true,
+      "value": "wallet"
     },
     {
       "name": "IMAGE_NAMESPACE",
@@ -339,9 +363,9 @@
     {
       "name": "PERSISTENT_VOLUME_CLASS",
       "displayName": "Persistent Volume Class name",
-      "description": "The class of the volume; gluster-file, gluster-block, gluster-file-db",
+      "description": "The class of the volume; gluster-file, gluster-block, gluster-file-db, netapp-file-standard",
       "required": false,
-      "value": "gluster-file-db"
+      "value": "netapp-file-standard"
     },
     {
       "name": "CPU_REQUEST",

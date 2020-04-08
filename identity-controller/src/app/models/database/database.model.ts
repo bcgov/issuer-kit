@@ -1,4 +1,8 @@
 import * as mongo from 'mongodb';
+import {
+  AppConfigurationService,
+  APP_SETTINGS,
+} from '../../../core/services/app-configuration-service';
 import { IInvitationRecord } from '../interfaces/invitation-record';
 import { TypedEvent } from '../typed-event/typed-event.model';
 
@@ -27,7 +31,7 @@ class DBClient extends mongo.MongoClient {
   }) {
     super(opts.uri || '', opts.options || {});
     const prefix = 'database';
-    this.database = process.env.DB_NAME || '';
+    this.database = AppConfigurationService.getSetting(APP_SETTINGS.DB_NAME);
     this.prefix = prefix;
   }
 

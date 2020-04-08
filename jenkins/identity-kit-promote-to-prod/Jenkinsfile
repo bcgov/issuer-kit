@@ -1,0 +1,51 @@
+import com.openshift.jenkins.plugins.OpenShiftDSL;
+
+String getImageTagHash(OpenShiftDSL openshift, String imageName, String tag = "") {
+
+  if(!tag?.trim()) {
+    tag = "latest"
+  }
+
+  def istag = openshift.raw("get istag ${imageName}:${tag} -o template --template='{{.image.dockerImageReference}}'")
+  return istag.out.tokenize('@')[1].trim()
+}
+
+void deploy(String appName, String namespace, String envTag, Map<String, String[]> APP_MAPPINGS) {
+  openshift.withCluster() {
+    openshift.withProject() {
+
+      echo "Tagging ${appName} for deployment to ${envTag} ..."
+
+      // Don't tag with BUILD_ID so the pruner can do it's job; it won't delete tagged images.
+      // Tag the images for deployment based on the image's hash
+      def IMAGE_HASH = getImageTagHash(openshift, "${appName}")
+      echo "IMAGE_HASH: ${IMAGE_HASH}"
+      openshift.tag("${appName}@${IMAGE_HASH}", "${appName}:${envTag}")
+    }
+
+    echo "Watching rollout of ${appName} in ${namespace}-${envTag} ..."
+    openshift.withProject("${namespace}-${envTag}") {
+        APP_MAPPINGS.get("${appName}").each{
+          def dc = openshift.selector('dc', "${it}")
+          // Wait for the deployment to complete.
+          // This will wait until the desired replicas are all available
+          dc.rollout().status()
+        }
+    }
+
+    echo "Deployment Complete."
+  }
+}
+
+node {
+  def config = load "../workspace@script/jenkins/config.groovy"
+
+  // Deploying new images
+  stage("Deploy images to ${config.PROD_ENV}") {
+    script {
+      config.PROD_APPS.keySet().each{
+        deploy("${it}", "${config.NAME_SPACE}", "${config.PROD_ENV}", config.PROD_APPS)
+      }
+    }
+  }
+}

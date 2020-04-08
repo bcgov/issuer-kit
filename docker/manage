@@ -20,8 +20,19 @@ function echoWarning (){
   echo -e "${_yellow}${_msg}${_nc}"
 }
 
-function checkS2IPresent () {
-  if [ -z $(type -P "$S2I_EXE") ]; then
+function isInstalled () {
+  rtnVal=$(type "$1" >/dev/null 2>&1)
+  rtnCd=$?
+  if [ ${rtnCd} -ne 0 ]; then
+    return 1
+  else
+    return 0
+  fi
+}
+
+function isS2iInstalled () {
+  S2I_EXE=s2i
+  if ! isInstalled ${S2I_EXE}; then
     echoError "The ${S2I_EXE} executable is needed and not on your path."
     echoError "It can be downloaded from here: https://github.com/openshift/source-to-image/releases"
     echoError "Make sure you extract the binary and place it in a directory on your path."
@@ -29,10 +40,47 @@ function checkS2IPresent () {
   fi
 }
 
+function isJQInstalled () {
+  JQ_EXE=jq
+  if ! isInstalled ${JQ_EXE}; then
+    echoError "The ${JQ_EXE} executable is required and was not found on your path."
+    echoError "Installation instructions can be found here: https://stedolan.github.io/jq/download"
+    echoError "Alternatively, a package manager such as Chocolatey (Windows) or Brew (Mac) can be used to install this dependecy."
+    exit 1
+  fi
+}
+
+function isCurlInstalled () {
+  CURL_EXE=curl
+  if ! isInstalled ${CURL_EXE}; then
+    echoError "The ${CURL_EXE} executable is required and was not found on your path."
+    echoError "If your shell of choice doesn't come with curl preinstalled, try installing it using either [Homebrew](https://brew.sh/) (MAC) or [Chocolatey](https://chocolatey.org/) (Windows)."
+    exit 1
+  fi
+}
+
+function isNgrokInstalled () {
+  NGROK_EXE=ngrok
+  if ! isInstalled ${NGROK_EXE}; then
+    echoError "The ${NGROK_EXE} executable is needed and not on your path."
+    echoError "It can be downloaded from here: https://ngrok.com/download"
+    echoError "Alternatively, a package manager such as Chocolatey (Windows) or Brew (Mac) can be used to install this dependecy."
+    exit 1
+  fi
+}
+
+function checkNgrokTunnelActive () {
+  if [ -z "${NGROK_AGENT_ENDPOINT}" ]; then
+    echoError "It appears that ngrok tunneling is not enabled."
+    echoError "Please open another shell in the scripts folder and execute start-ngrok.sh before trying again."
+    exit 1
+  fi
+}
+
 function customizeKeycloakConfig () {
   # Customize realm settings for development environment
   cp -f ./keycloak/config/realm-export.json ./keycloak/config/realm-export-docker.json
-  if [ -z "$GITHUB_CLIENT_ID" ] || [ -z "$GITHUB_CLIENT_ID" ]; then
+  if [ -z "$GITHUB_CLIENT_ID" ] || [ -z "$GITHUB_CLIENT_SECRET" ]; then
     echoWarning "The client id and/or secret for the integration of GitHub as IDP for Keycloak were not provided."
     echoWarning "Please set the GITHUB_CLIENT_ID and GITHUB_CLIENT_SECRET environment variables to use GitHub as your IDP."
     echoWarning "To get your  client id/secret combination, please visit: https://github.com/settings/developers"
@@ -45,11 +93,28 @@ function customizeKeycloakConfig () {
     sed -i "s/%GITHUB_CLIENT_SECRET%/$GITHUB_CLIENT_SECRET/g" ./keycloak/config/realm-export-docker.json
   fi
 }
+
+function generateKey(){
+  (
+    _length=${1:-48}
+    # Format can be `-base64` or `-hex`
+    _format=${2:--base64}
+
+    echo $(openssl rand ${_format} ${_length})
+  )
+}
+
+function generateSeed(){
+  (
+    _prefix=${1}
+    _seed=$(echo "${_prefix}$(generateKey 32)" | fold -w 32 | head -n 1 )
+    _seed=$(echo -n "${_seed}")
+    echo ${_seed}
+  )
+}
 #
 # Global utility functions - END
 #
-
-S2I_EXE=s2i
 SCRIPT_HOME="$(cd "$(dirname "$0")" && pwd)"
 
 # =================================================================================================================
@@ -64,10 +129,14 @@ usage() {
     
       logs - Display the logs from the docker compose run (ctrl-c to exit).
 
-      start - Runs a live development version of the containers, with hot-reloading
-              enabled.
+      start - Runs the containers in production mode.
       up - Same as start.
-      start-dev - Same as start.
+      
+      start-dev - Runs a live development version of the containers, with hot-reloading
+              enabled.
+
+      start-demo - Runs the containers in production mode, using the BCovrin Test ledger and
+              exposing the agent to the Internet using ngrok.
 
       stop - Stops the services.  This is a non-destructive process.  The volumes and containers
              are not deleted so they will be reused the next time you run start.
@@ -82,8 +151,8 @@ EOF
 # Default Settings:
 # -----------------------------------------------------------------------------------------------------------------
 DEFAULT_CONTAINERS="wa-db identity-kit-agent identity-kit-wallet keycloak keycloak-db"
-PROD_CONTAINERS="identity-controller wa-admin wa-public"
-DEV_CONTAINERS="identity-controller-dev wa-admin-dev wa-public-dev"
+PROD_CONTAINERS="identity-controller wa-admin issuer-web"
+DEV_CONTAINERS="identity-controller-dev wa-admin-dev issuer-web-dev"
 # -----------------------------------------------------------------------------------------------------------------
 # Functions:
 # -----------------------------------------------------------------------------------------------------------------
@@ -104,17 +173,17 @@ build-wa-admin() {
     -f '../docker/wa-admin/Dockerfile.dockerprod' '../'
 }
 
-build-wa-public() {
-  echo -e "\nBuilding wa-public image..."
+build-issuer-web() {
+  echo -e "\nBuilding issuer-web image..."
   docker build \
-    -t 'wa-public' \
-    -f '../docker/wa-public/Dockerfile.dockerprod' '../'
+    -t 'issuer-web' \
+    -f '../docker/issuer-web/Dockerfile.dockerprod' '../'
 }
 
 build-all() {
   build-identity-controller
   build-wa-admin
-  build-wa-public
+  build-issuer-web
 }
 
 configureEnvironment() {
@@ -160,8 +229,8 @@ configureEnvironment() {
   export ADMIN_API_HOST=identity-controller
   export ADMIN_API_PORT=5000
 
-  # wa-public
-  export WA_PUBLIC_PORT=4251
+  # issuer-web
+  export ISSUER_WEB_PORT=4251
   export PUBLIC_WEB_HOST_NAME=0.0.0.0
   export PUBLIC_WEB_HOST_PORT=8082
   export PUBLIC_WEB_HOST_TLS=off
@@ -202,13 +271,18 @@ configureEnvironment() {
   export AGENT_WALLET_NAME="identity_kit_agent"
   export AGENT_WALLET_ENCRYPTION_KEY="key"
   export AGENT_STORAGE_WALLET_TYPE="postgres_storage"
-  export AGENT_WALLET_SEED="identity_kit_agent_0000000000000"
+  if [ -z "${DEV_MODE}" ]; then
+    export AGENT_WALLET_SEED=$(generateSeed identity-kit-demo)
+  else
+    export AGENT_WALLET_SEED="identity_kit_0000000000000000000"
+  fi
   export AGENT_ADMIN_PORT=8024
   export AGENT_WEBHOOK_PORT=8020
-  export AGENT_WEBHOOK_URL="http://identity-controller-dev:5000"
+  export AGENT_WEBHOOK_URL=${AGENT_WEBHOOK_URL:-http://identity-controller:5000}
   export AGENT_HTTP_INTERFACE_PORT=8021
-  export AGENT_NAME="identity-kit-agent"
-  export AGENT_ENDPOINT=${AGENT_ENDPOINT:-http://$DOCKERHOST:$AGENT_HTTP_INTERFACE_PORT}
+  export AGENT_NAME="identity-kit-demo"
+  export AGENT_ENDPOINT=${NGROK_AGENT_ENDPOINT:-http://$DOCKERHOST:$AGENT_HTTP_INTERFACE_PORT}
+  export AGENT_ADMIN_API_KEY=${AGENT_ADMIN_API_KEY:-"agent-api-key-dev"}
   export AGENT_ADMIN_MODE="admin-insecure-mode"
   if [ ! -z "${AGENT_ADMIN_API_KEY}" ]; then
     AGENT_ADMIN_MODE="admin-api-key ${AGENT_ADMIN_API_KEY}"
@@ -218,12 +292,18 @@ configureEnvironment() {
   export IDENTITY_CONTROLLER_PORT=5000
   export AGENT_ADMIN_URL=${AGENT_ADMIN_URL:-http://identity-kit-agent:$AGENT_ADMIN_PORT}
   export DB_SERVICE="wa-db"
-  export SMTP_HOST=""
-  export SMTP_PORT=""
-  export SMTP_USERNAME=""
-  export SMTP_PASS=""
-  export ADMIN_EMAIL=""
-  export PUBLIC_SITE_URL=""
+  export SMTP_HOST=${SMTP_HOST}
+  export SMTP_PORT=${SMTP_PORT}
+  export SMTP_USERNAME=${SMTP_USERNAME}
+  export SMTP_PASS=${SMTP_PASS}
+  export ADMIN_EMAIL=${ADMIN_EMAIL:-"noreply@example.com"}
+  if [ -z "${DEV_MODE}" ]; then
+    export PUBLIC_SITE_URL=http://localhost:8082
+  else
+    export PUBLIC_SITE_URL=http://localhost:4251
+  fi
+  export EXISTING_SCHEMA_ID=${BCOVRIN_SCHEMA_ID}
+  export CUSTOM_SCHEMA_PATH=${CUSTOM_SCHEMA_PATH}
 }
 
 getInputParams() {
@@ -322,7 +402,7 @@ case "${COMMAND}" in
     docker-compose logs -f
     ;;
   build)
-    checkS2IPresent
+    isS2iInstalled
 
     configureEnvironment "$@"
 
@@ -342,16 +422,49 @@ case "${COMMAND}" in
       exit 1
     fi
     ;;
-  start-prod)
+  start|start|up)
+    unset DEV_MODE
+    unset BCOVRIN_SCHEMA_ID
+    unset LEDGER_URL
+    unset NGROK_AGENT_ENDPOINT
+    unset AGENT_WEBHOOK_URL
+    
     configureEnvironment "$@"
     customizeKeycloakConfig
     docker-compose up -d ${_startupParams} ${DEFAULT_CONTAINERS} ${PROD_CONTAINERS}
     docker-compose logs -f
     ;;
-  start-dev|start|up)
+  start-dev)
+    unset BCOVRIN_SCHEMA_ID
+    unset LEDGER_URL
+    unset NGROK_AGENT_ENDPOINT
+
+    export DEV_MODE=true
+    export AGENT_WEBHOOK_URL="http://identity-controller-dev:5000"
+
     configureEnvironment "$@"
     customizeKeycloakConfig
     docker-compose up -d ${_startupParams} ${DEFAULT_CONTAINERS} ${DEV_CONTAINERS}
+    docker-compose logs -f
+    ;;
+  start-demo)
+    isJQInstalled
+    isCurlInstalled
+
+    unset DEV_MODE
+    unset AGENT_WEBHOOK_URL
+    export BCOVRIN_SCHEMA_ID="85459GxjNySJ8HwTTQ4vq7:2:verified_person:1.4.0"
+    export LEDGER_URL="http://test.bcovrin.vonx.io"
+    if [ -z "$NGROK_AGENT_ENDPOINT" ]; then
+      isNgrokInstalled
+      export NGROK_AGENT_ENDPOINT=$(${CURL_EXE} http://localhost:4040/api/tunnels | ${JQ_EXE} --raw-output '.tunnels | map(select(.name | contains("identity-kit-agent"))) | .[0] | .public_url')
+    fi
+    
+    checkNgrokTunnelActive
+    echo "Running in demo mode, will use ${LEDGER_URL} as ledger and ${NGROK_AGENT_ENDPOINT} as the agent endpoint."
+    configureEnvironment "$@"
+    customizeKeycloakConfig
+    docker-compose up -d ${_startupParams} ${DEFAULT_CONTAINERS} ${PROD_CONTAINERS}
     docker-compose logs -f
     ;;
   stop)

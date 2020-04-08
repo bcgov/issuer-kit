@@ -5,19 +5,18 @@ else
   _red='\033[0;31m'; _yellow='\033[1;33m'; _nc='\033[0m'; echo -e \\n"${_red}overrides.inc could not be found on the path.${_nc}\n${_yellow}Please ensure the openshift-developer-tools are installed on and registered on your path.${_nc}\n${_yellow}https://github.com/BCDevOps/openshift-developer-tools${_nc}"; exit 1;
 fi
 
-# ========================================================================
-# Special Deployment Parameters needed for the backup instance.
-# ------------------------------------------------------------------------
-# The generated config map is used to update the Backup configuration.
-# ========================================================================
-CONFIG_MAP_NAME=identity-kit-admin-caddy-conf
-SOURCE_FILE=$( dirname "$0" )/../../../docker/wa-admin/config/Caddyfile
-
 OUTPUT_FORMAT=json
-OUTPUT_FILE=${CONFIG_MAP_NAME}-configmap_DeploymentConfig.json
 
-printStatusMsg "Generating ConfigMap; ${CONFIG_MAP_NAME} ..."
-generateConfigMap "${CONFIG_MAP_NAME}" "${SOURCE_FILE}" "${OUTPUT_FORMAT}" "${OUTPUT_FILE}"
+# The generated config maps are used to replace Caddyfile and config.json
+CADDY_SOURCE_FILE=$( dirname "$0" )/../../../docker/wa-admin/config/Caddyfile
+CADDY_OUTPUT_FILE=${CADDY_CONFIG_MAP_NAME}-configmap_DeploymentConfig.json
+printStatusMsg "Generating ConfigMap; ${CADDY_CONFIG_MAP_NAME} ..."
+generateConfigMap "${CADDY_CONFIG_MAP_NAME}${SUFFIX}" "${CADDY_SOURCE_FILE}" "${OUTPUT_FORMAT}" "${CADDY_OUTPUT_FILE}"
+
+APPCONFIG_SOURCE_FILE=$( dirname "$0" )/../../../wa-admin/src/assets/config/config.json
+APPCONFIG_OUTPUT_FILE=${APPCONFIG_CONFIG_MAP_NAME}-configmap_DeploymentConfig.json
+printStatusMsg "Generating ConfigMap; ${APPCONFIG_CONFIG_MAP_NAME} ..."
+generateConfigMap "${APPCONFIG_CONFIG_MAP_NAME}${SUFFIX}" "${APPCONFIG_SOURCE_FILE}" "${OUTPUT_FORMAT}" "${APPCONFIG_OUTPUT_FILE}"
 
 unset SPECIALDEPLOYPARMS
 echo ${SPECIALDEPLOYPARMS}

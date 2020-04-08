@@ -1,8 +1,14 @@
-import schemaDef from './schema';
 import { CredentialDefinition } from '../../../core/agent-controller/modules/credential-definition/credential-definition.model';
-import { Schema } from '../../../core/agent-controller/modules/schema/schema.model';
 import { Issue } from '../../../core/agent-controller/modules/issue/issue.model';
+import { Schema } from '../../../core/agent-controller/modules/schema/schema.model';
 import { ICredentialAttributes } from '../../../core/interfaces/issue-credential.interface';
+import {
+  AppConfigurationService,
+  APP_SETTINGS,
+} from '../../../core/services/app-configuration-service';
+import { DefaultSchemaDefinition, ISchemaDefinition } from './schema';
+
+import fs = require('fs');
 
 export class IssueService {
   _issue: Issue;
@@ -11,30 +17,100 @@ export class IssueService {
 
   credDefId: string;
 
-  apiUrl: string;
-  schemaSpec: { attributes: string[]; schema_name: string; schema_version: string; };
+  schemaSpec: {
+    attributes: string[];
+    schema_name: string;
+    schema_version: string;
+  };
 
-  constructor (apiUrl: string) {
-    console.log(apiUrl);
-    this.apiUrl = apiUrl;
-    const schema = new Schema(apiUrl);
+  constructor() {
+    const schema = new Schema();
+    const credDef = new CredentialDefinition();
+    const issue = new Issue();
 
-    const credDef = new CredentialDefinition(apiUrl);
-
-    const issue = new Issue(apiUrl);
     this._schema = schema;
     this._credDef = credDef;
     this._issue = issue;
-    this.schemaSpec = schemaDef;
+    this.schemaSpec = this.loadSchemaDefinition();
 
-    this._schema
-      .createSchema(this.schemaSpec)
+    const existingSchemaId = AppConfigurationService.getSetting(
+      APP_SETTINGS.EXISTING_SCHEMA_ID,
+    );
+    let schemaPromise;
+    if (existingSchemaId) {
+      console.log(
+        `Attempting to fetch schema id from ledger, provided schema id is: ${existingSchemaId}`,
+      );
+      schemaPromise = this._schema
+        .getSchemaById(existingSchemaId)
+        .then(response => {
+          if (!response.schema_json) {
+            console.error(
+              `The provided schema id [${existingSchemaId}] was not found on the Ledger, it will NOT be possible to issue credentials.`,
+            );
+            console.error(
+              `To correct this, either provide a valid schema id or leave the EXISTING_SCHEMA_ID environment variable blank to attempt registering a new schema.`,
+            );
+            return { schema_id: null };
+          }
+          return { schema_id: response.schema_json.id };
+        });
+    } else {
+      console.log(`Registering new schema id on the ledger...`);
+      schemaPromise = this._schema
+        .createSchema(this.schemaSpec)
+        .then(response => {
+          return response;
+        });
+    }
+
+    schemaPromise
       .then(schema => {
-        console.log('schemaId', schema);
+        console.log(
+          `The following schema id will be used to issue credentials: ${schema.schema_id}`,
+        );
         return schema.schema_id;
       })
       .then(id => this._credDef.createCredentialDefinition(id))
       .then(credDefId => (this.credDefId = credDefId.credential_definition_id));
+  }
+
+  loadSchemaDefinition() {
+    const defaultSchemaDef = new DefaultSchemaDefinition();
+
+    if (AppConfigurationService.getSetting(APP_SETTINGS.CUSTOM_SCHEMA_PATH)) {
+      try {
+        console.log(
+          `Loading custom schema definition from ${AppConfigurationService.getSetting(
+            APP_SETTINGS.CUSTOM_SCHEMA_PATH,
+          )}`,
+        );
+        if (
+          fs.existsSync(
+            AppConfigurationService.getSetting(APP_SETTINGS.CUSTOM_SCHEMA_PATH),
+          )
+        ) {
+          const rawdata = fs.readFileSync(
+            AppConfigurationService.getSetting(APP_SETTINGS.CUSTOM_SCHEMA_PATH),
+            'utf-8',
+          );
+          return JSON.parse(rawdata) as ISchemaDefinition;
+        } else {
+          console.warn(
+            `The specified file path '${AppConfigurationService.getSetting(
+              APP_SETTINGS.CUSTOM_SCHEMA_PATH,
+            )}' does not exist, the default schema definition will be used.`,
+          );
+        }
+      } catch (e) {
+        console.error(
+          'An exception occurred when trying to read the custom schema definition: ',
+          e,
+        );
+      }
+    }
+    // No custom schema definition provided/loaded
+    return defaultSchemaDef;
   }
 
   async credentialStatus(id: string) {
@@ -49,7 +125,9 @@ export class IssueService {
     const { connId, attrs } = args;
     if (!this.credDefId) {
       const res = await this._schema.createSchema(this.schemaSpec);
-      const credDefId = await this._credDef.createCredentialDefinition(res.schema_id);
+      const credDefId = await this._credDef.createCredentialDefinition(
+        res.schema_id,
+      );
       this.credDefId = credDefId.credential_definition_id;
     }
     try {
@@ -71,5 +149,5 @@ export function futureDate(offset: number = 99) {
   const year = today.getFullYear();
   const month = today.getMonth();
   const day = today.getDate();
-  return new Date(year + offset, month, day)
+  return new Date(year + offset, month, day);
 }

@@ -1,6 +1,10 @@
 import * as nodemailer from 'nodemailer';
-import Mail = require('nodemailer/lib/mailer');
+import {
+  AppConfigurationService,
+  APP_SETTINGS,
+} from '../../core/services/app-configuration-service';
 import { emailTemplate } from './invitation_email';
+import Mail = require('nodemailer/lib/mailer');
 
 export class EmailService {
   transporter: Mail;
@@ -25,20 +29,26 @@ export class EmailService {
         logger: true,
       });
       this.transporter = transport;
-      this.adminEmail = process.env.ADMIN_EMAIL;
+      this.adminEmail = AppConfigurationService.getSetting(
+        APP_SETTINGS.ADMIN_EMAIL,
+      );
     } else {
       const transport = nodemailer.createTransport({
-        host: process.env.SMTP_HOST || '',
-        port: parseInt(process.env.SMTP_PORT || '2525'),
+        host: AppConfigurationService.getSetting(APP_SETTINGS.SMTP_HOST),
+        port: Number(
+          AppConfigurationService.getSetting(APP_SETTINGS.SMTP_PORT),
+        ),
         auth: {
-          user: process.env.SMTP_USERNAME || '',
-          pass: process.env.SMTP_PASS,
+          user: AppConfigurationService.getSetting(APP_SETTINGS.SMTP_USERNAME),
+          pass: AppConfigurationService.getSetting(APP_SETTINGS.SMTP_PASS),
         },
         logger: true,
         secure: false,
       });
       this.transporter = transport;
-      this.adminEmail = process.env.ADMIN_EMAIL;
+      this.adminEmail = AppConfigurationService.getSetting(
+        APP_SETTINGS.ADMIN_EMAIL,
+      );
       console.warn('dev e-mail mode');
     }
   }
@@ -48,7 +58,9 @@ export class EmailService {
     const html = emailTemplate(url, this.adminEmail || '');
     const subject = 'Welcome to the Identity Kit POC test.';
 
-    const from = 'Identity Kit POC <no-reply@gov.bc.ca>';
+    const from = `Identity Kit POC <${AppConfigurationService.getSetting(
+      APP_SETTINGS.ADMIN_EMAIL,
+    )}>`;
     if (process.env.NODE_ENV !== 'production') console.log(html);
     try {
       const mail = await this.transporter.sendMail({
@@ -62,6 +74,7 @@ export class EmailService {
       console.log(err);
     }
   }
+  
   async requestInvite(opts: { address: string; signUpAddress: string }) {
     const { address, signUpAddress } = opts;
     const subject = 'New token request';

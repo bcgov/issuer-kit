@@ -20,7 +20,19 @@ services that have been provided by participating DIACC members
 </li>
 </ol>
 <p>
-Step 1: Setup
+Step 1: Obtain a Verified Email credential.
+</p>
+<p>
+This step works best if you have an additional device such as a laptop
+or tablet that can display the screens for the issuing service.
+<b>Using your laptop or tablet click the following link to
+start the process for issuing your Verified Email credential:</b>
+</p>
+<p><b><a href="https://email-verification.vonx.io/">https://email-verification.vonx.io/</a></b></p>
+<p>Follow the instructions on the screen.</p>
+<p>
+<p>
+Step 2: Setup
 </p>
 <ol>
 <li>You must have an active login account from one of the following: 
@@ -33,7 +45,7 @@ Step 1: Setup
 receiving, holding, and sharing verifiable credentials that are issued to you.
 Please install one of the following: 
 <ol>    
-<li>Streetcred, currently only for iPhone or iPad. Please make special note of
+<li>Streetcred, for iOS and Android. Please make special note of
 the extra details for this step since the demo will not work unless you follow
 the app setup instructions <a href="https://github.com/bcgov/identity-kit-poc/blob/master/docs/GettingApp.md">here</a>.
 <li>Other agents are TBD and are expected to be created by POC participants.
@@ -42,7 +54,7 @@ the app setup instructions <a href="https://github.com/bcgov/identity-kit-poc/bl
 </li> 
 </ol>
 <p>
-Step 2: Obtain your proof of concept digital ID for verified person
+Step 3: Obtain your proof of concept digital ID for verified person
 </p>
 <p>
 This step works best if you have an additional device such as a laptop
@@ -59,7 +71,7 @@ to do. If you find that the link has expired, please request a new invitation
 by sending an email to  <a href="mailto:${adminAddress}">${adminAddress}</a>. 
 </p>
 <p>
-Step 3: Use your proof of concept digital ID at proof of concept demonstration services. 
+Step 4: Use your proof of concept digital ID at proof of concept demonstration services. 
 </p>
 <p>
 Currently the following services are available:
@@ -72,7 +84,7 @@ the demo services.
 </p>
 <ol>
 <li>Demo Test Service - from your laptop or tablet click on the
-following link: <a href="https://law-society-demo.pathfinder.gov.bc.ca/">https://law-society-demo.pathfinder.gov.bc.ca/</a>. 
+following link: <a href="https://csb-audio.pathfinder.gov.bc.ca/">https://csb-audio.pathfinder.gov.bc.ca/</a>. 
 After the page loads click the button for verifiable credential and scan the QR code with your personal
 agent app that you installed in Step 1: Setup above.
 <li>Others demo services are TBD with expectation that POC participants will provide examples.

@@ -1,11 +1,10 @@
-import { Schema } from '../schema/schema.model';
 import { CredentialDefinitionService } from './credential-definition.service';
 
 export class CredentialDefinition {
   _credentialSvc: CredentialDefinitionService;
 
-  constructor(apiUrl: string) {
-    this._credentialSvc = new CredentialDefinitionService(apiUrl);
+  constructor() {
+    this._credentialSvc = new CredentialDefinitionService();
   }
 
   async createCredentialDefinition(id: string) {

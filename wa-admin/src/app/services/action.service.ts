@@ -1,15 +1,14 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { HttpService } from './http.service';
-import { IInvitationRecord } from '../shared/interfaces/invitation-record.interface';
-import { StateService, StateType } from './state.service';
-import { ActionType } from '../shared/interfaces/actions.interface';
-import { of } from 'rxjs';
 import { KeycloakService } from 'keycloak-angular';
 import { take } from 'rxjs/operators';
-import { HttpClient } from '@angular/common/http';
-import { environment } from 'src/environments/environment';
+import { ActionType } from '../shared/interfaces/actions.interface';
+import { IInvitationRecord } from '../shared/interfaces/invitation-record.interface';
+import { AppConfigService } from './app-config.service';
+import { HttpService } from './http.service';
+import { StateService, StateType } from './state.service';
 
-const apiUrl = '/api/';
+const apiUrl = AppConfigService.settings.apiServer.url;
 
 @Injectable({
   providedIn: 'root'
@@ -17,14 +16,14 @@ const apiUrl = '/api/';
 export class ActionService {
   invitedUsers: IInvitationRecord[];
   confirmedUsers: IInvitationRecord[];
-  _apiUrl: string;
+  apiUrl: string;
   constructor(
     private httpSvc: HttpService,
     private stateSvc: StateService,
     private keyCloakSvc: KeycloakService,
     private http: HttpClient
   ) {
-    this._apiUrl = apiUrl;
+    this.apiUrl = apiUrl;
     this.loadData();
   }
 
@@ -38,17 +37,11 @@ export class ActionService {
     });
   }
 
-  createInvitation(params: {
-    method: string;
-    jurisdiction: string;
-    email: string;
-    firstName: string;
-    lastName: string;
-    addedBy: string;
-  }) {
-    // TODO: SH: Hook this up to the back end
-    return this.httpSvc.post<{ _id: string, error?: string }>('invitations', params);
-    // return params;
+  createInvitation(params: any) {
+    return this.httpSvc.post<{ _id: string; error?: string }>(
+      'invitations',
+      params
+    );
   }
 
   applyAction(action: ActionType, records?: string[]) {
@@ -68,7 +61,7 @@ export class ActionService {
       for (const record of records) {
         arr.push(
           this.http
-            .post(`${this._apiUrl}invitations/${record}/revoke`, {
+            .post(`${this.apiUrl}/invitations/${record}/revoke`, {
               addedBy: this.stateSvc.user.username
             })
             .toPromise()
@@ -79,13 +72,11 @@ export class ActionService {
       this.loadData();
     } else {
       const res = await this.http
-        .post(`${this._apiUrl}invitations/${records}/revoke`, {
+        .post(`${this.apiUrl}/invitations/${records}/revoke`, {
           addedBy: this.stateSvc.user.username
         })
         .toPromise();
-
     }
-
   }
   async sendEmail(records: string[] | string) {
     if (Array.isArray(records)) {
@@ -93,7 +84,7 @@ export class ActionService {
       for (const record of records) {
         arr.push(
           this.http
-            .post(`${this._apiUrl}invitations/${record}/renew`, {
+            .post(`${this.apiUrl}/invitations/${record}/renew`, {
               addedBy: this.stateSvc.user.username
             })
             .toPromise()
@@ -105,13 +96,11 @@ export class ActionService {
       this.loadData();
     } else {
       const res = await this.http
-        .post(`${this._apiUrl}invitations/${records}/renew`, {
+        .post(`${this.apiUrl}/invitations/${records}/renew`, {
           addedBy: this.stateSvc.user.username
         })
         .toPromise();
-
     }
-
   }
 
   changeAccess(records: string[]) {

@@ -6,7 +6,7 @@
       "description": "Deployment template for a angular served by a Caddy webserver",
       "tags": "angular, caddy"
     },
-    "name": "${NAME}-deployment-template"
+    "name": "${NAME}${SUFFIX}"
   },
   "objects": [
     {
@@ -14,16 +14,19 @@
       "kind": "DeploymentConfig",
       "metadata": {
         "labels": {
-          "app": "${APP_GROUP}",
-          "name": "${NAME}"
+          "app": "${APP_NAME}${SUFFIX}",
+          "name": "${NAME}${SUFFIX}",
+          "app-group": "${APP_GROUP}",
+          "role": "${ROLE}",
+          "env": "${TAG_NAME}"
         },
-        "name": "${NAME}"
+        "name": "${NAME}${SUFFIX}"
       },
       "spec": {
         "replicas": 2,
         "selector": {
-          "app": "${NAME}",
-          "deploymentconfig": "${NAME}"
+          "name": "${NAME}${SUFFIX}",
+          "deploymentconfig": "${NAME}${SUFFIX}"
         },
         "strategy": {
           "rollingParams": {
@@ -38,16 +41,20 @@
         "template": {
           "metadata": {
             "labels": {
-              "app": "${NAME}",
-              "deploymentconfig": "${NAME}"
+              "app": "${APP_NAME}${SUFFIX}",
+              "name": "${NAME}${SUFFIX}",
+              "app-group": "${APP_GROUP}",
+              "role": "${ROLE}",
+              "env": "${TAG_NAME}",
+              "deploymentconfig": "${NAME}${SUFFIX}"
             }
           },
           "spec": {
             "volumes": [
               {
-                "name": "${NAME}-caddy-config-volume",
+                "name": "${NAME}${SUFFIX}-caddy-config-volume",
                 "configMap": {
-                  "name": "${CADDY_CONFIG_MAP_NAME}",
+                  "name": "${CADDY_CONFIG_MAP_NAME}${SUFFIX}",
                   "items": [
                     {
                       "key": "${CADDY_CONFIG_FILE_NAME}",
@@ -55,13 +62,25 @@
                     }
                   ]
                 }
+              },
+              {
+                "name": "${NAME}${SUFFIX}-appconfig-volume",
+                "configMap": {
+                  "name": "${APPCONFIG_CONFIG_MAP_NAME}${SUFFIX}",
+                  "items": [
+                    {
+                      "key": "${APPCONFIG_CONFIG_FILE_NAME}",
+                      "path": "${APPCONFIG_CONFIG_FILE_NAME}"
+                    }
+                  ]
+                }
               }
             ],
             "containers": [
               {
-                "image": "${NAME}",
+                "image": "${NAME}${SUFFIX}",
                 "imagePullPolicy": "Always",
-                "name": "${NAME}",
+                "name": "${NAME}${SUFFIX}",
                 "ports": [
                   {
                     "containerPort": 8080,
@@ -83,7 +102,7 @@
                   },
                   {
                     "name": "API_HOST",
-                    "value": "${API_HOST}"
+                    "value": "${API_HOST}${SUFFIX}"
                   },
                   {
                     "name": "API_PORT",
@@ -102,9 +121,14 @@
                 },
                 "volumeMounts": [
                   {
-                    "name": "${NAME}-caddy-config-volume",
+                    "name": "${NAME}${SUFFIX}-caddy-config-volume",
                     "mountPath": "${CADDY_CONFIG_MOUNT_PATH}${CADDY_CONFIG_FILE_NAME}",
                     "subPath": "${CADDY_CONFIG_FILE_NAME}"
+                  },
+                  {
+                    "name": "${NAME}${SUFFIX}-appconfig-volume",
+                    "mountPath": "${APPCONFIG_CONFIG_MOUNT_PATH}${APPCONFIG_CONFIG_FILE_NAME}",
+                    "subPath": "${APPCONFIG_CONFIG_FILE_NAME}"
                   }
                 ],
                 "livenessProbe": {
@@ -149,12 +173,12 @@
             "imageChangeParams": {
               "automatic": true,
               "containerNames": [
-                "${NAME}"
+                "${NAME}${SUFFIX}"
               ],
               "from": {
                 "kind": "ImageStreamTag",
                 "namespace": "${IMAGE_NAMESPACE}",
-                "name": "${NAME}:${TAG_NAME}"
+                "name": "${SOURCE_IMAGE_NAME}:${TAG_NAME}"
               }
             }
           }
@@ -166,10 +190,13 @@
       "kind": "Service",
       "metadata": {
         "labels": {
-          "app": "${APP_GROUP}",
-          "name": "${NAME}"
+          "app": "${APP_NAME}${SUFFIX}",
+          "name": "${NAME}${SUFFIX}",
+          "app-group": "${APP_GROUP}",
+          "role": "${ROLE}",
+          "env": "${TAG_NAME}"
         },
-        "name": "${NAME}"
+        "name": "${NAME}${SUFFIX}"
       },
       "spec": {
         "ports": [
@@ -181,8 +208,8 @@
           }
         ],
         "selector": {
-          "app": "${NAME}",
-          "deploymentconfig": "${NAME}"
+          "name": "${NAME}${SUFFIX}",
+          "deploymentconfig": "${NAME}${SUFFIX}"
         },
         "sessionAffinity": "None",
         "type": "ClusterIP"
@@ -193,10 +220,13 @@
       "kind": "Route",
       "metadata": {
         "labels": {
-          "app": "${APP_GROUP}",
-          "name": "${NAME}"
+          "app": "${APP_NAME}${SUFFIX}",
+          "name": "${NAME}${SUFFIX}",
+          "app-group": "${APP_GROUP}",
+          "role": "${ROLE}",
+          "env": "${TAG_NAME}"
         },
-        "name": "${NAME}"
+        "name": "${NAME}${SUFFIX}"
       },
       "spec": {
         "host": "${APPLICATION_DOMAIN}",
@@ -209,7 +239,7 @@
         },
         "to": {
           "kind": "Service",
-          "name": "${NAME}",
+          "name": "${NAME}${SUFFIX}",
           "weight": 100
         }
       }
@@ -218,29 +248,72 @@
       "kind": "HorizontalPodAutoscaler",
       "apiVersion": "autoscaling/v1",
       "metadata": {
-        "name": "${NAME}",
+        "name": "${NAME}${SUFFIX}",
         "labels": {
-          "app": "${APP_GROUP}",
-          "name": "${NAME}"
+          "app": "${APP_NAME}${SUFFIX}",
+          "name": "${NAME}${SUFFIX}",
+          "app-group": "${APP_GROUP}",
+          "role": "${ROLE}",
+          "env": "${TAG_NAME}"
         }
       },
       "spec": {
         "scaleTargetRef": {
           "kind": "DeploymentConfig",
-          "name": "${NAME}"
+          "name": "${NAME}${SUFFIX}"
         },
         "minReplicas": 1,
         "maxReplicas": 2
+      }
+    },
+    {
+      "kind": "NetworkSecurityPolicy",
+      "apiVersion": "secops.pathfinder.gov.bc.ca/v1alpha1",
+      "metadata": {
+        "name": "custom-${APP_NAME}-${NAME}-policy",
+        "labels": {
+          "name": "custom-${APP_NAME}-${NAME}-policy",
+          "app": "${APP_NAME}",
+          "app-group": "${APP_GROUP}",
+          "role": "${ROLE}",
+          "env": "${TAG_NAME}"
+        }
+      },
+      "spec": {
+        "description": "Allow the public frontend to talk to the controller service.",
+        "source": [
+          [
+            "role=${ROLE}",
+            "app=${APP_NAME}",
+            "env=${TAG_NAME}",
+            "$namespace=${NAMESPACE_NAME}-${TAG_NAME}"
+          ]
+        ],
+        "destination": [
+          [
+            "role=controller",
+            "app=${APP_NAME}",
+            "env=${TAG_NAME}",
+            "$namespace=${NAMESPACE_NAME}-${TAG_NAME}"
+          ]
+        ]
       }
     }
   ],
   "parameters": [
     {
+      "name": "NAME",
       "description": "The name assigned to all of the openshift objects defined in this template. It is also the name of runtime image you want.",
       "displayName": "Name",
-      "name": "NAME",
       "required": true,
       "value": "identity-kit-admin"
+    },
+    {
+      "name": "APP_NAME",
+      "displayName": "App Name",
+      "description": "Used to group components together in the OpenShift console.",
+      "required": true,
+      "value": "identity-kit"
     },
     {
       "name": "APP_GROUP",
@@ -248,6 +321,20 @@
       "description": "The name assigned to all of the deployments in this project.",
       "required": true,
       "value": "identity-kit"
+    },
+    {
+      "name": "SUFFIX",
+      "displayName": "Suffix",
+      "description": "A suffix applied to all of the objects in this template.",
+      "required": false,
+      "value": ""
+    },
+    {
+      "name": "ROLE",
+      "displayName": "Role",
+      "description": "The role of this service within the application - used for Network Policies",
+      "required": true,
+      "value": "admin-frontend"
     },
     {
       "description": "The namespace where to get the above image name",
@@ -258,7 +345,7 @@
     },
     {
       "name": "CADDY_CONFIG_FILE_NAME",
-      "displayName": "CAddy Config File Name",
+      "displayName": "Caddy Config File Name",
       "description": "The name of the configuration file to be used for Caddy.",
       "required": true,
       "value": "Caddyfile"
@@ -276,6 +363,27 @@
       "description": "The path to use to mount the config file.",
       "required": true,
       "value": "/etc/"
+    },
+    {
+      "name": "APPCONFIG_CONFIG_FILE_NAME",
+      "displayName": "config.json Config File Name",
+      "description": "The name of the configuration file to be used for config.json.",
+      "required": true,
+      "value": "config.json"
+    },
+    {
+      "name": "APPCONFIG_CONFIG_MAP_NAME",
+      "displayName": "config.json Config Map Name",
+      "description": "The name of the configuration map holding the data to configure the Angular app.",
+      "required": true,
+      "value": "identity-kit-admin-appconfig"
+    },
+    {
+      "name": "APPCONFIG_CONFIG_MOUNT_PATH",
+      "displayName": "appConfig,json Mount Path",
+      "description": "The path to use to mount the config file.",
+      "required": true,
+      "value": "/srv/assets/config/"
     },
     {
       "name": "WEB_HOST_NAME",
@@ -317,6 +425,13 @@
       "displayName": "Application Hostname",
       "name": "APPLICATION_DOMAIN",
       "value": "identity-kit-admin.pathfinder.gov.bc.ca"
+    },
+    {
+      "name": "SOURCE_IMAGE_NAME",
+      "displayName": "Source Image Name",
+      "description": "The name of the image to use for this resource.",
+      "required": true,
+      "value": "identity-kit-admin"
     },
     {
       "description": "The TAG name for this environment, e.g., dev, test, prod",

@@ -8,6 +8,7 @@ services:
     environment:
       - PORT=${IDENTITY_CONTROLLER_PORT}
       - AGENT_ADMIN_URL=${AGENT_ADMIN_URL}
+      - AGENT_ADMIN_API_KEY=${AGENT_ADMIN_API_KEY}
       - DB_SERVICE=${DB_SERVICE}
       - DB_NAME=${MONGODB_DATABASE}
       - DB_USER=${MONGODB_USER}
@@ -19,9 +20,10 @@ services:
       - ADMIN_EMAIL=${ADMIN_EMAIL}
       - SMTP_USERNAME=${SMTP_USERNAME}
       - SMTP_PASS=${SMTP_PASS}
+      - EXISTING_SCHEMA_ID=${EXISTING_SCHEMA_ID}
+      - CUSTOM_SCHEMA_PATH=${CUSTOM_SCHEMA_PATH}
     volumes:
       - ../identity-controller:/usr/src/controller
-      - identity-controller-node-cache:/usr/src/controller/node_modules
     ports:
       - ${IDENTITY_CONTROLLER_PORT}:${IDENTITY_CONTROLLER_PORT}
     networks:
@@ -36,6 +38,7 @@ services:
     environment:
       - PORT=${IDENTITY_CONTROLLER_PORT}
       - AGENT_ADMIN_URL=${AGENT_ADMIN_URL}
+      - AGENT_ADMIN_API_KEY=${AGENT_ADMIN_API_KEY}
       - DB_SERVICE=${DB_SERVICE}
       - DB_NAME=${MONGODB_DATABASE}
       - DB_USER=${MONGODB_USER}
@@ -45,6 +48,8 @@ services:
       - SMTP_PORT=${SMTP_PORT}
       - PUBLIC_SITE_URL=${PUBLIC_SITE_URL}
       - ADMIN_EMAIL=${ADMIN_EMAIL}
+      - EXISTING_SCHEMA_ID=${EXISTING_SCHEMA_ID}
+      - CUSTOM_SCHEMA_PATH=${CUSTOM_SCHEMA_PATH}
       - S2I_SCRIPTS_PATH=${STI_SCRIPTS_PATH}
     ports:
       - ${IDENTITY_CONTROLLER_PORT}:${IDENTITY_CONTROLLER_PORT}
@@ -55,7 +60,7 @@ services:
     command: >
       /bin/bash -c "
       echo waiting for database...;
-      sleep 10;
+      sleep 15;
       ${S2I_SCRIPTS_PATH}/run;"
 
   #
@@ -65,7 +70,6 @@ services:
     image: node:erbium
     volumes:
       - ../wa-admin:/usr/src/wa-admin
-      - wa-admin-node-cache:/usr/src/wa-admin/node_modules
     working_dir: /usr/src/wa-admin
     ports:
       - ${WA_ADMIN_PORT}:${WA_ADMIN_PORT}
@@ -83,13 +87,14 @@ services:
       - API_PORT=${ADMIN_API_PORT}
     volumes:
       - ./wa-admin/config/Caddyfile:/etc/Caddyfile
+      - ./wa-admin/config/form-template.json:/src/assets/config/form-template.json
     ports:
       - ${ADMIN_WEB_HOST_PORT}:${ADMIN_WEB_HOST_PORT}
     networks:
       - identity_kit
 
-  wa-public:
-    image: wa-public:latest
+  issuer-web:
+    image: issuer-web:latest
     environment:
       - WEB_HOST_NAME=${PUBLIC_WEB_HOST_NAME}
       - WEB_HOST_PORT=${PUBLIC_WEB_HOST_PORT}
@@ -97,7 +102,11 @@ services:
       - API_HOST=${PUBLIC_API_HOST}
       - API_PORT=${PUBLIC_API_PORT}
     volumes:
-      - ./wa-public/config/Caddyfile:/etc/Caddyfile
+      - ./issuer-web/config/Caddyfile:/etc/Caddyfile
+      - ./issuer-web/config/claim-config.json:/srv/config/claim-config.json
+      - ./issuer-web/config/config.json:/srv/config/config.json
+      - ./issuer-web/config/vuetify.json:/srv/config/vuetify.json
+      - ./issuer-web/config/terms-and-conditions.html:/srv/terms-and-conditions.html
     ports:
       - ${PUBLIC_WEB_HOST_PORT}:${PUBLIC_WEB_HOST_PORT}
     networks:
@@ -106,17 +115,16 @@ services:
   #
   # Public frontend with hot-reloading
   #
-  wa-public-dev:
+  issuer-web-dev:
     image: node:erbium
     volumes:
-      - ../wa-public:/usr/src/wa-public
-      - wa-public-node-cache:/usr/src/wa-public/node_modules
-    working_dir: /usr/src/wa-public
+      - ../issuer-web:/usr/src/issuer-web
+    working_dir: /usr/src/issuer-web
     ports:
-      - ${WA_PUBLIC_PORT}:${WA_PUBLIC_PORT}
+      - ${ISSUER_WEB_PORT}:${ISSUER_WEB_PORT}
     networks:
       - identity_kit
-    command: npm run start-docker
+    command: npm run serve
 
   #
   # wa-db
@@ -139,7 +147,7 @@ services:
   # keycloak service
   #
   keycloak:
-    image: jboss/keycloak:7.0.0
+    image: jboss/keycloak:9.0.0
     environment:
       DB_VENDOR: ${KEYCLOAK_DB_VENDOR}
       DB_ADDR: ${KEYCLOAK_DB_ADDR}
@@ -152,7 +160,7 @@ services:
       ROOT_LOGLEVEL: ${KEYCLOAK_ROOT_LOGLEVEL}
       KEYCLOAK_IMPORT: ${KEYCLOAK_IMPORT}
     volumes:
-      - ../docker/keycloak/config:/tmp
+      - ../docker/keycloak/config/realm-export-docker.json:/tmp/realm-export-docker.json
     ports:
       - 8180:8080
     depends_on:
@@ -174,7 +182,7 @@ services:
   # Identity Kit Agent
   #
   identity-kit-agent:
-    image: bcgovimages/aries-cloudagent:py36-1.11-1_0.4.0
+    image: bcgovimages/aries-cloudagent:py36-1.14-1_0.4.5
     environment:
       - LEDGER_URL=${LEDGER_URL}
       - WALLET_TYPE=${WALLET_TYPE}
@@ -189,6 +197,7 @@ services:
       - HTTP_INTERFACE_PORT=${HTTP_INTERFACE_PORT}
       - AGENT_ADMIN_PORT=${AGENT_ADMIN_PORT}
       - AGENT_NAME=${AGENT_NAME}
+      - AGENT_ADMIN_API_KEY=${AGENT_ADMIN_API_KEY}
     networks:
       - identity_kit
     ports:
@@ -200,7 +209,7 @@ services:
     command: [
         "-c",
         "curl -d '{\"seed\":\"${AGENT_WALLET_SEED}\", \"role\":\"TRUST_ANCHOR\", \"alias\":\"${AGENT_NAME}\"}' -X POST ${LEDGER_URL}/register; \
-        sleep 10; \
+        sleep 5; \
         aca-py start \
         --inbound-transport http '0.0.0.0' ${AGENT_HTTP_INTERFACE_PORT} \
         --outbound-transport http \
@@ -249,6 +258,3 @@ volumes:
   keycloak-db-data:
   identity-kit-wallet-data:
   wa-db-data:
-  wa-admin-node-cache:
-  wa-public-node-cache:
-  identity-controller-node-cache:

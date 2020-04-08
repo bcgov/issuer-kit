@@ -1,8 +1,8 @@
-import * as Koa from 'koa';
-import * as HttpStatus from 'http-status-codes';
-import * as bodyParser from 'koa-bodyparser';
 import * as cors from '@koa/cors';
-import { allowedRoutes, allowedMethods } from './routes';
+import * as HttpStatus from 'http-status-codes';
+import * as Koa from 'koa';
+import * as bodyParser from 'koa-bodyparser';
+import { allowedMethods, allowedRoutes } from './routes';
 
 const admin: Koa = new Koa();
 // Generic error handling middleware.
@@ -14,9 +14,9 @@ const options = {
     'content-type',
     'Authorization',
     'Accept',
-    'Origin'
+    'Origin',
   ],
-  allowMethods: 'GET, HEAD, PUT, POST, DELETE, PATCH, OPTIONS'
+  allowMethods: 'GET, HEAD, PUT, POST, DELETE, PATCH, OPTIONS',
 };
 admin.use(bodyParser());
 

@@ -1,9 +1,18 @@
+import { AppConfig } from "@/models/appConfig";
 import { Invitation, InvitationStatus } from "@/models/invitation";
+import * as ConfigService from "@/services/config";
 import IssuerStore from "@/store";
 import { Route } from "vue-router";
 
-export default function validToken(to: Route, from: Route, next: Function) {
-  if (to.path === "/") {
+export default async function validToken(
+  to: Route,
+  from: Route,
+  next: Function
+) {
+  const config: AppConfig = await ConfigService.getAppConfig();
+  if (!config.inviteRequired) {
+    next();
+  } else if (to.path === "/") {
     IssuerStore.getInstance()
       .dispatch("invitation/isValidToken", to)
       .then((result: boolean) => {

@@ -21,5 +21,13 @@
   "apiServer": {
     "url": "http://localhost:5000"
   },
-  "testLink": "https://csb-audio.pathfinder.gov.bc.ca"
+  "issuedSuccess": {
+    "successText": "To try out your new credential:",
+    "links": [
+      {
+        "url": "https://csb-audio.pathfinder.gov.bc.ca",
+        "description": "CSB Audio"
+      }
+    ]
+  }
 }

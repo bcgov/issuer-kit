@@ -5,13 +5,6 @@
     <v-card class="mx-auto my-2 lighten-4" max-width="800" tile>
       <v-card-title class="headline mb-1">Issuing Credential</v-card-title>
 
-      <!-- <v-container class="progress-indicator">
-        <v-progress-linear
-          indeterminate
-          color="secondary darken-2"
-        ></v-progress-linear>
-      </v-container> -->
-
       <v-container class="progress-steps">
         <v-row>
           <v-col cols="12">
@@ -56,9 +49,13 @@
           wallet.
         </p>
         <p>
-          To try out your new credential please
-          <a :href="testLink">click here</a>.
+          {{ successText }}
         </p>
+        <ul>
+          <li v-for="link in successLinks" :key="link.url">
+            <a :href="link.url">{{ link.description }}</a>
+          </li>
+        </ul>
       </v-container>
     </v-card>
   </v-container>
@@ -75,7 +72,8 @@ import { sleep } from "../utils";
 @Component
 export default class Connect extends Vue {
   private issued = false;
-  private testLink = "";
+  private successText = "";
+  private successLinks = new Array<any>();
   private cancelTokenSource!: CancelTokenSource;
 
   created() {
@@ -86,7 +84,8 @@ export default class Connect extends Vue {
     const appConfig = this.$store.getters[
       "configuration/getConfiguration"
     ] as Configuration;
-    this.testLink = appConfig.app.testLink;
+    this.successText = appConfig.app.issuedSuccess.successText;
+    this.successLinks = appConfig.app.issuedSuccess.links;
     this.requestCredentialIssuance(appConfig.app).then(result => {
       this.handleIssueCredential(
         result.data.credential_exchange_id,

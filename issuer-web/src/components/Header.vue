@@ -2,6 +2,11 @@
 .v-toolbar__content {
   border-bottom: 2px solid var(--v-secondary-base);
 }
+
+.issuer-logo {
+  height: 50px;
+  width: 50px;
+}
 </style>
 
 <template>
@@ -9,11 +14,10 @@
     <div class="d-flex align-center">
       <v-img
         alt="Issuer Logo"
-        class="shrink mr-2"
+        class="shrink mr-2 issuer-logo"
         contain
-        src="logo.png"
+        src="logo.svg"
         transition="scale-transition"
-        width="40"
       />
 
       <h1>{{ issuerName }}</h1>

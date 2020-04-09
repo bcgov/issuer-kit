@@ -21,7 +21,10 @@ export interface AppConfig {
   apiServer: {
     url: string;
   };
-  testLink: string;
+  issuedSuccess: {
+    successText: string;
+    links: Array<any>;
+  };
 }
 
 export class Configuration {

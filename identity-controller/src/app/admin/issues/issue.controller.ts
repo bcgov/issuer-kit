@@ -41,7 +41,9 @@ router.post('/', async (ctx: Context) => {
     'mime-type': 'text/plain',
   }));
 
-  console.debug('Giving the mobile agent a few seconds to catch-up with the request...');
+  console.debug(
+    'Giving the mobile agent a few seconds to catch-up with the request...',
+  );
   await wait(5000);
 
   try {
@@ -56,22 +58,24 @@ router.post('/', async (ctx: Context) => {
       return ctx.throw(500, 'failed to create credential exchange record');
     }
     const expiry = futureDate(710);
-    const record = await client.updateRecord({
-      collection: 'invitations',
-      query: {
-        expiry,
-        connectionId: data.connectionId,
-        credExId: res.credential_exchange_id,
-        issued: false,
-        consumed: true,
-      },
-      id: _id,
-    });
-    if (!record) {
-      console.error(
-        `${new Date().toDateString()} Failed to store credex record in MongoDB.`,
-      );
-      return ctx.throw(500, 'failed to store credex record');
+    if (_id) {
+      const record = await client.updateRecord({
+        collection: 'invitations',
+        query: {
+          expiry,
+          connectionId: data.connectionId,
+          credExId: res.credential_exchange_id,
+          issued: false,
+          consumed: true,
+        },
+        id: _id,
+      });
+      if (!record) {
+        console.error(
+          `${new Date().toDateString()} Failed to store credex record in MongoDB.`,
+        );
+        return ctx.throw(500, 'failed to store credex record');
+      }
     }
     ctx.body = res;
   } catch (err) {

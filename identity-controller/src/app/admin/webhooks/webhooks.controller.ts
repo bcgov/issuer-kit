@@ -46,16 +46,18 @@ router.post('/issue_credential', async (ctx: Context) => {
 
   if (data.state === 'request_received') {
     console.info('Credential has been requested', data.credential_exchange_id);
-    const res = await client.getRecordByQuery({
+    const invitationRecord = await client.getRecordByQuery({
       collection: 'invitations',
       query: { credExId: data.credential_exchange_id },
     });
     await wait(2000);
-    if (!res)
-      return console.error(
-        `${new Date().toDateString()} - Failed to find a credential by that ID`,
-        data.credential_exchange_id,
+    if (!invitationRecord) {
+      console.warn(
+        `${new Date().toDateString()} - No invitation found for cred_ex_id ${
+          data.credential_exchange_id
+        }, may be invitation-less.`,
       );
+    }
 
     const records = await issueCtrl.records();
     const issue = await issueCtrl.filterIssueCrendentials(
@@ -63,13 +65,16 @@ router.post('/issue_credential', async (ctx: Context) => {
       data.credential_exchange_id,
       records,
     );
+    
     const attributes =
       issue[0].credential_proposal_dict.credential_proposal.attributes;
+      
     const result = await issueCtrl.sendIssueById(
       data.credential_exchange_id,
       attributes,
-      'issued by Identity Kit POC',
+      'issued credential',
     );
+    
     if (!result) {
       console.error(
         `${new Date().toDateString()} - Failed to issue the credential, check agent status & db to ensure CredExId is correct`,
@@ -77,19 +82,22 @@ router.post('/issue_credential', async (ctx: Context) => {
       return ctx.throw(500, 'something went wrong issuing the credential');
     }
 
-    const update = await client.updateRecord({
-      collection: 'invitations',
-      query: { issued: true, consumed: true },
-      id: res._id,
-    });
+    if (invitationRecord) {
+      const update = await client.updateRecord({
+        collection: 'invitations',
+        query: { issued: true, consumed: true },
+        id: invitationRecord._id,
+      });
 
-    if (!update)
-      return console.log(
-        'something went wrong saving the update to the user record',
-        data.credential_exchange_id,
-      );
+      if (!update) {
+        return console.log(
+          'something went wrong saving the update to the user record',
+          data.credential_exchange_id,
+        );
+      }
+    }
   }
-  if (data.state === 'issued') {
+  if (data.state === 'credential_issued') {
     console.log('Credential has been issued', data.credential_exchange_id);
   }
   return (ctx.status = 200);

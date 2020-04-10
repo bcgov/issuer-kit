@@ -3,6 +3,7 @@ import * as Router from 'koa-router';
 import { wait } from '../../../core/utility';
 import { client } from '../../../index';
 import { futureDate, IssueService } from './issue.service';
+import { Issue } from '../../../core/agent-controller/modules/issue/issue.model';
 
 export interface ICredentialPayload {
   claims: any;
@@ -87,12 +88,15 @@ router.post('/', async (ctx: Context) => {
   return whole object to validate the credential
 */
 router.get('/:id', async (ctx: Context) => {
-  const id = ctx.params.id;
-  const res = await client.getRecordByQuery({
-    collection: 'invitations',
-    query: { credExId: id },
-  });
-  ctx.body = res;
+  const issueCtrl = new Issue();
+  const cred_ex_id = ctx.params.id;
+  const records = await issueCtrl.records();
+  const issue = await issueCtrl.filterIssueCrendentials(
+    'credential_exchange_id',
+    cred_ex_id,
+    records,
+  );
+  ctx.body = { issued: issue[0].state === 'credential_issued' };
 });
 
 export default router;

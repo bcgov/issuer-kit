@@ -136,7 +136,8 @@ export default class Connect extends Vue {
     ]) as Connection;
     let invitation;
     try {
-      const localInvitation = localStorage.getItem("issuer-invitation") || "{}";
+      const localInvitation =
+        localStorage.getItem("issuer-invitation") || '{ "data": { }  }';
       invitation = JSON.parse(localInvitation);
     } catch (e) {
       console.error(

@@ -65,7 +65,7 @@ export default class Connect extends Vue {
   private cancelTokenSource!: CancelTokenSource;
 
   created() {
-    this.width = 200;
+    this.width = 300;
     this.base64Invitation = "Loading invite...";
 
     this.cancelTokenSource = Axios.CancelToken.source();

@@ -92,6 +92,8 @@ export default class Connect extends Vue {
         appConfig.app
       ).then(() => {
         this.issued = true;
+        // silently sign out of the app
+        this.$store.commit("oidcStore/unsetOidcAuth");
       });
     });
   }

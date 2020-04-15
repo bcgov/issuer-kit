@@ -15,6 +15,7 @@ export class IssueService {
   _credDef: CredentialDefinition;
   _schema: Schema;
 
+  schemaId: string;
   credDefId: string;
 
   schemaSpec: {
@@ -31,8 +32,9 @@ export class IssueService {
     this._schema = schema;
     this._credDef = credDef;
     this._issue = issue;
-    this.schemaSpec = this.loadSchemaDefinition();
+  }
 
+  async initSchemaDef() {
     const existingSchemaId = AppConfigurationService.getSetting(
       APP_SETTINGS.EXISTING_SCHEMA_ID,
     );
@@ -44,7 +46,7 @@ export class IssueService {
       schemaPromise = this._schema
         .getSchemaById(existingSchemaId)
         .then(response => {
-          if (!response.schema_json) {
+          if (!response.schema) {
             console.error(
               `The provided schema id [${existingSchemaId}] was not found on the Ledger, it will NOT be possible to issue credentials.`,
             );
@@ -53,22 +55,25 @@ export class IssueService {
             );
             return { schema_id: null };
           }
-          return { schema_id: response.schema_json.id };
+          return { schema_id: response.schema.id };
         });
     } else {
       console.log(`Registering new schema id on the ledger...`);
+      this.schemaSpec = this.loadSchemaDefinition();
       schemaPromise = this._schema
         .createSchema(this.schemaSpec)
         .then(response => {
+          this.loadSchemaDefinition();
           return response;
         });
     }
 
-    schemaPromise
+    return schemaPromise
       .then(schema => {
         console.log(
           `The following schema id will be used to issue credentials: ${schema.schema_id}`,
         );
+        this.schemaId = schema.schema_id;
         return schema.schema_id;
       })
       .then(id => this._credDef.createCredentialDefinition(id))
@@ -123,14 +128,10 @@ export class IssueService {
     attrs: ICredentialAttributes[];
   }) {
     const { connId, attrs } = args;
-    if (!this.credDefId) {
-      const res = await this._schema.createSchema(this.schemaSpec);
-      const credDefId = await this._credDef.createCredentialDefinition(
-        res.schema_id,
-      );
-      this.credDefId = credDefId.credential_definition_id;
-    }
     try {
+      if (!this.credDefId) {
+        await this.initSchemaDef();
+      }
       const res = await this._issue.issueOfferSend(
         connId,
         'issued by identity kit poc',

@@ -46,7 +46,7 @@ export class IssueService {
       schemaPromise = this._schema
         .getSchemaById(existingSchemaId)
         .then(response => {
-          if (!response.schema) {
+          if (!response.schema_json) {
             console.error(
               `The provided schema id [${existingSchemaId}] was not found on the Ledger, it will NOT be possible to issue credentials.`,
             );
@@ -55,7 +55,7 @@ export class IssueService {
             );
             return { schema_id: null };
           }
-          return { schema_id: response.schema.id };
+          return { schema_id: response.schema_json.id };
         });
     } else {
       console.log(`Registering new schema id on the ledger...`);

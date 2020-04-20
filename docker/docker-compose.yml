@@ -103,10 +103,7 @@ services:
       - API_PORT=${PUBLIC_API_PORT}
     volumes:
       - ./issuer-web/config/Caddyfile:/etc/Caddyfile
-      - ./issuer-web/config/claim-config.json:/srv/config/claim-config.json
-      - ./issuer-web/config/config.json:/srv/config/config.json
-      - ./issuer-web/config/vuetify.json:/srv/config/vuetify.json
-      - ./issuer-web/config/terms-and-conditions.html:/srv/terms-and-conditions.html
+      - ./issuer-web/config/web:/srv/config
     ports:
       - ${PUBLIC_WEB_HOST_PORT}:${PUBLIC_WEB_HOST_PORT}
     networks:

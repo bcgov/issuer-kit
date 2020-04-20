@@ -6,7 +6,7 @@
 # NAME=issuer-web
 # APP_NAME=identity-kit
 # APP_GROUP=issuer
-# SUFFIX=
+# SUFFIX=-bc
 # ROLE=public-frontend
 # IMAGE_NAMESPACE=devex-von-tools
 # CADDY_CONFIG_FILE_NAME=Caddyfile

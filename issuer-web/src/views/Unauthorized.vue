@@ -8,6 +8,8 @@
           >fas fa-exclamation-triangle</v-icon
         >
         <p class="my-3">You are not authorized to access the resource</p>
+
+        <CustomHtmlComponent :html="htmlContent" />
       </v-container>
     </v-card>
   </v-container>
@@ -15,7 +17,17 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+import CustomHtmlComponent from "@/components/CustomHtmlComponent.vue";
+import Axios from "axios";
 
-@Component
-export default class Unauthorized extends Vue {}
+@Component({ components: { CustomHtmlComponent } })
+export default class Unauthorized extends Vue {
+  private htmlContent = "";
+
+  beforeCreate() {
+    Axios.get("/unauthorized.html").then((htmlContent) => {
+      this.htmlContent = htmlContent.data;
+    });
+  }
+}
 </script>

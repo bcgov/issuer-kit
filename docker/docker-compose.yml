@@ -107,6 +107,7 @@ services:
       - ./issuer-web/config/config.json:/srv/config/config.json
       - ./issuer-web/config/vuetify.json:/srv/config/vuetify.json
       - ./issuer-web/config/terms-and-conditions.html:/srv/terms-and-conditions.html
+      - ./issuer-web/config/unauthorized.html:/srv/unauthorized.html
     ports:
       - ${PUBLIC_WEB_HOST_PORT}:${PUBLIC_WEB_HOST_PORT}
     networks:

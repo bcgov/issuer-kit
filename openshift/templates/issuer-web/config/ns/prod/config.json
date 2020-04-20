@@ -1,0 +1,33 @@
+{
+  "env": "production",
+  "issuer": {
+    "name": "NS Identity Kit"
+  },
+  "inviteRequired": true,
+  "authentication": {
+    "enabled": true,
+    "oidcSettings": {
+      "authority": "https://sso.pathfinder.gov.bc.ca/auth/realms/gzyg46lx",
+      "clientId": "ns-id-public",
+      "redirectUri": "https://ns-id.vonx.io/oidc-callback",
+      "redirect_uri": "https://ns-id.vonx.io/oidc-callback-error",
+      "responseType": "code",
+      "scope": "openid profile email",
+      "automaticSilentRenew": true,
+      "silentRedirectUri": "https://ns-id.vonx.io/silent-renew-oidc.html",
+      "post_logout_redirect_uri": "https://ns-id.vonx.io"
+    }
+  },
+  "apiServer": {
+    "url": "/api"
+  },
+  "issuedSuccess": {
+    "successText": "To try out your new credential:",
+    "links": [
+      {
+        "url": "https://csb-audio.pathfinder.gov.bc.ca",
+        "description": "CSB Audio"
+      }
+    ]
+  }
+}

@@ -1,5 +1,5 @@
 {
-  "env": "prod-like",
+  "env": "docker-prod-like",
   "issuer": {
     "name": "Test Issuer"
   },

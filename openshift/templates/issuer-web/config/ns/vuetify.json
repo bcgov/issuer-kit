@@ -8,8 +8,8 @@
     },
     "themes": {
       "light": {
-        "primary": "#234075",
-        "secondary": "#e3a82b",
+        "primary": "#D9F3FD",
+        "secondary": "#7FD6F7",
         "accent": "#82B1FF",
         "error": "#FF5252",
         "info": "#2196F3",

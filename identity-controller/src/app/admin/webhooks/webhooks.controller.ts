@@ -35,7 +35,7 @@ router.post('/connections', async (ctx: Context) => {
   const { state, connection_id: connectionId } = data;
   console.info('connection hook', data);
   if (state === 'response') {
-    connCtrl.requestResponse(connectionId);
+    // connCtrl.requestResponse(connectionId);
     connCtrl.sendTrustPing(connectionId);
   }
   return (ctx.status = 200);

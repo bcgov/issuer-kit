@@ -1,0 +1,20 @@
+{
+  "host": "localhost",
+  "port": "PORT",
+  "public": "../public/",
+  "paginate": {
+    "default": 10,
+    "max": 50
+  },
+  "mongodb": {
+    "host": "DB_SERVICE",
+    "db": "DB_NAME",
+    "port": "DB_PORT",
+    "user": "DB_USER",
+    "password": "DB_PASSWORD"
+  },
+  "agent": {
+    "adminUrl": "AGENT_ADMIN_URL",
+    "adminApiKey": "AGENT_ADMIN_API_KEY"
+  }
+}

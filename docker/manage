@@ -241,7 +241,7 @@ configureEnvironment() {
   export MONGODB_ADMIN_PASSWORD=admin
   export MONGODB_USER=mongouser
   export MONGODB_PASSWORD=mongopwd
-  export MONGODB_DATABASE=identity
+  export MONGODB_DATABASE=issuer_kit_db
   export MONGODB_PORT=27017
 
   # keycloak

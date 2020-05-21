@@ -14,14 +14,14 @@ services:
       - DB_USER=${MONGODB_USER}
       - DB_PASSWORD=${MONGODB_PASSWORD}
       - DB_PORT=${MONGODB_PORT}
-      - SMTP_HOST=${SMTP_HOST}
-      - SMTP_PORT=${SMTP_PORT}
-      - PUBLIC_SITE_URL=${PUBLIC_SITE_URL}
-      - ADMIN_EMAIL=${ADMIN_EMAIL}
-      - SMTP_USERNAME=${SMTP_USERNAME}
-      - SMTP_PASS=${SMTP_PASS}
-      - EXISTING_SCHEMA_ID=${EXISTING_SCHEMA_ID}
-      - CUSTOM_SCHEMA_PATH=${CUSTOM_SCHEMA_PATH}
+      # - SMTP_HOST=${SMTP_HOST}
+      # - SMTP_PORT=${SMTP_PORT}
+      # - PUBLIC_SITE_URL=${PUBLIC_SITE_URL}
+      # - ADMIN_EMAIL=${ADMIN_EMAIL}
+      # - SMTP_USERNAME=${SMTP_USERNAME}
+      # - SMTP_PASS=${SMTP_PASS}
+      # - EXISTING_SCHEMA_ID=${EXISTING_SCHEMA_ID}
+      # - CUSTOM_SCHEMA_PATH=${CUSTOM_SCHEMA_PATH}
     volumes:
       - ../api:/usr/src/api
     ports:
@@ -31,7 +31,7 @@ services:
     working_dir: /usr/src/api
     depends_on:
       - db
-    command: npm run start-docker
+    command: npm run dev
 
   api:
     image: issuer-kit-api:latest

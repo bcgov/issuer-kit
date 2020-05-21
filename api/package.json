@@ -49,9 +49,11 @@
     "feathers-mongodb": "^6.1.0",
     "feathers-swagger": "^1.2.1",
     "helmet": "^3.22.0",
+    "moment": "^2.26.0",
     "mongodb": "^3.5.7",
     "mongodb-core": "^3.2.7",
     "serve-favicon": "^2.5.0",
+    "uuid": "^8.1.0",
     "winston": "^3.2.1"
   },
   "devDependencies": {
@@ -61,6 +63,7 @@
     "@types/mocha": "^7.0.2",
     "@types/mongodb": "^3.5.18",
     "@types/serve-favicon": "^2.5.0",
+    "@types/uuid": "^8.0.0",
     "axios": "^0.19.2",
     "mocha": "^7.1.2",
     "nodemon": "^2.0.4",

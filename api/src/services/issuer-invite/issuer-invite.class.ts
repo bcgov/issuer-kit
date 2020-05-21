@@ -18,7 +18,7 @@ export class IssuerInvite extends Service implements ServiceSwaggerAddon {
   }
 
   docs: ServiceSwaggerOptions = {
-    description: "test",
+    description: "Issuer Invite",
   };
 
   model = {
@@ -66,19 +66,3 @@ export class IssuerInvite extends Service implements ServiceSwaggerAddon {
     },
   };
 }
-
-//   interface IssuerInvite {
-//     token: string;
-//     email: string;
-
-//     issued: boolean;
-//     expired: boolean;
-
-//     created_at: Date;
-//     created_by: string;
-
-//     updated_at?: Date;
-//     updated_by?: string;
-
-//     data?: object;
-//   }

@@ -150,27 +150,27 @@ EOF
 # -----------------------------------------------------------------------------------------------------------------
 # Default Settings:
 # -----------------------------------------------------------------------------------------------------------------
-DEFAULT_CONTAINERS="wa-db identity-kit-agent identity-kit-wallet keycloak keycloak-db"
-PROD_CONTAINERS="identity-controller wa-admin issuer-web"
-DEV_CONTAINERS="identity-controller-dev wa-admin-dev issuer-web-dev"
+DEFAULT_CONTAINERS="db agent wallet keycloak keycloak-db"
+PROD_CONTAINERS="api issuer-admin issuer-web"
+DEV_CONTAINERS="api-dev issuer-admin-dev issuer-web-dev"
 # -----------------------------------------------------------------------------------------------------------------
 # Functions:
 # -----------------------------------------------------------------------------------------------------------------
-build-identity-controller() {
+build-api() {
   BASE_IMAGE="registry.access.redhat.com/rhscl/nodejs-10-rhel7"
-  echo "Building identity-kit-controller image using $BASE_IMAGE as base..."
+  echo "Building issuer-kit-api image using $BASE_IMAGE as base..."
   
   ${S2I_EXE} build \
-    '../identity-controller' \
+    '../api' \
     $BASE_IMAGE \
-    'identity-kit-controller'
+    'issuer-kit-api'
 }
 
-build-wa-admin() {
-  echo -e "\nBuilding wa-admin image..."
+build-issuer-admin() {
+  echo -e "\nBuilding issuer-admin image..."
   docker build \
-    -t 'wa-admin' \
-    -f '../docker/wa-admin/Dockerfile.dockerprod' '../'
+    -t 'issuer-admin' \
+    -f '../docker/issuer-admin/Dockerfile.dockerprod' '../'
 }
 
 build-issuer-web() {
@@ -181,8 +181,8 @@ build-issuer-web() {
 }
 
 build-all() {
-  build-identity-controller
-  build-wa-admin
+  build-api
+  build-issuer-admin
   build-issuer-web
 }
 
@@ -221,12 +221,12 @@ configureEnvironment() {
   export S2I_SCRIPTS_PATH=${S2I_SCRIPTS_PATH:-/usr/libexec/s2i}
   export DEBUG=${DEBUG}
 
-  # wa-admin
-  export WA_ADMIN_PORT=4250
+  # issuer-admin
+  export ISSUER_ADMIN_PORT=4250
   export ADMIN_WEB_HOST_NAME=0.0.0.0
   export ADMIN_WEB_HOST_PORT=8081
   export ADMIN_WEB_HOST_TLS=off
-  export ADMIN_API_HOST=identity-controller
+  export ADMIN_API_HOST=api
   export ADMIN_API_PORT=5000
 
   # issuer-web
@@ -234,10 +234,10 @@ configureEnvironment() {
   export PUBLIC_WEB_HOST_NAME=0.0.0.0
   export PUBLIC_WEB_HOST_PORT=8082
   export PUBLIC_WEB_HOST_TLS=off
-  export PUBLIC_API_HOST=identity-controller
+  export PUBLIC_API_HOST=api
   export PUBLIC_API_PORT=5000
 
-  # wa-db
+  # db
   export MONGODB_ADMIN_PASSWORD=admin
   export MONGODB_USER=mongouser
   export MONGODB_PASSWORD=mongopwd
@@ -258,29 +258,29 @@ configureEnvironment() {
   export KEYCLOAK_DB_USER="keycloak"
   export KEYCLOAK_DB_PASSWORD="keycloak"
 
-  # identity-kit-wallet
-  export WALLET_HOST="identity-kit-wallet"
+  # wallet
+  export WALLET_HOST="wallet"
   export WALLET_PORT="5432"
   export WALLET_USER="DB_USER"
   export WALLET_PASSWORD="DB_PASSWORD"
-  export WALLET_DATABASE="IDENTITY_KIT"
+  export WALLET_DATABASE="issuer_kit"
   export WALLET_ADMIN_PASSWORD="mysecretpassword"
 
-  # identity-kit-agent
+  # agent
   export LEDGER_URL=${LEDGER_URL-http://$DOCKERHOST:9000}
-  export AGENT_WALLET_NAME="identity_kit_agent"
+  export AGENT_WALLET_NAME="issuer_kit_agent"
   export AGENT_WALLET_ENCRYPTION_KEY="key"
   export AGENT_STORAGE_WALLET_TYPE="postgres_storage"
   if [ -z "${DEV_MODE}" ]; then
-    export AGENT_WALLET_SEED=$(generateSeed identity-kit-demo)
+    export AGENT_WALLET_SEED=$(generateSeed issuer-kit-demo)
   else
-    export AGENT_WALLET_SEED="identity_kit_0000000000000000000"
+    export AGENT_WALLET_SEED="issuer_kit_0000000000000000000"
   fi
   export AGENT_ADMIN_PORT=8024
   export AGENT_WEBHOOK_PORT=8020
-  export AGENT_WEBHOOK_URL=${AGENT_WEBHOOK_URL:-http://identity-controller:5000}
+  export AGENT_WEBHOOK_URL=${AGENT_WEBHOOK_URL:-http://api:5000}
   export AGENT_HTTP_INTERFACE_PORT=8021
-  export AGENT_NAME="identity-kit-demo"
+  export AGENT_NAME="issuer-kit-demo"
   export AGENT_ENDPOINT=${NGROK_AGENT_ENDPOINT:-http://$DOCKERHOST:$AGENT_HTTP_INTERFACE_PORT}
   export AGENT_ADMIN_API_KEY=${AGENT_ADMIN_API_KEY:-"agent-api-key-dev"}
   export AGENT_ADMIN_MODE="admin-insecure-mode"
@@ -288,10 +288,10 @@ configureEnvironment() {
     AGENT_ADMIN_MODE="admin-api-key ${AGENT_ADMIN_API_KEY}"
   fi
 
-  # identity-controller
-  export IDENTITY_CONTROLLER_PORT=5000
-  export AGENT_ADMIN_URL=${AGENT_ADMIN_URL:-http://identity-kit-agent:$AGENT_ADMIN_PORT}
-  export DB_SERVICE="wa-db"
+  # api
+  export API_PORT=5000
+  export AGENT_ADMIN_URL=${AGENT_ADMIN_URL:-http://agent:$AGENT_ADMIN_PORT}
+  export DB_SERVICE="db"
   export SMTP_HOST=${SMTP_HOST}
   export SMTP_PORT=${SMTP_PORT}
   export SMTP_USERNAME=${SMTP_USERNAME}
@@ -440,7 +440,7 @@ case "${COMMAND}" in
     unset NGROK_AGENT_ENDPOINT
 
     export DEV_MODE=true
-    export AGENT_WEBHOOK_URL="http://identity-controller-dev:5000"
+    export AGENT_WEBHOOK_URL="http://api-dev:5000"
 
     configureEnvironment "$@"
     customizeKeycloakConfig
@@ -457,7 +457,7 @@ case "${COMMAND}" in
     export LEDGER_URL="http://test.bcovrin.vonx.io"
     if [ -z "$NGROK_AGENT_ENDPOINT" ]; then
       isNgrokInstalled
-      export NGROK_AGENT_ENDPOINT=$(${CURL_EXE} http://localhost:4040/api/tunnels | ${JQ_EXE} --raw-output '.tunnels | map(select(.name | contains("identity-kit-agent"))) | .[0] | .public_url')
+      export NGROK_AGENT_ENDPOINT=$(${CURL_EXE} http://localhost:4040/api/tunnels | ${JQ_EXE} --raw-output '.tunnels | map(select(.name | contains("issuer-agent"))) | .[0] | .public_url')
     fi
     
     checkNgrokTunnelActive

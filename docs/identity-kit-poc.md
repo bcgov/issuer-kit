@@ -9,7 +9,7 @@ The Identity Kit Proof of Concept (IKP) architecture is presented in the diagram
 * The administrator uses github authorization to access the list of approved participants.
   * A list of administrators is managed within Keycloak.
   * Once an admin has used Keycloak to access the site, a Keycloak administrator must provide them access to the app
-  * The default user (wa-admin) has access.
+  * The default user (issuer-admin) has access.
 * The app is a list manager that allows authorized users to add, update, email and deactivate (see below) approved users. Likely fields:
   * Email Address
   * Name

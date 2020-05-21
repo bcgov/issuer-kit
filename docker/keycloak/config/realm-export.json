@@ -1,6 +1,6 @@
 {
-  "id": "identity-kit",
-  "realm": "identity-kit",
+  "id": "issuer-kit",
+  "realm": "issuer-kit",
   "notBefore": 0,
   "revokeRefreshToken": false,
   "refreshTokenMaxReuse": 0,
@@ -44,7 +44,7 @@
         "description": "${role_offline-access}",
         "composite": false,
         "clientRole": false,
-        "containerId": "identity-kit",
+        "containerId": "issuer-kit",
         "attributes": {}
       },
       {
@@ -53,12 +53,12 @@
         "description": "${role_uma_authorization}",
         "composite": false,
         "clientRole": false,
-        "containerId": "identity-kit",
+        "containerId": "issuer-kit",
         "attributes": {}
       }
     ],
     "client": {
-      "identity-kit-public": [],
+      "issuer-kit-public": [],
       "realm-management": [
         {
           "id": "707d1e5a-9324-42ea-abab-0d24b55846ae",
@@ -271,18 +271,18 @@
           "attributes": {}
         }
       ],
-      "identity-kit-admin": [
+      "issuer-admin": [
         {
           "id": "fd2959c0-d16c-4484-8661-0ed42be3d854",
-          "name": "wa-admin",
-          "description": "Grants access to the Admin interface of the identity-kit webapp.",
+          "name": "admin",
+          "description": "Grants access to the Admin interface of the issuer-kit webapp.",
           "composite": false,
           "clientRole": true,
           "containerId": "d02ae41c-5cb8-4883-a66b-a059aff2509c",
           "attributes": {}
         }
       ],
-      "identity-kit-api": [],
+      "issuer-kit-api": [],
       "security-admin-console": [],
       "admin-cli": [],
       "broker": [
@@ -356,13 +356,13 @@
     {
       "id": "b64044ed-3076-4aff-a1da-b79654b7b3c8",
       "createdTimestamp": 1573243470444,
-      "username": "wa-admin",
+      "username": "admin",
       "enabled": true,
       "totp": false,
       "emailVerified": false,
       "firstName": "Webapp",
       "lastName": "Admin",
-      "email": "wa-admin@identity-kit.org",
+      "email": "admin@issuer-kit.org",
       "credentials": [
         {
           "type": "password",
@@ -386,8 +386,8 @@
         "uma_authorization"
       ],
       "clientRoles": {
-        "identity-kit-admin": [
-          "wa-admin"
+        "issuer-admin": [
+          "admin"
         ],
         "account": [
           "manage-account",
@@ -400,13 +400,13 @@
     {
       "id": "a5aa1a10-293b-41bc-9b9d-4cb89efeb263",
       "createdTimestamp": 1573243521373,
-      "username": "wa-user",
+      "username": "user",
       "enabled": true,
       "totp": false,
       "emailVerified": false,
       "firstName": "Webapp",
       "lastName": "User",
-      "email": "wa-user@identity-kit.org",
+      "email": "user@issuer-kit.org",
       "credentials": [
         {
           "type": "password",
@@ -452,7 +452,7 @@
       "id": "a4898127-ba22-4fce-8792-0c2ca4ffe562",
       "clientId": "account",
       "name": "${client_account}",
-      "baseUrl": "/auth/realms/identity-kit/account",
+      "baseUrl": "/auth/realms/issuer-kit/account",
       "surrogateAuthRequired": false,
       "enabled": true,
       "clientAuthenticatorType": "client-secret",
@@ -462,7 +462,7 @@
         "view-profile"
       ],
       "redirectUris": [
-        "/auth/realms/identity-kit/account/*"
+        "/auth/realms/issuer-kit/account/*"
       ],
       "webOrigins": [],
       "notBefore": 0,
@@ -571,7 +571,7 @@
     },
     {
       "id": "d02ae41c-5cb8-4883-a66b-a059aff2509c",
-      "clientId": "identity-kit-admin",
+      "clientId": "issuer-admin",
       "surrogateAuthRequired": false,
       "enabled": true,
       "clientAuthenticatorType": "client-secret",
@@ -627,7 +627,7 @@
     },
     {
       "id": "a69d68f7-e051-4108-b5ce-13b3f37e7671",
-      "clientId": "identity-kit-api",
+      "clientId": "issuer-kit-api",
       "surrogateAuthRequired": false,
       "enabled": true,
       "clientAuthenticatorType": "client-secret",
@@ -678,7 +678,7 @@
     },
     {
       "id": "41e9c6d2-9406-4ea9-a81a-5f564f0414e5",
-      "clientId": "identity-kit-public",
+      "clientId": "issuer-kit-public",
       "name": "",
       "surrogateAuthRequired": false,
       "enabled": true,
@@ -870,13 +870,13 @@
       "id": "5f77f796-eb3f-4c0d-89da-c5bad77d826f",
       "clientId": "security-admin-console",
       "name": "${client_security-admin-console}",
-      "baseUrl": "/auth/admin/identity-kit/console/index.html",
+      "baseUrl": "/auth/admin/issuer-kit/console/index.html",
       "surrogateAuthRequired": false,
       "enabled": true,
       "clientAuthenticatorType": "client-secret",
       "secret": "**********",
       "redirectUris": [
-        "/auth/admin/identity-kit/console/*"
+        "/auth/admin/issuer-kit/console/*"
       ],
       "webOrigins": [],
       "notBefore": 0,

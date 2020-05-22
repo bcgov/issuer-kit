@@ -16,5 +16,15 @@
   "agent": {
     "adminUrl": "AGENT_ADMIN_URL",
     "adminApiKey": "AGENT_ADMIN_API_KEY"
-  }
+  },
+  "smtp": {
+    "host": "SMTP_HOST",
+    "port": "SMTP_PORT",
+    "secure": false,
+    "auth": {
+      "user": "SMTP_USERNAME",
+      "password": "SMTP_PASS"
+    }
+  },
+  "emailSender": "ADMIN_EMAIL"
 }

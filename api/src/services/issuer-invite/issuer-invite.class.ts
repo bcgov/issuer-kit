@@ -19,6 +19,7 @@ export class IssuerInvite extends Service implements ServiceSwaggerAddon {
 
   docs: ServiceSwaggerOptions = {
     description: "Issuer Invite",
+    idType: "string"
   };
 
   model = {

@@ -1,0 +1,14 @@
+[
+  {
+    "id": "85459GxjNySJ8HwTTQ4vq7:2:verified_person:1.4.0"
+  },
+  {
+    "schema_name": "my_schema",
+    "schema_version": "0.01",
+    "attributes": [
+      "attr1",
+      "attr2",
+      "attr3"
+    ]
+  }
+]

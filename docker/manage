@@ -150,7 +150,7 @@ EOF
 # -----------------------------------------------------------------------------------------------------------------
 # Default Settings:
 # -----------------------------------------------------------------------------------------------------------------
-DEFAULT_CONTAINERS="db agent wallet keycloak keycloak-db"
+DEFAULT_CONTAINERS="db agent wallet keycloak keycloak-db maildev"
 PROD_CONTAINERS="api issuer-admin issuer-web"
 DEV_CONTAINERS="api-dev issuer-admin-dev issuer-web-dev"
 # -----------------------------------------------------------------------------------------------------------------
@@ -217,7 +217,7 @@ configureEnvironment() {
   done
 
   # Global
-  export COMPOSE_PROJECT_NAME="${COMPOSE_PROJECT_NAME:-identity-kit}"
+  export COMPOSE_PROJECT_NAME="${COMPOSE_PROJECT_NAME:-issuer-kit}"
   export S2I_SCRIPTS_PATH=${S2I_SCRIPTS_PATH:-/usr/libexec/s2i}
   export DEBUG=${DEBUG}
 
@@ -292,10 +292,8 @@ configureEnvironment() {
   export API_PORT=5000
   export AGENT_ADMIN_URL=${AGENT_ADMIN_URL:-http://agent:$AGENT_ADMIN_PORT}
   export DB_SERVICE="db"
-  export SMTP_HOST=${SMTP_HOST}
-  export SMTP_PORT=${SMTP_PORT}
-  export SMTP_USERNAME=${SMTP_USERNAME}
-  export SMTP_PASS=${SMTP_PASS}
+  export SMTP_HOST=${SMTP_HOST:-maildev}
+  export SMTP_PORT=${SMTP_PORT:-25}
   export ADMIN_EMAIL=${ADMIN_EMAIL:-"noreply@example.com"}
   if [ -z "${DEV_MODE}" ]; then
     export PUBLIC_SITE_URL=http://localhost:8082
@@ -408,7 +406,7 @@ case "${COMMAND}" in
 
     buildImage=$(toLower ${1})
     shift || buildImage=all
-    buildImage=$(echo ${buildImage} | sed s~^identity-kit-~~)
+    buildImage=$(echo ${buildImage} | sed s~^issuer-kit-~~)
     case "$buildImage" in
       *=*)
         buildImage=all

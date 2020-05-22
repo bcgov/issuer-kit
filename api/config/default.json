@@ -21,9 +21,8 @@
     "host": "SMTP_HOST",
     "port": "SMTP_PORT",
     "secure": false,
-    "auth": {
-      "user": "SMTP_USERNAME",
-      "password": "SMTP_PASS"
+    "tls": {
+        "rejectUnauthorized": false
     }
   },
   "emailSender": "ADMIN_EMAIL"

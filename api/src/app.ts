@@ -4,7 +4,7 @@ import feathers from "@feathersjs/feathers";
 import socketio from "@feathersjs/socketio";
 import compress from "compression";
 import cors from "cors";
-import swagger from "feathers-swagger";
+import swagger, { SwaggerService } from "feathers-swagger";
 import helmet from "helmet";
 import path from "path";
 import favicon from "serve-favicon";
@@ -64,7 +64,11 @@ app.configure(
       },
     },
     defaults: {
-      schemasGenerator(service, model, modelName) {
+      schemasGenerator(
+        service: SwaggerService<any>,
+        model: string,
+        modelName: string
+      ) {
         return {
           [model]: service.model,
           [`${model}_list`]: {

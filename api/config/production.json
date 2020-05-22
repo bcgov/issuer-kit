@@ -1,9 +1,1 @@
-{
-  "host": "api-app.feathersjs.com",
-  "port": "PORT",
-  "smtp": {
-    "tls": {
-        "rejectUnauthorized": true
-    }
-  }
-}
+{}

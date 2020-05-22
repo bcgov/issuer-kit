@@ -13,7 +13,7 @@ declare module '../../declarations' {
 }
 
 export default function (app: Application) {
-  const sender = app.get('emailSender');
+  const sender = app.get('emailSettings').sender;
   const transporter = app.get('smtp');
 
   // Initialize our service with any options it requires

@@ -22,8 +22,14 @@
     "port": "SMTP_PORT",
     "secure": false,
     "tls": {
-        "rejectUnauthorized": false
+      "rejectUnauthorized": false
     }
   },
-  "emailSender": "ADMIN_EMAIL"
+  "emailSettings": {
+    "sender": "ADMIN_EMAIL",
+    "subject": "EMAIL_SUBJECT"
+  },
+  "publicSite": {
+    "url": "PUBLIC_SITE_URL"
+  }
 }

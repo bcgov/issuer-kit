@@ -1,6 +1,5 @@
 import { HookContext } from "@feathersjs/feathers";
-import fs from "fs";
-import path from "path";
+import { loadFileAsText } from "./load-config-file";
 
 /**
  * Replace the contents of the string template based on a context
@@ -17,19 +16,12 @@ export async function sendEmail(context: HookContext) {
     context.data.token
   }`;
   settings.inviteUrl = inviteUrl; // add to default object used for string replacement
-  const emailBodyTemplate = fs.readFileSync(
-    path.resolve(
-      __dirname,
-      "..",
-      "..",
-      "config",
-      settings.emailTemplate || "invite-email.html"
-    ),
-    "utf8"
+  const emailBodyTemplate = loadFileAsText(
+    settings.emailTemplate || "invite-email.html"
   );
 
   // Replace variables in email template with provided context from configuration
-  const emailBody = inject(emailBodyTemplate, settings)
+  const emailBody = inject(emailBodyTemplate, settings);
 
   const email = {
     to: context.data.email,

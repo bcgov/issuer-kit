@@ -31,5 +31,9 @@
   },
   "publicSite": {
     "url": "PUBLIC_SITE_URL"
+  },
+  "issuer": {
+    "name": "Issuer Name",
+    "offerComment": "Credential offer from Issuer Name"
   }
 }

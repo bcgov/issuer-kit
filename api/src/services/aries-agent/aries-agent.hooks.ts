@@ -1,3 +1,4 @@
+import { HookContext } from "@feathersjs/feathers";
 import { disallow } from "feathers-hooks-common";
 
 export default {
@@ -12,7 +13,16 @@ export default {
   },
 
   error: {
-    all: [disallow("external")],
+    all: [
+      disallow("external"),
+      async (context: HookContext) => {
+        console.error(
+          `Error in ${context.path} calling ${context.method}  method`,
+          context.error
+        );
+        return context;
+      },
+    ],
     create: [],
   },
 };

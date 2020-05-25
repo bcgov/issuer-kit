@@ -4,6 +4,11 @@ import {
   ServiceSwaggerOptions,
 } from "feathers-swagger/types";
 import { Application } from "../../declarations";
+import {
+  ConnectionServiceResponse,
+  AriesInvitation,
+} from "../../models/connection";
+import { ServiceAction, ServiceType } from "../../models/enums";
 
 interface Data {}
 
@@ -18,19 +23,20 @@ export class Connection implements ServiceSwaggerAddon {
     this.app = app;
   }
 
-  async get(id: Id, params?: Params): Promise<Data> {
-    return {
-      id,
-      text: `A new message with ID: ${id}!`,
-    };
+  async get(id: Id, params?: Params): Promise<ConnectionServiceResponse> {
+    return await this.app.service("aries-agent").create({
+      service: ServiceType.Connection,
+      action: ServiceAction.Fetch,
+      data: { connection_id: id },
+    });
   }
 
-  async create(data: Data, params?: Params): Promise<Data> {
-    if (Array.isArray(data)) {
-      return Promise.all(data.map((current) => this.create(current, params)));
-    }
-
-    return data;
+  async create(data: Data, params?: Params): Promise<AriesInvitation> {
+    return (await this.app.service("aries-agent").create({
+      service: ServiceType.Connection,
+      action: ServiceAction.Create,
+      data: {},
+    })) as AriesInvitation;
   }
 
   docs: ServiceSwaggerOptions = {

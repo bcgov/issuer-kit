@@ -29,4 +29,5 @@ export interface SchemaDefinition {
   schema_version?: string;
   schema_name?: string;
   attributes?: string[];
+  default: boolean;
 }

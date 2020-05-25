@@ -70,7 +70,11 @@ export class AriesAgent {
           return this.getCredentialExchange(data.data.credential_exchange_id);
         }
       case ServiceType.CredDef:
-        return this.getOrCreateCredDef(data.data.schema_id);
+        let schema_id = data.data.schema_id;
+        if(!schema_id){
+          schema_id = "default";
+        }
+        return this.getOrCreateCredDef(schema_id);
       default:
         return new NotImplemented(
           `The operation ${data.service} is not supported`
@@ -98,6 +102,9 @@ export class AriesAgent {
         schema = await this.publishSchema(schemaDef);
       }
       this.schemas.set(schema.schema_id || schema.schema.id, schema);
+      if(schemaDef.default) {
+        this.schemas.set("default", schema);
+      }
     });
   }
 

@@ -17,7 +17,7 @@ export const actions: ActionTree<ConnectionState, RootState> = {
       "configuration/getConfiguration"
     ] as Configuration;
     return new Promise<Connection>((resolve, reject) => {
-      Axios.get(`${config.app.apiServer.url}/connections`)
+      Axios.post(`${config.app.apiServer.url}/connections`)
         .then((response) => {
           if (response.status === 200) {
             const responseData = response.data as AgentConnectionInterface;

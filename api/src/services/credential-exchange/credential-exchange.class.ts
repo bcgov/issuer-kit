@@ -12,8 +12,10 @@ import {
 } from "../../models/credential-exchange";
 import { ServiceAction, ServiceType } from "../../models/enums";
 import { formatCredentialOffer } from "../../utils/credential-exchange";
+import { updateInviteRecord } from "../../utils/issuer-invite";
 
 interface Data {
+  token?: string;
   schema_id: string;
   connection_id: string;
   claims: Claim[];
@@ -62,11 +64,20 @@ export class CredentialExchange implements ServiceSwaggerAddon {
       cred_def_id
     ) as AriesCredentialOffer;
 
-    return await this.app.service("aries-agent").create({
+    const newCredEx = (await this.app.service("aries-agent").create({
       service: ServiceType.CredEx,
       action: ServiceAction.Create,
       data: credentialOffer,
-    });
+    })) as CredExServiceResponse;
+
+    if (data.token) {
+      updateInviteRecord(
+        { token: data.token },
+        { credential_exchange_id: newCredEx.id },
+        this.app
+      );
+    }
+    return newCredEx;
   }
 
   docs: ServiceSwaggerOptions = {

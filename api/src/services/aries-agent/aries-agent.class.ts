@@ -1,3 +1,4 @@
+import { NotImplemented } from "@feathersjs/errors";
 import { Params } from "@feathersjs/feathers";
 import Axios, { AxiosRequestConfig } from "axios";
 import { Application } from "../../declarations";
@@ -6,6 +7,7 @@ import {
   AriesInvitation,
   ConnectionServiceResponse,
 } from "../../models/connection";
+import { CredDefServiceResponse } from "../../models/credential-definition";
 import {
   AriesCredentialExchange,
   AriesCredentialOffer,
@@ -13,9 +15,8 @@ import {
 } from "../../models/credential-exchange";
 import { ServiceAction, ServiceType } from "../../models/enums";
 import { AriesSchema, SchemaDefinition } from "../../models/schema";
-import { loadJSON } from "../../utils/load-config-file";
-import { CredDefServiceResponse } from "../../models/credential-definition";
 import { formatCredentialDefinition } from "../../utils/credential-definition";
+import { loadJSON } from "../../utils/load-config-file";
 
 interface AgentSettings {
   adminUrl: string;
@@ -71,7 +72,9 @@ export class AriesAgent {
       case ServiceType.CredDef:
         return this.getOrCreateCredDef(data.data.schema_id);
       default:
-        return { status: "Unsupported operation" };
+        return new NotImplemented(
+          `The operation ${data.service} is not supported`
+        );
     }
   }
 

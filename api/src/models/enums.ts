@@ -8,3 +8,14 @@ export enum ServiceType {
   CredEx,
   CredDef,
 }
+
+export enum WebhookTopic {
+  Connections = "connections",
+  IssueCredential = "issue_credential",
+}
+
+
+export enum CredExState {
+  Issued = "issued",
+  Stored = "stored",
+}

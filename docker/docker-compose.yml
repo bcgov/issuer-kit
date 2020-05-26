@@ -17,6 +17,7 @@ services:
       - SMTP_HOST=${SMTP_HOST}
       - SMTP_PORT=${SMTP_PORT}
       - ADMIN_EMAIL=${ADMIN_EMAIL}
+      - EMAIL_SUBJECT=${EMAIL_SUBJECT}
       - PUBLIC_SITE_URL=${PUBLIC_SITE_URL}
     volumes:
       - ../api:/usr/src/api
@@ -43,6 +44,7 @@ services:
       - SMTP_HOST=${SMTP_HOST}
       - SMTP_PORT=${SMTP_PORT}
       - ADMIN_EMAIL=${ADMIN_EMAIL}
+      - EMAIL_SUBJECT=${EMAIL_SUBJECT}
       - PUBLIC_SITE_URL=${PUBLIC_SITE_URL}
       - S2I_SCRIPTS_PATH=${S2I_SCRIPTS_PATH}
     ports:

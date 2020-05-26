@@ -301,8 +301,7 @@ configureEnvironment() {
   else
     export PUBLIC_SITE_URL=http://localhost:4251
   fi
-  export EXISTING_SCHEMA_ID=${BCOVRIN_SCHEMA_ID}
-  export CUSTOM_SCHEMA_PATH=${CUSTOM_SCHEMA_PATH}
+  export EMAIL_SUBJECT=${EMAIL_SUBJECT:-"Issuer Kit Invite"}
 }
 
 getInputParams() {
@@ -423,7 +422,6 @@ case "${COMMAND}" in
     ;;
   start|start|up)
     unset DEV_MODE
-    unset BCOVRIN_SCHEMA_ID
     unset LEDGER_URL
     unset NGROK_AGENT_ENDPOINT
     unset AGENT_WEBHOOK_URL
@@ -434,7 +432,6 @@ case "${COMMAND}" in
     docker-compose logs -f
     ;;
   start-dev)
-    unset BCOVRIN_SCHEMA_ID
     unset LEDGER_URL
     unset NGROK_AGENT_ENDPOINT
 
@@ -452,7 +449,6 @@ case "${COMMAND}" in
 
     unset DEV_MODE
     unset AGENT_WEBHOOK_URL
-    export BCOVRIN_SCHEMA_ID="85459GxjNySJ8HwTTQ4vq7:2:verified_person:1.4.0"
     export LEDGER_URL="http://test.bcovrin.vonx.io"
     if [ -z "$NGROK_AGENT_ENDPOINT" ]; then
       isNgrokInstalled

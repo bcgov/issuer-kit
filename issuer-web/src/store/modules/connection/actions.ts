@@ -17,9 +17,9 @@ export const actions: ActionTree<ConnectionState, RootState> = {
       "configuration/getConfiguration"
     ] as Configuration;
     return new Promise<Connection>((resolve, reject) => {
-      Axios.post(`${config.app.apiServer.url}/connections`)
+      Axios.post(`${config.app.apiServer.url}/connection`)
         .then((response) => {
-          if (response.status === 200) {
+          if (response.status === 201) {
             const responseData = response.data as AgentConnectionInterface;
             const connection = new Connection();
             connection.id = responseData.connection_id;
@@ -47,13 +47,13 @@ export const actions: ActionTree<ConnectionState, RootState> = {
       "configuration/getConfiguration"
     ] as Configuration;
     return new Promise<ConnectionStatus>((resolve, reject) => {
-      const id = context.getters["getConnection"].id;
+      const id = context.getters["getConnection"].connection_id;
       const retryInterceptor = Axios.interceptors.response.use(
         async (response) => {
           const responseData = response.data as AgentConnectionStatusInterface;
           if (
             !response.config.url?.match(
-              `${config.app.apiServer.url}/connections/${id}`
+              `${config.app.apiServer.url}/connection/${id}`
             )
           ) {
             return response;
@@ -71,7 +71,7 @@ export const actions: ActionTree<ConnectionState, RootState> = {
           return Promise.reject(error);
         }
       );
-      Axios.get(`${config.app.apiServer.url}/connections/${id}`, {
+      Axios.get(`${config.app.apiServer.url}/connection/${id}`, {
         cancelToken: options.cancelToken,
       })
         .then((response) => {

@@ -71,6 +71,6 @@ export interface AriesConnection {
 }
 
 export interface ConnectionServiceResponse {
-  id: string;
+  connection_id: string;
   state: string;
 }

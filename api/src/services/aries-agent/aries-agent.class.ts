@@ -71,8 +71,8 @@ export class AriesAgent {
         }
       case ServiceType.CredDef:
         let schema_id = data.data.schema_id;
-        if(!schema_id){
-          schema_id = "default";
+        if (!schema_id) {
+          schema_id = this.schemas.get("default")?.schema_id;
         }
         return this.getOrCreateCredDef(schema_id);
       default:
@@ -102,7 +102,7 @@ export class AriesAgent {
         schema = await this.publishSchema(schemaDef);
       }
       this.schemas.set(schema.schema_id || schema.schema.id, schema);
-      if(schemaDef.default) {
+      if (schemaDef.default) {
         this.schemas.set("default", schema);
       }
     });
@@ -119,7 +119,7 @@ export class AriesAgent {
     const response = await Axios.get(url, this.getRequestConfig());
     const data = response.data as AriesConnection;
     return {
-      id: data.connection_id,
+      connection_id: data.connection_id,
       state: data.state,
     } as ConnectionServiceResponse;
   }
@@ -131,7 +131,7 @@ export class AriesAgent {
     const response = await Axios.post(url, data, this.getRequestConfig());
     const credExData = response.data as AriesCredentialExchange;
     return {
-      id: credExData.credential_exchange_id,
+      credential_exchange_id: credExData.credential_exchange_id,
       state: credExData.state,
     } as CredExServiceResponse;
   }
@@ -143,7 +143,7 @@ export class AriesAgent {
     const response = await Axios.get(url, this.getRequestConfig());
     const credExData = response.data as AriesCredentialExchange;
     return {
-      id: credExData.credential_exchange_id,
+      credential_exchange_id: credExData.credential_exchange_id,
       state: credExData.state,
     } as CredExServiceResponse;
   }

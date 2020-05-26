@@ -5,6 +5,7 @@ import {
 } from "feathers-swagger/types";
 import { Application } from "../../declarations";
 import { Claim } from "../../models/credential";
+import { CredDefServiceResponse } from "../../models/credential-definition";
 import {
   AriesCredentialAttributes,
   AriesCredentialOffer,
@@ -51,17 +52,17 @@ export class CredentialExchange implements ServiceSwaggerAddon {
         } as AriesCredentialAttributes)
     );
 
-    const cred_def_id = await this.app.service("aries-agent").create({
+    const cred_def_id = (await this.app.service("aries-agent").create({
       service: ServiceType.CredDef,
       action: ServiceAction.Create,
       data: { schema_id: data.schema_id },
-    });
+    })) as CredDefServiceResponse;
 
     const credentialOffer = formatCredentialOffer(
       data.connection_id,
       comment,
       attributes,
-      cred_def_id
+      cred_def_id.credential_definition_id
     ) as AriesCredentialOffer;
 
     const newCredEx = (await this.app.service("aries-agent").create({
@@ -73,7 +74,7 @@ export class CredentialExchange implements ServiceSwaggerAddon {
     if (data.token) {
       updateInviteRecord(
         { token: data.token },
-        { credential_exchange_id: newCredEx.id },
+        { credential_exchange_id: newCredEx.credential_exchange_id },
         this.app
       );
     }

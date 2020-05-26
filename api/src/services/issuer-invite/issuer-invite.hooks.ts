@@ -23,6 +23,12 @@ export default {
       async (context: HookContext) => {
         context.data.token = uuidv4();
         context.data.created_at = moment().toISOString(true);
+        if (context.app.get("issuer").validityDays > 0) {
+          context.data.expiry = moment().add(
+            context.app.get("issuer").validityDays,
+            "days"
+          );
+        }
         return context;
       },
     ],
@@ -30,6 +36,12 @@ export default {
       validateEmail,
       async (context: HookContext) => {
         context.data.updated_at = moment().toISOString(true);
+        if (context.app.get("issuer").validityDays > 0) {
+          context.data.expiry = moment().add(
+            context.app.get("issuer").validityDays,
+            "days"
+          );
+        }
         return context;
       },
     ],
@@ -37,6 +49,12 @@ export default {
       validateEmail,
       async (context: HookContext) => {
         context.data.updated_at = moment().toISOString(true);
+        if (context.app.get("issuer").validityDays > 0) {
+          context.data.expiry = moment().add(
+            context.app.get("issuer").validityDays,
+            "days"
+          );
+        }
         return context;
       },
     ],

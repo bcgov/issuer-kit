@@ -8,11 +8,11 @@ import { Route } from "vue-router";
 import { ActionContext, ActionTree } from "vuex";
 
 function getInviteStatus(inviteData: {
-  active: boolean;
+  issued: boolean;
   expired: boolean;
 }): InvitationStatus {
   let status;
-  if (inviteData.active && !inviteData.expired) {
+  if (!inviteData.issued && !inviteData.expired) {
     status = InvitationStatus.VALID;
   } else if (inviteData.expired) {
     status = InvitationStatus.EXPIRED;
@@ -40,12 +40,12 @@ export const actions: ActionTree<InvitationState, RootState> = {
         resolve(false);
       } else {
         // check token validity
-        Axios.get(`${config.apiServer.url}/invitations/${token}/validate`).then(
+        Axios.post(`${config.apiServer.url}/token/${token}/validate`).then(
           response => {
             const responseData = response.data as IssuerInvitationInterface;
             const invitationStatus = getInviteStatus({
-              active: responseData.active,
-              expired: responseData.expired
+              issued: responseData.issued || false,
+              expired: responseData.expired || false
             });
             invitation.status = invitationStatus;
             if (InvitationStatus.VALID === invitationStatus) {

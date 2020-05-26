@@ -5,6 +5,7 @@ import credentialExchange from "./credential-exchange/credential-exchange.servic
 import issuerInvite from "./issuer-invite/issuer-invite.service";
 import mailer from "./mailer/mailer.service";
 import webhooks from './webhooks/webhooks.service';
+import tokenValidation from './token-validation/token-validation.service';
 // Don't remove this comment. It's needed to format import lines nicely.
 
 export function services(app: Application) {
@@ -12,6 +13,7 @@ export function services(app: Application) {
   app.configure(connection);
   app.configure(credentialExchange);
   app.configure(webhooks);
+  app.configure(tokenValidation);
 }
 
 export function internalServices(app: Application) {

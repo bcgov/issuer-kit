@@ -34,6 +34,8 @@
   },
   "issuer": {
     "name": "Issuer Name",
-    "offerComment": "Credential offer from Issuer Name"
+    "offerComment": "Credential offer from Issuer Name",
+    "validityDays": -1,
+    "multiUse": false
   }
 }

@@ -1,4 +1,4 @@
-export interface AriesCredentialAttributes {
+export interface AriesCredentialAttribute {
   name: string;
   "mime-type"?: string;
   value: string;
@@ -6,7 +6,7 @@ export interface AriesCredentialAttributes {
 
 export interface AriesCredentialPreview {
   "@type": string;
-  attributes: AriesCredentialAttributes[];
+  attributes: AriesCredentialAttribute[];
 }
 
 export interface AriesCredentialOffer {

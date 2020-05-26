@@ -47,7 +47,7 @@ export const actions: ActionTree<ConnectionState, RootState> = {
       "configuration/getConfiguration"
     ] as Configuration;
     return new Promise<ConnectionStatus>((resolve, reject) => {
-      const id = context.getters["getConnection"].connection_id;
+      const id = context.getters["getConnection"].id;
       const retryInterceptor = Axios.interceptors.response.use(
         async (response) => {
           const responseData = response.data as AgentConnectionStatusInterface;

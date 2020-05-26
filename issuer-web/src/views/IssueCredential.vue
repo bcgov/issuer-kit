@@ -106,7 +106,7 @@ export default class Connect extends Vue {
   async handleIssueCredential(credExId: string, config: AppConfig) {
     const retryInterceptor = Axios.interceptors.response.use(
       async (response) => {
-        if (response.data.state === "issued") {
+        if (response.data.state === "credential_issued") {
           return response;
         } else {
           // retry every 500ms until the credential has not been issued
@@ -154,7 +154,7 @@ export default class Connect extends Vue {
       token: invitation.data._id,
       connection_id: connection.id, // eslint-disable-line @typescript-eslint/camelcase
       claims: credential.claims,
-      schema_id: config.credentials?.schema_id,  // eslint-disable-line @typescript-eslint/camelcase
+      schema_id: config.credentials?.schema_id, // eslint-disable-line @typescript-eslint/camelcase
     };
     return Axios.post(`${config.apiServer.url}/credential-exchange/`, data, {
       cancelToken: this.cancelTokenSource.token,

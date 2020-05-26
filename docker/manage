@@ -157,10 +157,11 @@ DEV_CONTAINERS="api-dev issuer-admin-dev issuer-web-dev"
 # Functions:
 # -----------------------------------------------------------------------------------------------------------------
 build-api() {
-  BASE_IMAGE="registry.access.redhat.com/rhscl/nodejs-10-rhel7"
+  BASE_IMAGE="centos/nodejs-12-centos7"
   echo "Building issuer-kit-api image using $BASE_IMAGE as base..."
   
   ${S2I_EXE} build \
+    --copy \
     '../api' \
     $BASE_IMAGE \
     'issuer-kit-api'
@@ -274,11 +275,11 @@ configureEnvironment() {
   if [ -z "${DEV_MODE}" ]; then
     export AGENT_WALLET_SEED=$(generateSeed issuer-kit-demo)
   else
-    export AGENT_WALLET_SEED="issuer_kit_0000000000000000000"
+    export AGENT_WALLET_SEED="issuer_kit_000000000000000000000"
   fi
   export AGENT_ADMIN_PORT=8024
   export AGENT_WEBHOOK_PORT=8020
-  export AGENT_WEBHOOK_URL=${AGENT_WEBHOOK_URL:-http://api:5000}
+  export AGENT_WEBHOOK_URL=${AGENT_WEBHOOK_URL:-http://api:5000/webhooks}
   export AGENT_HTTP_INTERFACE_PORT=8021
   export AGENT_NAME="issuer-kit-demo"
   export AGENT_ENDPOINT=${NGROK_AGENT_ENDPOINT:-http://$DOCKERHOST:$AGENT_HTTP_INTERFACE_PORT}
@@ -438,7 +439,7 @@ case "${COMMAND}" in
     unset NGROK_AGENT_ENDPOINT
 
     export DEV_MODE=true
-    export AGENT_WEBHOOK_URL="http://api-dev:5000"
+    export AGENT_WEBHOOK_URL="http://api-dev:5000/webhooks"
 
     configureEnvironment "$@"
     customizeKeycloakConfig

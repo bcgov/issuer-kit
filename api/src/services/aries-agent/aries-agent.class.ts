@@ -12,11 +12,13 @@ import {
   AriesCredentialExchange,
   AriesCredentialOffer,
   CredExServiceResponse,
+  AriesCredentialAttribute,
 } from "../../models/credential-exchange";
 import { ServiceAction, ServiceType } from "../../models/enums";
 import { AriesSchema, SchemaDefinition } from "../../models/schema";
 import { formatCredentialDefinition } from "../../utils/credential-definition";
 import { loadJSON } from "../../utils/load-config-file";
+import { formatCredentialPreview } from "../../utils/credential-exchange";
 
 interface AgentSettings {
   adminUrl: string;
@@ -66,8 +68,13 @@ export class AriesAgent {
       case ServiceType.CredEx:
         if (data.action === ServiceAction.Create) {
           return this.newCredentialExchange(data.data as AriesCredentialOffer);
-        } else {
+        } else if (data.action === ServiceAction.Fetch) {
           return this.getCredentialExchange(data.data.credential_exchange_id);
+        } else if (data.action === ServiceAction.Issue) {
+          return this.issueCredential(
+            data.data.credential_exchange_id,
+            data.data.attributes
+          );
         }
       case ServiceType.CredDef:
         let schema_id = data.data.schema_id;
@@ -77,7 +84,7 @@ export class AriesAgent {
         return this.getOrCreateCredDef(schema_id);
       default:
         return new NotImplemented(
-          `The operation ${data.service} is not supported`
+          `The operation ${data.service}/${data.action} is not supported`
         );
     }
   }
@@ -141,6 +148,23 @@ export class AriesAgent {
   ): Promise<CredExServiceResponse> {
     const url = `${this.agent.adminUrl}/issue-credential/records/${id}`;
     const response = await Axios.get(url, this.getRequestConfig());
+    const credExData = response.data as AriesCredentialExchange;
+    return {
+      credential_exchange_id: credExData.credential_exchange_id,
+      state: credExData.state,
+    } as CredExServiceResponse;
+  }
+
+  private async issueCredential(
+    id: string,
+    attributes: AriesCredentialAttribute[]
+  ): Promise<CredExServiceResponse> {
+    const url = `${this.agent.adminUrl}/issue-credential/records/${id}/issue`;
+    const response = await Axios.post(
+      url,
+      { credential_preview: formatCredentialPreview(attributes) },
+      this.getRequestConfig()
+    );
     const credExData = response.data as AriesCredentialExchange;
     return {
       credential_exchange_id: credExData.credential_exchange_id,

@@ -7,7 +7,7 @@ import { Application } from "../../declarations";
 import { Claim } from "../../models/credential";
 import { CredDefServiceResponse } from "../../models/credential-definition";
 import {
-  AriesCredentialAttributes,
+  AriesCredentialAttribute,
   AriesCredentialOffer,
   CredExServiceResponse,
 } from "../../models/credential-exchange";
@@ -49,7 +49,7 @@ export class CredentialExchange implements ServiceSwaggerAddon {
           name: claim.name,
           value: claim.value,
           "mime-type": "text/plain",
-        } as AriesCredentialAttributes)
+        } as AriesCredentialAttribute)
     );
 
     const cred_def_id = (await this.app.service("aries-agent").create({

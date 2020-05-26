@@ -1,12 +1,19 @@
 import { NotImplemented } from "@feathersjs/errors";
 import { Params } from "@feathersjs/feathers";
 import { Application } from "../../declarations";
-import { CredExState, WebhookTopic } from "../../models/enums";
+import {
+  CredExState,
+  WebhookTopic,
+  ServiceType,
+  ServiceAction,
+} from "../../models/enums";
 import { updateInviteRecord } from "../../utils/issuer-invite";
+import { AriesCredentialAttribute } from "../../models/credential-exchange";
 
 interface Data {
   state?: CredExState;
   credential_exchange_id?: string;
+  credential_proposal_dict?: any;
 }
 
 interface ServiceOptions {}
@@ -40,8 +47,17 @@ export class Webhooks {
 
   private async handleIssueCredential(data: Data): Promise<any> {
     switch (data.state) {
-      case CredExState.Stored:
-      // do nothing
+      case CredExState.RequestReceived:
+        const attributes = data.credential_proposal_dict?.credential_proposal
+          ?.attributes as AriesCredentialAttribute[];
+        await this.app.service("aries-agent").create({
+          service: ServiceType.CredEx,
+          action: ServiceAction.Issue,
+          data: {
+            credential_exchange_id: data.credential_exchange_id,
+            attributes: attributes,
+          },
+        });
       case CredExState.Issued:
         console.log(
           `Credential issued for cred_ex_id ${data.credential_exchange_id}`

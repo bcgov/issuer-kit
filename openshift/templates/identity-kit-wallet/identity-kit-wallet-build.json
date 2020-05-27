@@ -106,7 +106,7 @@
       "displayName": "Source Context Directory",
       "description": "The source context directory.",
       "required": false,
-      "value": "wa-wallet/config"
+      "value": "wallet/config"
     },
     {
       "name": "SOURCE_IMAGE_KIND",

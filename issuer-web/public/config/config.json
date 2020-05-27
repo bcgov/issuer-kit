@@ -7,8 +7,8 @@
   "authentication": {
     "enabled": false,
     "oidcSettings": {
-      "authority": "http://localhost:8180/auth/realms/identity-kit",
-      "clientId": "identity-kit-public",
+      "authority": "http://localhost:8180/auth/realms/issuer-kit",
+      "clientId": "issuer-kit-public",
       "redirectUri": "http://localhost:4251/oidc-callback",
       "redirect_uri": "http://localhost:4251/oidc-callback-error",
       "responseType": "code",

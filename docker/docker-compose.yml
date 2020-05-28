@@ -71,7 +71,7 @@ services:
       - ${ISSUER_ADMIN_PORT}:${ISSUER_ADMIN_PORT}
     networks:
       - issuer_kit
-    command: npm run start-docker
+    command: npm run serve
 
   issuer-admin:
     image: issuer-admin:latest
@@ -83,9 +83,9 @@ services:
       - API_PORT=${ADMIN_API_PORT}
     volumes:
       - ./issuer-admin/config/Caddyfile:/etc/Caddyfile
-      - ./issuer-admin/config/form-template.json:/src/assets/config/form-template.json
+      - ./issuer-admin/config/admin:/srv/config
     ports:
-      - ${ADMIN_WEB_HOST_PORT}:${ADMIN_WEB_HOST_PORT}
+      - ${PUBLIC_WEB_HOST_PORT}:${PUBLIC_WEB_HOST_PORT}
     networks:
       - issuer_kit
 

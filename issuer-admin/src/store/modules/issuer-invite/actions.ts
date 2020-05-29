@@ -14,15 +14,21 @@ export const actions: ActionTree<IssuerInviteState, RootState> = {
       "configuration/getConfiguration"
     ] as Configuration;
     console.log("OPTIONS:", options);
-    let skip = 0;
-    let limit = 10;
+    let skipParam = "";
+    let limitParam = "";
+    let sortParam = "";
     if (options) {
-      skip = (options.page - 1) * options.itemsPerPage;
-      limit = options.itemsPerPage > 0 ? options.itemsPerPage : limit;
+      skipParam = `%24skip=${(options.page - 1) * options.itemsPerPage}`;
+      if (options.itemsPerPage > 0) {
+        limitParam = `&%24limit=${options.itemsPerPage}`;
+      }
+      sortParam = `&%24sort[${options.sortBy[0] || "email"}]=${
+        options.sortDesc[0] ? -1 : 1
+      }`;
     }
     return new Promise<IssuerInviteServiceResponse>((resolve, reject) => {
       Axios.get(
-        `${config.app.apiServer.url}/issuer-invite?%24skip=${skip}&%24limit=${limit}`
+        `${config.app.apiServer.url}/issuer-invite?${skipParam}${limitParam}${sortParam}`
       )
         .then((response) => {
           const inviteList = response.data as IssuerInviteServiceResponse;

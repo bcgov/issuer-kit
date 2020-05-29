@@ -109,9 +109,11 @@ export default class Home extends Vue {
 
   @Watch("options")
   handler(value: DataOptions, oldValue: DataOptions) {
+    this.loading = true;
     this.fetchData(value).then((response: IssuerInviteServiceResponse) => {
       this.invites = response.data;
       this.totalInvites = response.total;
+      this.loading = false;
     });
   }
 }

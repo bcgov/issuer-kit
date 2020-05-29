@@ -1,11 +1,10 @@
 import { AppConfig } from "@/models/appConfig";
 import { RootState } from "@/models/storeState";
 import { configuration } from "@/store/modules/configuration/configuration";
-import { invitation } from "@/store/modules/invitation/invitation";
+import { issuerInvite } from "@/store/modules/issuer-invite/issuer-invite";
 import Vue from "vue";
 import Vuex, { Store, StoreOptions } from "vuex";
 import { vuexOidcCreateStoreModule } from "vuex-oidc";
-
 class IssuerStore extends Store<RootState> {
   private static instance: Store<RootState>;
 
@@ -18,7 +17,7 @@ class IssuerStore extends Store<RootState> {
       },
       modules: {
         configuration,
-        invitation,
+        issuerInvite,
         oidcStore: vuexOidcCreateStoreModule(
           config.authentication.oidcSettings,
           // Optional OIDC store settings

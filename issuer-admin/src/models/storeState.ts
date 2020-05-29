@@ -1,35 +1,19 @@
-import { Credential } from "@/models/credential";
 import { Configuration } from "./appConfig";
-import { Connection } from "./connection";
-import { Invitation } from "./invitation";
+import { IssuerInvite } from "./issuer-invite";
 
 export enum StateType {
   NONE,
   INITIALIZED,
   UPDATED,
-  ERROR
+  ERROR,
 }
 
 export interface RootState {
   version: string;
 }
 
-export interface CredentialState {
-  credential: Credential;
-  statusMessage: string;
-  error: any; //eslint-disable-line
-  stateType: StateType;
-}
-
-export interface ConnectionState {
-  connection: Connection;
-  statusMessage: string;
-  error: any; //eslint-disable-line
-  stateType: StateType;
-}
-
-export interface InvitationState {
-  invitation: Invitation;
+export interface IssuerInviteState {
+  issuerInvites: IssuerInvite[];
   statusMessage: string;
   error: any; //eslint-disable-line
   stateType: StateType;

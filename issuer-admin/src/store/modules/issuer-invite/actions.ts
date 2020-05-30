@@ -8,27 +8,34 @@ import { ActionContext, ActionTree } from "vuex";
 export const actions: ActionTree<IssuerInviteState, RootState> = {
   async fetchInvites(
     context: ActionContext<IssuerInviteState, RootState>,
-    options: DataOptions
+    options: {
+      dataOptions: DataOptions;
+      searchString?: string;
+    }
   ): Promise<IssuerInviteServiceResponse> {
     const config = context.rootGetters[
       "configuration/getConfiguration"
     ] as Configuration;
-    console.log("OPTIONS:", options);
     let skipParam = "";
     let limitParam = "";
     let sortParam = "";
-    if (options) {
-      skipParam = `%24skip=${(options.page - 1) * options.itemsPerPage}`;
-      if (options.itemsPerPage > 0) {
-        limitParam = `&%24limit=${options.itemsPerPage}`;
+    let searchParam = "";
+    if (options.dataOptions) {
+      skipParam = `%24skip=${(options.dataOptions.page - 1) *
+        options.dataOptions.itemsPerPage}`;
+      if (options.dataOptions.itemsPerPage > 0) {
+        limitParam = `&%24limit=${options.dataOptions.itemsPerPage}`;
       }
-      sortParam = `&%24sort[${options.sortBy[0] || "email"}]=${
-        options.sortDesc[0] ? -1 : 1
+      sortParam = `&%24sort[${options.dataOptions.sortBy[0] || "email"}]=${
+        options.dataOptions.sortDesc[0] ? -1 : 1
       }`;
+    }
+    if (options.searchString) {
+      searchParam = `&email=${options.searchString}`;
     }
     return new Promise<IssuerInviteServiceResponse>((resolve, reject) => {
       Axios.get(
-        `${config.app.apiServer.url}/issuer-invite?${skipParam}${limitParam}${sortParam}`
+        `${config.app.apiServer.url}/issuer-invite?${skipParam}${limitParam}${sortParam}${searchParam}`
       )
         .then((response) => {
           const inviteList = response.data as IssuerInviteServiceResponse;

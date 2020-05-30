@@ -7,3 +7,14 @@ export async function validateEmail(context: HookContext) {
   }
   return context;
 }
+
+export async function searchRegex(context: HookContext) {
+  const query = context.params.query;
+  for (let field in query) {
+    if (field === "email") {
+      query[field] = { $regex: new RegExp(query[field], "i") };
+    }
+  }
+  context.params.query = query;
+  return context;
+}

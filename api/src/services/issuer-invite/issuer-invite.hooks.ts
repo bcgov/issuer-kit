@@ -1,8 +1,8 @@
 import { HookContext } from "@feathersjs/feathers";
 import moment from "moment";
 import { v4 as uuidv4 } from "uuid";
-import { validateEmail } from "../../utils/hook-validators";
 import { sendEmail } from "../../utils/email";
+import { searchRegex, validateEmail } from "../../utils/hooks";
 
 async function sendEmailIfRequired(context: HookContext) {
   if (!context.data.issued && !context.data.expired) {
@@ -16,7 +16,7 @@ export default {
     all: [
       // TODO: sanitize data
     ],
-    find: [],
+    find: [searchRegex],
     get: [],
     create: [
       validateEmail,

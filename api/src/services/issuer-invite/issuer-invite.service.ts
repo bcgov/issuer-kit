@@ -13,7 +13,8 @@ declare module '../../declarations' {
 
 export default function (app: Application) {
   const options = {
-    paginate: app.get('paginate')
+    paginate: app.get('paginate'),
+    whitelist: ['$regex']
   };
 
   // Initialize our service with any options it requires

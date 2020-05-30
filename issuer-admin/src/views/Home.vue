@@ -15,6 +15,7 @@
         class="elevation-1"
         :footer-props="{
           showFirstLastPage: true,
+          itemsPerPageOptions: [5, 10, 15],
         }"
       >
         <template v-slot:top>
@@ -78,13 +79,13 @@ export default class Home extends Vue {
   private totalInvites = 0;
 
   mounted() {
-    this.$store
-      .dispatch("issuerInvite/fetchInvites")
-      .then((serviceResponse: IssuerInviteServiceResponse) => {
-        this.invites = serviceResponse.data;
-        this.totalInvites = serviceResponse.total;
-        this.loading = false;
-      });
+    this.fetchData({
+      dataOptions: this.options as DataOptions,
+    }).then((response: IssuerInviteServiceResponse) => {
+      this.invites = response.data;
+      this.totalInvites = response.total;
+      this.loading = false;
+    });
   }
 
   editItem(item: IssuerInvite) {
@@ -92,7 +93,9 @@ export default class Home extends Vue {
   }
 
   async deleteItem(item: IssuerInvite) {
-    this.fetchData(this.options as DataOptions).then(() => {
+    this.fetchData({
+      dataOptions: this.options as DataOptions,
+    }).then(() => {
       const itemIdx = this.invites.findIndex((el) => item._id === el._id);
       this.invites.splice(itemIdx, 1);
       this.$store.dispatch("issuerInvite/deleteInvite", item._id);
@@ -103,14 +106,32 @@ export default class Home extends Vue {
     console.log("ADD");
   }
 
-  fetchData(options: DataOptions): Promise<IssuerInviteServiceResponse> {
+  fetchData(options: {
+    dataOptions: DataOptions;
+    searchString?: string;
+  }): Promise<IssuerInviteServiceResponse> {
     return this.$store.dispatch("issuerInvite/fetchInvites", options);
   }
 
   @Watch("options")
   handler(value: DataOptions, oldValue: DataOptions) {
     this.loading = true;
-    this.fetchData(value).then((response: IssuerInviteServiceResponse) => {
+    this.fetchData({ dataOptions: value }).then(
+      (response: IssuerInviteServiceResponse) => {
+        this.invites = response.data;
+        this.totalInvites = response.total;
+        this.loading = false;
+      }
+    );
+  }
+
+  @Watch("search")
+  searchHandler(value: string, oldValue: string) {
+    this.loading = true;
+    this.fetchData({
+      dataOptions: this.options as DataOptions,
+      searchString: value,
+    }).then((response: IssuerInviteServiceResponse) => {
       this.invites = response.data;
       this.totalInvites = response.total;
       this.loading = false;

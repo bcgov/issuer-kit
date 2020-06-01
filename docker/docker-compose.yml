@@ -85,7 +85,7 @@ services:
       - ./issuer-admin/config/Caddyfile:/etc/Caddyfile
       - ./issuer-admin/config/admin:/srv/config
     ports:
-      - ${PUBLIC_WEB_HOST_PORT}:${PUBLIC_WEB_HOST_PORT}
+      - ${ADMIN_WEB_HOST_PORT}:${ADMIN_WEB_HOST_PORT}
     networks:
       - issuer_kit
 

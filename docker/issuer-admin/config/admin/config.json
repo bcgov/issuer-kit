@@ -1,7 +1,8 @@
 {
   "env": "docker-prod-like",
   "issuer": {
-    "name": "Issuer Admin"
+    "name": "Issuer Admin",
+    "publicUrl": "http://localhost:8082"
   },
   "authentication": {
     "enabled": true,

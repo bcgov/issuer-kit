@@ -111,6 +111,7 @@ export default class DataCollection extends Vue {
 
       let actionPromise;
       if (this.editMode) {
+        this.issuerInvite.updated_by = this.currentUser; // eslint-disable-line @typescript-eslint/camelcase
         actionPromise = this.$store.dispatch(
           "issuerInvite/updateInvite",
           this.issuerInvite
@@ -144,7 +145,7 @@ export default class DataCollection extends Vue {
         if (invite.data) {
           this.setExistingClaimValues(invite.data);
         }
-        this.inviteLink = `${publicUrl}?invite_token=${invite.token}`;
+        this.inviteLink = `${publicUrl}/?invite_token=${invite.token}`;
         this.issuerInvite.email = invite.email;
         this.issuerInvite.issued = invite.issued;
         this.issuerInvite.expired = invite.expired;

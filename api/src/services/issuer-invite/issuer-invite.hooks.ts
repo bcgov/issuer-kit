@@ -36,11 +36,8 @@ export default {
       validateEmail,
       async (context: HookContext) => {
         context.data.updated_at = moment().toISOString(true);
-        if (context.app.get("issuer").validityDays > 0) {
-          context.data.expiry = moment().add(
-            context.app.get("issuer").validityDays,
-            "days"
-          );
+        if (context.data.expired) {
+          context.data.expiry = moment().toDate();
         }
         return context;
       },
@@ -49,11 +46,8 @@ export default {
       validateEmail,
       async (context: HookContext) => {
         context.data.updated_at = moment().toISOString(true);
-        if (context.app.get("issuer").validityDays > 0) {
-          context.data.expiry = moment().add(
-            context.app.get("issuer").validityDays,
-            "days"
-          );
+        if (context.data.expired) {
+          context.data.expiry = moment().toDate();
         }
         return context;
       },

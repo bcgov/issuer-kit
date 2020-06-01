@@ -16,9 +16,9 @@ export async function updateInviteRecord(
   });
 }
 
-function isIssuable(issued: boolean, multiUse: boolean): boolean {
+function isIssued(issued: boolean, multiUse: boolean): boolean {
   if (multiUse) {
-    return true;
+    return false;
   } else {
     return issued || multiUse;
   }
@@ -42,7 +42,7 @@ export async function isValidInvite(
 
     return {
       token: invite.token,
-      issued: !isIssuable(invite.issued, issuer.multiUse),
+      issued: isIssued(invite.issued, issuer.multiUse),
       expired: invite.expiry?.getTime() <= Date.now(),
       data: invite.data,
     } as TokenValidationResponse;

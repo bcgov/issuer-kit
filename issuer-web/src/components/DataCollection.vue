@@ -32,7 +32,7 @@ import { mapGetters } from "vuex";
     ...mapGetters("oidcStore", ["oidcUser"])
   }
 })
-export default class Header extends Vue {
+export default class DataCollection extends Vue {
   @Prop({ default: "default" }) private themeName!: string;
   private survey = new SurveyVue.Model();
   private surveyKey = 0;

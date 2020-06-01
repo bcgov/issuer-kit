@@ -2,6 +2,7 @@ export interface AppConfig {
   env: string;
   issuer: {
     name: string;
+    publicUrl: string;
   };
   inviteRequired: boolean;
   authentication: {

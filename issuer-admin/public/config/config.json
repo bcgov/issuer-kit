@@ -1,7 +1,8 @@
 {
   "env": "development",
   "issuer": {
-    "name": "Issuer Admin"
+    "name": "Issuer Admin",
+    "publicUrl": "http://localhost:4251"
   },
   "authentication": {
     "enabled": true,

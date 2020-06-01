@@ -9,5 +9,5 @@ import { Component, Vue } from "vue-property-decorator";
 import DataCollection from "@/components/DataCollection.vue";
 
 @Component({ components: { DataCollection } })
-export default class DataEntry extends Vue {}
+export default class Invite extends Vue {}
 </script>

@@ -1,3 +1,5 @@
+import { Claim } from "./credential";
+
 export class IssuerInvite {
   public _id!: string;
   public token!: string;
@@ -8,5 +10,5 @@ export class IssuerInvite {
   public created_by!: string;
   public updated_at!: Date;
   public updated_by!: string;
-  public data!: any; // eslint-disable-line
+  public data!: any; //eslint-ignore-line
 }

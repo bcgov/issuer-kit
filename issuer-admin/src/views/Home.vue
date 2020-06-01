@@ -15,7 +15,7 @@
         class="elevation-1"
         :footer-props="{
           showFirstLastPage: true,
-          itemsPerPageOptions: [5, 10, 15],
+          itemsPerPageOptions: [5, 10, 15]
         }"
       >
         <template v-slot:top>
@@ -30,7 +30,7 @@
               hide-details
             ></v-text-field>
             <v-spacer></v-spacer>
-            <v-btn color="primary" dark class="mb-2" @click="newItem()"
+            <v-btn color="primary" dark class="mb-2" :to="{ path: 'invite' }"
               >New Invite</v-btn
             >
           </v-toolbar>
@@ -61,7 +61,7 @@
 <script lang="ts">
 import { Component, Vue, Watch } from "vue-property-decorator";
 import { IssuerInvite } from "../models/issuer-invite";
-import { IssuerInviteServiceResponse } from "../models/api";
+import { IssuerInviteListServiceResponse } from "../models/api";
 import { DataOptions } from "vuetify";
 
 @Component({})
@@ -73,15 +73,15 @@ export default class Home extends Vue {
     { text: "Email", align: "start", value: "email" },
     { text: "Issued", value: "issued" },
     { text: "Expired", value: "expired" },
-    { text: "Actions", value: "actions", sortable: false },
+    { text: "Actions", value: "actions", sortable: false }
   ];
   private invites = new Array<IssuerInvite>();
   private totalInvites = 0;
 
   mounted() {
     this.fetchData({
-      dataOptions: this.options as DataOptions,
-    }).then((response: IssuerInviteServiceResponse) => {
+      dataOptions: this.options as DataOptions
+    }).then((response: IssuerInviteListServiceResponse) => {
       this.invites = response.data;
       this.totalInvites = response.total;
       this.loading = false;
@@ -89,27 +89,23 @@ export default class Home extends Vue {
   }
 
   editItem(item: IssuerInvite) {
-    console.log("EDIT: ", item);
+    this.$router.push({ path: "invite", query: { id: item._id } });
   }
 
   async deleteItem(item: IssuerInvite) {
     this.fetchData({
-      dataOptions: this.options as DataOptions,
+      dataOptions: this.options as DataOptions
     }).then(() => {
-      const itemIdx = this.invites.findIndex((el) => item._id === el._id);
+      const itemIdx = this.invites.findIndex(el => item._id === el._id);
       this.invites.splice(itemIdx, 1);
       this.$store.dispatch("issuerInvite/deleteInvite", item._id);
     });
   }
 
-  newItem() {
-    console.log("ADD");
-  }
-
   fetchData(options: {
     dataOptions: DataOptions;
     searchString?: string;
-  }): Promise<IssuerInviteServiceResponse> {
+  }): Promise<IssuerInviteListServiceResponse> {
     return this.$store.dispatch("issuerInvite/fetchInvites", options);
   }
 
@@ -117,7 +113,7 @@ export default class Home extends Vue {
   handler(value: DataOptions, oldValue: DataOptions) {
     this.loading = true;
     this.fetchData({ dataOptions: value }).then(
-      (response: IssuerInviteServiceResponse) => {
+      (response: IssuerInviteListServiceResponse) => {
         this.invites = response.data;
         this.totalInvites = response.total;
         this.loading = false;
@@ -130,8 +126,8 @@ export default class Home extends Vue {
     this.loading = true;
     this.fetchData({
       dataOptions: this.options as DataOptions,
-      searchString: value,
-    }).then((response: IssuerInviteServiceResponse) => {
+      searchString: value
+    }).then((response: IssuerInviteListServiceResponse) => {
       this.invites = response.data;
       this.totalInvites = response.total;
       this.loading = false;

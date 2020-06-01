@@ -12,13 +12,15 @@
 <template>
   <v-app-bar app color="primary" dark>
     <div class="d-flex align-center">
-      <v-img
-        alt="Issuer Logo"
-        class="shrink mr-2 issuer-logo"
-        contain
-        src="logo.svg"
-        transition="scale-transition"
-      />
+      <router-link to="/">
+        <v-img
+          alt="Issuer Logo"
+          class="shrink mr-2 issuer-logo"
+          contain
+          src="logo.svg"
+          transition="scale-transition"
+        />
+      </router-link>
 
       <h1>{{ issuerName }}</h1>
     </div>

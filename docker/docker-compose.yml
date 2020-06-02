@@ -47,6 +47,8 @@ services:
       - EMAIL_SUBJECT=${EMAIL_SUBJECT}
       - PUBLIC_SITE_URL=${PUBLIC_SITE_URL}
       - S2I_SCRIPTS_PATH=${S2I_SCRIPTS_PATH}
+    volumes:
+      - ./api/config:/opt/app-root/src/config
     ports:
       - ${API_PORT}:${API_PORT}
     networks:

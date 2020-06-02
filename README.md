@@ -38,7 +38,7 @@ Identity Kit can be started in different (demo, local and developer) modes by ex
 
 - The apps (administrator and issuer) are protected by a locally running instance of Red Hat's Keycloak Identity and Access Management (IAM) component that is started as part of the Docker compose process. Credentials are pre-configured for the two applications with appropriate access as follows:
   - For the administrator app use: `issuer-admin`/`issuer-admin`
-  - For the issuer app use: `user`/`user`
+  - For the issuer app use: `issuer-user`/`issuer-user`
 
 ### Demo Mode
 

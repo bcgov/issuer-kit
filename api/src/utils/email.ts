@@ -13,7 +13,7 @@ const inject = (str: string, obj: { [index: string]: any }) =>
 export async function sendEmail(context: HookContext) {
   const settings = context.app.get("emailSettings");
   const inviteUrl = `${context.app.get("publicSite").url}/?invite_token=${
-    context.data.token
+    context.result.token
   }`;
   settings.inviteUrl = inviteUrl; // add to default object used for string replacement
   const emailBodyTemplate = loadFileAsText(

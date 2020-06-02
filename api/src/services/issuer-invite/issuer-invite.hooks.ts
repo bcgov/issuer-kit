@@ -27,7 +27,7 @@ export default {
           context.data.expiry = moment().add(
             context.app.get("issuer").validityDays,
             "days"
-          );
+          ).toDate();
         }
         return context;
       },
@@ -38,6 +38,8 @@ export default {
         context.data.updated_at = moment().toISOString(true);
         if (context.data.expired) {
           context.data.expiry = moment().toDate();
+        } else {
+          context.data.expiry = undefined;
         }
         return context;
       },
@@ -48,6 +50,8 @@ export default {
         context.data.updated_at = moment().toISOString(true);
         if (context.data.expired) {
           context.data.expiry = moment().toDate();
+        } else {
+          context.data.expiry = undefined;
         }
         return context;
       },

@@ -1,7 +1,7 @@
 #=========================================================
 # OpenShift template parameters for:
 # Component: .
-# Template File: ../openshift/templates/identity-kit-public-angular/identity-kit-public-angular-build.json
+# Template File: ../openshift/templates/issuer-web-base-image/issuer-web-base-image-build.json
 #=========================================================
 NAME=issuer-web-base-image
 APP_NAME=identity-kit

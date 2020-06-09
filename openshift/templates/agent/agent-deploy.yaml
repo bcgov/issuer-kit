@@ -352,7 +352,7 @@ parameters:
     displayName: Webhook URL
     description: The webhook endpoint
     required: true
-    value: http://identity-kit-controller:8080
+    value: http://issuer-kit-api:8080
   - name: AGENT_ADMIN_PORT
     displayName: Agent Admin Port
     description: The admin port on which the service will listen.

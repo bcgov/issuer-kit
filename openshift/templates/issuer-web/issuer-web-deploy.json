@@ -540,7 +540,7 @@
       "displayName": "API Service Name",
       "description": "The name of the API service.",
       "required": true,
-      "value": "identity-kit-controller"
+      "value": "issuer-api"
     },
     {
       "name": "API_PORT",

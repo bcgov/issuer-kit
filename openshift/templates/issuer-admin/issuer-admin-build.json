@@ -37,7 +37,7 @@
         "runPolicy": "Serial",
         "source": {
           "type": "Dockerfile",
-          "dockerfile": "FROM ${RUNTIME_IMAGE_NAME}:${RUNTIME_IMAGE_TAG}\nCOPY /app/dist/wa-admin /srv\nCOPY /app/config/Caddyfile /etc/Caddyfile",
+          "dockerfile": "FROM ${RUNTIME_IMAGE_NAME}:${RUNTIME_IMAGE_TAG}\nCOPY /app/dist /srv\nCOPY /app/config/Caddyfile /etc/Caddyfile",
           "images": [
             {
               "from": {
@@ -85,7 +85,7 @@
       "displayName": "Name",
       "description": "The name assigned to all of the resources defined in this template.",
       "required": true,
-      "value": "identity-kit-admin"
+      "value": "issuer-admin"
     },
     {
       "name": "APP_NAME",
@@ -134,7 +134,7 @@
       "displayName": "Artifact Image Name",
       "description": "The name of the image containing the built artifacts.",
       "required": true,
-      "value": "identity-kit-admin-angular"
+      "value": "issuer-admin-base-image"
     },
     {
       "name": "ARTIFACT_IMAGE_TAG",

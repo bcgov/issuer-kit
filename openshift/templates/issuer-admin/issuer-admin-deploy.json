@@ -3,7 +3,7 @@
   "kind": "Template",
   "metadata": {
     "annotations": {
-      "description": "Deployment template for a angular served by a Caddy webserver",
+      "description": "Deployment template for a Vue app served by a Caddy webserver",
       "tags": "angular, caddy"
     },
     "name": "${NAME}${SUFFIX}"
@@ -23,7 +23,7 @@
         "name": "${NAME}${SUFFIX}"
       },
       "spec": {
-        "replicas": 2,
+        "replicas": 1,
         "selector": {
           "name": "${NAME}${SUFFIX}",
           "deploymentconfig": "${NAME}${SUFFIX}"
@@ -64,13 +64,85 @@
                 }
               },
               {
-                "name": "${NAME}${SUFFIX}-appconfig-volume",
+                "name": "${NAME}${SUFFIX}-app-claim-config-volume",
                 "configMap": {
-                  "name": "${APPCONFIG_CONFIG_MAP_NAME}${SUFFIX}",
+                  "name": "${APP_CONFIG_MAP_NAME}${SUFFIX}",
                   "items": [
                     {
-                      "key": "${APPCONFIG_CONFIG_FILE_NAME}",
-                      "path": "${APPCONFIG_CONFIG_FILE_NAME}"
+                      "key": "${APP_CLAIM_CONFIG_FILE_NAME}",
+                      "path": "${APP_CLAIM_CONFIG_FILE_NAME}"
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "${NAME}${SUFFIX}-app-config-volume",
+                "configMap": {
+                  "name": "${APP_CONFIG_MAP_NAME}${SUFFIX}",
+                  "items": [
+                    {
+                      "key": "${APP_CONFIG_FILE_NAME}",
+                      "path": "${APP_CONFIG_FILE_NAME}"
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "${NAME}${SUFFIX}-app-custom-scripts-volume",
+                "configMap": {
+                  "name": "${APP_CONFIG_MAP_NAME}${SUFFIX}",
+                  "items": [
+                    {
+                      "key": "${APP_CUSTOM_SCRIPTS_FILE_NAME}",
+                      "path": "${APP_CUSTOM_SCRIPTS_FILE_NAME}"
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "${NAME}${SUFFIX}-app-logo-volume",
+                "configMap": {
+                  "name": "${APP_CONFIG_MAP_NAME}${SUFFIX}",
+                  "items": [
+                    {
+                      "key": "${APP_LOGO_FILE_NAME}",
+                      "path": "${APP_LOGO_FILE_NAME}"
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "${NAME}${SUFFIX}-app-terms-volume",
+                "configMap": {
+                  "name": "${APP_CONFIG_MAP_NAME}${SUFFIX}",
+                  "items": [
+                    {
+                      "key": "${APP_TERMS_FILE_NAME}",
+                      "path": "${APP_TERMS_FILE_NAME}"
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "${NAME}${SUFFIX}-app-unauthorized-volume",
+                "configMap": {
+                  "name": "${APP_CONFIG_MAP_NAME}${SUFFIX}",
+                  "items": [
+                    {
+                      "key": "${APP_UNAUTHORIZED_FILE_NAME}",
+                      "path": "${APP_UNAUTHORIZED_FILE_NAME}"
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "${NAME}${SUFFIX}-app-vuetify-volume",
+                "configMap": {
+                  "name": "${APP_CONFIG_MAP_NAME}${SUFFIX}",
+                  "items": [
+                    {
+                      "key": "${APP_VUETIFY_FILE_NAME}",
+                      "path": "${APP_VUETIFY_FILE_NAME}"
                     }
                   ]
                 }
@@ -126,9 +198,39 @@
                     "subPath": "${CADDY_CONFIG_FILE_NAME}"
                   },
                   {
-                    "name": "${NAME}${SUFFIX}-appconfig-volume",
-                    "mountPath": "${APPCONFIG_CONFIG_MOUNT_PATH}${APPCONFIG_CONFIG_FILE_NAME}",
-                    "subPath": "${APPCONFIG_CONFIG_FILE_NAME}"
+                    "name": "${NAME}${SUFFIX}-app-claim-config-volume",
+                    "mountPath": "${APP_CONFIG_MOUNT_PATH}${APP_CLAIM_CONFIG_FILE_NAME}",
+                    "subPath": "${APP_CLAIM_CONFIG_FILE_NAME}"
+                  },
+                  {
+                    "name": "${NAME}${SUFFIX}-app-config-volume",
+                    "mountPath": "${APP_CONFIG_MOUNT_PATH}${APP_CONFIG_FILE_NAME}",
+                    "subPath": "${APP_CONFIG_FILE_NAME}"
+                  },
+                  {
+                    "name": "${NAME}${SUFFIX}-app-custom-scripts-volume",
+                    "mountPath": "${APP_CONFIG_MOUNT_PATH}${APP_CUSTOM_SCRIPTS_FILE_NAME}",
+                    "subPath": "${APP_CUSTOM_SCRIPTS_FILE_NAME}"
+                  },
+                  {
+                    "name": "${NAME}${SUFFIX}-app-vuetify-volume",
+                    "mountPath": "${APP_CONFIG_MOUNT_PATH}${APP_VUETIFY_FILE_NAME}",
+                    "subPath": "${APP_VUETIFY_FILE_NAME}"
+                  },
+                  {
+                    "name": "${NAME}${SUFFIX}-app-logo-volume",
+                    "mountPath": "${APP_ARTIFACT_MOUNT_PATH}${APP_LOGO_FILE_NAME}",
+                    "subPath": "${APP_LOGO_FILE_NAME}"
+                  },
+                  {
+                    "name": "${NAME}${SUFFIX}-app-terms-volume",
+                    "mountPath": "${APP_ARTIFACT_MOUNT_PATH}${APP_TERMS_FILE_NAME}",
+                    "subPath": "${APP_TERMS_FILE_NAME}"
+                  },
+                  {
+                    "name": "${NAME}${SUFFIX}-app-unauthorized-volume",
+                    "mountPath": "${APP_ARTIFACT_MOUNT_PATH}${APP_UNAUTHORIZED_FILE_NAME}",
+                    "subPath": "${APP_UNAUTHORIZED_FILE_NAME}"
                   }
                 ],
                 "livenessProbe": {
@@ -245,35 +347,13 @@
       }
     },
     {
-      "kind": "HorizontalPodAutoscaler",
-      "apiVersion": "autoscaling/v1",
-      "metadata": {
-        "name": "${NAME}${SUFFIX}",
-        "labels": {
-          "app": "${APP_NAME}${SUFFIX}",
-          "name": "${NAME}${SUFFIX}",
-          "app-group": "${APP_GROUP}",
-          "role": "${ROLE}",
-          "env": "${TAG_NAME}"
-        }
-      },
-      "spec": {
-        "scaleTargetRef": {
-          "kind": "DeploymentConfig",
-          "name": "${NAME}${SUFFIX}"
-        },
-        "minReplicas": 1,
-        "maxReplicas": 2
-      }
-    },
-    {
       "kind": "NetworkSecurityPolicy",
       "apiVersion": "secops.pathfinder.gov.bc.ca/v1alpha1",
       "metadata": {
-        "name": "custom-${APP_NAME}-${NAME}-policy",
+        "name": "custom-${APP_NAME}-${NAME}${SUFFIX}-policy",
         "labels": {
-          "name": "custom-${APP_NAME}-${NAME}-policy",
-          "app": "${APP_NAME}",
+          "name": "custom-${APP_NAME}-${NAME}${SUFFIX}-policy",
+          "app": "${APP_NAME}${SUFFIX}",
           "app-group": "${APP_GROUP}",
           "role": "${ROLE}",
           "env": "${TAG_NAME}"
@@ -284,7 +364,7 @@
         "source": [
           [
             "role=${ROLE}",
-            "app=${APP_NAME}",
+            "app=${APP_NAME}${SUFFIX}",
             "env=${TAG_NAME}",
             "$namespace=${NAMESPACE_NAME}-${TAG_NAME}"
           ]
@@ -292,7 +372,7 @@
         "destination": [
           [
             "role=controller",
-            "app=${APP_NAME}",
+            "app=${APP_NAME}${SUFFIX}",
             "env=${TAG_NAME}",
             "$namespace=${NAMESPACE_NAME}-${TAG_NAME}"
           ]
@@ -302,11 +382,11 @@
   ],
   "parameters": [
     {
-      "name": "NAME",
       "description": "The name assigned to all of the openshift objects defined in this template. It is also the name of runtime image you want.",
       "displayName": "Name",
+      "name": "NAME",
       "required": true,
-      "value": "identity-kit-admin"
+      "value": "issuer-admin"
     },
     {
       "name": "APP_NAME",
@@ -320,7 +400,7 @@
       "displayName": "App Group",
       "description": "The name assigned to all of the deployments in this project.",
       "required": true,
-      "value": "identity-kit"
+      "value": "issuer"
     },
     {
       "name": "SUFFIX",
@@ -334,7 +414,7 @@
       "displayName": "Role",
       "description": "The role of this service within the application - used for Network Policies",
       "required": true,
-      "value": "admin-frontend"
+      "value": "public-frontend"
     },
     {
       "description": "The namespace where to get the above image name",
@@ -345,7 +425,7 @@
     },
     {
       "name": "CADDY_CONFIG_FILE_NAME",
-      "displayName": "Caddy Config File Name",
+      "displayName": "CAddy Config File Name",
       "description": "The name of the configuration file to be used for Caddy.",
       "required": true,
       "value": "Caddyfile"
@@ -355,7 +435,7 @@
       "displayName": "Caddyfile Config Map Name",
       "description": "The name of the configuration map.",
       "required": true,
-      "value": "identity-kit-admin-caddy-conf"
+      "value": "issuer-admin-caddy-conf"
     },
     {
       "name": "CADDY_CONFIG_MOUNT_PATH",
@@ -365,25 +445,74 @@
       "value": "/etc/"
     },
     {
-      "name": "APPCONFIG_CONFIG_FILE_NAME",
-      "displayName": "config.json Config File Name",
-      "description": "The name of the configuration file to be used for config.json.",
+      "name": "APP_CONFIG_MAP_NAME",
+      "displayName": "Application Config Map Name",
+      "description": "The name of the configuration map holding the data to configure the application.",
+      "required": true,
+      "value": "issuer-admin-config"
+    },
+    {
+      "name": "APP_CONFIG_MOUNT_PATH",
+      "displayName": "Application Config Mount Path",
+      "description": "The path to use to mount the configuration file(s).",
+      "required": true,
+      "value": "/srv/config/"
+    },
+    {
+      "name": "APP_CLAIM_CONFIG_FILE_NAME",
+      "displayName": "Application Claim Config File Name",
+      "description": "The name of the application claim configuration file.",
+      "required": true,
+      "value": "claim-config.json"
+    },
+    {
+      "name": "APP_CONFIG_FILE_NAME",
+      "displayName": "Application Config File Name",
+      "description": "The name of the application configuration file.",
       "required": true,
       "value": "config.json"
     },
     {
-      "name": "APPCONFIG_CONFIG_MAP_NAME",
-      "displayName": "config.json Config Map Name",
-      "description": "The name of the configuration map holding the data to configure the Angular app.",
+      "name": "APP_CUSTOM_SCRIPTS_FILE_NAME",
+      "displayName": "Application Custom Scripts File Name",
+      "description": "The name of the application custom scripts file.",
       "required": true,
-      "value": "identity-kit-admin-appconfig"
+      "value": "custom-scripts.js"
     },
     {
-      "name": "APPCONFIG_CONFIG_MOUNT_PATH",
-      "displayName": "appConfig,json Mount Path",
-      "description": "The path to use to mount the config file.",
+      "name": "APP_VUETIFY_FILE_NAME",
+      "displayName": "Application Vuetify File Name",
+      "description": "The name of the application vuetify file.",
       "required": true,
-      "value": "/srv/assets/config/"
+      "value": "vuetify.json"
+    },
+    {
+      "name": "APP_ARTIFACT_MOUNT_PATH",
+      "displayName": "Application Artifact Mount Path",
+      "description": "The path to use to mount the application artifact file(s).",
+      "required": true,
+      "value": "/srv/"
+    },
+    {
+      "name": "APP_LOGO_FILE_NAME",
+      "displayName": "Application logo File Name",
+      "description": "The name of the application logo file.",
+      "required": true,
+      "value": "logo.svg"
+    },
+    {
+      "name": "APP_TERMS_FILE_NAME",
+      "displayName": "Application Terms File Name",
+      "description": "The name of the application terms file.",
+      "required": true,
+      "value": "terms-and-conditions.html"
+    },
+    {
+      "name": "APP_UNAUTHORIZED_FILE_NAME",
+      "displayName": "Application Unauthorized File Name",
+      "description": "The name of the application unauthorized file.",
+      "required": true,
+      "value": "unauthorized.html"
     },
     {
       "name": "WEB_HOST_NAME",
@@ -411,7 +540,7 @@
       "displayName": "API Service Name",
       "description": "The name of the API service.",
       "required": true,
-      "value": "identity-kit-controller"
+      "value": "issuer-api"
     },
     {
       "name": "API_PORT",
@@ -424,14 +553,14 @@
       "description": "The exposed hostname that will route to the service, e.g., myappname.pathfinder.gov.bc.ca, if left blank a value will be defaulted.",
       "displayName": "Application Hostname",
       "name": "APPLICATION_DOMAIN",
-      "value": "identity-kit-admin.pathfinder.gov.bc.ca"
+      "value": "identity-kit.pathfinder.gov.bc.ca"
     },
     {
       "name": "SOURCE_IMAGE_NAME",
       "displayName": "Source Image Name",
       "description": "The name of the image to use for this resource.",
       "required": true,
-      "value": "identity-kit-admin"
+      "value": "issuer-admin"
     },
     {
       "description": "The TAG name for this environment, e.g., dev, test, prod",

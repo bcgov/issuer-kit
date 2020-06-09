@@ -78,7 +78,7 @@
       "displayName": "Name",
       "description": "The name assigned to all of the resources defined in this template.",
       "required": true,
-      "value": "identity-kit--angular"
+      "value": "issuer-admin-base-image"
     },
     {
       "name": "APP_NAME",
@@ -120,7 +120,7 @@
       "displayName": "Docker File Path",
       "description": "The path to the docker file defining the build.",
       "required": false,
-      "value": "docker/wa-admin/Dockerfile"
+      "value": "docker/issuer-admin/Dockerfile"
     },
     {
       "name": "OUTPUT_IMAGE_TAG",

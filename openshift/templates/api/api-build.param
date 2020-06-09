@@ -1,15 +1,18 @@
 #=========================================================
 # OpenShift template parameters for:
 # Component: .
-# Template File: ../openshift/templates/identity-kit-admin-angular/identity-kit-admin-angular-build.json
+# Template File: ../openshift/templates/api/api-build.json
 #=========================================================
-NAME=identity-kit-admin-angular
+NAME=api
 APP_NAME=identity-kit
-APP_GROUP=identity-kit-base-image
+APP_GROUP=identity-kit-runtime
+ENV_NAME=tools
 GIT_REPO_URL=https://github.com/bcgov/identity-kit-poc.git
 GIT_REF=master
-SOURCE_CONTEXT_DIR=.
-DOCKER_FILE_PATH=docker/wa-admin/Dockerfile
+SOURCE_CONTEXT_DIR=issuer-api
+SOURCE_IMAGE_KIND=DockerImage
+SOURCE_IMAGE_NAME=registry.access.redhat.com/rhscl/nodejs-10-rhel7
+SOURCE_IMAGE_TAG=latest
 OUTPUT_IMAGE_TAG=latest
 CPU_LIMIT=1
 MEMORY_LIMIT=4Gi

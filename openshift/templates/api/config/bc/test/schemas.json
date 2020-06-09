@@ -1,6 +1,18 @@
 [
   {
-    "id": "85459GxjNySJ8HwTTQ4vq7:2:verified_person:1.4.0",
-    "default": true
+    "default": true,
+    "schema_name": "verified_person",
+    "schema_version": "1.4.0",
+    "attributes": [
+      "given_names",
+      "family_name",
+      "birthdate",
+      "street_address",
+      "postal_code",
+      "locality",
+      "region",
+      "country",
+      "issued"
+    ]
   }
 ]

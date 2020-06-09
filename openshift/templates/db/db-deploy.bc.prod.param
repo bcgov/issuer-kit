@@ -1,7 +1,7 @@
 #=========================================================
 # OpenShift template parameters for:
 # Component: .
-# Template File: ../openshift/templates/identity-kit-db/identity-kit-db-deploy.json
+# Template File: ../openshift/templates/db/db-deploy.json
 #=========================================================
 # NAME=identity-kit-db
 # APP_NAME=identity-kit
@@ -9,7 +9,7 @@
 # SUFFIX=-bc
 # ROLE=db
 # IMAGE_NAMESPACE=devex-von-tools
-# SOURCE_IMAGE_NAME=identity-kit-db
+# SOURCE_IMAGE_NAME=issuer-db
 TAG_NAME=prod
 # MONGODB_DATABASE=identity_kit_db
 # MONGODB_USER=[a-zA-Z_][a-zA-Z0-9_]{10}

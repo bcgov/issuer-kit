@@ -3,9 +3,9 @@
 # Component: .
 # Template File: ../openshift/templates/wallet/wallet-build.json
 #=========================================================
-NAME=wallet
-APP_NAME=identity-kit
-APP_GROUP=identity-kit-storage
+NAME=issuer-wallet
+APP_NAME=issuer-kit
+APP_GROUP=issuer-kit-storage
 GIT_REPO_URL=https://github.com/bcgov/identity-kit-poc.git
 GIT_REF=master
 SOURCE_CONTEXT_DIR=wallet/config

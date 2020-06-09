@@ -1,0 +1,24 @@
+{
+  "env": "docker-prod-like",
+  "issuer": {
+    "name": "Issuer Admin",
+    "publicUrl": "https://identity-kit.pathfinder.gov.bc.ca"
+  },
+  "authentication": {
+    "enabled": true,
+    "oidcSettings": {
+      "authority": "https://sso-dev.pathfinder.gov.bc.ca/auth/realms/gzyg46lx",
+      "clientId": "identity-kit-admin",
+      "redirectUri": "https://identity-kit-admin.pathfinder.gov.bc.ca/oidc-callback",
+      "redirect_uri": "https://identity-kit-admin.pathfinder.gov.bc.ca/oidc-callback-error",
+      "responseType": "code",
+      "scope": "openid profile email",
+      "automaticSilentRenew": true,
+      "silentRedirectUri": "https://identity-kit-admin.pathfinder.gov.bc.ca/silent-renew-oidc.html",
+      "post_logout_redirect_uri": "https://identity-kit-admin.pathfinder.gov.bc.ca"
+    }
+  },
+  "apiServer": {
+    "url": "/api"
+  }
+}

@@ -1,7 +1,7 @@
 #=========================================================
 # OpenShift template parameters for:
 # Component: .
-# Template File: ../openshift/templates/identity-kit-wallet/identity-kit-wallet-deploy.json
+# Template File: ../openshift/templates/wallet/wallet-deploy.json
 #=========================================================
 # NAME=identity-kit-wallet
 # APP_NAME=identity-kit
@@ -9,7 +9,7 @@
 # SUFFIX=-bc
 # ROLE=wallet
 # IMAGE_NAMESPACE=devex-von-tools
-# SOURCE_IMAGE_NAME=identity-kit-wallet
+# SOURCE_IMAGE_NAME=issuer-wallet
 TAG_NAME=prod
 # POSTGRESQL_DATABASE_NAME=identity_kit_wallet
 # POSTGRESQL_USER=[a-zA-Z_][a-zA-Z0-9_]{10}

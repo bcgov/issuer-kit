@@ -3,15 +3,15 @@
 # Component: .
 # Template File: ../openshift/templates/api/api-build.json
 #=========================================================
-NAME=api
-APP_NAME=identity-kit
-APP_GROUP=identity-kit-runtime
+NAME=issuer-api
+APP_NAME=issuer-kit
+APP_GROUP=issuer-kit-runtime
 ENV_NAME=tools
 GIT_REPO_URL=https://github.com/bcgov/identity-kit-poc.git
 GIT_REF=master
-SOURCE_CONTEXT_DIR=issuer-api
+SOURCE_CONTEXT_DIR=api
 SOURCE_IMAGE_KIND=DockerImage
-SOURCE_IMAGE_NAME=registry.access.redhat.com/rhscl/nodejs-10-rhel7
+SOURCE_IMAGE_NAME=centos/nodejs-12-centos7
 SOURCE_IMAGE_TAG=latest
 OUTPUT_IMAGE_TAG=latest
 CPU_LIMIT=1

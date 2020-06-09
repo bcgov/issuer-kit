@@ -3,9 +3,9 @@
 # Component: .
 # Template File: ../openshift/templates/agent/agent-build.json
 #=========================================================
-NAME=agent
-APP_NAME=identity-kit
-APP_GROUP=identity-kit-runtime
+NAME=issuer-agent
+APP_NAME=issuer-kit
+APP_GROUP=issuer-kit-runtime
 GIT_REPO_URL=https://github.com/bcgov/identity-kit-poc.git
 GIT_REF=master
 SOURCE_CONTEXT_DIR=.

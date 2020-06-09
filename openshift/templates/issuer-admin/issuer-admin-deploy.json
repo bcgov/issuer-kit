@@ -112,18 +112,6 @@
                 }
               },
               {
-                "name": "${NAME}${SUFFIX}-app-terms-volume",
-                "configMap": {
-                  "name": "${APP_CONFIG_MAP_NAME}${SUFFIX}",
-                  "items": [
-                    {
-                      "key": "${APP_TERMS_FILE_NAME}",
-                      "path": "${APP_TERMS_FILE_NAME}"
-                    }
-                  ]
-                }
-              },
-              {
                 "name": "${NAME}${SUFFIX}-app-unauthorized-volume",
                 "configMap": {
                   "name": "${APP_CONFIG_MAP_NAME}${SUFFIX}",
@@ -221,11 +209,6 @@
                     "name": "${NAME}${SUFFIX}-app-logo-volume",
                     "mountPath": "${APP_ARTIFACT_MOUNT_PATH}${APP_LOGO_FILE_NAME}",
                     "subPath": "${APP_LOGO_FILE_NAME}"
-                  },
-                  {
-                    "name": "${NAME}${SUFFIX}-app-terms-volume",
-                    "mountPath": "${APP_ARTIFACT_MOUNT_PATH}${APP_TERMS_FILE_NAME}",
-                    "subPath": "${APP_TERMS_FILE_NAME}"
                   },
                   {
                     "name": "${NAME}${SUFFIX}-app-unauthorized-volume",
@@ -414,7 +397,7 @@
       "displayName": "Role",
       "description": "The role of this service within the application - used for Network Policies",
       "required": true,
-      "value": "public-frontend"
+      "value": "admin-frontend"
     },
     {
       "description": "The namespace where to get the above image name",
@@ -499,13 +482,6 @@
       "description": "The name of the application logo file.",
       "required": true,
       "value": "logo.svg"
-    },
-    {
-      "name": "APP_TERMS_FILE_NAME",
-      "displayName": "Application Terms File Name",
-      "description": "The name of the application terms file.",
-      "required": true,
-      "value": "terms-and-conditions.html"
     },
     {
       "name": "APP_UNAUTHORIZED_FILE_NAME",

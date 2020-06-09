@@ -162,7 +162,7 @@
       "displayName": "Source Image Name",
       "required": true,
       "description": "The name of the source image.",
-      "value": "registry.access.redhat.com/rhscl/nodejs-10-rhel7"
+      "value": "centos/nodejs-12-centos7"
     },
     {
       "name": "SOURCE_IMAGE_TAG",

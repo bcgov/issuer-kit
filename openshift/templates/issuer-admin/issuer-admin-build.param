@@ -4,8 +4,8 @@
 # Template File: ../openshift/templates/issuer-admin/issuer-admin-build.json
 #=========================================================
 NAME=issuer-admin
-APP_NAME=identity-kit
-APP_GROUP=identity-kit-runtime
+APP_NAME=issuer-kit
+APP_GROUP=issuer-kit-runtime
 OUTPUT_IMAGE_TAG=latest
 SOURCE_IMAGE_TAG=1.0.3-no-stats
 SOURCE_IMAGE_NAME=abiosoft/caddy

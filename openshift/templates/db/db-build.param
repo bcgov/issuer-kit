@@ -3,9 +3,9 @@
 # Component: .
 # Template File: ../openshift/templates/db/db-build.json
 #=========================================================
-NAME=db
-APP_NAME=identity-kit
-APP_GROUP=identity-kit-storage
+NAME=issuer-db
+APP_NAME=issuer-kit
+APP_GROUP=issuer-kit-storage
 GIT_REPO_URL=https://github.com/bcgov/identity-kit-poc.git
 GIT_REF=master
 SOURCE_IMAGE_KIND=DockerImage

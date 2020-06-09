@@ -4,8 +4,8 @@
 # Template File: ../openshift/templates/issuer-admin-base-image/issuer-admin-base-image-build.json
 #=========================================================
 NAME=issuer-admin-base-image
-APP_NAME=identity-kit
-APP_GROUP=identity-kit-base-image
+APP_NAME=issuer-kit
+APP_GROUP=issuer-kit-base-image
 GIT_REPO_URL=https://github.com/bcgov/identity-kit-poc.git
 GIT_REF=master
 SOURCE_CONTEXT_DIR=.

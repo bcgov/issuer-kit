@@ -1,5 +1,5 @@
 tunnels:
-  identity-kit-agent:
+  issuer-agent:
     addr: 8021
     proto: http
     bind-tls: true

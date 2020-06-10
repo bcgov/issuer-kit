@@ -34,12 +34,11 @@ Identity Kit can be started in different (demo, local and developer) modes by ex
 
 - When starting the system, there is an initial pause with a message to give you a chance to setup some GitHub integration capabilities. That is needed only if you want test out logging into the admin and issuer applications using GitHub credentials. When getting started, we recommend that you just wait for the start up process to continue.
 
-- Assuming you don't have a email server handy, you will get an error when adding a participant, and they won't get your email. To access the issuer, click the `<- Identity` button (top left) to get back to the participants list, click on the newly added user, and use the URL at the top of the screen. The URL includes the server for the Issuer app, and the GUID for the just created user. That's the URL that the participant would have received in the email they didn't get.
-  - If you do have an email server handy, configuration parameters can be set in environment variables that are processed in the `./manage` script.
+- A local maildev server will be running at http://localhost:8050: you can use it to monitor the outgoing emails sent from the admin app when creating a new invite.
 
 - The apps (administrator and issuer) are protected by a locally running instance of Red Hat's Keycloak Identity and Access Management (IAM) component that is started as part of the Docker compose process. Credentials are pre-configured for the two applications with appropriate access as follows:
-  - For the administrator app use: `wa-admin`/`wa-admin`
-  - For the issuer app use: `wa-user`/`wa-user`
+  - For the administrator app use: `issuer-admin`/`issuer-admin`
+  - For the issuer app use: `issuer-user`/`issuer-user`
 
 ### Demo Mode
 
@@ -55,17 +54,19 @@ To run in demo mode, open two shell/terminal sessions:
 
 Once started, the services will be exposed on localhost at the following endpoints:
 
-- `identity-controller`: http://localhost:5000
+- `api`: http://localhost:5000
 
-- `wa-admin` Administrator app: http://localhost:8081
+- `issuer-admin` Administrator app: http://localhost:8081
 
-- `wa-public` Issuer app: http://localhost:8082
+- `issuer-web` Issuer app: http://localhost:8082
 
-- `wa-db`: http://localhost:27017
+- `db`: http://localhost:27017
 
 - `keycloak`: http://localhost:8180
 
-- `identity-kit-agent`: http://localhost:8024
+- `agent`: http://localhost:8024
+
+- `maildev`: http://localhost:8050
 
 For instructions on how to run the demo, please refer to [this document](./docs/identity-kit-poc.md).
 
@@ -91,17 +92,19 @@ To run in local mode, open two shell/terminal sessions:
 
 Once started, the services will be exposed on localhost at the following endpoints:
 
-- `identity-controller`: http://localhost:5000
+- `api`: http://localhost:5000
 
-- `wa-admin` Administrator app: http://localhost:8081
+- `issuer-admin` Administrator app: http://localhost:8081
 
-- `wa-public` Issuer app: http://localhost:8082
+- `issuer-web` Issuer app: http://localhost:8082
 
-- `wa-db`: http://localhost:27017
+- `db`: http://localhost:27017
 
 - `keycloak`: http://localhost:8180
 
-- `identity-kit-agent`: http://localhost:8024
+- `agent`: http://localhost:8024
+
+- `maildev`: http://localhost:8050
 
 :information_source: When running in local OR demo mode, changes to the code will not be reflected in the containers unless a rebuild using `./manage build` and restart using `./manage start` is performed.
 
@@ -116,61 +119,64 @@ To restart the applications:
 
 ### Development Mode
 
-Development mode runs the admin frontend, public frontend and the controller in development mode with hot-reloading enabled. This means that any change to the code in the `src` directories of `wa-admin`, `wa-public` and `identity-controller` will automatically trigger a rebuild and reload of the associated service.
+Development mode runs the admin frontend, public frontend and the api/controller in development mode with hot-reloading enabled. This means that any change to the code in the `src` directories of `issuer-admin`, `issuer-web` and `api` will automatically trigger a rebuild and reload of the associated service.
 
-To run in development mode, run `npm install` in each one of the `wa-admin`, `wa-public` and `identity-controller` directories and then run the same steps as `Local Mode` above, but use `./manage start-dev` in place of the `./manage start` command in the second shell.
+To run in development mode, run `npm install` in each one of the `issuer-admin`, `issuer-web` and `api` directories and then run the same steps as `Local Mode` above, but use `./manage start-dev` in place of the `./manage start` command in the second shell.
 
 The services will be running at the following endpoints:
 
-- `identity-controller`: http://localhost:5000
+- `api`: http://localhost:5000
 
-- `wa-admin` Administrator app: http://localhost:4250
+- `issuer-admin` Administrator app: http://localhost:4250
 
-- `wa-public` Issuer app: http://localhost:4251
+- `issuer-web` Issuer app: http://localhost:4251
 
-- `wa-db`: http://localhost:27017
+- `db`: http://localhost:27017
 
 - `keycloak`: http://localhost:8180
 
-- `identity-kit-agent`: http://localhost:8024
+- `agent`: http://localhost:8024
+
+- `maildev`: http://localhost:8050
 
 ## Keycloak Configuration and Users
 
 While it is possible to provide a client id and token pair to use the GitHub integration for Keycloak (follow the on-screen instructions when starting the apps), two default users  are shipped with the default Keycloak configuration:
 
-- to access the `wa-admin` Administrator app, use the following username/password combination: `wa-admin/wa-admin`.
+- to access the `issuer-admin` Administrator app, use the following username/password combination: `issuer-admin/issuer-admin`.
 
-- to access the `wa-public` Issuer webapp, use the following username/password combination: `wa-user/wa-user`.
+- to access the `issuer-web` Issuer webapp, use the following username/password combination: `user/user`.
 
-:warning: The `wa-admin` user can also access the public webapp, however `wa-public` will only be able to access the public site. When testing locally, it is recommended to open admin and public sites in two different browsers in order to prevent cookies to auto-login the admin user onto the public site.
+:warning: The `issuer-admin` user can also access the public webapp, however `issuer-web` will only be able to access the public site. When testing locally, it is recommended to open admin and public sites in two different browsers in order to prevent cookies to auto-login the admin user onto the public site.
 
 ## Credential Schema
 
-The schema of the credential that will be issued by Identity Kit is defined in [this file](identity-controller/src/app/admin/issues/schema.ts)
+Each api/controller can issue several credentials matching different schemas: the schema definitions that can be processed by the api/controller are described in [this file](api/config/schemas.json). There are two ways of defining a schema: using the `id` of the schema on the target ledger or, alternatively, defining the `schema_name`, `schema_version` and `attributes` for the schema. Additionally, ***one schema in the provided list must be marked with the `default: true` property***: this describes which schema will be used if no explicit request is forwarded to the api/controller.
 
-When using Identity Kit in demo mode the controller will instruct the agent to use the schema definition that was published to the BCovrin Test Ledger by the BCGov issuer, and therefore issue credentials that match that definition. In most cases updating the schema definition should not be necessary, however if this was the case the following steps will be required to instruct the controller/agent to publish a new schema definition on the target ledger, and use it:
+When using Identity Kit in demo mode the api/controller will use the schema marked as default, which corresponds to the schema definition that was published to the BCovrin Test Ledger by the BCGov issuer, and issue credentials that match that definition. In most cases updating the schema definition should not be necessary, however if this was the case the following steps will be required to instruct the controller/agent to publish a new schema definition on the target ledger, and use it:
 
-- update the schema attributes in [schema.ts](identity-controller/src/app/admin/issues/schema.ts) with the desired fields.
+- update the schema definition(s) in [schemas.json](api/config/schemas.json) using the desired fields.
 
-- update the form in the public-facing web application to support the new fields. The public web application is contained in the [wa-public](./wa-public) folder.
-
-- unset the `EXISTING_SCHEMA_ID` environment variable from the `identity-controller` deployment/container. This will tell it to generate a new schema definition associated with the current DID.
+- update the configuration of the public-facing web application to support the new fields and request the new schema. The public web application is contained in the [issuer-web](./issuer-web) folder and the files to update are `claim-config.json` for the form definition and `config.json` to add (or update) the following section:
+```
+"credentials": {
+    "schema_id": "85459GxjNySJ8HwTTQ4vq7:2:verified_person:1.4.0"
+  }
+```
 
 :information_source: If you are planning on using Identity Kit in your own production-like environment - regardless of wether you will be re-using the BCGov schema or creating your own - you may want to update the `AGENT_WALLET_SEED` environment variable with a unique value used only by your agent/organization rather than using the default value used for demo purposes.
 
 ## App Configuration
 
-The identity-kit  controller, administrator and issuer applications can be configured by using a number of environment variables and settings stored in configuration files. The application is shipped with default configurations that work well when running in the provided dockerized environment, if settings need to be updated look for:
+The api, administrator and issuer applications can be configured by using a number of environment variables and settings stored in configuration files. The application is shipped with default configurations that work well when running in the provided dockerized environment, if settings need to be updated look for:
 
-  - `controller`: all the settings are injected via environment variables, take a look at the relevant sections in [docker/manage](./docker/manage) and [docker/docker-compose.yml](docker/docker-compose.yml). Some extra details are provided below for settings specific to NodeMailer.
+  - `api`: all the settings are defined in the [config/default.json](api/config/default.json) file. The API is a NodeJS application built on [FeathersJS](https://docs.feathersjs.com/api/configuration.html#configuration-directory). Rather than defining multiple files for each environment, the default configuration has been extended to use environment variables that can be inected at runtime. Take a look at the relevant sections in [docker/manage](./docker/manage) and [docker/docker-compose.yml](docker/docker-compose.yml) to learn what is being injected into the api container. Additionally, the body of the email sent out as invite can be customized by updating the [api/config/invite-email.html](invite-email.html) file.
 
-  - `wa-admin` Administrator app: the application is configured using [wa-admin/src/assets/config/config.json](wa-admin/src/assets/config/config.json). Overriding the file shipped with the application with your custom settings file at deployment time will cause the web application to pick up the settings.
-
-  - `wa-public` Issuer app: similarly to the Administrator app, the configuration is stored in [wa-public/src/assets/config/config.json](wa-public/src/assets/config/config.json) and can be overridden at deployment time.
+  - `issuer-admin` and `issuer-web` are configured using the configuration files in the respective `public/config` folders. Overriding the file shipped with the application with your custom settings file at deployment time will cause the web application to pick up the settings.
 
 ### SMTP Settings
 
-The controller uses [nodemailer](https://nodemailer.com) to send email invitations. When running in localhost the default behaviour is to not send emails and show an alert with the invite link instead.
+The api/controller uses [nodemailer](https://nodemailer.com) to send email invitations. When running on localhost a `maildev` service is used to intercept outgoing email messages.
 
 If you are running a deployment and require emails to be sent, set the following environment variables appropriately:
 
@@ -184,4 +190,11 @@ If you are running a deployment and require emails to be sent, set the following
   
   - *ADMIN_EMAIL*: the email address that will be used as sender of your emails.
 
-If additional tweaks are required, the code responsible for email delivery is in [email.service.ts](identity-controller/src/app/services/email.service.ts).
+If additional tweaks are required, the code responsible for email delivery is in [email.service.ts](api/src/app/services/email.service.ts).
+
+### API Docs
+
+The `api` service exposes a Swagger documentation page at `http://localhost:5000/swagger/docs`.
+Publicly available APIs are documented there.
+
+:information_source: at the time of writing, the response structure of the `/connection` POST method to request a new connection invitation is not accurate. The API docs represent the response the same as for the GET method, however in this case the response represent a new Aries connection invitation that matches the AriesConnection data model in [this file](api/src/models/connection.ts).

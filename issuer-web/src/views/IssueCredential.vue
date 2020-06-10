@@ -86,7 +86,7 @@ export default class Connect extends Vue {
     ] as Configuration;
     this.successText = appConfig.app.issuedSuccess.successText;
     this.successLinks = appConfig.app.issuedSuccess.links;
-    this.requestCredentialIssuance(appConfig.app).then(result => {
+    this.requestCredentialIssuance(appConfig.app).then((result) => {
       this.handleIssueCredential(
         result.data.credential_exchange_id,
         appConfig.app
@@ -105,8 +105,8 @@ export default class Connect extends Vue {
 
   async handleIssueCredential(credExId: string, config: AppConfig) {
     const retryInterceptor = Axios.interceptors.response.use(
-      async response => {
-        if (response.data.issued) {
+      async (response) => {
+        if (response.data.state === "credential_issued") {
           return response;
         } else {
           // retry every 500ms until the credential has not been issued
@@ -114,16 +114,19 @@ export default class Connect extends Vue {
           return Axios.request(response.config);
         }
       },
-      error => {
+      (error) => {
         // Any status codes that falls outside the range of 2xx cause this function to trigger
         // Do something with response error
         return Promise.reject(error);
       }
     );
 
-    return await Axios.get(`${config.apiServer.url}/issues/${credExId}`, {
-      cancelToken: this.cancelTokenSource.token
-    }).finally(() => {
+    return await Axios.get(
+      `${config.apiServer.url}/credential-exchange/${credExId}`,
+      {
+        cancelToken: this.cancelTokenSource.token,
+      }
+    ).finally(() => {
       Axios.interceptors.response.eject(retryInterceptor);
     });
   }
@@ -148,12 +151,13 @@ export default class Connect extends Vue {
       console.error(e);
     }
     const data = {
-      _id: invitation.data._id,
-      connectionId: connection.id,
-      claims: credential.claims
+      token: invitation.data._id,
+      connection_id: connection.id, // eslint-disable-line @typescript-eslint/camelcase
+      claims: credential.claims,
+      schema_id: config.credentials?.schema_id, // eslint-disable-line @typescript-eslint/camelcase
     };
-    return Axios.post(`${config.apiServer.url}/issues/`, data, {
-      cancelToken: this.cancelTokenSource.token
+    return Axios.post(`${config.apiServer.url}/credential-exchange/`, data, {
+      cancelToken: this.cancelTokenSource.token,
     });
   }
 }

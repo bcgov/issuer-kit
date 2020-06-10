@@ -17,8 +17,8 @@ class config {
   // The application label
   // This is used to find all of the build configurations associated to the application
   // To work the build configurations must have an "app" label;
-  // - For example; app=identity-kit
-  public static final String APP_LABEL = 'identity-kit'
+  // - For example; app=issuer-kit
+  public static final String APP_LABEL = 'issuer-kit'
   public static final String BASE_IMAGE_SELECTOR = "${APP_LABEL}-base-image"
   public static final String RUNTIME_IMAGE_SELECTOR = "${APP_LABEL}-runtime"
 

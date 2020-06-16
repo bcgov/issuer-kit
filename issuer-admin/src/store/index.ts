@@ -13,7 +13,7 @@ class IssuerStore extends Store<RootState> {
 
     const storeOptions: StoreOptions<RootState> = {
       state: {
-        version: "1.0.0", // a simple property
+        version: "1.0.0" // a simple property
       },
       modules: {
         configuration,
@@ -23,10 +23,10 @@ class IssuerStore extends Store<RootState> {
           // Optional OIDC store settings
           {
             namespaced: true,
-            dispatchEventsOnWindow: true,
+            dispatchEventsOnWindow: true
           }
-        ),
-      },
+        )
+      }
     };
 
     super(storeOptions);

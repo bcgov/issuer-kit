@@ -9,6 +9,7 @@ APP_GROUP=issuer
 SUFFIX=-bc
 ROLE=admin-frontend
 IMAGE_NAMESPACE=devex-von-tools
+NAMESPACE_NAME=devex-von
 CADDY_CONFIG_FILE_NAME=Caddyfile
 CADDY_CONFIG_MAP_NAME=issuer-admin-caddy-conf
 CADDY_CONFIG_MOUNT_PATH=/etc/

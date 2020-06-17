@@ -424,6 +424,13 @@
       "value": "devex-von-tools"
     },
     {
+      "name": "NAMESPACE_NAME",
+      "displayName": "Namespace Name",
+      "description": "The name of the namespace being deployed to..",
+      "required": true,
+      "value": "devex-von"
+    },
+    {
       "name": "CADDY_CONFIG_FILE_NAME",
       "displayName": "CAddy Config File Name",
       "description": "The name of the configuration file to be used for Caddy.",

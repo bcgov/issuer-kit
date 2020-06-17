@@ -6,6 +6,7 @@
 NAME=issuer-api
 APP_NAME=issuer-kit
 APP_GROUP=issuer-kit-runtime
+NAMESPACE_NAME=devex-von
 ENV_NAME=tools
 GIT_REPO_URL=https://github.com/bcgov/identity-kit-poc.git
 GIT_REF=master

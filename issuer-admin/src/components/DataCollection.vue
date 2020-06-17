@@ -13,6 +13,10 @@
 .sv_main .sv_container .sv_body .sv_nav .sv_complete_btn {
   background-color: var(--v-success-base);
 }
+
+.sv_nav .sv_complete_btn {
+  display: none;
+}
 </style>
 
 <template>
@@ -23,7 +27,7 @@
         <a :href="inviteLink">{{ inviteLink }}</a>
       </v-card-subtitle>
 
-      <v-form class="pa-4">
+      <v-form class="pa-4" ref="form">
         <v-text-field
           v-model="issuerInvite.email"
           :rules="emailRules"
@@ -53,6 +57,18 @@
       </v-card-subtitle>
 
       <survey :survey="survey" :key="surveyKey"></survey>
+
+      <v-divider></v-divider>
+
+      <v-container fluid>
+        <v-row class="mx-4" justify="end">
+          <v-col cols="12" md="2">
+            <v-btn outlined color="success" @click="validateAndSave"
+              >Save</v-btn
+            >
+          </v-col>
+        </v-row>
+      </v-container>
     </v-card>
   </v-container>
 </template>
@@ -60,9 +76,12 @@
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
 import * as SurveyVue from "survey-vue";
-import { Claim } from "../models/credential";
-import { Configuration, AppConfig } from "../models/appConfig";
+import { Configuration } from "../models/appConfig";
 import { IssuerInvite } from "../models/issuer-invite";
+
+interface DataCollectionType extends Vue {
+  validate(): boolean;
+}
 
 @Component({})
 export default class DataCollection extends Vue {
@@ -75,9 +94,16 @@ export default class DataCollection extends Vue {
 
   private currentUser!: string;
 
+  $refs!: {
+    form: DataCollectionType;
+  };
   private emailRules = [
-    (v: string) => !!v || "E-mail is required",
-    (v: string) => /.+@.+\..+/.test(v) || "E-mail must be valid"
+    (email: string) => !!email || "E-mail is required",
+    (email: string) =>
+      // eslint-disable-next-line no-useless-escape
+      /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
+        email
+      ) || "E-mail must be valid"
   ];
 
   created() {
@@ -101,13 +127,23 @@ export default class DataCollection extends Vue {
     const claimConfig = config.claims;
     this.survey = new SurveyVue.Model(claimConfig);
 
-    this.survey.completeText = this.editMode
-      ? "Update Invite"
-      : "Create Invite";
+    if (this.editMode) {
+      // load data from stored invite and refresh view
+      const id = this.$route.query.id as string;
+      this.refreshSurvey(id, config.app.issuer.publicUrl);
+    }
+  }
 
-    this.survey.onComplete.add(result => {
+  get editMode(): boolean {
+    return this.$route.query.id ? true : false;
+  }
+
+  private validateAndSave(): void {
+    if (!this.$refs.form.validate() || !this.survey.completeLastPage()) {
+      return;
+    } else {
       this.issuerInvite.created_by = this.currentUser; // eslint-disable-line @typescript-eslint/camelcase
-      this.issuerInvite.data = result.data;
+      this.issuerInvite.data = this.survey.data;
 
       let actionPromise;
       if (this.editMode) {
@@ -125,17 +161,7 @@ export default class DataCollection extends Vue {
       actionPromise.then(result => {
         this.$router.push({ path: "/" });
       });
-    });
-
-    if (this.editMode) {
-      // load data from stored invite and refresh view
-      const id = this.$route.query.id as string;
-      this.refreshSurvey(id, config.app.issuer.publicUrl);
     }
-  }
-
-  get editMode(): boolean {
-    return this.$route.query.id ? true : false;
   }
 
   private refreshSurvey(inviteId: string, publicUrl: string): void {

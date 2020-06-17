@@ -26,6 +26,7 @@ import { Component, Prop, Vue } from "vue-property-decorator";
 import * as SurveyVue from "survey-vue";
 import { Credential, Claim } from "../models/credential";
 import { mapGetters } from "vuex";
+import { Invitation } from "../models/invitation";
 
 @Component({
   computed: {
@@ -74,6 +75,9 @@ export default class DataCollection extends Vue {
     // by doing this, any claim coming from OIDC will be disabled as well
     this.valuesFromToken(this.$store.getters["oidcStore/oidcUser"]);
 
+    // if the user received an invite, use the values provided, if any
+    this.valuesFromInvitation();
+
     this.surveyKey += 1;
   }
 
@@ -82,6 +86,17 @@ export default class DataCollection extends Vue {
     if (values) {
       Object.entries(values).forEach(([key, value]) => {
         this.setField(key, value, true);
+      });
+    }
+  }
+
+  private valuesFromInvitation(): void {
+    const invitation = this.$store.getters[
+      "invitation/getInvitation"
+    ] as Invitation;
+    if (invitation.data) {
+      Object.entries(invitation.data).forEach(([key, value]) => {
+        this.setField(key, value as string, true);
       });
     }
   }
@@ -109,7 +124,8 @@ export default class DataCollection extends Vue {
     // eslint-disable-next-line
     // @ts-ignore: implicit any type
     const surveyFunctions = window["surveyFunctions"] || [];
-    surveyFunctions.forEach((f: any) => { // eslint-disable-line
+    surveyFunctions.forEach((f: any) => {
+      // eslint-disable-line
       SurveyVue.FunctionFactory.Instance.register(f.name, f);
     });
   }

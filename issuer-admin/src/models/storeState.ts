@@ -5,7 +5,7 @@ export enum StateType {
   NONE,
   INITIALIZED,
   UPDATED,
-  ERROR,
+  ERROR
 }
 
 export interface RootState {

@@ -10,6 +10,7 @@
 # ROLE=agent
 APPLICATION_DOMAIN=identity-kit-agent-devex-von-test.pathfinder.gov.bc.ca
 # IMAGE_NAMESPACE=devex-von-tools
+# NAMESPACE_NAME=devex-von
 # SOURCE_IMAGE_NAME=issuer-agent
 TAG_NAME=test
 AGENT_LABEL_NAME=BCGov-POC-TEST-Issuer

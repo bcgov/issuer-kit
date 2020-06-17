@@ -1,6 +1,6 @@
-# BC Gov Identity Kit
+# BC Gov Issuer Kit
 
-This repo contains code and deployment instructions for running the BC Gov's Identity Kit Verifiable Credentials proof of concept (PoC). The ID Kit PoC includes:
+This repo contains code and deployment instructions for running the BC Gov's Issuer Kit Verifiable Credentials proof of concept (PoC). The ID Kit PoC includes:
 
 - An administrator application that allows the organization operating the PoC to invite (via email) and track participants to be issued a verifiable credential.
 - An issuer application used by participants to set the claims in, and be issued, a verifiable credential.
@@ -8,11 +8,11 @@ This repo contains code and deployment instructions for running the BC Gov's Ide
 
 The instructions below allow you to run the application on your laptop in a couple of different ways. Once you are familiar with the app, you can configure the code to be deployed on enterprise hardware, with updates applicable to your environment.
 
-An overview of the architecture of the IdKit and the administrator and participant flows can be found [here](docs/identity-kit-poc.md).
+An overview of the architecture of the IdKit and the administrator and participant flows can be found [here](docs/issuer-kit.md).
 
-Need a mobile app to try? Instructions are available [here](../identity-kit-poc/docs/GettingApp.md) for getting an IOS mobile app. An Android app will be available Real Soon Now.
+Need a mobile app to try? Instructions are available [here](../issuer-kit/docs/GettingApp.md) for getting an IOS mobile app. An Android app will be available Real Soon Now.
 
-> The instructions here are still a bit raw. We're iterating on them and check back if things don't go smoothly. We're happy to answer any questions you have. Easiest way to connect with us is to add an [issue](https://github.com/bcgov/identity-kit-poc/issues) in this repo.
+> The instructions here are still a bit raw. We're iterating on them and check back if things don't go smoothly. We're happy to answer any questions you have. Easiest way to connect with us is to add an [issue](https://github.com/bcgov/issuer-kit/issues) in this repo.
 
 ## Pre-Requisites
 
@@ -28,9 +28,9 @@ Need a mobile app to try? Instructions are available [here](../identity-kit-poc/
 
 `jq` and `ngrok` are available on package manager systems for different platforms such as [Homebrew](https://brew.sh/) (Mac), [Chocolatey](https://chocolatey.org/) (Windows) and various Linux distribution package managers.
 
-## Running the Identity Kit
+## Running the Issuer Kit
 
-Identity Kit can be started in different (demo, local and developer) modes by executing the steps in the respective sections below. The following are a couple important things to keep in mind as you start the apps:
+Issuer Kit can be started in different (demo, local and developer) modes by executing the steps in the respective sections below. The following are a couple important things to keep in mind as you start the apps:
 
 - When starting the system, there is an initial pause with a message to give you a chance to setup some GitHub integration capabilities. That is needed only if you want test out logging into the admin and issuer applications using GitHub credentials. When getting started, we recommend that you just wait for the start up process to continue.
 
@@ -42,7 +42,7 @@ Identity Kit can be started in different (demo, local and developer) modes by ex
 
 ### Demo Mode
 
-Demo mode runs Identity Kit using the [BCovrin Test](http://test.bcovrin.vonx.io) ledger and uses `ngrok` to expose the agent running locally to the Internet. The Streetcred mobile agent (iOS and Android) can be used with Identity Kit if you use demo mode.
+Demo mode runs Issuer Kit using the [BCovrin Test](http://test.bcovrin.vonx.io) ledger and uses `ngrok` to expose the agent running locally to the Internet. The Streetcred mobile agent (iOS and Android) can be used with Issuer Kit if you use demo mode.
 
 To run in demo mode, open two shell/terminal sessions:
 
@@ -68,7 +68,7 @@ Once started, the services will be exposed on localhost at the following endpoin
 
 - `maildev`: http://localhost:8050
 
-For instructions on how to run the demo, please refer to [this document](./docs/identity-kit-poc.md).
+For instructions on how to run the demo, please refer to [this document](./docs/issuer-kit.md).
 
 To restart the applications:
 
@@ -86,7 +86,7 @@ In Local Mode the entire application runs locally and uses a locally deployed In
 To run in local mode, open two shell/terminal sessions:
 
 1. Follow the [instructions](https://github.com/bcgov/von-network#running-the-network-locally) to start `von-network` running locally
-2. Change to the Identity Kit [docker](./docker) folder:
+2. Change to the Issuer Kit [docker](./docker) folder:
    - run `./manage build` to assemble the runtime images for the services.
    - run `./manage start` to start the containers
 
@@ -153,7 +153,7 @@ While it is possible to provide a client id and token pair to use the GitHub int
 
 Each api/controller can issue several credentials matching different schemas: the schema definitions that can be processed by the api/controller are described in [this file](api/config/schemas.json). There are two ways of defining a schema: using the `id` of the schema on the target ledger or, alternatively, defining the `schema_name`, `schema_version` and `attributes` for the schema. Additionally, ***one schema in the provided list must be marked with the `default: true` property***: this describes which schema will be used if no explicit request is forwarded to the api/controller.
 
-When using Identity Kit in demo mode the api/controller will use the schema marked as default, which corresponds to the schema definition that was published to the BCovrin Test Ledger by the BCGov issuer, and issue credentials that match that definition. In most cases updating the schema definition should not be necessary, however if this was the case the following steps will be required to instruct the controller/agent to publish a new schema definition on the target ledger, and use it:
+When using Issuer Kit in demo mode the api/controller will use the schema marked as default, which corresponds to the schema definition that was published to the BCovrin Test Ledger by the BCGov issuer, and issue credentials that match that definition. In most cases updating the schema definition should not be necessary, however if this was the case the following steps will be required to instruct the controller/agent to publish a new schema definition on the target ledger, and use it:
 
 - update the schema definition(s) in [schemas.json](api/config/schemas.json) using the desired fields.
 
@@ -164,7 +164,7 @@ When using Identity Kit in demo mode the api/controller will use the schema mark
   }
 ```
 
-:information_source: If you are planning on using Identity Kit in your own production-like environment - regardless of wether you will be re-using the BCGov schema or creating your own - you may want to update the `AGENT_WALLET_SEED` environment variable with a unique value used only by your agent/organization rather than using the default value used for demo purposes.
+:information_source: If you are planning on using Issuer Kit in your own production-like environment - regardless of wether you will be re-using the BCGov schema or creating your own - you may want to update the `AGENT_WALLET_SEED` environment variable with a unique value used only by your agent/organization rather than using the default value used for demo purposes.
 
 ## App Configuration
 

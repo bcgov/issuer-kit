@@ -261,21 +261,21 @@
       "displayName": "Name",
       "description": "The name assigned to all of the OpenShift resources associated to the server instance.",
       "required": true,
-      "value": "identity-kit-db"
+      "value": "issuer-db"
     },
     {
       "name": "APP_NAME",
       "displayName": "App Name",
       "description": "Used to group components together in the OpenShift console.",
       "required": true,
-      "value": "identity-kit"
+      "value": "issuer-kit"
     },
     {
       "name": "APP_GROUP",
       "displayName": "App Group",
       "description": "The name assigned to all of the deployments in this project.",
       "required": true,
-      "value": "identity-kit"
+      "value": "issuer-kit-storage"
     },
     {
       "name": "SUFFIX",
@@ -303,7 +303,7 @@
       "displayName": "Source Image Name",
       "description": "The name of the image to use for this resource.",
       "required": true,
-      "value": "identity-kit-db"
+      "value": "issuer-db"
     },
     {
       "name": "TAG_NAME",
@@ -317,7 +317,7 @@
       "displayName": "MongoDB Database Name",
       "description": "The name of the MongoDB database.",
       "required": true,
-      "value": "identity_kit_db"
+      "value": "issuer_db"
     },
     {
       "name": "MONGODB_USER",

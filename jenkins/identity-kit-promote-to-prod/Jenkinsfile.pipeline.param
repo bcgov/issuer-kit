@@ -6,7 +6,7 @@
 NAME=identity-kit-promote-to-prod
 # GITHUB_WEBHOOK_SECRET=[a-zA-Z0-9]{40}
 # GENERIC_WEBHOOK_SECRET=[a-zA-Z0-9]{40}
-SOURCE_REPOSITORY_URL=https://github.com/bcgov/identity-kit-poc.git
+SOURCE_REPOSITORY_URL=https://github.com/bcgov/issuer-kit.git
 SOURCE_REPOSITORY_REF=master
 CONTEXT_DIR=./jenkins/identity-kit-promote-to-prod
 JENKINSFILE_PATH=Jenkinsfile

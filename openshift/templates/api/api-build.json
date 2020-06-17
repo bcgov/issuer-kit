@@ -113,14 +113,14 @@
       "displayName": "App Name",
       "description": "Used to group components together in the OpenShift console.",
       "required": true,
-      "value": "identity-kit"
+      "value": "issuer-kit"
     },
     {
       "name": "APP_GROUP",
       "displayName": "App Group",
       "description": "The name assigned to all of the deployments in this project.",
       "required": true,
-      "value": "identity-kit-runtime"
+      "value": "issuer-kit-runtime"
     },
     {
       "name": "NAMESPACE_NAME",
@@ -141,7 +141,7 @@
       "displayName": "Git Repo URL",
       "description": "The URL to your GIT repo, don't use the this default unless your just experimenting.",
       "required": true,
-      "value": "https://github.com/bcgov/identity-kit-poc.git"
+      "value": "https://github.com/bcgov/issuer-kit.git"
     },
     {
       "name": "GIT_REF",
@@ -155,7 +155,7 @@
       "displayName": "Source Context Directory",
       "description": "The source context directory.",
       "required": true,
-      "value": "issuer-api"
+      "value": "api"
     },
     {
       "name": "SOURCE_IMAGE_KIND",

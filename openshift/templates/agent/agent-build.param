@@ -6,7 +6,7 @@
 NAME=issuer-agent
 APP_NAME=issuer-kit
 APP_GROUP=issuer-kit-runtime
-GIT_REPO_URL=https://github.com/bcgov/identity-kit-poc.git
+GIT_REPO_URL=https://github.com/bcgov/issuer-kit.git
 GIT_REF=master
 SOURCE_CONTEXT_DIR=.
 DOCKER_FILE_PATH=docker/agent/Dockerfile

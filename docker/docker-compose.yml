@@ -174,7 +174,7 @@ services:
       - keycloak-db-data:/var/lib/pgsql/data
 
   #
-  # Identity Kit Agent
+  # Issuer Kit Agent
   #
   agent:
     image: bcgovimages/aries-cloudagent:py36-1.14-1_0.5.1
@@ -230,7 +230,7 @@ services:
       ]
 
   #
-  # Identity Kit Wallet
+  # Issuer Kit Wallet
   #
   wallet:
     image: registry.access.redhat.com/rhscl/postgresql-10-rhel7:latest

@@ -298,17 +298,17 @@ parameters:
     displayName: Name
     description: The name assigned to all the objects defined in this template.
     required: true
-    value: identity-kit-agent
+    value: issuer-agent
   - name: APP_NAME
     displayName: App Name
     description: Used to group components together in the OpenShift console.
     required: true
-    value: identity-kit
+    value: issuer-kit
   - name: APP_GROUP
     displayName: App Group
     description: Used to group components together.
     required: true
-    value: identity-kit-agent
+    value: issuer-kit-agent
   - name: SUFFIX
     displayName: Suffix
     description: A suffix applied to all the objects in this template.
@@ -323,7 +323,7 @@ parameters:
     displayName: Application Hostname
     description: The exposed hostname that will route to the service, if left blank a value will be defaulted.
     required: false
-    value: identity-kit-agent.pathfinder.gov.bc.ca
+    value:
   - name: IMAGE_NAMESPACE
     displayName: Namespace containing application images.
     required: true
@@ -337,7 +337,7 @@ parameters:
     displayName: Source Image Name
     description: The name of the source image to use for the service.
     required: true
-    value: identity-kit-agent
+    value: issuer-agent
   - name: TAG_NAME
     displayName: Environment TAG name
     description: The TAG name for this environment, e.g., dev, test, prod.
@@ -347,17 +347,17 @@ parameters:
     displayName: Agent Label/Name
     description: The label/name of the agent
     required: true
-    value: identity-kit-agent
+    value: issuer-kit-agent
   - name: AGENT_BASE_URL
     displayName: Agent endpoint
     description: The endpoint of the agent
     required: true
-    value: https://identity-kit-agent.pathfinder.gov.bc.ca
+    value: https://issuer-kit-agent.pathfinder.gov.bc.ca
   - name: WEBHOOK_URL
     displayName: Webhook URL
     description: The webhook endpoint
     required: true
-    value: http://issuer-kit-api:8080
+    value: http://issuer-api:8080/webhooks
   - name: AGENT_ADMIN_PORT
     displayName: Agent Admin Port
     description: The admin port on which the service will listen.
@@ -398,7 +398,7 @@ parameters:
     displayName: PostgreSql Wallet Hostname
     required: true
     description: Hostname of the deployed database hosting the wallet.  Only used when WALLET_STORAGE_TYPE = postgres_storage.
-    value: identity-kit-wallet
+    value: issuer-wallet
   - name: WALLET_HOST_PORT
     displayName: PostgreSql Wallet Port
     required: true
@@ -420,7 +420,7 @@ parameters:
       The name of the wallet credential store (aka The name of the secret
       that contains the wallet credentials).
     required: true
-    value: identity-kit-agent-wallet-credentials
+    value: issuer-agent-wallet-credentials
   - name: WALLET_KEY
     displayName: Wallet Encryption Key
     description: The encryption key to be used for the wallets.  Needs to be base64 encoded.

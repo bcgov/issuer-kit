@@ -9,6 +9,7 @@
 # SUFFIX=-bc
 # ROLE=controller
 # IMAGE_NAMESPACE=devex-von-tools
+# NAMESPACE_NAME=devex-von
 # SERVICE_PORT=8080
 # DB_SERVICE=identity-kit-db
 # DB_PORT=27017

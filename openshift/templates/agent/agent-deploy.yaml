@@ -328,6 +328,11 @@ parameters:
     displayName: Namespace containing application images.
     required: true
     value: devex-von-tools
+  - name: NAMESPACE_NAME
+    displayName: Namespace Name
+    description: The name of the namespace being deployed to.
+    required: true
+    value: devex-von
   - name: SOURCE_IMAGE_NAME
     displayName: Source Image Name
     description: The name of the source image to use for the service.

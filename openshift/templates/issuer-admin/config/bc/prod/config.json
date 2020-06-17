@@ -2,7 +2,7 @@
   "env": "docker-prod-like",
   "issuer": {
     "name": "Issuer Admin",
-    "publicUrl": "https://issuer-kit.pathfinder.gov.bc.ca"
+    "publicUrl": "https://identity-kit.pathfinder.gov.bc.ca"
   },
   "authentication": {
     "enabled": true,

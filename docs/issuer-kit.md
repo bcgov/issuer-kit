@@ -2,7 +2,7 @@
 
 The Issuer Kit architecture is presented in the diagram below. Following the diagram are the various flows associated with the architecture diagram.
 
-![IKP Architecture](http://www.plantuml.com/plantuml/proxy?src=https://raw.githubusercontent.com/swcurran/issuer-kit/master/docs/architecture_and_flow.puml)
+![IKP Architecture](http://www.plantuml.com/plantuml/proxy?src=https://raw.githubusercontent.com/bcgov/issuer-kit/master/docs/architecture_and_flow.puml)
 
 ## Administrator Flow
 

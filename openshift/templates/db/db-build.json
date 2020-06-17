@@ -91,7 +91,7 @@
       "displayName": "Git Repo URL",
       "description": "The URL to your GIT repo.",
       "required": true,
-      "value": "https://github.com/bcgov/identity-kit-poc.git"
+      "value": "https://github.com/bcgov/issuer-kit.git"
     },
     {
       "name": "GIT_REF",

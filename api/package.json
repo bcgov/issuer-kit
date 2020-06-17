@@ -2,7 +2,7 @@
   "name": "api",
   "description": "Issuer Kit API",
   "version": "1.0.0",
-  "homepage": "https://github.com/bcgov/identity-kit-poc",
+  "homepage": "https://github.com/bcgov/issuer-kit",
   "private": true,
   "main": "src",
   "keywords": [

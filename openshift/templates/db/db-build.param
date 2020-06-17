@@ -6,7 +6,7 @@
 NAME=issuer-db
 APP_NAME=issuer-kit
 APP_GROUP=issuer-kit-storage
-GIT_REPO_URL=https://github.com/bcgov/identity-kit-poc.git
+GIT_REPO_URL=https://github.com/bcgov/issuer-kit.git
 GIT_REF=master
 SOURCE_IMAGE_KIND=DockerImage
 SOURCE_IMAGE_NAME=registry.access.redhat.com/rhscl/mongodb-36-rhel7

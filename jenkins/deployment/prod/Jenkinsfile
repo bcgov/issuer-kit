@@ -1,0 +1,27 @@
+def PIPELINE_NAME = "deployment/prod"
+
+def LIB_NAME= "custom-lib"
+def LIB_REPO = "https://github.com/bcgov/issuer-kit.git"
+def LIB_BRANCH = "master"
+library identifier: "${LIB_NAME}@${LIB_BRANCH}",
+        retriever: modernSCM(
+          [$class: 'GitSCMSource',
+          remote: "${LIB_REPO}",
+          branches: [[name: "*/${LIB_BRANCH}"]]])
+
+node {
+  def config = load "../workspace@script/jenkins/${PIPELINE_NAME}/config.groovy"
+
+  config.APPS.each { appName ->
+    stage("Deploying ${appName} to ${config.DESTINATION_TAG}") {
+      script {
+        openshift.withCluster() {
+          openshift.withProject() {
+            echo "Tagging ${appName}:${config.SOURCE_TAG} for deployment to ${config.DESTINATION_TAG} ..."
+            openshift.tag("${appName}:${config.SOURCE_TAG}", "${appName}:${config.DESTINATION_TAG}")
+          }
+        }
+      }
+    }
+  }
+}

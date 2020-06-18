@@ -1,40 +1,22 @@
-import com.openshift.jenkins.plugins.OpenShiftDSL;
+// The applicatino label
+// This is used to find all of the build configurations associated to the application
+// To work the build configurations must have an "app" label;
+// - For example; app=iiw-book
+def APP_BASE_LABEL = 'issuer-kit-base-image'
+def APP_LABEL = 'issuer-kit'
 
-@NonCPS
-boolean triggerBuild(String contextDirectory) {
-  // Determine if code has changed within the source context directory.
-  def changeLogSets = currentBuild.changeSets
-  def filesChangeCnt = 0
-  for (int i = 0; i < changeLogSets.size(); i++) {
-    def entries = changeLogSets[i].items
-    for (int j = 0; j < entries.length; j++) {
-      def entry = entries[j]
-      //echo "${entry.commitId} by ${entry.author} on ${new Date(entry.timestamp)}: ${entry.msg}"
-      def files = new ArrayList(entry.affectedFiles)
-      for (int k = 0; k < files.size(); k++) {
-        def file = files[k]
-        def filePath = file.path
-        //echo ">> ${file.path}"
-        if (filePath.contains(contextDirectory)) {
-          filesChangeCnt = 1
-          k = files.size()
-          j = entries.length
-        }
-      }
-    }
-  }
+// Wait timeout in minutes
+def WAIT_TIMEOUT = 10
 
-  if ( filesChangeCnt < 1 ) {
-    echo("The changes in ${contextDirectory} do not require a build.")
-    return false
-  }
-  else {
-    echo("The changes in ${contextDirectory} require a build.")
-    return true
-  }
-}
+// Assumes Builds, Images, and Deployments all have the same name(s)
+// Components will be deployed in the order they are listed.
+def COMPONENTS = ['issuer-wallet', 'issuer-db', 'issuer-web', 'issuer-admin', 'issuer-api', 'issuer-agent']
 
-String getImageTagHash(OpenShiftDSL openshift, String imageName, String tag = "") {
+// Edit your environment TAG names below
+def TAG_NAMES = ['test', 'prod']
+
+// Get an image's hash tag
+String getImageTagHash(String imageName, String tag = "") {
 
   if(!tag?.trim()) {
     tag = "latest"
@@ -44,106 +26,91 @@ String getImageTagHash(OpenShiftDSL openshift, String imageName, String tag = ""
   return istag.out.tokenize('@')[1].trim()
 }
 
-void build(String imageSelector, Map<String, String> APP_CONTEXT_DIRS, int WAIT_TIMEOUT) {
-  openshift.withCluster() {
-    openshift.withProject() {
-      //  Retrieve all build configurations based on the selector
-      def buildConfigsAll = openshift.selector("bc", [ "app-group" : "${imageSelector}" ])
-      echo "Found ${buildConfigsAll.count()} buildconfigs for app label (app-group=${imageSelector}): ${buildConfigsAll.names()}"
-
-      // Set 'run-build' label based on wether there have been changes in the context directory
-      buildConfigsAll.withEach {
-        def buildName = it.name().split("/")[1];
-        def contextDir = APP_CONTEXT_DIRS[buildName];
-        if(triggerBuild(contextDir)){
-            setRunBuildLabel(it, 'true');
-        }
-      }
-
-      // Retrieve all the build configs that need to be executed
-      def buildConfigsRun = openshift.selector("bc", [ "app-group" : "${imageSelector}", "run-build" : "true" ])
-      echo "Found ${buildConfigsRun.count()} buildconfigs for app label (app=${imageSelector}, run-build=true): ${buildConfigsRun.names()}"
-
-      // Kick off all the builds in parallel ...
-      def builds = buildConfigsRun.startBuild()
-      echo "Started ${builds.count()} builds: ${builds.names()}"
-
-      // Reset run-build label now that builds have started
-      buildConfigsRun.withEach {
-          setRunBuildLabel(it, 'false');
-      }
-
-      timeout(WAIT_TIMEOUT) {
-        // Wait for all the builds to complete ...
-        // This section will exit after the last build completes.
-        echo "Waiting for builds to complete ..."
-        builds.withEach {
-          // untilEach and watch - do not support watching multiple named resources,
-          // so we have to feed it one at a time.
-          it.untilEach(1) {
-              echo "${it.object().status.phase} - ${it.name()}"
-              return (it.object().status.phase == "Complete")
-          }
-        }
-      }
-    }
-  }
-}
-
-void deploy(String appName, String namespace, String envTag, Map<String, String[]> APP_MAPPINGS) {
-  openshift.withCluster() {
-    openshift.withProject() {
-
-      echo "Tagging ${appName} for deployment to ${envTag} ..."
-
-      // Don't tag with BUILD_ID so the pruner can do it's job; it won't delete tagged images.
-      // Tag the images for deployment based on the image's hash
-      def IMAGE_HASH = getImageTagHash(openshift, "${appName}")
-      echo "IMAGE_HASH: ${IMAGE_HASH}"
-      openshift.tag("${appName}@${IMAGE_HASH}", "${appName}:${envTag}")
-    }
-
-    echo "Watching rollout of ${appName} in ${namespace}-${envTag} ..."
-    openshift.withProject("${namespace}-${envTag}") {
-        APP_MAPPINGS.get("${appName}").each{
-          def dc = openshift.selector('dc', "${it}")
-          // Wait for the deployment to complete.
-          // This will wait until the desired replicas are all available
-          dc.rollout().status()
-        }
-    }
-
-    echo "Deployment Complete."
-  }
-}
-
-void setRunBuildLabel(OpenShiftDSL.OpenShiftResourceSelector  bc, String flagValue) {
-  echo "Setting label 'run-build' to '${flagValue}' for ${bc.name()}"
-  bc.label([ 'run-build':"${flagValue}" ], "--overwrite")
-}
-
 node {
-  def config = load "../workspace@script/jenkins/config.groovy"
-
-  // Build base images
-  stage("Building base images...") {
+  stage("Building base images ...") {
     script {
-      build(config.BASE_IMAGE_SELECTOR, config.APP_CONTEXT_DIRS, config.WAIT_TIMEOUT);
+      openshift.withCluster() {
+        openshift.withProject() {
+          
+          // Find all of the build configurations associated to the application using labels ...
+          def buildconfigs = openshift.selector("bc", [ app : "${APP_BASE_LABEL}" ])
+          echo "Found ${buildconfigs.count()} buildconfigs for app label (app=${APP_BASE_LABEL}): ${buildconfigs.names()}"
+
+          // Kick off all the builds in parallel ...
+          def builds = buildconfigs.startBuild()
+          echo "Started ${builds.count()} builds: ${builds.names()}"
+
+          timeout(WAIT_TIMEOUT) {
+            // Wait for all the builds to complete ...
+            // This section will exit after the last build completes.
+            echo "Waiting for builds to complete ..."
+            builds.withEach {
+              // untilEach and watch - do not support watching multiple named resources,
+              // so we have to feed it one at a time.
+              it.untilEach(1) {
+                  echo "${it.object().status.phase} - ${it.name()}"
+                  return (it.object().status.phase == "Complete")
+              }
+            }
+          }
+
+          echo "Base builds complete ..."
+        }
+      }
     }
   }
 
-  // Build runtime images and deploy when ready
-  stage("Building runtime images...") {
+  stage("Building images ...") {
     script {
-      build(config.RUNTIME_IMAGE_SELECTOR, config.APP_CONTEXT_DIRS, config.WAIT_TIMEOUT);
+      openshift.withCluster() {
+        openshift.withProject() {
+
+          // Find all of the build configurations associated to the application using labels ...
+          def buildconfigs = openshift.selector("bc", [ app : "${APP_LABEL}" ])
+          echo "Found ${buildconfigs.count()} buildconfigs for app label (app=${APP_LABEL}): ${buildconfigs.names()}"
+
+          // Kick off all the builds in parallel ...
+          def builds = buildconfigs.startBuild()
+          echo "Started ${builds.count()} builds: ${builds.names()}"
+
+          timeout(WAIT_TIMEOUT) {
+            // Wait for all the builds to complete ...
+            // This section will exit after the last build completes.
+            echo "Waiting for builds to complete ..."
+            builds.withEach {
+              // untilEach and watch - do not support watching multiple named resources,
+              // so we have to feed it one at a time.
+              it.untilEach(1) {
+                  echo "${it.object().status.phase} - ${it.name()}"
+                  return (it.object().status.phase == "Complete")
+              }
+            }
+          }
+
+          echo "Builds complete ..."
+        }
+      }
     }
   }
 
-  // Deploying new images
-  stage("Deploy images to ${config.TEST_ENV}") {
-    script {
-      config.TEST_APPS.keySet().each{
-        deploy("${it}", "${config.NAME_SPACE}", "${config.TEST_ENV}", config.TEST_APPS)
+  for(item in COMPONENTS)
+  {
+    stage("Deploying ${item} to ${TAG_NAMES[0]}") {
+      script {
+        openshift.withCluster() {
+          openshift.withProject() {
+
+            echo "Tagging ${item} for deployment to ${TAG_NAMES[0]} ..."
+
+            // Don't tag with BUILD_ID so the pruner can do it's job; it won't delete tagged images.
+            // Tag the images for deployment based on the image's hash
+            def IMAGE_HASH = getImageTagHash("${item}")
+            echo "IMAGE_HASH: ${IMAGE_HASH}"
+            openshift.tag("${item}@${IMAGE_HASH}", "${item}:${TAG_NAMES[0]}")
+          }
+
+          echo "Deployment Complete."
+        }
       }
     }
   }

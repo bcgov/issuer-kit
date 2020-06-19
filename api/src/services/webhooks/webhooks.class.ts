@@ -58,6 +58,7 @@ export class Webhooks {
             attributes: attributes,
           },
         });
+        return { result: "Success" };
       case CredExState.Issued:
         console.log(
           `Credential issued for cred_ex_id ${data.credential_exchange_id}`
@@ -67,6 +68,7 @@ export class Webhooks {
           { issued: true },
           this.app
         );
+        return { result: "Success" };
       default:
         console.warn(
           `Received unexpected state ${data.state} for cred_ex_id ${data.credential_exchange_id}`

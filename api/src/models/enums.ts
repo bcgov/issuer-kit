@@ -18,5 +18,5 @@ export enum WebhookTopic {
 export enum CredExState {
   OfferSent = "offer_sent",
   RequestReceived = "request_received",
-  Issued = "issued",
+  Issued = "credential_issued",
 }

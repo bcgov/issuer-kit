@@ -68,6 +68,12 @@ Once started, the services will be exposed on localhost at the following endpoin
 
 - `maildev`: http://localhost:8050
 
+Within the Streetcred app, check the settings to see what Ledger you are using. For this demo the Streetcred app must be set to use the "BCovrin Test" network, as follows:
+
+- Go to settings by clicking the menu icon in the top right (the "hamburger" icon&mdash;three stacked horizontal lines)
+- Click on the "Network" item and from the subsequent list select "BCovrin Test" network.
+- Click the back arrow to return to the settings and again to return to the main app screen.
+
 For instructions on how to run the demo, please refer to [this document](./docs/issuer-kit.md).
 
 To restart the applications:

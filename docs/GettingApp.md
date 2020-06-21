@@ -14,7 +14,7 @@ Links to download the Streetcred Identity Agent:
 After installing and opening the app, follow the instructions to create your wallet with appropriate permissions. After setup, you will be taken to the main app screen ("Actions"). Before continuing with the BC Gov proof of concept apps, you must do some additional setup, as follows:
 
 - Go to settings by clicking the menu icon in the top right (the "hamburger" icon&mdash;three stacked horizontal lines)
-- Click on the "Network" item and from the subsequent list select "BCovrin Test" network.
+- Click on the "Network" item and from the subsequent list select "Sovrin Staging" network.
 - Click the back arrow to return to the settings and again to return to the main app screen.
 
 That's it for the special instructions! Please return to the instructions for application you are using.
@@ -31,7 +31,7 @@ Links to download the esatus Wallet:
 After installing and opening the app, follow the instructions to create your wallet with appropriate permissions. After setup, you will be taken to the main app screen ("Welcome..."). Before continuing with the BC Gov proof of concept apps, you must do some additional setup, as follows:
 
 - Go to settings by clicking the cog icon in the top right
-- Click on the "Change Ledger" item and from the subsequent list select "BCGov Test Ledger" network.
+- Click on the "Change Ledger" item and from the subsequent list select "Sovrin StagingNet" network.
 - Click the back arrow to return to the settings and again to return to the main app screen.
 
 That's it for the special instructions! Please return to the instructions for application you are using.

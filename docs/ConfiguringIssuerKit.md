@@ -32,7 +32,7 @@ Similarly to the `unauthorized.html` configuration file we discussed earlier, `t
 
 #### Dynamic Form Configuration
 
-Both the admin and issuer webapp use [SurveyJS](https://surveyjs.io) to display forms that are dynamically generated from a configuration file.
+Both the admin and issuer webapp use [SurveyJS](https://surveyjs.io) to display forms that are dynamically generated from the configuration file referenced below.
 
 `config/claim-config.json` is  SurveyJs configuration file, defining the behaviour of the surveyjs object. For more details on how to configure a survey, please refer to the [SurveyJS docs](https://surveyjs.io/Examples/Library).
 

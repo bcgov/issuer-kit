@@ -204,3 +204,7 @@ The `api` service exposes a Swagger documentation page at `http://localhost:5000
 Publicly available APIs are documented there.
 
 :information_source: at the time of writing, the response structure of the `/connection` POST method to request a new connection invitation is not accurate. The API docs represent the response the same as for the GET method, however in this case the response represent a new Aries connection invitation that matches the AriesConnection data model in [this file](api/src/models/connection.ts).
+
+### Customizing the services
+
+The configuration settings for the services in Issuer Kit can be found [here](docs/ConfiguringIssuerKit.md).

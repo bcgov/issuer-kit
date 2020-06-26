@@ -42,7 +42,7 @@ Both the admin and issuer webapp use SurveyJS to display forms that are dynamica
 
 `config.json` contains the bulk of the configuration for the web application. Most of the settings in this file are shared between the admin and issuer wbapps, with some exceptions.
 
-* `env`: a string describing the environment the deployment is running in.
+* `env`: a string describing the environment the deployment is running in. This is just a label, useful to quickly identify which configuration is being used.
 
 * `issuer`: an object containing information about the issuer. It currently only holds the `name` property, a string with the issuer's name.
 
@@ -83,7 +83,7 @@ Most of the configuration file is fairly simple, the following are the setting g
 
 * `emailSettings`: this object contains configuration items used when generating and sending the invite email. `sender` and `subject` are required, but additional properties can be defined and used in the invite email (see details in the invite email section).
 
-* `publisSite`: the base URl for the public issuer site, to be used when generating invite links.
+* `publicSite`: the base URl for the public issuer site, to be used when generating invite links.
 
 * `issuer`: an object holding configuration settings for the issuer
 

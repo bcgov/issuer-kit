@@ -3,7 +3,7 @@
   "issuer": {
     "name": "Test Issuer"
   },
-  "inviteRequired": false,
+  "inviteRequired": true,
   "authentication": {
     "enabled": true,
     "oidcSettings": {

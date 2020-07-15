@@ -1,0 +1,13 @@
+#=========================================================
+# OpenShift template parameters for:
+# Component: .
+# Template File: ../openshift/templates/agent/agent-build.json
+#=========================================================
+NAME=issuer-agent
+APP_NAME=issuer-kit
+APP_GROUP=issuer-kit-runtime
+GIT_REPO_URL=https://github.com/bcgov/issuer-kit.git
+GIT_REF=master
+SOURCE_CONTEXT_DIR=.
+DOCKER_FILE_PATH=docker/agent/Dockerfile
+OUTPUT_IMAGE_TAG=latest

@@ -1,0 +1,462 @@
+---
+kind: Template
+apiVersion: v1
+metadata:
+  name: ${NAME}${SUFFIX}
+objects:
+  - kind: Service
+    apiVersion: v1
+    metadata:
+      name: ${NAME}${SUFFIX}
+      labels:
+        name: ${NAME}${SUFFIX}
+        app: ${APP_NAME}${SUFFIX}
+        app-group: ${APP_GROUP}
+        role: ${ROLE}
+        env: ${TAG_NAME}
+    spec:
+      ports:
+        - name: ${NAME}-admin
+          port: ${{AGENT_ADMIN_PORT}}
+          protocol: TCP
+          targetPort: ${{AGENT_ADMIN_PORT}}
+        - name: ${NAME}-http
+          port: ${{AGENT_HTTP_PORT}}
+          protocol: TCP
+          targetPort: ${{AGENT_HTTP_PORT}}
+      selector:
+        name: ${NAME}${SUFFIX}
+
+  - kind: Route
+    apiVersion: v1
+    metadata:
+      name: ${NAME}${SUFFIX}
+      labels:
+        name: ${NAME}${SUFFIX}
+        app: ${APP_NAME}${SUFFIX}
+        app-group: ${APP_GROUP}
+        role: ${ROLE}
+        env: ${TAG_NAME}
+      annotations:
+        haproxy.router.openshift.io/timeout: ${ROUTE_TIMEOUT}
+    spec:
+      host: ${APPLICATION_DOMAIN}
+      port:
+        targetPort: ${NAME}-http
+      tls:
+        insecureEdgeTerminationPolicy: Redirect
+        termination: edge
+      to:
+        kind: Service
+        name: ${NAME}${SUFFIX}
+        weight: 100
+
+  - kind: Secret
+    apiVersion: v1
+    metadata:
+      name: ${WALLET_CREDENTIAL_STORE_NAME}${SUFFIX}
+      labels:
+        name: ${NAME}${SUFFIX}
+        app: ${APP_NAME}${SUFFIX}
+        app-group: ${APP_GROUP}
+        role: ${ROLE}
+        env: ${TAG_NAME}
+    stringData:
+      key: ${WALLET_KEY}
+      seed: ${WALLET_SEED}
+      did: ${WALLET_DID}
+    type: Opaque
+
+  - kind: Secret
+    apiVersion: v1
+    metadata:
+      name: ${NAME}${SUFFIX}
+      labels:
+        name: ${NAME}${SUFFIX}
+        app: ${APP_NAME}${SUFFIX}
+        app-group: ${APP_GROUP}
+        role: ${ROLE}
+        env: ${TAG_NAME}
+    stringData:
+      admin-api-key: ${ADMIN_API_KEY}
+    type: Opaque
+
+  - kind: DeploymentConfig
+    apiVersion: v1
+    metadata:
+      name: ${NAME}${SUFFIX}
+      labels:
+        name: ${NAME}${SUFFIX}
+        app: ${APP_NAME}${SUFFIX}
+        app-group: ${APP_GROUP}
+        role: ${ROLE}
+        env: ${TAG_NAME}
+    spec:
+      replicas: 1
+      selector:
+        name: ${NAME}${SUFFIX}
+      strategy:
+        type: Rolling
+      template:
+        metadata:
+          name: ${NAME}${SUFFIX}
+          labels:
+            name: ${NAME}${SUFFIX}
+            app: ${APP_NAME}${SUFFIX}
+            app-group: ${APP_GROUP}
+            role: ${ROLE}
+            env: ${TAG_NAME}
+        spec:
+          containers:
+            - name: ${NAME}${SUFFIX}
+              command:
+                # Note:
+                #  - The wallet-name cannot contain '-'s.
+                - bash
+                - -c
+                - $(echo aca-py start
+                  --inbound-transport http '0.0.0.0' ${HTTP_INTERFACE_PORT}
+                  --outbound-transport http
+                  --endpoint ${AGENT_ENDPOINT}
+                  --genesis-url "${GENESIS_URL}"
+                  --auto-accept-invites
+                  --auto-accept-requests
+                  --auto-ping-connection
+                  --auto-respond-messages
+                  --auto-respond-credential-offer
+                  --auto-verify-presentation
+                  --wallet-type 'indy'
+                  --wallet-name "$(echo ${AGENT_WALLET_NAME} | tr '[:upper:]' '[:lower:]' | sed "s~-~_~g")"
+                  --wallet-key "${WALLET_ENCRYPTION_KEY}"
+                  --wallet-storage-type "${WALLET_TYPE}"
+                  --wallet-storage-config "$(eval echo \"${WALLET_STORAGE_CONFIGURATION}\")"
+                  --wallet-storage-creds "$(eval echo \"${WALLET_STORAGE_CREDENTIALS}\")"
+                  --seed "${INDY_WALLET_SEED}"
+                  --admin '0.0.0.0' ${ADMIN_INTERFACE_PORT}
+                  $([ ! -z "${AGENT_ADMIN_API_KEY}" ] && echo "--admin-api-key ${AGENT_ADMIN_API_KEY}" || echo "--admin-insecure-mode")
+                  --label "${AGENT_NAME}"
+                  --log-level ${AGENT_LOG_LEVEL});
+              env:
+                - name: GENESIS_URL
+                  value: ${GENESIS_FILE_URL}
+                - name: AGENT_WALLET_NAME
+                  value: ${NAME}${SUFFIX}-wallet
+                - name: WALLET_TYPE
+                  value: ${WALLET_STORAGE_TYPE}
+                - name: POSTGRESQL_WALLET_HOST
+                  value: ${WALLET_HOST}${SUFFIX}
+                - name: POSTGRESQL_WALLET_PORT
+                  value: ${WALLET_HOST_PORT}
+                - name: WALLET_STORAGE_CONFIGURATION
+                  value: ${WALLET_STORAGE_CONFIG}
+                - name: WALLET_STORAGE_CREDENTIALS
+                  value: ${WALLET_STORAGE_CREDS}
+                - name: POSTGRESQL_WALLET_USER
+                  valueFrom:
+                    secretKeyRef:
+                      name: ${WALLET_HOST}${SUFFIX}
+                      key: database-user
+                - name: POSTGRESQL_WALLET_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: ${WALLET_HOST}${SUFFIX}
+                      key: database-password
+                - name: POSTGRESQL_WALLET_ADMIN_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: ${WALLET_HOST}${SUFFIX}
+                      key: admin-password
+                - name: WALLET_ENCRYPTION_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: ${WALLET_CREDENTIAL_STORE_NAME}${SUFFIX}
+                      key: key
+                - name: INDY_WALLET_SEED
+                  valueFrom:
+                    secretKeyRef:
+                      name: ${WALLET_CREDENTIAL_STORE_NAME}${SUFFIX}
+                      key: seed
+                - name: WALLET_DID
+                  valueFrom:
+                    secretKeyRef:
+                      name: ${WALLET_CREDENTIAL_STORE_NAME}${SUFFIX}
+                      key: did
+                - name: WEBHOOK_URL
+                  value: ${WEBHOOK_URL}
+                - name: HTTP_INTERFACE_PORT
+                  value: ${AGENT_HTTP_PORT}
+                - name: ADMIN_INTERFACE_PORT
+                  value: ${AGENT_ADMIN_PORT}
+                - name: AGENT_ADMIN_API_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: ${NAME}${SUFFIX}
+                      key: admin-api-key
+                - name: AGENT_NAME
+                  value: ${AGENT_LABEL_NAME}
+                - name: AGENT_ENDPOINT
+                  value: ${AGENT_BASE_URL}
+                - name: AGENT_LOG_LEVEL
+                  value: ${LOG_LEVEL}
+              image:
+              ports:
+                - containerPort: ${{AGENT_ADMIN_PORT}}
+                  protocol: TCP
+                - containerPort: ${{AGENT_HTTP_PORT}}
+                  protocol: TCP
+              readinessProbe:
+                timeoutSeconds: 30
+                initialDelaySeconds: 3
+                httpGet:
+                  path: /
+                  port: ${{AGENT_HTTP_PORT}}
+              livenessProbe:
+                timeoutSeconds: 30
+                initialDelaySeconds: 300
+                httpGet:
+                  path: /
+                  port: ${{AGENT_HTTP_PORT}}
+              imagePullPolicy: IfNotPresent
+              resources:
+                limits:
+                  cpu: ${CPU_LIMIT}
+                  memory: ${MEMORY_LIMIT}
+                requests:
+                  cpu: ${CPU_REQUEST}
+                  memory: ${MEMORY_REQUEST}
+              terminationMessagePath: /dev/termination-log
+              terminationMessagePolicy: File
+          dnsPolicy: ClusterFirst
+          restartPolicy: Always
+          schedulerName: default-scheduler
+          securityContext: {}
+          terminationGracePeriodSeconds: 30
+      triggers:
+        - type: ConfigChange
+        - type: ImageChange
+          imageChangeParams:
+            automatic: true
+            containerNames:
+              - ${NAME}${SUFFIX}
+            from:
+              kind: ImageStreamTag
+              name: ${SOURCE_IMAGE_NAME}:${TAG_NAME}
+              namespace: ${IMAGE_NAMESPACE}
+
+  - kind: NetworkSecurityPolicy
+    apiVersion: secops.pathfinder.gov.bc.ca/v1alpha1
+    metadata:
+      name: custom-${APP_NAME}-${NAME}-to-external-network
+      labels:
+        name: custom-${APP_NAME}-${NAME}-to-external-network
+        app: ${APP_NAME}
+        app-group: ${APP_GROUP}
+        role: ${ROLE}
+        env: ${TAG_NAME}
+    spec:
+      description: |
+        Allow the agent to access the internet.
+      source:
+        - - role=${ROLE}
+          - app=${APP_NAME}
+          - env=${TAG_NAME}
+          - $namespace=${NAMESPACE_NAME}-${TAG_NAME}
+      destination:
+        - - ext:network=any
+
+  - kind: NetworkSecurityPolicy
+    apiVersion: secops.pathfinder.gov.bc.ca/v1alpha1
+    metadata:
+      name: custom-${APP_NAME}-${NAME}-policy
+      labels:
+        name: custom-${APP_NAME}-${NAME}-policy
+        app: ${APP_NAME}
+        app-group: ${APP_GROUP}
+        role: ${ROLE}
+        env: ${TAG_NAME}
+    spec:
+      description: |
+        Allow the agent to talk to either the wallet or controller micro services.
+      source:
+        - - role=${ROLE}
+          - app=${APP_NAME}
+          - env=${TAG_NAME}
+          - $namespace=${NAMESPACE_NAME}-${TAG_NAME}
+
+      destination:
+        - - role=wallet
+          - app=${APP_NAME}
+          - env=${TAG_NAME}
+          - $namespace=${NAMESPACE_NAME}-${TAG_NAME}
+        - - role=controller
+          - app=${APP_NAME}
+          - env=${TAG_NAME}
+          - $namespace=${NAMESPACE_NAME}-${TAG_NAME}
+
+parameters:
+  - name: NAME
+    displayName: Name
+    description: The name assigned to all the objects defined in this template.
+    required: true
+    value: issuer-agent
+  - name: APP_NAME
+    displayName: App Name
+    description: Used to group components together in the OpenShift console.
+    required: true
+    value: issuer-kit
+  - name: APP_GROUP
+    displayName: App Group
+    description: Used to group components together.
+    required: true
+    value: issuer-kit-agent
+  - name: SUFFIX
+    displayName: Suffix
+    description: A suffix applied to all the objects in this template.
+    required: false
+    value:
+  - name: ROLE
+    displayName: Role
+    description: The role of this service within the application - used for Network Policies.
+    required: true
+    value: agent
+  - name: APPLICATION_DOMAIN
+    displayName: Application Hostname
+    description: The exposed hostname that will route to the service, if left blank a value will be defaulted.
+    required: false
+    value:
+  - name: IMAGE_NAMESPACE
+    displayName: Namespace containing application images.
+    required: true
+    value: devex-von-tools
+  - name: NAMESPACE_NAME
+    displayName: Namespace Name
+    description: The name of the namespace being deployed to.
+    required: true
+    value: devex-von
+  - name: SOURCE_IMAGE_NAME
+    displayName: Source Image Name
+    description: The name of the source image to use for the service.
+    required: true
+    value: issuer-agent
+  - name: TAG_NAME
+    displayName: Environment TAG name
+    description: The TAG name for this environment, e.g., dev, test, prod.
+    required: true
+    value: latest
+  - name: AGENT_LABEL_NAME
+    displayName: Agent Label/Name
+    description: The label/name of the agent
+    required: true
+    value: issuer-kit-agent
+  - name: AGENT_BASE_URL
+    displayName: Agent endpoint
+    description: The endpoint of the agent
+    required: true
+    value: https://issuer-kit-agent.pathfinder.gov.bc.ca
+  - name: WEBHOOK_URL
+    displayName: Webhook URL
+    description: The webhook endpoint
+    required: true
+    value: http://issuer-api:8080/webhooks
+  - name: AGENT_ADMIN_PORT
+    displayName: Agent Admin Port
+    description: The admin port on which the service will listen.
+    required: true
+    value: "8024"
+  - name: ADMIN_API_KEY
+    displayName: Agent Admin API Key
+    description: The key used to authenticate client requests to the admin api.
+    required: true
+    generate: expression
+    from: "[a-zA-Z0-9]{16}"
+  - name: AGENT_HTTP_PORT
+    displayName: Agent Http Port
+    description: The http port on which the service will listen.
+    required: true
+    value: "8021"
+  - name: GENESIS_FILE_URL
+    displayName: Genesis File URL
+    description: The URL from which the genesis file can be downloaded.
+    required: true
+    value: http://test.bcovrin.vonx.io/genesis
+  - name: LOG_LEVEL
+    displayName: Log Level
+    description: The logging level for the agent.
+    required: true
+    value: WARNING
+  # ===============================================================================
+  # Wallet Configuration
+  #--------------------------------------------------------------------------------
+  - name: WALLET_STORAGE_TYPE
+    displayName: Wallet Storage Type
+    description:
+      The wallet storage type.  Your choice of 'postgres' or 'sqlite' at
+      the moment.  If not defined, defaults to 'sqlite' for compatibility
+    required: false
+    value: postgres_storage
+  - name: WALLET_HOST
+    displayName: PostgreSql Wallet Hostname
+    required: true
+    description: Hostname of the deployed database hosting the wallet.  Only used when WALLET_STORAGE_TYPE = postgres_storage.
+    value: issuer-wallet
+  - name: WALLET_HOST_PORT
+    displayName: PostgreSql Wallet Port
+    required: true
+    description: The port number of the deployed database hosting the wallet.  Only used when WALLET_STORAGE_TYPE = postgres_storage.
+    value: "5432"
+  - name: WALLET_STORAGE_CONFIG
+    displayName: Wallet Storage Configuration
+    required: true
+    description: Wallet storage configuration
+    value: '{\"url\":\"${POSTGRESQL_WALLET_HOST}:${POSTGRESQL_WALLET_PORT}\",\"max_connections\":5}'
+  - name: WALLET_STORAGE_CREDS
+    displayName: Wallet Storage Credential Configuration
+    required: true
+    description: Wallet storage credential configuration
+    value: '{\"account\":\"${POSTGRESQL_WALLET_USER}\",\"password\":\"${POSTGRESQL_WALLET_PASSWORD}\",\"admin_account\":\"postgres\",\"admin_password\":\"${POSTGRESQL_WALLET_ADMIN_PASSWORD}\"}'
+  - name: WALLET_CREDENTIAL_STORE_NAME
+    displayName: Wallet Credential Store Name
+    description:
+      The name of the wallet credential store (aka The name of the secret
+      that contains the wallet credentials).
+    required: true
+    value: issuer-agent-wallet-credentials
+  - name: WALLET_KEY
+    displayName: Wallet Encryption Key
+    description: The encryption key to be used for the wallets.  Needs to be base64 encoded.
+    required: true
+    generate: expression
+    from: "[a-zA-Z0-9]{10}"
+  - name: WALLET_SEED
+    displayName: Indy Wallet Seed
+    description: The Seed used for the indy wallet.  Needs to be base64 encoded.
+    required: true
+    generate: expression
+    from: "[a-zA-Z0-9]{32}"
+  - name: WALLET_DID
+    displayName: Indy Wallet DID
+    description: The DID associated to the indy wallet.  Needs to be base64 encoded.
+    required: false
+    generate: expression
+    from: "[a-zA-Z0-9]{16}"
+  # ===============================================================================
+  - name: CPU_REQUEST
+    displayName: Resources CPU Request
+    description: The resources CPU request (in cores) for this build.
+    required: true
+    value: 10m
+  - name: CPU_LIMIT
+    displayName: Resources CPU Limit
+    description: The resources CPU limit (in cores) for this build.
+    required: true
+    value: 1000m
+  - name: MEMORY_REQUEST
+    displayName: Resources Memory Request
+    description: The resources Memory request (in Mi, Gi, etc) for this build.
+    required: true
+    value: 10Mi
+  - name: MEMORY_LIMIT
+    displayName: Resources Memory Limit
+    description: The resources Memory limit (in Mi, Gi, etc) for this build.
+    required: true
+    value: 1Gi

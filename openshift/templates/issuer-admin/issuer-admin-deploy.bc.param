@@ -1,0 +1,36 @@
+#=========================================================
+# OpenShift template parameters for:
+# Component: .
+# Template File: ../openshift/templates/issuer-admin/issuer-admin-deploy.json
+#=========================================================
+NAME=issuer-admin
+APP_NAME=identity-kit
+APP_GROUP=issuer
+SUFFIX=-bc
+ROLE=admin-frontend
+IMAGE_NAMESPACE=devex-von-tools
+NAMESPACE_NAME=devex-von
+CADDY_CONFIG_FILE_NAME=Caddyfile
+CADDY_CONFIG_MAP_NAME=issuer-admin-caddy-conf
+CADDY_CONFIG_MOUNT_PATH=/etc/
+APP_CONFIG_MAP_NAME=issuer-admin-config
+APP_CONFIG_MOUNT_PATH=/srv/config/
+APP_CLAIM_CONFIG_FILE_NAME=claim-config.json
+APP_CONFIG_FILE_NAME=config.json
+APP_CUSTOM_SCRIPTS_FILE_NAME=custom-scripts.js
+APP_VUETIFY_FILE_NAME=vuetify.json
+APP_ARTIFACT_MOUNT_PATH=/srv/
+APP_LOGO_FILE_NAME=logo.svg
+APP_UNAUTHORIZED_FILE_NAME=unauthorized.html
+WEB_HOST_NAME=0.0.0.0
+WEB_HOST_PORT=8080
+WEB_HOST_TLS=off
+API_HOST=identity-kit-controller
+API_PORT=8080
+APPLICATION_DOMAIN=issuer-admin-devex-von-test.pathfinder.gov.bc.ca
+SOURCE_IMAGE_NAME=issuer-admin
+TAG_NAME=test
+CPU_REQUEST=10m
+CPU_LIMIT=250m
+MEMORY_REQUEST=100Mi
+MEMORY_LIMIT=256Mi

@@ -25,6 +25,9 @@ export interface AppConfig {
     successText: string;
     links: Array<any>;
   };
+  credentials: {
+    schema_id: string;
+  };
 }
 
 export class Configuration {

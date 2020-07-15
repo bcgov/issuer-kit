@@ -1,0 +1,14 @@
+#=========================================================
+# OpenShift template parameters for:
+# Component: .
+# Template File: ../openshift/templates/db/db-build.json
+#=========================================================
+NAME=issuer-db
+APP_NAME=issuer-kit
+APP_GROUP=issuer-kit-storage
+GIT_REPO_URL=https://github.com/bcgov/issuer-kit.git
+GIT_REF=master
+SOURCE_IMAGE_KIND=DockerImage
+SOURCE_IMAGE_NAME=registry.access.redhat.com/rhscl/mongodb-36-rhel7
+SOURCE_IMAGE_TAG=latest
+OUTPUT_IMAGE_TAG=latest

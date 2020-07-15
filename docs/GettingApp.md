@@ -1,20 +1,23 @@
 # Getting a Mobile Wallet
 
-Use these instructions to get a compatible mobile app on your phone that can receive, hold and prove your verifiable credentials. There are currently two options [StreetCred](#streetcred-identity-agent) and [esatus](#esatus-wallet).
+Use these instructions to get a compatible mobile app on your phone that can receive, hold and prove your verifiable credentials. There are currently two options from [Trinsic](#trinsic-wallet) and [esatus](#esatus-wallet).
 
-## Streetcred Identity Agent
+## Trinsic Wallet
 
-[Streetcred.id](https://streetcred.id) provides compatible Identity Agents for both iOS and Android. To use the app you need to install the app and do some initial setup. Please follow the setup instructions below after you install and open the Streetcred app.
+[Trinsic.id](https://trinsic.id) (formerly called Streetcred ID) provides compatible wallets for both iOS and Android. To use the BC Gov apps you need to install the wallet and do some initial setup. Please follow the setup instructions below after you install and open the Trinsic Wallet.
 
-Links to download the Streetcred Identity Agent:
+Links to download the Trinsic Wallet:
 
 - [Apple iOS](https://apps.apple.com/us/app/streetcred-identity-agent/id1475160728)
 - [Google Android](https://play.google.com/store/apps/details?id=id.streetcred.apps.mobile)
 
-After installing and opening the app, follow the instructions to create your wallet with appropriate permissions. After setup, you will be taken to the main app screen ("Actions"). Before continuing with the BC Gov proof of concept apps, you must do some additional setup, as follows:
+After installing and opening the mobile wallet, follow the instructions to configure the wallet with appropriate permissions. After setup, you will be taken to the main app screen ("Actions"). Before continuing with a BC Gov identity service, you must do some additional setup, as follows:
 
 - Go to settings by clicking the menu icon in the top right (the "hamburger" icon&mdash;three stacked horizontal lines)
-- Click on the "Network" item and from the subsequent list select "BCovrin Test" network.
+- Click on the "Network" item and from the subsequent list select one of the following:
+  - If you are using a production app, select "Sovrin"
+  - If you are using a proof-of-concept app, select "Sovrin Staging"
+  - If you are using a proof-of-concept app that instructs you to use the BCovrin test ledger, select "BCovrin Test"
 - Click the back arrow to return to the settings and again to return to the main app screen.
 
 That's it for the special instructions! Please return to the instructions for application you are using.
@@ -28,10 +31,13 @@ Links to download the esatus Wallet:
 - [Apple iOS](https://apps.apple.com/ca/app/esatus-wallet/id1496769057)
 - [Google Android](https://play.google.com/store/apps/details?id=com.esatus.wallet)
 
-After installing and opening the app, follow the instructions to create your wallet with appropriate permissions. After setup, you will be taken to the main app screen ("Welcome..."). Before continuing with the BC Gov proof of concept apps, you must do some additional setup, as follows:
+After installing and opening the mobile wallet, follow the instructions to configure the wallet with appropriate permissions. After setup, you will be taken to the main app screen ("Welcome..."). Before continuing with a BC Gov identity service, you must do some additional setup, as follows:
 
 - Go to settings by clicking the cog icon in the top right
-- Click on the "Change Ledger" item and from the subsequent list select "BCGov Test Ledger" network.
+- Click on the "Change Ledger" item and from the subsequent list select one of the following:
+  - If you are using a production service, select "Sovrin MainNet"
+  - If you are using a proof-of-concept service, select "Sovrin StagingNet"
+  - If you are using a proof-of-concept service that instructs you to use the BCovrin test ledger, select "BCGov Test Ledger"
 - Click the back arrow to return to the settings and again to return to the main app screen.
 
 That's it for the special instructions! Please return to the instructions for application you are using.

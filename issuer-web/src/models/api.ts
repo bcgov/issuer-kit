@@ -1,9 +1,9 @@
 import { ConnectionStatus } from './connection';
 
 export interface IssuerInvitationInterface {
-  _id: string;
-  expired: boolean;
-  active: boolean;
+  token: string;
+  expired?: boolean;
+  issued?: boolean;
   data?: {};
 }
 

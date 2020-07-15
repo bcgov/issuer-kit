@@ -68,6 +68,7 @@ import { Connection } from "../models/connection";
 import { Credential } from "../models/credential";
 import { AppConfig, Configuration } from "../models/appConfig";
 import { sleep } from "../utils";
+import { Invitation } from "../models/invitation";
 
 @Component
 export default class Connect extends Vue {
@@ -94,6 +95,9 @@ export default class Connect extends Vue {
         this.issued = true;
         // silently sign out of the app
         this.$store.commit("oidcStore/unsetOidcAuth");
+
+        // remove data from localStorage
+        localStorage.removeItem("issuer-invite");
       });
     });
   }
@@ -106,7 +110,7 @@ export default class Connect extends Vue {
   async handleIssueCredential(credExId: string, config: AppConfig) {
     const retryInterceptor = Axios.interceptors.response.use(
       async response => {
-        if (response.data.issued) {
+        if (response.data.state === "credential_issued") {
           return response;
         } else {
           // retry every 500ms until the credential has not been issued
@@ -121,9 +125,12 @@ export default class Connect extends Vue {
       }
     );
 
-    return await Axios.get(`${config.apiServer.url}/issues/${credExId}`, {
-      cancelToken: this.cancelTokenSource.token
-    }).finally(() => {
+    return await Axios.get(
+      `${config.apiServer.url}/credential-exchange/${credExId}`,
+      {
+        cancelToken: this.cancelTokenSource.token
+      }
+    ).finally(() => {
       Axios.interceptors.response.eject(retryInterceptor);
     });
   }
@@ -136,23 +143,16 @@ export default class Connect extends Vue {
     const connection = (await this.$store.getters[
       "connection/getConnection"
     ]) as Connection;
-    let invitation;
-    try {
-      const localInvitation =
-        localStorage.getItem("issuer-invitation") || '{ "data": { }  }';
-      invitation = JSON.parse(localInvitation);
-    } catch (e) {
-      console.error(
-        "An error occurred when fetching the invite object from localstorage"
-      );
-      console.error(e);
-    }
+    const invitation = this.$store.getters[
+      "invitation/getInvitation"
+    ] as Invitation;
     const data = {
-      _id: invitation.data._id,
-      connectionId: connection.id,
-      claims: credential.claims
+      token: invitation.token,
+      connection_id: connection.id, // eslint-disable-line @typescript-eslint/camelcase
+      claims: credential.claims,
+      schema_id: config.credentials?.schema_id // eslint-disable-line @typescript-eslint/camelcase
     };
-    return Axios.post(`${config.apiServer.url}/issues/`, data, {
+    return Axios.post(`${config.apiServer.url}/credential-exchange/`, data, {
       cancelToken: this.cancelTokenSource.token
     });
   }

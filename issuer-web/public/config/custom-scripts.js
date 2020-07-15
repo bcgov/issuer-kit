@@ -1,10 +1,19 @@
-/* Include all your custom JS code in here, it will be available to the app instance on the window object */
+/* Include all your custom JS code in here, it will be available to the app instance */
 
-function myCoolFunction() {
-  console.log("Do something great here.");
+function setCurrentISODate(params) {
+  if (params.length < 1) {
+    throw new Error(
+      "setCurrentISODate is missing one or more required parameters"
+    );
+  }
+  var dateField = params[0];
+  var survey = this.survey;
+
+  var date = new Date();
+  survey.setValue(dateField, date.toISOString());
 }
 
-/* All custom functions that will be used in SurveyJS triggers
- * must be listed in this array, so that they will be automatically registered.
- */
-surveyFunctions = [myCoolFunction];
+/* An array containing custom functions that will be automatically registered with
+* SurveyJS so that they can be used in triggers.
+*/
+surveyFunctions = [setCurrentISODate];

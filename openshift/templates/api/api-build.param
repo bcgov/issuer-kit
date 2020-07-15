@@ -1,0 +1,21 @@
+#=========================================================
+# OpenShift template parameters for:
+# Component: .
+# Template File: ../openshift/templates/api/api-build.json
+#=========================================================
+NAME=issuer-api
+APP_NAME=issuer-kit
+APP_GROUP=issuer-kit-runtime
+NAMESPACE_NAME=devex-von
+ENV_NAME=tools
+GIT_REPO_URL=https://github.com/bcgov/issuer-kit.git
+GIT_REF=master
+SOURCE_CONTEXT_DIR=api
+SOURCE_IMAGE_KIND=DockerImage
+SOURCE_IMAGE_NAME=centos/nodejs-12-centos7
+SOURCE_IMAGE_TAG=latest
+OUTPUT_IMAGE_TAG=latest
+CPU_LIMIT=1
+MEMORY_LIMIT=4Gi
+CPU_REQUEST=250m
+MEMORY_REQUEST=2Gi

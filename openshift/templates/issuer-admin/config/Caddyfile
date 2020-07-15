@@ -1,0 +1,27 @@
+{%WEB_HOST_NAME%}:{%WEB_HOST_PORT%} {
+    # Uncomment the following to enable logging;
+    log stdout
+    errors stdout
+
+    tls {%WEB_HOST_TLS%}  # Use `self_signed` to enable self_signed tls, or `off` to disable tls.  TLS not needed for OpenShift.
+
+    # enable gzip compression
+    gzip
+
+    root /srv/
+
+    # Openly exposed health check endpoint for OpenShift
+    status 200 /health
+
+    # Required for angular router to work
+    rewrite {
+        if {path} not_match ^/api
+        to {path} {path}/ /
+    }
+
+    proxy /api {%API_HOST%}:{%API_PORT%} {
+        without /api
+        transparent
+        fail_timeout 0 # see https://github.com/mholt/caddy/issues/1925
+    }
+}

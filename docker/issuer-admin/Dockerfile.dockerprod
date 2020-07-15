@@ -1,0 +1,11 @@
+# build stage
+FROM node:erbium as build-stage
+WORKDIR /app
+COPY issuer-admin/package*.json ./
+RUN npm install
+COPY issuer-admin/ .
+RUN npm run build
+
+# production stage
+FROM abiosoft/caddy:1.0.3-no-stats as production-stage
+COPY --from=build-stage /app/dist /srv

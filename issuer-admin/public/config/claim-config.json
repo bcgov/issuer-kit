@@ -1,0 +1,20 @@
+{
+  "questions": [
+    {
+      "name": "given_names",
+      "type": "text",
+      "title": "First Name:",
+      "placeHolder": "",
+      "isRequired": true,
+      "requiredErrorText": "Required Field"
+    },
+    {
+      "name": "family_name",
+      "type": "text",
+      "title": "Last Name:",
+      "placeHolder": "",
+      "isRequired": true,
+      "requiredErrorText": "Required Field"
+    }
+  ]
+}

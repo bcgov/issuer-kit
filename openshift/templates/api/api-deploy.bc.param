@@ -1,0 +1,36 @@
+#=========================================================
+# OpenShift template parameters for:
+# Component: .
+# Template File: ../openshift/templates/api/api-deploy.json
+#=========================================================
+NAME=identity-kit-controller
+APP_NAME=identity-kit
+APP_GROUP=identity-kit-controller
+SUFFIX=-bc
+ROLE=controller
+IMAGE_NAMESPACE=devex-von-tools
+NAMESPACE_NAME=devex-von
+SERVICE_PORT=8080
+DB_SERVICE=identity-kit-db
+DB_PORT=27017
+DB_NAME=identity_kit_db
+SOURCE_IMAGE_NAME=issuer-api
+TAG_NAME=test
+AGENT_SERVICE_NAME=identity-kit-agent
+AGENT_ADMIN_PORT=8024
+SMTP_SERVER_ADDRESS=
+SMTP_SERVER_PORT=
+ADMIN_EMAIL=
+EMAIL_SUBJECT=Invite to Identity Kit
+PUBLIC_SITE_URL=https://identity-kit-devex-von-test.pathfinder.gov.bc.ca
+APP_CONFIG_MAP_NAME=issuer-api-config
+APP_CONFIG_MOUNT_PATH=/opt/app-root/src/config/
+APP_CONFIG_FILE_NAME=default.json
+APP_SCHEMAS_FILE_NAME=schemas.json
+APP_EMAIL_INVITE_FILE_NAME=invite-email.html
+MIN_REPLICAS=1
+MAX_REPLICAS=1
+CPU_REQUEST=10m
+CPU_LIMIT=300m
+MEMORY_REQUEST=10Mi
+MEMORY_LIMIT=256Mi

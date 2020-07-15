@@ -1,0 +1,15 @@
+#=========================================================
+# OpenShift template parameters for:
+# Component: .
+# Template File: ../openshift/templates/wallet/wallet-build.json
+#=========================================================
+NAME=issuer-wallet
+APP_NAME=issuer-kit
+APP_GROUP=issuer-kit-storage
+GIT_REPO_URL=https://github.com/bcgov/issuer-kit.git
+GIT_REF=master
+SOURCE_CONTEXT_DIR=wallet/config
+SOURCE_IMAGE_KIND=DockerImage
+SOURCE_IMAGE_NAME=registry.access.redhat.com/rhscl/postgresql-10-rhel7
+SOURCE_IMAGE_TAG=latest
+OUTPUT_IMAGE_TAG=latest

@@ -1,0 +1,12 @@
+#=========================================================
+# OpenShift Jenkins pipeline template parameters for:
+# Jenkinsfile: ../jenkins/deployment/prod/Jenkinsfile
+# Template File: https://raw.githubusercontent.com/BCDevOps/openshift-tools/master/provisioning/pipeline/resources/pipeline-build.json
+#=========================================================
+NAME=identity-kit-promote-to-prod
+# GITHUB_WEBHOOK_SECRET=[a-zA-Z0-9]{40}
+# GENERIC_WEBHOOK_SECRET=[a-zA-Z0-9]{40}
+SOURCE_REPOSITORY_URL=https://github.com/bcgov/issuer-kit.git
+SOURCE_REPOSITORY_REF=master
+CONTEXT_DIR=./jenkins/deployment/prod
+JENKINSFILE_PATH=Jenkinsfile

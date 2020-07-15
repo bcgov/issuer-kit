@@ -65,6 +65,27 @@
       "defaultValue": "Canada",
       "isRequired": true,
       "requiredErrorText": "Required Field"
+    },
+    {
+      "type": "text",
+      "name": "issued",
+      "title": "Issued:",
+      "readOnly": true,
+      "isRequired": true
+    },
+    {
+      "type": "text",
+      "name": "placeholder",
+      "defaultValue": "placeholder",
+      "readOnly": true,
+      "visibleIf": "{issued} empty"
+    }
+  ],
+  "triggers": [
+    {
+      "type": "runexpression",
+      "expression": "{placeholder} notempty",
+      "runExpression": "setCurrentISODate('issued')"
     }
   ]
 }

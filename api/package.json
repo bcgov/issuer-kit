@@ -25,7 +25,7 @@
   },
   "scripts": {
     "test": "npm run compile && npm run mocha",
-    "dev": "ts-node-dev --no-notify src/",
+    "dev": "ts-node-dev --poll --no-notify src/",
     "serve": "npm run compile && node lib/",
     "mocha": "ts-mocha \"test/**/*.ts\" --recursive --exit",
     "compile": "shx rm -rf lib/ && tsc",

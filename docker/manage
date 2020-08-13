@@ -288,6 +288,7 @@ configureEnvironment() {
   if [ ! -z "${AGENT_ADMIN_API_KEY}" ]; then
     AGENT_ADMIN_MODE="admin-api-key ${AGENT_ADMIN_API_KEY}"
   fi
+  export TAILS_SERVER_BASE_URL=${TAILS_SERVER_BASE_URL:-https://tails-server-dev.pathfinder.gov.bc.ca}
 
   # api
   export API_PORT=5000

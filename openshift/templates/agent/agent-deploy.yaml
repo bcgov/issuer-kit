@@ -135,7 +135,8 @@ objects:
                   --admin '0.0.0.0' ${ADMIN_INTERFACE_PORT}
                   $([ ! -z "${AGENT_ADMIN_API_KEY}" ] && echo "--admin-api-key ${AGENT_ADMIN_API_KEY}" || echo "--admin-insecure-mode")
                   --label "${AGENT_NAME}"
-                  --log-level ${AGENT_LOG_LEVEL});
+                  --log-level ${AGENT_LOG_LEVEL})
+                  --tails-server-base-url ${TAILS_SERVER_BASE_URL};
               env:
                 - name: GENESIS_URL
                   value: ${GENESIS_FILE_URL}
@@ -198,6 +199,8 @@ objects:
                   value: ${AGENT_BASE_URL}
                 - name: AGENT_LOG_LEVEL
                   value: ${LOG_LEVEL}
+                - name: TAILS_SERVER_BASE_URL
+                  value: ${TAILS_SERVER_BASE_URL}
               image:
               ports:
                 - containerPort: ${{AGENT_ADMIN_PORT}}
@@ -384,6 +387,11 @@ parameters:
     description: The logging level for the agent.
     required: true
     value: WARNING
+  - name: TAILS_SERVER_BASE_URL
+    displayName: Tails Server Base Url
+    description: The base URL for the Tails Server.
+    required: true
+    value: https://tails-server-dev.pathfinder.gov.bc.ca
   # ===============================================================================
   # Wallet Configuration
   #--------------------------------------------------------------------------------

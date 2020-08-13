@@ -21,6 +21,7 @@ AGENT_BASE_URL=https://identity-kit-agent.pathfinder.gov.bc.ca
 # AGENT_HTTP_PORT=8021
 # GENESIS_FILE_URL=https://raw.githubusercontent.com/sovrin-foundation/sovrin/stable/sovrin/pool_transactions_sandbox_genesis
 # LOG_LEVEL=WARNING
+TAILS_SERVER_BASE_URL=https://tails-server-test.pathfinder.gov.bc.ca
 # WALLET_STORAGE_TYPE=postgres_storage
 # WALLET_HOST=identity-kit-wallet
 # WALLET_HOST_PORT=5432

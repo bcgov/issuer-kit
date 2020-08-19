@@ -7,7 +7,6 @@ export enum ServiceAction {
 export enum ServiceType {
   Connection,
   CredEx,
-  CredDef,
 }
 
 export enum WebhookTopic {

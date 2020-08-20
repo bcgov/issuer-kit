@@ -1,26 +1,22 @@
 import { NotImplemented } from "@feathersjs/errors";
 import { Params } from "@feathersjs/feathers";
-import Axios, { AxiosRequestConfig } from "axios";
+import Axios from "axios";
 import { Application } from "../../declarations";
+import logger from "../../logger";
 import {
   AriesConnection,
   AriesInvitation,
   ConnectionServiceResponse,
 } from "../../models/connection";
-import { CredDefServiceResponse } from "../../models/credential-definition";
 import {
+  AriesCredentialAttribute,
   AriesCredentialExchange,
   AriesCredentialOffer,
   CredExServiceResponse,
-  AriesCredentialAttribute,
 } from "../../models/credential-exchange";
 import { ServiceAction, ServiceType } from "../../models/enums";
-import { AriesSchema, SchemaDefinition } from "../../models/schema";
-import { CredDefUtils } from "../../utils/credential-definition";
-import { loadJSON } from "../../utils/load-config-file";
-import { formatCredentialPreview } from "../../utils/credential-exchange";
 import { AcaPyUtils } from "../../utils/aca-py";
-import logger from "../../logger";
+import { formatCredentialPreview } from "../../utils/credential-exchange";
 
 interface AgentSettings {
   adminUrl: string;
@@ -48,7 +44,11 @@ export class AriesAgent {
   }
 
   private async init() {
-    await this.acaPyUtils.init();
+    const result = await this.acaPyUtils.init();
+
+    this.app.set("schemas", result.schemas);
+    this.app.set("credDefs", result.credDefs);
+
     logger.info("Aries Agent service initialized");
   }
 

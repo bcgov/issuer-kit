@@ -45,7 +45,9 @@ export class AcaPyUtils {
 
   async init(): Promise<any> {
     const config = loadJSON("schemas.json") as SchemaDefinition[];
+    const schemas = new Map<string, AriesSchema>();
     const schemaUtils = SchemaUtils.getInstance(this.app);
+    const credDefs = new Map<string, string>();
     const credDefUtils = CredDefUtils.getInstance(this.app);
 
     // wait for the agent to be ready
@@ -71,32 +73,36 @@ export class AcaPyUtils {
           // Register to the ledger
           schema = await schemaUtils.publishSchema(schemaDef);
         }
+        schemas.set(schema.schema_id || schema.schema.id, schema);
+        if (schemaDef.default) {
+          // Set default schema used by issuer
+          schemas.set("default", schema);
+        }
+
         const support_revocation = schemaDef.revocable || false;
         const tag = schemaDef.tag || "default";
 
         //  publish cred_def for current schema
-        const credDef = credDefUtils.formatCredentialDefinition(
+        const formattedCredDef = credDefUtils.formatCredentialDefinition(
           schema.schema.id,
           support_revocation,
           tag
         );
-        await credDefUtils.getOrCreateCredDef(credDef);
+        const credDef = await credDefUtils.getOrCreateCredDef(formattedCredDef);
+        credDefs.set(schema.schema.id, credDef.credential_definition_id);
       } catch (err) {
         logger.error(err);
       }
     }
 
-    if (!this.app.get("schemas").get("default")) {
+    if (!schemas.get("default")) {
       logger.warn(
         "No default schema set, all requests to the API will need to specify which schema to use"
       );
     }
-
-    return new Promise(() => {
-      return {
-        schemas: this.app.get("schemas"),
-        credDefs: this.app.get("credDefs"),
-      };
+    return Promise.resolve({
+      schemas: schemas,
+      credDefs: credDefs,
     });
   }
 

@@ -32,10 +32,6 @@ export class CredDefUtils {
     return CredDefUtils.instance;
   }
 
-  private addCredDef(id: string, credDefId: string) {
-    this.app.get("credDefs").set(id, credDefId);
-  }
-
   formatCredentialDefinition(
     schema_id: string,
     support_revocation = false,
@@ -71,10 +67,6 @@ export class CredDefUtils {
         this.utils.getRequestConfig()
       );
       credDefResponse = response.data as CredDefServiceResponse;
-      this.addCredDef(
-        credDef.schema_id,
-        credDefResponse.credential_definition_id
-      );
       logger.debug(
         `Published credential definition: ${JSON.stringify(credDefResponse)}`
       );

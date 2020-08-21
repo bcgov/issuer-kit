@@ -45,6 +45,13 @@
             disabled
           ></v-simple-checkbox>
         </template>
+        <template v-slot:item.revoked="{ item }">
+          <v-simple-checkbox
+            v-if="item.revoked !== undefined"
+            v-model="item.revoked"
+            disabled
+          ></v-simple-checkbox>
+        </template>
         <template v-slot:item.actions="{ item }">
           <v-icon small class="mr-2" @click="editItem(item)">
             mdi-pencil
@@ -73,6 +80,7 @@ export default class Home extends Vue {
     { text: "Email", align: "start", value: "email" },
     { text: "Issued", value: "issued" },
     { text: "Expired", value: "expired" },
+    { text: "Revoked", value: "revoked" },
     { text: "Actions", value: "actions", sortable: false }
   ];
   private invites = new Array<IssuerInvite>();

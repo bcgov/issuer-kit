@@ -18,11 +18,6 @@ import { ServiceAction, ServiceType } from "../../models/enums";
 import { AcaPyUtils } from "../../utils/aca-py";
 import { formatCredentialPreview } from "../../utils/credential-exchange";
 
-interface AgentSettings {
-  adminUrl: string;
-  adminApiKey: string;
-}
-
 interface Data {
   service: ServiceType;
   action: ServiceAction;
@@ -70,6 +65,11 @@ export class AriesAgent {
             data.data.credential_exchange_id,
             data.data.attributes
           );
+        } else if (data.action === ServiceAction.Revoke) {
+          return this.revokeCredential(
+            data.data.revocation_id,
+            data.data.revoc_reg_id
+          );
         }
       default:
         return new NotImplemented(
@@ -79,6 +79,7 @@ export class AriesAgent {
   }
 
   private async newConnection(): Promise<AriesInvitation> {
+    logger.debug("Creating new connection invitation");
     const url = `${this.acaPyUtils.getAdminUrl()}/connections/create-invitation`;
     const response = await Axios.post(
       url,
@@ -89,6 +90,7 @@ export class AriesAgent {
   }
 
   private async getConnection(id: string): Promise<ConnectionServiceResponse> {
+    logger.debug(`Getting info for connection [${id}]`);
     const url = `${this.acaPyUtils.getAdminUrl()}/connections/${id}`;
     const response = await Axios.get(url, this.acaPyUtils.getRequestConfig());
     const data = response.data as AriesConnection;
@@ -101,6 +103,7 @@ export class AriesAgent {
   private async newCredentialExchange(
     data: AriesCredentialOffer
   ): Promise<any> {
+    logger.debug("Creating new credential exchange");
     const url = `${this.acaPyUtils.getAdminUrl()}/issue-credential/send-offer`;
     const response = await Axios.post(
       url,
@@ -117,6 +120,7 @@ export class AriesAgent {
   private async getCredentialExchange(
     id: string
   ): Promise<CredExServiceResponse> {
+    logger.debug(`Fetching data for credential exchange [${id}]`);
     const url = `${this.acaPyUtils.getAdminUrl()}/issue-credential/records/${id}`;
     const response = await Axios.get(url, this.acaPyUtils.getRequestConfig());
     const credExData = response.data as AriesCredentialExchange;
@@ -130,6 +134,7 @@ export class AriesAgent {
     id: string,
     attributes: AriesCredentialAttribute[]
   ): Promise<CredExServiceResponse> {
+    logger.debug(`Issuing credential on credential exchange [${id}]`);
     const url = `${this.acaPyUtils.getAdminUrl()}/issue-credential/records/${id}/issue`;
     const response = await Axios.post(
       url,
@@ -141,5 +146,21 @@ export class AriesAgent {
       credential_exchange_id: credExData.credential_exchange_id,
       state: credExData.state,
     } as CredExServiceResponse;
+  }
+
+  private async revokeCredential(
+    revocation_id: string,
+    revoc_reg_id: string
+  ): Promise<boolean> {
+    logger.debug(
+      `Attempting revocation for id [${revocation_id}] on registry [${revoc_reg_id}]`
+    );
+    const url = `${this.acaPyUtils.getAdminUrl()}/issue-credential/revoke?cred_rev_id=${revocation_id}&rev_reg_id=${revoc_reg_id}&publish=true`;
+    const response = await Axios.post(
+      url,
+      null,
+      this.acaPyUtils.getRequestConfig()
+    );
+    return response.status === 200;
   }
 }

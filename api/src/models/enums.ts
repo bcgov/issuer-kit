@@ -2,6 +2,7 @@ export enum ServiceAction {
   Create,
   Fetch,
   Issue,
+  Revoke
 }
 
 export enum ServiceType {

@@ -47,7 +47,7 @@
         </template>
         <template v-slot:item.revoked="{ item }">
           <v-simple-checkbox
-            v-if="item.revoked !== undefined"
+            v-if="item.revoked != null"
             v-model="item.revoked"
             disabled
           ></v-simple-checkbox>

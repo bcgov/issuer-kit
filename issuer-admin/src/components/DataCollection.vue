@@ -41,7 +41,7 @@
           label="Credential has been issued"
         ></v-checkbox>
         <v-checkbox
-          v-if="editMode"
+          v-if="editMode && issuerInvite.revoked != null"
           v-model="issuerInvite.revoked"
           label="Credential was revoked"
         ></v-checkbox>

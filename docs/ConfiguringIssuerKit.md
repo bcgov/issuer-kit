@@ -115,12 +115,20 @@ Example:
       "attr1",
       "attr2",
       "attr3"
-    ]
+    ],
+    "revocable": true,
+    "tag": "my-custom-tag
   }
 ]
 ```
 
 :information_source: one schema needs to be flagged with the `default: true` property in order for requests that don't explicitly specify a schema to be fulfilled.
+
+##### Optional settings
+
+* `revocable`: when set to `true`, a revocation registry will be generated and published, and the admin UI will display revocation controls once the credential has been issued.
+
+* `tag`: this setting defines a custom tag to be applied when publishing a new credential definition for that schema.
 
 #### Invite email
 

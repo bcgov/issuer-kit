@@ -1,14 +1,20 @@
 [
   {
-    "schema_name": "my_schema",
-    "schema_version": "0.01",
+    "schema_name": "verified_person",
+    "schema_version": "0.1.0",
     "attributes": [
-      "attr1",
-      "attr2",
-      "attr3"
+      "locality",
+      "issued",
+      "birthdate",
+      "postal_code",
+      "region",
+      "family_name",
+      "street_address",
+      "country",
+      "given_names"
     ],
     "default": true,
     "revocable": true,
-    "tag": "my_custom_tag"
+    "tag": "issuer-kit-dev"
   }
 ]

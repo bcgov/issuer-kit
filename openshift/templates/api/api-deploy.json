@@ -271,6 +271,10 @@
                   {
                     "name": "PUBLIC_SITE_URL",
                     "value": "${PUBLIC_SITE_URL}"
+                  },
+                  {
+                    "name": "LOG_LEVEL",
+                    "value": "${LOG_LEVEL}"
                   }
                 ],
                 "resources": {
@@ -535,6 +539,13 @@
       "description": "Public Site URL",
       "required": true,
       "value": "https://issuer-kit.pathfinder.gov.bc.ca"
+    },
+    {
+      "name": "LOG_LEVEL",
+      "displayName": "Log Level",
+      "description": "Log Level",
+      "required": true,
+      "value": "info"
     },
     {
       "name": "APP_CONFIG_MAP_NAME",

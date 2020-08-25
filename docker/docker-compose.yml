@@ -19,6 +19,7 @@ services:
       - ADMIN_EMAIL=${ADMIN_EMAIL}
       - EMAIL_SUBJECT=${EMAIL_SUBJECT}
       - PUBLIC_SITE_URL=${PUBLIC_SITE_URL}
+      - LOG_LEVEL=${LOG_LEVEL}
     volumes:
       - ../api:/usr/src/api
     ports:
@@ -46,6 +47,7 @@ services:
       - ADMIN_EMAIL=${ADMIN_EMAIL}
       - EMAIL_SUBJECT=${EMAIL_SUBJECT}
       - PUBLIC_SITE_URL=${PUBLIC_SITE_URL}
+      - LOG_LEVEL=${LOG_LEVEL}
       - S2I_SCRIPTS_PATH=${S2I_SCRIPTS_PATH}
     volumes:
       - ./api/config:/opt/app-root/src/config

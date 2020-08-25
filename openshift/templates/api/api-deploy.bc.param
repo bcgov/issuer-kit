@@ -23,6 +23,7 @@ SMTP_SERVER_PORT=
 ADMIN_EMAIL=
 EMAIL_SUBJECT=Invite to Identity Kit
 PUBLIC_SITE_URL=https://identity-kit-devex-von-test.pathfinder.gov.bc.ca
+LOG_LEVEL=info
 APP_CONFIG_MAP_NAME=issuer-api-config
 APP_CONFIG_MOUNT_PATH=/opt/app-root/src/config/
 APP_CONFIG_FILE_NAME=default.json

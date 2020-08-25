@@ -14,6 +14,8 @@ interface Data {
   state?: CredExState;
   credential_exchange_id?: string;
   credential_proposal_dict?: any;
+  revocation_id?: string;
+  revoc_reg_id?: string;
 }
 
 interface ServiceOptions {}
@@ -65,7 +67,12 @@ export class Webhooks {
         );
         updateInviteRecord(
           { credential_exchange_id: data.credential_exchange_id },
-          { issued: true },
+          {
+            issued: true,
+            revoked: data.revocation_id ? false : undefined,
+            revocation_id: data.revocation_id,
+            revoc_reg_id: data.revoc_reg_id,
+          },
           this.app
         );
         return { result: "Success" };

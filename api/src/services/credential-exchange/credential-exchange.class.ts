@@ -5,7 +5,6 @@ import {
 } from "feathers-swagger/types";
 import { Application } from "../../declarations";
 import { Claim } from "../../models/credential";
-import { CredDefServiceResponse } from "../../models/credential-definition";
 import {
   AriesCredentialAttribute,
   AriesCredentialOffer,
@@ -14,6 +13,8 @@ import {
 import { ServiceAction, ServiceType } from "../../models/enums";
 import { formatCredentialOffer } from "../../utils/credential-exchange";
 import { updateInviteRecord } from "../../utils/issuer-invite";
+import { AriesSchema } from "../../models/schema";
+import logger from "../../logger";
 
 interface Data {
   token?: string;
@@ -52,17 +53,25 @@ export class CredentialExchange implements ServiceSwaggerAddon {
         } as AriesCredentialAttribute)
     );
 
-    const cred_def_id = (await this.app.service("aries-agent").create({
-      service: ServiceType.CredDef,
-      action: ServiceAction.Create,
-      data: { schema_id: data.schema_id },
-    })) as CredDefServiceResponse;
+    let schema_id = data.schema_id;
+    if (!schema_id) {
+      const default_schema = this.app
+        .get("schemas")
+        .get("default") as AriesSchema;
+      if (!default_schema) {
+        throw new Error(
+          "No schema id was provided and no default schema is available"
+        );
+      }
+      schema_id = default_schema.schema_id || default_schema.schema.id;
+    }
+    const cred_def_id = this.app.get("credDefs").get(schema_id) as string;
 
     const credentialOffer = formatCredentialOffer(
       data.connection_id,
       comment,
       attributes,
-      cred_def_id.credential_definition_id
+      cred_def_id
     ) as AriesCredentialOffer;
 
     const newCredEx = (await this.app.service("aries-agent").create({

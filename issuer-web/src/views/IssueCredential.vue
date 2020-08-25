@@ -97,7 +97,7 @@ export default class Connect extends Vue {
         this.$store.commit("oidcStore/unsetOidcAuth");
 
         // remove data from localStorage
-        localStorage.removeItem("issuer-invite");
+        localStorage.removeItem("issuer-invitation");
       });
     });
   }

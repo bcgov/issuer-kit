@@ -1,29 +1,22 @@
 import { NotImplemented } from "@feathersjs/errors";
 import { Params } from "@feathersjs/feathers";
-import Axios, { AxiosRequestConfig } from "axios";
+import Axios from "axios";
 import { Application } from "../../declarations";
+import logger from "../../logger";
 import {
   AriesConnection,
   AriesInvitation,
   ConnectionServiceResponse,
 } from "../../models/connection";
-import { CredDefServiceResponse } from "../../models/credential-definition";
 import {
+  AriesCredentialAttribute,
   AriesCredentialExchange,
   AriesCredentialOffer,
   CredExServiceResponse,
-  AriesCredentialAttribute,
 } from "../../models/credential-exchange";
 import { ServiceAction, ServiceType } from "../../models/enums";
-import { AriesSchema, SchemaDefinition } from "../../models/schema";
-import { formatCredentialDefinition } from "../../utils/credential-definition";
-import { loadJSON } from "../../utils/load-config-file";
+import { AcaPyUtils } from "../../utils/aca-py";
 import { formatCredentialPreview } from "../../utils/credential-exchange";
-
-interface AgentSettings {
-  adminUrl: string;
-  adminApiKey: string;
-}
 
 interface Data {
   service: ServiceType;
@@ -36,28 +29,25 @@ interface ServiceOptions {}
 export class AriesAgent {
   app: Application;
   options: ServiceOptions;
-
-  agent: AgentSettings;
-  schemas: Map<string, AriesSchema>;
-  credDefs: Map<string, string>;
+  acaPyUtils: AcaPyUtils;
 
   constructor(options: ServiceOptions = {}, app: Application) {
     this.options = options;
     this.app = app;
+    this.acaPyUtils = AcaPyUtils.getInstance(app);
+    this.init();
+  }
 
-    const agentSettings = app.get("agent") as AgentSettings;
-    this.agent = agentSettings;
+  private async init() {
+    const result = await this.acaPyUtils.init();
 
-    this.schemas = new Map<string, AriesSchema>();
-    this.credDefs = new Map<string, string>();
+    this.app.set("schemas", result.schemas);
+    this.app.set("credDefs", result.credDefs);
+
+    logger.info("Aries Agent service initialized");
   }
 
   async create(data: Data, params?: Params): Promise<any> {
-    if (this.schemas.size === 0) {
-      // lazy-load configured schemas on first run
-      await this.initSchemas();
-    }
-
     switch (data.service) {
       case ServiceType.Connection:
         if (data.action === ServiceAction.Create) {
@@ -75,13 +65,12 @@ export class AriesAgent {
             data.data.credential_exchange_id,
             data.data.attributes
           );
+        } else if (data.action === ServiceAction.Revoke) {
+          return this.revokeCredential(
+            data.data.revocation_id,
+            data.data.revoc_reg_id
+          );
         }
-      case ServiceType.CredDef:
-        let schema_id = data.data.schema_id;
-        if (!schema_id) {
-          schema_id = this.schemas.get("default")?.schema_id;
-        }
-        return this.getOrCreateCredDef(schema_id);
       default:
         return new NotImplemented(
           `The operation ${data.service}/${data.action} is not supported`
@@ -89,41 +78,21 @@ export class AriesAgent {
     }
   }
 
-  private getRequestConfig(): AxiosRequestConfig {
-    return {
-      headers: {
-        "x-api-key": this.agent.adminApiKey,
-      },
-    } as AxiosRequestConfig;
-  }
-
-  private async initSchemas() {
-    const config = loadJSON("schemas.json") as SchemaDefinition[];
-    config.forEach(async (schemaDef: SchemaDefinition) => {
-      let schema: AriesSchema;
-      if (schemaDef.id) {
-        // Already published to ledger, add to supported array
-        schema = await this.getSchema(schemaDef.id);
-      } else {
-        // Check wether the schema was registered
-        schema = await this.publishSchema(schemaDef);
-      }
-      this.schemas.set(schema.schema_id || schema.schema.id, schema);
-      if (schemaDef.default) {
-        this.schemas.set("default", schema);
-      }
-    });
-  }
-
   private async newConnection(): Promise<AriesInvitation> {
-    const url = `${this.agent.adminUrl}/connections/create-invitation`;
-    const response = await Axios.post(url, {}, this.getRequestConfig());
+    logger.debug("Creating new connection invitation");
+    const url = `${this.acaPyUtils.getAdminUrl()}/connections/create-invitation`;
+    const response = await Axios.post(
+      url,
+      {},
+      this.acaPyUtils.getRequestConfig()
+    );
     return response.data as AriesInvitation;
   }
 
   private async getConnection(id: string): Promise<ConnectionServiceResponse> {
-    const url = `${this.agent.adminUrl}/connections/${id}`;
-    const response = await Axios.get(url, this.getRequestConfig());
+    logger.debug(`Getting info for connection [${id}]`);
+    const url = `${this.acaPyUtils.getAdminUrl()}/connections/${id}`;
+    const response = await Axios.get(url, this.acaPyUtils.getRequestConfig());
     const data = response.data as AriesConnection;
     return {
       connection_id: data.connection_id,
@@ -134,8 +103,13 @@ export class AriesAgent {
   private async newCredentialExchange(
     data: AriesCredentialOffer
   ): Promise<any> {
-    const url = `${this.agent.adminUrl}/issue-credential/send-offer`;
-    const response = await Axios.post(url, data, this.getRequestConfig());
+    logger.debug("Creating new credential exchange");
+    const url = `${this.acaPyUtils.getAdminUrl()}/issue-credential/send-offer`;
+    const response = await Axios.post(
+      url,
+      data,
+      this.acaPyUtils.getRequestConfig()
+    );
     const credExData = response.data as AriesCredentialExchange;
     return {
       credential_exchange_id: credExData.credential_exchange_id,
@@ -146,8 +120,9 @@ export class AriesAgent {
   private async getCredentialExchange(
     id: string
   ): Promise<CredExServiceResponse> {
-    const url = `${this.agent.adminUrl}/issue-credential/records/${id}`;
-    const response = await Axios.get(url, this.getRequestConfig());
+    logger.debug(`Fetching data for credential exchange [${id}]`);
+    const url = `${this.acaPyUtils.getAdminUrl()}/issue-credential/records/${id}`;
+    const response = await Axios.get(url, this.acaPyUtils.getRequestConfig());
     const credExData = response.data as AriesCredentialExchange;
     return {
       credential_exchange_id: credExData.credential_exchange_id,
@@ -159,11 +134,12 @@ export class AriesAgent {
     id: string,
     attributes: AriesCredentialAttribute[]
   ): Promise<CredExServiceResponse> {
-    const url = `${this.agent.adminUrl}/issue-credential/records/${id}/issue`;
+    logger.debug(`Issuing credential on credential exchange [${id}]`);
+    const url = `${this.acaPyUtils.getAdminUrl()}/issue-credential/records/${id}/issue`;
     const response = await Axios.post(
       url,
       { credential_preview: formatCredentialPreview(attributes) },
-      this.getRequestConfig()
+      this.acaPyUtils.getRequestConfig()
     );
     const credExData = response.data as AriesCredentialExchange;
     return {
@@ -172,33 +148,19 @@ export class AriesAgent {
     } as CredExServiceResponse;
   }
 
-  private async publishSchema(schema: SchemaDefinition): Promise<AriesSchema> {
-    const url = `${this.agent.adminUrl}/schemas`;
-    const response = await Axios.post(url, schema, this.getRequestConfig());
-    return response.data as AriesSchema;
-  }
-
-  private async getSchema(id: string): Promise<AriesSchema> {
-    const url = `${this.agent.adminUrl}/schemas/${id}`;
-    const response = await Axios.get(url, this.getRequestConfig());
-    return response.data as AriesSchema;
-  }
-
-  private async getOrCreateCredDef(
-    schema_id: string
-  ): Promise<CredDefServiceResponse> {
-    let credExResponse: CredDefServiceResponse;
-    if (this.credDefs.get(schema_id)) {
-      credExResponse = {
-        credential_definition_id: this.credDefs.get(schema_id) || "",
-      };
-    } else {
-      const url = `${this.agent.adminUrl}/credential-definitions`;
-      const credDef = formatCredentialDefinition(schema_id);
-      const response = await Axios.post(url, credDef, this.getRequestConfig());
-      credExResponse = response.data as CredDefServiceResponse;
-      this.credDefs.set(schema_id, credExResponse.credential_definition_id);
-    }
-    return credExResponse;
+  private async revokeCredential(
+    revocation_id: string,
+    revoc_reg_id: string
+  ): Promise<boolean> {
+    logger.debug(
+      `Attempting revocation for id [${revocation_id}] on registry [${revoc_reg_id}]`
+    );
+    const url = `${this.acaPyUtils.getAdminUrl()}/issue-credential/revoke?cred_rev_id=${revocation_id}&rev_reg_id=${revoc_reg_id}&publish=true`;
+    const response = await Axios.post(
+      url,
+      null,
+      this.acaPyUtils.getRequestConfig()
+    );
+    return response.status === 200;
   }
 }

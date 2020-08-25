@@ -25,7 +25,7 @@ export const mutations: MutationTree<InvitationState> = {
   },
   setInvitation(state: InvitationState, invitation: Invitation) {
     Vue.set(state.invitation, "data", invitation.data);
-    Vue.set(state.invitation, "token", invitation.status);
+    Vue.set(state.invitation, "token", invitation.token);
     Vue.set(state.invitation, "status", invitation.status);
     state.error = false;
     state.statusMessage = "success";

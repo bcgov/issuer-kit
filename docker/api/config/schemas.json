@@ -1,6 +1,23 @@
 [
   {
-    "id": "85459GxjNySJ8HwTTQ4vq7:2:verified_person:1.4.0",
-    "default": true
+    "id": "85459GxjNySJ8HwTTQ4vq7:2:verified_person:1.4.0"
+  },
+  {
+    "schema_name": "verified_person",
+    "schema_version": "0.1.0",
+    "attributes": [
+      "locality",
+      "issued",
+      "birthdate",
+      "postal_code",
+      "region",
+      "family_name",
+      "street_address",
+      "country",
+      "given_names"
+    ],
+    "default": true,
+    "revocable": true,
+    "tag": "issuer-kit-demo"
   }
 ]

@@ -177,7 +177,7 @@ services:
   # Issuer Kit Agent
   #
   agent:
-    image: bcgovimages/aries-cloudagent:py36-1.15-0_0.5.4-beta2
+    image: bcgovimages/aries-cloudagent:py36-1.15-0_0.5.4
     environment:
       - LEDGER_URL=${LEDGER_URL}
       - WALLET_TYPE=${AGENT_STORAGE_WALLET_TYPE}
@@ -193,7 +193,7 @@ services:
       - AGENT_ADMIN_PORT=${AGENT_ADMIN_PORT}
       - AGENT_NAME=${AGENT_NAME}
       - AGENT_ADMIN_API_KEY=${AGENT_ADMIN_API_KEY}
-      - TAILS_SERVER_BASE_URL=${TAILS_SERVER_BASE_URL}
+      - TAILS_SERVER_URL=${TAILS_SERVER_URL}
     networks:
       - issuer_kit
     ports:
@@ -228,7 +228,7 @@ services:
         --admin '0.0.0.0' ${AGENT_ADMIN_PORT} \
         --${AGENT_ADMIN_MODE} \
         --label ${AGENT_NAME} \
-        --tails-server-base-url ${TAILS_SERVER_BASE_URL}",
+        --tails-server-base-url ${TAILS_SERVER_URL}",
       ]
 
   #
@@ -247,7 +247,24 @@ services:
       - ${WALLET_PORT}:${WALLET_PORT}
     volumes:
       - wallet-data:/var/lib/pgsql/data
-  
+
+  tails-server:
+    build:
+      context: https://github.com/bcgov/indy-tails-server.git
+      dockerfile: docker/Dockerfile.tails-server
+    ports:
+      - ${TAILS_SERVER_PORT}:${TAILS_SERVER_PORT}
+    volumes:
+      - tails-storage:/tmp
+    networks:
+      - issuer_kit
+    command: >
+      tails-server
+        --host 0.0.0.0
+        --port $TAILS_SERVER_PORT
+        --storage-path $TAILS_STORAGE_PATH
+        --log-level $LOG_LEVEL
+
   maildev:
     image: djfarrelly/maildev
     networks:
@@ -262,3 +279,4 @@ volumes:
   keycloak-db-data:
   wallet-data:
   db-data:
+  tails-storage:

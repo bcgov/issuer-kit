@@ -245,6 +245,8 @@ objects:
                   value: ${AGENT_BASE_URL}
                 - name: AGENT_LOG_LEVEL
                   value: ${LOG_LEVEL}
+                - name: TAILS_FILES_DIR
+                  value: ${TAILS_FILES_DIR}
                 - name: TAILS_SERVER_BASE_URL
                   value: ${TAILS_SERVER_BASE_URL}
               image:
@@ -255,7 +257,7 @@ objects:
                   protocol: TCP
               volumeMounts:
               - name: ${NAME}${SUFFIX}-tails
-                mountPath: /home/indy/tails
+                mountPath: '${TAILS_FILES_DIR}'
               readinessProbe:
                 timeoutSeconds: 30
                 initialDelaySeconds: 3
@@ -448,6 +450,11 @@ parameters:
   # ===============================================================================
   # Tails Files Configuration
   #--------------------------------------------------------------------------------
+  - name: TAILS_FILES_DIR
+    displayName: Tails File Storage Dir
+    description: The directory where the local copies of the tails files will be stored.
+    required: true
+    value: /home/indy/.indy_client/tails
   - name: TAILS_FILES_VOLUME_CLASS
     displayName: Tails File Storage Volume Class
     description:

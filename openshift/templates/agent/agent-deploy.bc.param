@@ -31,6 +31,7 @@ WALLET_CREDENTIAL_STORE_NAME=identity-kit-agent-wallet-credentials
 WALLET_KEY=[a-zA-Z0-9]{10}
 WALLET_SEED=[a-zA-Z0-9]{32}
 WALLET_DID=[a-zA-Z0-9]{16}
+TAILS_FILES_DIR=/home/indy/.indy_client/tails
 TAILS_FILES_VOLUME_CLASS=netapp-file-standard
 TAILS_FILES_VOLUME_SIZE=1Gi
 TAILS_SERVER_BASE_URL=https://tails-server-test.pathfinder.gov.bc.ca

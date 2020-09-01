@@ -14,7 +14,7 @@ async function sendEmailIfRequired(context: HookContext) {
 
 async function handleRevocation(context: HookContext) {
   if (
-    !context.data.revoked &&
+    context.data.revoked &&
     context.data.revocation_id &&
     context.data.revoc_reg_id
   ) {
@@ -28,6 +28,11 @@ async function handleRevocation(context: HookContext) {
     context.data.revoc_reg_id = undefined;
     context.data.revocation_id = undefined;
     context.data.revocation_history = revocation_history;
+  } else if (
+    !context.data.revoked &&
+    context.data.revocation_id &&
+    context.data.revoc_reg_id
+  ) {
     context.data.issued = false;
   }
   return context;

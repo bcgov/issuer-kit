@@ -51,6 +51,48 @@ objects:
         name: ${NAME}${SUFFIX}
         weight: 100
 
+  - kind: Route
+    apiVersion: v1
+    metadata:
+      name: ${NAME}-admin${SUFFIX}
+      labels:
+        name: ${NAME}${SUFFIX}
+        app: ${APP_NAME}${SUFFIX}
+        app-group: ${APP_GROUP}
+        role: ${ROLE}
+        env: ${TAG_NAME}
+      annotations:
+        haproxy.router.openshift.io/timeout: ${ROUTE_TIMEOUT}
+    spec:
+      host: ${ADMIN_APPLICATION_DOMAIN}
+      port:
+        targetPort: ${NAME}-admin
+      tls:
+        insecureEdgeTerminationPolicy: Redirect
+        termination: edge
+      to:
+        kind: Service
+        name: ${NAME}${SUFFIX}
+        weight: 100
+
+  - kind: PersistentVolumeClaim
+    apiVersion: v1
+    metadata:
+      name: ${NAME}${SUFFIX}-tails
+      labels:
+        name: ${NAME}${SUFFIX}
+        app: ${APP_NAME}${SUFFIX}
+        app-group: ${APP_GROUP}
+        role: ${ROLE}
+        env: ${TAG_NAME}
+    spec:
+      storageClassName: "${TAILS_FILES_VOLUME_CLASS}"
+      accessModes:
+      - ReadWriteMany
+      resources:
+        requests:
+          storage: "${TAILS_FILES_VOLUME_SIZE}"
+
   - kind: Secret
     apiVersion: v1
     metadata:
@@ -107,6 +149,10 @@ objects:
             role: ${ROLE}
             env: ${TAG_NAME}
         spec:
+          volumes:
+            - name: ${NAME}${SUFFIX}-tails
+              persistentVolumeClaim:
+                claimName: ${NAME}${SUFFIX}-tails
           containers:
             - name: ${NAME}${SUFFIX}
               command:
@@ -135,7 +181,8 @@ objects:
                   --admin '0.0.0.0' ${ADMIN_INTERFACE_PORT}
                   $([ ! -z "${AGENT_ADMIN_API_KEY}" ] && echo "--admin-api-key ${AGENT_ADMIN_API_KEY}" || echo "--admin-insecure-mode")
                   --label "${AGENT_NAME}"
-                  --log-level ${AGENT_LOG_LEVEL});
+                  --log-level ${AGENT_LOG_LEVEL})
+                  --tails-server-base-url ${TAILS_SERVER_BASE_URL};
               env:
                 - name: GENESIS_URL
                   value: ${GENESIS_FILE_URL}
@@ -198,12 +245,19 @@ objects:
                   value: ${AGENT_BASE_URL}
                 - name: AGENT_LOG_LEVEL
                   value: ${LOG_LEVEL}
+                - name: TAILS_FILES_DIR
+                  value: ${TAILS_FILES_DIR}
+                - name: TAILS_SERVER_BASE_URL
+                  value: ${TAILS_SERVER_BASE_URL}
               image:
               ports:
                 - containerPort: ${{AGENT_ADMIN_PORT}}
                   protocol: TCP
                 - containerPort: ${{AGENT_HTTP_PORT}}
                   protocol: TCP
+              volumeMounts:
+              - name: ${NAME}${SUFFIX}-tails
+                mountPath: '${TAILS_FILES_DIR}'
               readinessProbe:
                 timeoutSeconds: 30
                 initialDelaySeconds: 3
@@ -324,6 +378,15 @@ parameters:
     description: The exposed hostname that will route to the service, if left blank a value will be defaulted.
     required: false
     value:
+  - name: ADMIN_APPLICATION_DOMAIN
+    displayName: Admin Application Hostname
+    description: The exposed hostname that will route to the admin service endpoint, if left blank a value will be defaulted.
+    required: false
+  - name: ROUTE_TIMEOUT
+    displayName: Route Timeout
+    description: The timeout for the application route.  When this timeout is exceeded the application's route will respond with a 504 Gateway Timeout error.
+    required: true
+    value: 120s
   - name: IMAGE_NAMESPACE
     displayName: Namespace containing application images.
     required: true
@@ -384,6 +447,31 @@ parameters:
     description: The logging level for the agent.
     required: true
     value: WARNING
+  # ===============================================================================
+  # Tails Files Configuration
+  #--------------------------------------------------------------------------------
+  - name: TAILS_FILES_DIR
+    displayName: Tails File Storage Dir
+    description: The directory where the local copies of the tails files will be stored.
+    required: true
+    value: /home/indy/.indy_client/tails
+  - name: TAILS_FILES_VOLUME_CLASS
+    displayName: Tails File Storage Volume Class
+    description:
+      The class of the volume; gluster-file, gluster-block, gluster-file-db, netapp-file-standard, netapp-block-standard.
+    required: true
+    value: netapp-file-standard
+  - name: TAILS_FILES_VOLUME_SIZE
+    displayName: Tails File Storage Dir
+    description:
+      The size of the persistent volume , e.g. 512Mi, 1Gi, 2Gi.
+    required: true
+    value: 1Gi
+  - name: TAILS_SERVER_BASE_URL
+    displayName: Tails Server Base Url
+    description: The base URL for the Tails Server.
+    required: true
+    value: https://tails-server-dev.pathfinder.gov.bc.ca
   # ===============================================================================
   # Wallet Configuration
   #--------------------------------------------------------------------------------

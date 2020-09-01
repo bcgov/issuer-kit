@@ -2,12 +2,12 @@ export enum ServiceAction {
   Create,
   Fetch,
   Issue,
+  Revoke
 }
 
 export enum ServiceType {
   Connection,
   CredEx,
-  CredDef,
 }
 
 export enum WebhookTopic {

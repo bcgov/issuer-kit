@@ -150,7 +150,7 @@ EOF
 # -----------------------------------------------------------------------------------------------------------------
 # Default Settings:
 # -----------------------------------------------------------------------------------------------------------------
-DEFAULT_CONTAINERS="db agent wallet keycloak keycloak-db maildev"
+DEFAULT_CONTAINERS="db agent wallet keycloak keycloak-db maildev tails-server"
 PROD_CONTAINERS="api issuer-admin issuer-web"
 DEV_CONTAINERS="api-dev issuer-admin-dev issuer-web-dev"
 # -----------------------------------------------------------------------------------------------------------------
@@ -221,6 +221,7 @@ configureEnvironment() {
   export COMPOSE_PROJECT_NAME="${COMPOSE_PROJECT_NAME:-issuer-kit}"
   export S2I_SCRIPTS_PATH=${S2I_SCRIPTS_PATH:-/usr/libexec/s2i}
   export DEBUG=${DEBUG}
+  export LOG_LEVEL=${LOG_LEVEL:-DEBUG}
 
   # issuer-admin
   export ISSUER_ADMIN_PORT=4250
@@ -266,6 +267,11 @@ configureEnvironment() {
   export WALLET_PASSWORD="DB_PASSWORD"
   export WALLET_DATABASE="issuer_kit"
   export WALLET_ADMIN_PASSWORD="mysecretpassword"
+
+  # tails-server
+  export TAILS_SERVER_PORT=6543
+  export TAILS_STORAGE_PATH=${STORAGE_PATH:-"/tmp/tails-files"}
+  export TAILS_SERVER_URL=${TAILS_SERVER_URL:-http://$DOCKERHOST:6543}
 
   # agent
   export LEDGER_URL=${LEDGER_URL-http://$DOCKERHOST:9000}
@@ -423,6 +429,7 @@ case "${COMMAND}" in
   start|start|up)
     unset DEV_MODE
     unset LEDGER_URL
+    unset TAILS_SERVER_URL
     unset NGROK_AGENT_ENDPOINT
     unset AGENT_WEBHOOK_URL
     
@@ -433,6 +440,7 @@ case "${COMMAND}" in
     ;;
   start-dev)
     unset LEDGER_URL
+    unset TAILS_SERVER_URL
     unset NGROK_AGENT_ENDPOINT
 
     export DEV_MODE=true
@@ -450,6 +458,7 @@ case "${COMMAND}" in
     unset DEV_MODE
     unset AGENT_WEBHOOK_URL
     export LEDGER_URL="http://test.bcovrin.vonx.io"
+    export TAILS_SERVER_URL="https://tails-server-dev.pathfinder.gov.bc.ca"
     if [ -z "$NGROK_AGENT_ENDPOINT" ]; then
       isNgrokInstalled
       export NGROK_AGENT_ENDPOINT=$(${CURL_EXE} http://localhost:4040/api/tunnels | ${JQ_EXE} --raw-output '.tunnels | map(select(.name | contains("issuer-agent"))) | .[0] | .public_url')

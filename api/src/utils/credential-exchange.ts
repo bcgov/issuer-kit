@@ -3,7 +3,11 @@ import {
   AriesCredentialAttribute,
   AriesCredentialOffer,
   AriesCredentialPreview,
+  CredExServiceResponse,
 } from "../models/credential-exchange";
+import { HookContext } from "@feathersjs/feathers";
+import { ServiceType, ServiceAction } from "../models/enums";
+import { GeneralError } from "@feathersjs/errors";
 
 export function formatCredentialOffer(
   connection_id: string,
@@ -27,14 +31,21 @@ export function formatCredentialOffer(
 export function formatCredentialPreview(
   attributes: AriesCredentialAttribute[]
 ): AriesCredentialPreview {
-  const issued = {
-    name: "issued",
-    "mime-type": "text/plain",
-    value: moment().toISOString(),
-  } as AriesCredentialAttribute;
   return {
     "@type":
       "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/issue-credential/1.0/credential-preview",
-    attributes: [...attributes, issued],
+    attributes: attributes,
   };
+}
+
+export async function revokeCredential(context: HookContext) {
+  await context.app.service("aries-agent").create({
+    service: ServiceType.CredEx,
+    action: ServiceAction.Revoke,
+    data: {
+      revocation_id: context.data.revocation_id,
+      revoc_reg_id: context.data.revoc_reg_id,
+    },
+  });
+  return context;
 }

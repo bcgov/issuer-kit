@@ -94,7 +94,7 @@ export default class Connect extends Vue {
       ).then(() => {
         this.issued = true;
         // silently sign out of the app
-        this.$store.commit("oidcStore/unsetOidcAuth");
+        this.$store.dispatch("oidcStore/signOutOidcSilent");
 
         // remove data from localStorage
         localStorage.removeItem("issuer-invitation");

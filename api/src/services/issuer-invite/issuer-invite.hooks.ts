@@ -1,9 +1,9 @@
 import { HookContext } from "@feathersjs/feathers";
 import moment from "moment";
 import { v4 as uuidv4 } from "uuid";
-import { sendEmail } from "../../utils/email";
-import { searchRegex, validateEmail } from "../../utils/hooks";
 import { revokeCredential } from "../../utils/credential-exchange";
+import { sendEmail } from "../../utils/email";
+import { canDeleteInvite, searchRegex, validateEmail } from "../../utils/hooks";
 
 async function sendEmailIfRequired(context: HookContext) {
   if (!context.data.issued && !context.data.expired) {
@@ -84,7 +84,7 @@ export default {
         return context;
       },
     ],
-    remove: [],
+    remove: [canDeleteInvite],
   },
 
   after: {

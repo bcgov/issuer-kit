@@ -181,8 +181,8 @@ objects:
                   --admin '0.0.0.0' ${ADMIN_INTERFACE_PORT}
                   $([ ! -z "${AGENT_ADMIN_API_KEY}" ] && echo "--admin-api-key ${AGENT_ADMIN_API_KEY}" || echo "--admin-insecure-mode")
                   --label "${AGENT_NAME}"
-                  --log-level ${AGENT_LOG_LEVEL})
-                  --tails-server-base-url ${TAILS_SERVER_BASE_URL};
+                  --log-level ${AGENT_LOG_LEVEL}
+                  --tails-server-base-url ${TAILS_SERVER_BASE_URL});
               env:
                 - name: GENESIS_URL
                   value: ${GENESIS_FILE_URL}

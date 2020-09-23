@@ -1,4 +1,6 @@
+import { MethodNotAllowed } from "@feathersjs/errors";
 import { HookContext } from "@feathersjs/feathers";
+import { Db, ObjectId } from "mongodb";
 
 export async function validateEmail(context: HookContext) {
   const emailRegexp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -17,4 +19,22 @@ export async function searchRegex(context: HookContext) {
   }
   context.params.query = query;
   return context;
+}
+
+export async function canDeleteInvite(context: HookContext) {
+  const client: Promise<Db> = context.app.get("mongoClient");
+
+  return await client.then(async (db) => {
+    const invite = await db
+      .collection("issuer-invite")
+      .findOne({ _id: new ObjectId(context.id) });
+
+    if (invite.revoked === undefined) {
+      return context;
+    } else {
+      throw new MethodNotAllowed(
+        "Cannot delete invites for revocable credentials"
+      );
+    }
+  });
 }

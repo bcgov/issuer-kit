@@ -7,7 +7,7 @@
   "authentication": {
     "enabled": true,
     "oidcSettings": {
-      "authority": "https://sso-test.pathfinder.gov.bc.ca/auth/realms/gzyg46lx",
+      "authority": "https://test.oidc.gov.bc.ca/auth/realms/gzyg46lx",
       "clientId": "identity-kit-public-test",
       "redirectUri": "https://identity-kit-devex-von-test.pathfinder.gov.bc.ca/oidc-callback",
       "redirect_uri": "https://identity-kit-devex-von-test.pathfinder.gov.bc.ca/oidc-callback-error",

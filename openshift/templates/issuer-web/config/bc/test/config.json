@@ -23,6 +23,11 @@
   },
   "issuedSuccess": {
     "successText": "To try out your new credential:",
-    "links": []
+    "links": [
+      {
+        "url": "https://pctftest-test.vonx.io",
+        "description": "Pan-Canadian Trust Framework Chat"
+      }
+    ]
   }
 }

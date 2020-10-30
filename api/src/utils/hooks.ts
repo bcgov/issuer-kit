@@ -1,6 +1,13 @@
-import { MethodNotAllowed } from "@feathersjs/errors";
+import {
+  Forbidden,
+  MethodNotAllowed,
+  NotAuthenticated,
+} from "@feathersjs/errors";
 import { HookContext } from "@feathersjs/feathers";
+import { decode, verify } from "jsonwebtoken";
+import jwks, { ClientOptions, JwksClient, SigningKey } from "jwks-rsa";
 import { Db, ObjectId } from "mongodb";
+import logger from "../logger";
 
 export async function validateEmail(context: HookContext) {
   const emailRegexp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -37,4 +44,51 @@ export async function canDeleteInvite(context: HookContext) {
       );
     }
   });
+}
+
+export async function verifyJWT(context: HookContext) {
+  const authHeader = context.params.headers?.authorization as string;
+  if (!authHeader) {
+    return Promise.reject(new Forbidden("The authorization header is missing"));
+  }
+  const token = authHeader.split(" ")[1];
+
+  // fetch public key from JWKS url and verify token
+  const jwksOptions = {
+    jwksUri: context.app.get("authentication").jwksUri,
+  } as ClientOptions;
+  const client = jwks(jwksOptions) as JwksClient;
+  const keys = (await client.getSigningKeysAsync()) as SigningKey[];
+
+  let decoded;
+  try {
+    decoded = verify(token, keys[0].getPublicKey(), {
+      algorithms: context.app.get("authentication").algorithms,
+    });
+  } catch (error) {
+    throw new NotAuthenticated(`Authentication failed: ${error.message}`);
+  }
+  return context;
+}
+
+export function verifyJWTRoles(roles: string[]) {
+  return async (context: HookContext) => {
+    const authHeader = context.params.headers?.authorization as string;
+    if (!authHeader) {
+      throw new Forbidden("The authorization header is missing");
+    }
+    const token = authHeader.split(" ")[1];
+
+    const decoded = decode(token) as {
+      [key: string]: any;
+    };
+    const tokenRoles = decoded.roles as string[];
+    roles.forEach((role: string) => {
+      if (!tokenRoles.includes(role)) {
+        logger.debug(`Required role ${role} is missing!`);
+        throw new Forbidden("The user does not have all the required roles");
+      }
+    });
+    return context;
+  };
 }

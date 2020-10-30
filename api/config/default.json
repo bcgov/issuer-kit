@@ -37,5 +37,9 @@
     "offerComment": "Credential offer from Issuer Name",
     "validityDays": -1,
     "multiUse": false
+  },
+  "authentication": {
+    "jwksUri": "http://keycloak:8080/auth/realms/issuer-kit/protocol/openid-connect/certs",
+    "algorithms": ["RS256"]
   }
 }

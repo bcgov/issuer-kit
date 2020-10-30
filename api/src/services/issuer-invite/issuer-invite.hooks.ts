@@ -3,7 +3,13 @@ import moment from "moment";
 import { v4 as uuidv4 } from "uuid";
 import { revokeCredential } from "../../utils/credential-exchange";
 import { sendEmail } from "../../utils/email";
-import { canDeleteInvite, searchRegex, validateEmail } from "../../utils/hooks";
+import {
+  canDeleteInvite,
+  searchRegex,
+  validateEmail,
+  verifyJWT,
+  verifyJWTRoles,
+} from "../../utils/hooks";
 
 async function sendEmailIfRequired(context: HookContext) {
   if (!context.data.issued && !context.data.expired) {
@@ -40,9 +46,7 @@ async function handleRevocation(context: HookContext) {
 
 export default {
   before: {
-    all: [
-      // TODO: sanitize data
-    ],
+    all: [verifyJWT, verifyJWTRoles(["admin"])],
     find: [searchRegex],
     get: [],
     create: [

@@ -109,3 +109,36 @@ export function setRequestUser(field: string) {
     return context;
   };
 }
+
+export async function validateCredentialRequest(context: HookContext) {
+  const authHeader = context.params.headers?.authorization as string;
+  const idToken = authHeader.split(" ")[1];
+
+  // fetch public key from JWKS url and verify token
+  const jwksOptions = {
+    jwksUri: context.app.get("authentication").jwksUri,
+  } as ClientOptions;
+  const client = jwks(jwksOptions) as JwksClient;
+  const keys = (await client.getSigningKeysAsync()) as SigningKey[];
+
+  let decoded;
+  try {
+    decoded = verify(idToken, keys[0].getPublicKey(), {
+      algorithms: context.app.get("authentication").algorithms,
+    });
+  } catch (error) {
+    decoded = undefined;
+  }
+
+  const inviteToken = context.data.token;
+  const requestedSchema = context.app
+    .get("public-schemas")
+    .get(context.data.schema_id || "default");
+
+  if (!decoded || !inviteToken || !requestedSchema) {
+    throw new Forbidden(
+      "The requested action could not be completed. Please check your settings and ensure you are either authenticated or requesting a public schema."
+    );
+  }
+  return context;
+}

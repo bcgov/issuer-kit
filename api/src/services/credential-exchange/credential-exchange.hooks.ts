@@ -1,10 +1,11 @@
 import { HookContext } from "@feathersjs/feathers";
+import { validateCredentialRequest } from "../../utils/hooks";
 
 export default {
   before: {
     all: [],
     get: [],
-    create: [],
+    create: [validateCredentialRequest],
   },
 
   after: {

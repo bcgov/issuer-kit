@@ -92,3 +92,20 @@ export function verifyJWTRoles(roles: string[]) {
     return context;
   };
 }
+
+export function setRequestUser(field: string) {
+  return async (context: HookContext) => {
+    const authHeader = context.params.headers?.authorization as string;
+    if (!authHeader) {
+      throw new Forbidden("The authorization header is missing");
+    }
+    const token = authHeader.split(" ")[1];
+
+    const decoded = decode(token) as {
+      [key: string]: any;
+    };
+    context.data[field] = decoded.preferred_username;
+    logger.debug(`${field} set to ${decoded.preferred_username}`);
+    return context;
+  };
+}

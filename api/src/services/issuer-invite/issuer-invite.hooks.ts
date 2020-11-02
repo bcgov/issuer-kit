@@ -6,6 +6,7 @@ import { sendEmail } from "../../utils/email";
 import {
   canDeleteInvite,
   searchRegex,
+  setRequestUser,
   validateEmail,
   verifyJWT,
   verifyJWTRoles,
@@ -50,6 +51,7 @@ export default {
     find: [searchRegex],
     get: [],
     create: [
+      setRequestUser("created_by"),
       validateEmail,
       async (context: HookContext) => {
         context.data.token = uuidv4();
@@ -63,6 +65,7 @@ export default {
       },
     ],
     update: [
+      setRequestUser("updated_by"),
       validateEmail,
       handleRevocation,
       async (context: HookContext) => {
@@ -76,6 +79,7 @@ export default {
       },
     ],
     patch: [
+      setRequestUser("updated_by"),
       validateEmail,
       handleRevocation,
       async (context: HookContext) => {

@@ -97,8 +97,6 @@ export default class DataCollection extends Vue {
   private issuerInvite!: IssuerInvite;
   private inviteLink = "";
 
-  private currentUser!: string;
-
   $refs!: {
     form: DataCollectionType;
   };
@@ -114,10 +112,6 @@ export default class DataCollection extends Vue {
   created() {
     SurveyVue.StylesManager.applyTheme(this.themeName);
     this.registerSurveyFunctions();
-
-    this.$store.dispatch("oidcStore/getOidcUser").then(user => {
-      this.currentUser = user.profile.preferred_username;
-    });
 
     this.issuerInvite = new IssuerInvite();
     this.issuerInvite.issued = false;
@@ -147,12 +141,10 @@ export default class DataCollection extends Vue {
     if (!this.$refs.form.validate() || !this.survey.completeLastPage()) {
       return;
     } else {
-      this.issuerInvite.created_by = this.currentUser; // eslint-disable-line @typescript-eslint/camelcase
       this.issuerInvite.data = this.survey.data;
 
       let actionPromise;
       if (this.editMode) {
-        this.issuerInvite.updated_by = this.currentUser; // eslint-disable-line @typescript-eslint/camelcase
         actionPromise = this.$store.dispatch(
           "issuerInvite/updateInvite",
           this.issuerInvite

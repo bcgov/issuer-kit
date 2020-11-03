@@ -1,6 +1,7 @@
 [
   {
     "default": true,
+    "public": false,
     "schema_name": "verified_person",
     "schema_version": "1.4.0",
     "attributes": [

@@ -1,0 +1,45 @@
+{
+  "host": "localhost",
+  "port": "PORT",
+  "public": "../public/",
+  "paginate": {
+    "default": 10,
+    "max": 50
+  },
+  "mongodb": {
+    "host": "DB_SERVICE",
+    "db": "DB_NAME",
+    "port": "DB_PORT",
+    "user": "DB_USER",
+    "password": "DB_PASSWORD"
+  },
+  "agent": {
+    "adminUrl": "AGENT_ADMIN_URL",
+    "adminApiKey": "AGENT_ADMIN_API_KEY"
+  },
+  "smtp": {
+    "host": "SMTP_HOST",
+    "port": "SMTP_PORT",
+    "secure": false,
+    "tls": {
+      "rejectUnauthorized": false
+    }
+  },
+  "emailSettings": {
+    "sender": "ADMIN_EMAIL",
+    "subject": "EMAIL_SUBJECT"
+  },
+  "publicSite": {
+    "url": "PUBLIC_SITE_URL"
+  },
+  "issuer": {
+    "name": "Issuer Name",
+    "offerComment": "Credential offer from Issuer Name",
+    "validityDays": -1,
+    "multiUse": true
+  },
+  "authentication": {
+    "jwksUri": "https://test.oidc.gov.bc.ca/auth/realms/gzyg46lx/protocol/openid-connect/certs",
+    "algorithms": ["RS256"]
+  }
+}

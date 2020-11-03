@@ -37,5 +37,9 @@
     "offerComment": "Credential offer from Issuer Name",
     "validityDays": -1,
     "multiUse": true
+  },
+  "authentication": {
+    "jwksUri": "https://oidc.gov.bc.ca/auth/realms/gzyg46lx/protocol/openid-connect/certs",
+    "algorithms": ["RS256"]
   }
 }

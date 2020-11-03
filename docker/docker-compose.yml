@@ -162,6 +162,8 @@ services:
       - 8180:8080
     depends_on:
       - keycloak-db
+    networks:
+      - issuer_kit
 
   #
   # keycloak-db
@@ -174,6 +176,8 @@ services:
       POSTGRESQL_DATABASE: ${KEYCLOAK_DB_NAME}
     volumes:
       - keycloak-db-data:/var/lib/pgsql/data
+    networks:
+      - issuer_kit
 
   #
   # Issuer Kit Agent

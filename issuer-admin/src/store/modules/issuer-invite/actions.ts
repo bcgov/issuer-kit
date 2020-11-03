@@ -34,9 +34,15 @@ export const actions: ActionTree<IssuerInviteState, RootState> = {
     if (options.searchString) {
       searchParam = `&email=${options.searchString}`;
     }
+    const idToken = context.rootGetters["oidcStore/oidcIdToken"];
     return new Promise<IssuerInviteListServiceResponse>((resolve, reject) => {
       Axios.get(
-        `${config.app.apiServer.url}/issuer-invite?${skipParam}${limitParam}${sortParam}${searchParam}`
+        `${config.app.apiServer.url}/issuer-invite?${skipParam}${limitParam}${sortParam}${searchParam}`,
+        {
+          headers: {
+            authorization: `Bearer ${idToken}`
+          }
+        }
       )
         .then(response => {
           const inviteList = response.data as IssuerInviteListServiceResponse;
@@ -55,8 +61,13 @@ export const actions: ActionTree<IssuerInviteState, RootState> = {
     const config = context.rootGetters[
       "configuration/getConfiguration"
     ] as Configuration;
+    const idToken = context.rootGetters["oidcStore/oidcIdToken"];
     return new Promise<boolean>((resolve, reject) => {
-      Axios.delete(`${config.app.apiServer.url}/issuer-invite/${id}`)
+      Axios.delete(`${config.app.apiServer.url}/issuer-invite/${id}`, {
+        headers: {
+          authorization: `Bearer ${idToken}`
+        }
+      })
         .then(() => {
           resolve(true);
         })
@@ -73,8 +84,13 @@ export const actions: ActionTree<IssuerInviteState, RootState> = {
     const config = context.rootGetters[
       "configuration/getConfiguration"
     ] as Configuration;
+    const idToken = context.rootGetters["oidcStore/oidcIdToken"];
     return new Promise<boolean>((resolve, reject) => {
-      Axios.post(`${config.app.apiServer.url}/issuer-invite`, issuerInvite)
+      Axios.post(`${config.app.apiServer.url}/issuer-invite`, issuerInvite, {
+        headers: {
+          authorization: `Bearer ${idToken}`
+        }
+      })
         .then(() => {
           resolve(true);
         })
@@ -91,8 +107,13 @@ export const actions: ActionTree<IssuerInviteState, RootState> = {
     const config = context.rootGetters[
       "configuration/getConfiguration"
     ] as Configuration;
+    const idToken = context.rootGetters["oidcStore/oidcIdToken"];
     return new Promise<IssuerInvite>((resolve, reject) => {
-      Axios.get(`${config.app.apiServer.url}/issuer-invite/${id}`)
+      Axios.get(`${config.app.apiServer.url}/issuer-invite/${id}`, {
+        headers: {
+          authorization: `Bearer ${idToken}`
+        }
+      })
         .then(response => {
           const invite = response.data as IssuerInvite;
           resolve(invite);
@@ -122,10 +143,16 @@ export const actions: ActionTree<IssuerInviteState, RootState> = {
       updated_by: issuerInvite.updated_by // eslint-disable-line @typescript-eslint/camelcase
     };
 
+    const idToken = context.rootGetters["oidcStore/oidcIdToken"];
     return new Promise<boolean>((resolve, reject) => {
       Axios.patch(
         `${config.app.apiServer.url}/issuer-invite/${issuerInvite._id}`,
-        sanitizedInvite
+        sanitizedInvite,
+        {
+          headers: {
+            authorization: `Bearer ${idToken}`
+          }
+        }
       )
         .then(() => {
           resolve(true);

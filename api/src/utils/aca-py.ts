@@ -67,7 +67,8 @@ export class AcaPyUtils {
           // Already published to ledger
           schema = await schemaUtils.fetchSchema(
             schemaDef.id,
-            schemaDef.default
+            schemaDef.default,
+            schemaDef.public
           );
         } else {
           // Register to the ledger

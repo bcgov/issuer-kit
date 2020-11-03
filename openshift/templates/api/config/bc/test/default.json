@@ -39,7 +39,7 @@
     "multiUse": true
   },
   "authentication": {
-    "jwksUri": "http://keycloak:8080/auth/realms/issuer-kit/protocol/openid-connect/certs",
+    "jwksUri": "https://test.oidc.gov.bc.ca/auth/realms/gzyg46lx/protocol/openid-connect/certs",
     "algorithms": ["RS256"]
   }
 }

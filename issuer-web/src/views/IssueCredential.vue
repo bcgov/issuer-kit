@@ -76,9 +76,11 @@ export default class Connect extends Vue {
   private successText = "";
   private successLinks = new Array<any>();
   private cancelTokenSource!: CancelTokenSource;
+  private idToken!: string;
 
   created() {
     this.cancelTokenSource = Axios.CancelToken.source();
+    this.idToken = this.$store.getters["oidcStore/oidcIdToken"];
   }
 
   mounted() {
@@ -128,7 +130,10 @@ export default class Connect extends Vue {
     return await Axios.get(
       `${config.apiServer.url}/credential-exchange/${credExId}`,
       {
-        cancelToken: this.cancelTokenSource.token
+        cancelToken: this.cancelTokenSource.token,
+        headers: {
+          authorization: `Bearer ${this.idToken}`
+        }
       }
     ).finally(() => {
       Axios.interceptors.response.eject(retryInterceptor);
@@ -153,7 +158,10 @@ export default class Connect extends Vue {
       schema_id: config.credentials?.schema_id // eslint-disable-line @typescript-eslint/camelcase
     };
     return Axios.post(`${config.apiServer.url}/credential-exchange/`, data, {
-      cancelToken: this.cancelTokenSource.token
+      cancelToken: this.cancelTokenSource.token,
+      headers: {
+        authorization: `Bearer ${this.idToken}`
+      }
     });
   }
 }

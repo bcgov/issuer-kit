@@ -15,6 +15,7 @@
     ],
     "default": true,
     "revocable": true,
-    "tag": "issuer-kit-dev"
+    "tag": "issuer-kit-dev",
+    "public": true
   }
 ]

@@ -1,9 +1,9 @@
+import { Application } from "@feathersjs/express";
 import Axios from "axios";
 import logger from "../logger";
+import { UndefinedAppError } from "../models/errors";
 import { AriesSchema, SchemaDefinition } from "../models/schema";
 import { AcaPyUtils } from "./aca-py";
-import { Application } from "@feathersjs/express";
-import { UndefinedAppError } from "../models/errors";
 
 export class SchemaUtils {
   private static instance: SchemaUtils;
@@ -13,6 +13,7 @@ export class SchemaUtils {
   private constructor(app: Application) {
     this.app = app;
     this.app.set("schemas", new Map<string, AriesSchema>());
+    this.app.set("public-schemas", new Map<string, AriesSchema>());
     this.utils = AcaPyUtils.getInstance(app);
   }
 
@@ -29,8 +30,28 @@ export class SchemaUtils {
     return SchemaUtils.instance;
   }
 
-  private addSchema(id: string, schema: AriesSchema) {
-    this.app.get("schemas").set(id, schema);
+  private storeSchema(
+    schema: AriesSchema,
+    isDefault = false,
+    isPublic = false
+  ) {
+    this.app.get("schemas").set(schema.schema_id || schema.schema.id, schema);
+
+    if (isDefault) {
+      // Set default schema used by issuer
+      this.app.get("schemas").set("default", schema);
+      logger.debug(`Schema ${JSON.stringify(schema)} stored as [default] `);
+    }
+    if (isPublic) {
+      // Add schema to list of schemas that can be used without authentication
+      this.app
+        .get("public-schemas")
+        .set(schema.schema_id || schema.schema.id, schema);
+      logger.debug(`Schema ${JSON.stringify(schema)} stored as [public] `);
+    }
+    if (isDefault && isPublic) {
+      this.app.get("public-schemas").set("default", schema);
+    }
   }
 
   async publishSchema(schema: SchemaDefinition): Promise<AriesSchema> {
@@ -43,18 +64,15 @@ export class SchemaUtils {
     );
     const schemaResponse = response.data as AriesSchema;
     logger.debug(`Published schema: ${JSON.stringify(schemaResponse)}`);
-    this.addSchema(
-      schemaResponse.schema_id || schemaResponse.schema.id,
-      schemaResponse
-    );
-    if (schema.default) {
-      // Set default schema used by issuer
-      this.addSchema("default", schemaResponse);
-    }
+    this.storeSchema(schemaResponse, schema.default, schema.public);
     return Promise.resolve(schemaResponse);
   }
 
-  async fetchSchema(id: string, isDefault = false): Promise<AriesSchema> {
+  async fetchSchema(
+    id: string,
+    isDefault = false,
+    isPublic = false
+  ): Promise<AriesSchema> {
     const url = `${this.utils.getAdminUrl()}/schemas/${id}`;
     logger.debug(`Fetching schema with id ${id} from ledger.`);
     const response = await Axios.get(url, this.utils.getRequestConfig());
@@ -67,11 +85,7 @@ export class SchemaUtils {
     }
 
     logger.debug(`Fetched schema: ${JSON.stringify(schemaResponse)}`);
-    this.addSchema(schemaResponse.schema.id, schemaResponse);
-    if (isDefault) {
-      // Set default schema used by issuer
-      this.addSchema("default", schemaResponse);
-    }
+    this.storeSchema(schemaResponse, isDefault, isPublic);
 
     return Promise.resolve(schemaResponse);
   }

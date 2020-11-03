@@ -397,6 +397,36 @@
           ]
         ]
       }
+    },
+    {
+      "kind": "NetworkSecurityPolicy",
+      "apiVersion": "secops.pathfinder.gov.bc.ca/v1alpha1",
+      "metadata": {
+        "name": "${NAME}${SUFFIX}-to-external-network",
+        "labels": {
+          "name": "${NAME}${SUFFIX}-to-external-network",
+          "app": "${APP_NAME}${SUFFIX}",
+          "app-group": "${APP_GROUP}",
+          "role": "${ROLE}",
+          "env": "${TAG_NAME}"
+        }
+      },
+      "spec": {
+        "description": "Allow the controller to access the internet.\n",
+        "source": [
+          [
+            "role=${ROLE}",
+            "app=${APP_NAME}${SUFFIX}",
+            "env=${TAG_NAME}",
+            "$namespace=${NAMESPACE_NAME}-${TAG_NAME}"
+          ]
+        ],
+        "destination": [
+          [
+            "ext:network=any"
+          ]
+        ]
+      }
     }
   ],
   "parameters": [

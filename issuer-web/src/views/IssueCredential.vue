@@ -76,7 +76,7 @@ export default class Connect extends Vue {
   private successText = "";
   private successLinks = new Array<any>();
   private cancelTokenSource!: CancelTokenSource;
-  private idToken;
+  private idToken!: string;
 
   created() {
     this.cancelTokenSource = Axios.CancelToken.source();

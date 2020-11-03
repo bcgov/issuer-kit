@@ -49,6 +49,9 @@ export class SchemaUtils {
         .set(schema.schema_id || schema.schema.id, schema);
       logger.debug(`Schema ${JSON.stringify(schema)} stored as [public] `);
     }
+    if (isDefault && isPublic) {
+      this.app.get("public-schemas").set("default", schema);
+    }
   }
 
   async publishSchema(schema: SchemaDefinition): Promise<AriesSchema> {

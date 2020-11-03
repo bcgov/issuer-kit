@@ -135,7 +135,7 @@ export async function validateCredentialRequest(context: HookContext) {
     .get("public-schemas")
     .get(context.data.schema_id || "default");
 
-  if (!decoded || !inviteToken || !requestedSchema) {
+  if (!decoded && !inviteToken && !requestedSchema) {
     throw new Forbidden(
       "The requested action could not be completed. Please check your settings and ensure you are either authenticated or requesting a public schema."
     );

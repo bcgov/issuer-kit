@@ -17,7 +17,8 @@
       "given_names"
     ],
     "default": true,
-    "revocable": true,
-    "tag": "issuer-kit-demo"
+    "revocable": false,
+    "tag": "issuer-kit-demo",
+    "public": false
   }
 ]

@@ -95,6 +95,12 @@ Most of the configuration file is fairly simple, the following are the setting g
 
   * `multiUse`: determines wether a single invite can e used multiple times, or it will be disabled after the first credential is successfully issued.
 
+* `authentication`: an object holding configuration settings for the OIDC authentication service
+
+  * `jwksUri`: the JWKS uri for the service to be used when verifying id tokens
+
+  * `algorithms`: an array containing one (or more) encryption algorithms supported by the authentication server
+
 #### Schemas
 
 Each issuer APi/controller can be used to issue several different credentials. The schemas determining such credentials are configured in `schemas.json`.
@@ -117,7 +123,8 @@ Example:
       "attr3"
     ],
     "revocable": true,
-    "tag": "my-custom-tag
+    "tag": "my-custom-tag,
+    "public": true
   }
 ]
 ```
@@ -129,6 +136,8 @@ Example:
 * `revocable`: when set to `true`, a revocation registry will be generated and published, and the admin UI will display revocation controls once the credential has been issued.
 
 * `tag`: this setting defines a custom tag to be applied when publishing a new credential definition for that schema.
+
+* `public`: when set to `true`, the issuer will receive (and fulfill) credential requests for the specified schema id (or default, if not specified and the default schema is set to public). Otherwise, to successfully request a credential teh user will either need to be authenticated via invite or by signing-in using an Identity Provider (see the relevant settings in the configuration for the issuer web application).
 
 #### Invite email
 

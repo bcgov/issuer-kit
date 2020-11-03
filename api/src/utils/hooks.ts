@@ -111,6 +111,7 @@ export function setRequestUser(field: string) {
 }
 
 export async function validateCredentialRequest(context: HookContext) {
+  const dbClient = (await context.app.get("mongoClient")) as Db;
   const authHeader = context.params.headers?.authorization as string;
   const idToken = authHeader.split(" ")[1];
 
@@ -118,8 +119,8 @@ export async function validateCredentialRequest(context: HookContext) {
   const jwksOptions = {
     jwksUri: context.app.get("authentication").jwksUri,
   } as ClientOptions;
-  const client = jwks(jwksOptions) as JwksClient;
-  const keys = (await client.getSigningKeysAsync()) as SigningKey[];
+  const oidcClient = jwks(jwksOptions) as JwksClient;
+  const keys = (await oidcClient.getSigningKeysAsync()) as SigningKey[];
 
   let decoded;
   try {
@@ -130,7 +131,9 @@ export async function validateCredentialRequest(context: HookContext) {
     decoded = undefined;
   }
 
-  const inviteToken = context.data.token;
+  const inviteToken = await dbClient
+    .collection("issuer-invite")
+    .findOne({ token: context.data.token });
   const requestedSchema = context.app
     .get("public-schemas")
     .get(context.data.schema_id || "default");

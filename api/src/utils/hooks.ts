@@ -1,8 +1,4 @@
-import {
-  Forbidden,
-  MethodNotAllowed,
-  NotAuthenticated,
-} from "@feathersjs/errors";
+import { Forbidden, MethodNotAllowed } from "@feathersjs/errors";
 import { HookContext } from "@feathersjs/feathers";
 import { decode, verify } from "jsonwebtoken";
 import jwks, { ClientOptions, JwksClient, SigningKey } from "jwks-rsa";
@@ -47,38 +43,25 @@ export async function canDeleteInvite(context: HookContext) {
 }
 
 export async function verifyJWT(context: HookContext) {
-  const authHeader = context.params.headers?.authorization as string;
-  if (!authHeader) {
-    return Promise.reject(new Forbidden("The authorization header is missing"));
+  const token = extractIdToken(
+    context.params.headers?.authorization as string
+  );
+  if (!token) {
+    throw new Forbidden("The authorization header is missing");
   }
-  const token = authHeader.split(" ")[1];
-
-  // fetch public key from JWKS url and verify token
-  const jwksOptions = {
-    jwksUri: context.app.get("authentication").jwksUri,
-  } as ClientOptions;
-  const client = jwks(jwksOptions) as JwksClient;
-  const keys = (await client.getSigningKeysAsync()) as SigningKey[];
-
-  let decoded;
-  try {
-    decoded = verify(token, keys[0].getPublicKey(), {
-      algorithms: context.app.get("authentication").algorithms,
-    });
-  } catch (error) {
-    throw new NotAuthenticated(`Authentication failed: ${error.message}`);
-  }
+  const keys = await getAuthSigningKeys(context);
+  verifyIdToken(token, keys, context);
   return context;
 }
 
 export function verifyJWTRoles(roles: string[]) {
   return async (context: HookContext) => {
-    const authHeader = context.params.headers?.authorization as string;
-    if (!authHeader) {
+    const token = extractIdToken(
+      context.params.headers?.authorization as string
+    );
+    if (!token) {
       throw new Forbidden("The authorization header is missing");
     }
-    const token = authHeader.split(" ")[1];
-
     const decoded = decode(token) as {
       [key: string]: any;
     };
@@ -95,12 +78,12 @@ export function verifyJWTRoles(roles: string[]) {
 
 export function setRequestUser(field: string) {
   return async (context: HookContext) => {
-    const authHeader = context.params.headers?.authorization as string;
-    if (!authHeader) {
+    const token = extractIdToken(
+      context.params.headers?.authorization as string
+    );
+    if (!token) {
       throw new Forbidden("The authorization header is missing");
     }
-    const token = authHeader.split(" ")[1];
-
     const decoded = decode(token) as {
       [key: string]: any;
     };
@@ -112,25 +95,12 @@ export function setRequestUser(field: string) {
 
 export async function validateCredentialRequest(context: HookContext) {
   const dbClient = (await context.app.get("mongoClient")) as Db;
-  const authHeader = context.params.headers?.authorization as string;
-  const idToken = authHeader.split(" ")[1];
+  const idToken = extractIdToken(
+    context.params.headers?.authorization as string
+  );
+  const keys = await getAuthSigningKeys(context);
 
-  // fetch public key from JWKS url and verify token
-  const jwksOptions = {
-    jwksUri: context.app.get("authentication").jwksUri,
-  } as ClientOptions;
-  const oidcClient = jwks(jwksOptions) as JwksClient;
-  const keys = (await oidcClient.getSigningKeysAsync()) as SigningKey[];
-
-  let decoded;
-  try {
-    decoded = verify(idToken, keys[0].getPublicKey(), {
-      algorithms: context.app.get("authentication").algorithms,
-    });
-  } catch (error) {
-    decoded = undefined;
-  }
-
+  const decoded = verifyIdToken(idToken, keys, context);
   const inviteToken = await dbClient
     .collection("issuer-invite")
     .findOne({ token: context.data.token });
@@ -144,4 +114,46 @@ export async function validateCredentialRequest(context: HookContext) {
     );
   }
   return context;
+}
+
+async function getAuthSigningKeys(context: HookContext): Promise<SigningKey[]> {
+  if (!context.app.get("authentication")) {
+    logger.debug(
+      "The [authentication] section is missing in the configuration"
+    );
+    return [] as SigningKey[];
+  }
+  // fetch public key from JWKS url and verify token
+  const jwksOptions = {
+    jwksUri: context.app.get("authentication").jwksUri,
+  } as ClientOptions;
+  const oidcClient = jwks(jwksOptions) as JwksClient;
+  return (await oidcClient.getSigningKeysAsync()) as SigningKey[];
+}
+
+function verifyIdToken(
+  idToken: string | undefined,
+  keys: SigningKey[],
+  context: HookContext
+): string | undefined | object {
+  if (!idToken || !context.app.get("authentication") || keys.length === 0) {
+    return undefined;
+  }
+  let decoded;
+  try {
+    decoded = verify(idToken, keys[0].getPublicKey(), {
+      algorithms: context.app.get("authentication").algorithms,
+    });
+  } catch (error) {
+    logger.error(error);
+    decoded = undefined;
+  }
+  return decoded;
+}
+
+function extractIdToken(authHeader: string | undefined): string | undefined {
+  if (!authHeader || authHeader.split(" ").length === 1) {
+    return undefined;
+  }
+  return authHeader.split(" ")[1];
 }

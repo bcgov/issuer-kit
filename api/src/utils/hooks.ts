@@ -145,6 +145,7 @@ function verifyIdToken(
       algorithms: context.app.get("authentication").algorithms,
     });
   } catch (error) {
+    logger.error(error);
     decoded = undefined;
   }
   return decoded;

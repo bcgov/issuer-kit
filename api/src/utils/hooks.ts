@@ -43,13 +43,14 @@ export async function canDeleteInvite(context: HookContext) {
 }
 
 export async function verifyJWT(context: HookContext) {
-  const authHeader = context.params.headers?.authorization as string;
-  if (!authHeader) {
-    return Promise.reject(new Forbidden("The authorization header is missing"));
+  const token = extractIdToken(
+    context.params.headers?.authorization as string
+  );
+  if (!token) {
+    throw new Forbidden("The authorization header is missing");
   }
-  const token = authHeader.split(" ")[1];
   const keys = await getAuthSigningKeys(context);
-  decodeIdToken(token, keys, context);
+  verifyIdToken(token, keys, context);
   return context;
 }
 
@@ -99,7 +100,7 @@ export async function validateCredentialRequest(context: HookContext) {
   );
   const keys = await getAuthSigningKeys(context);
 
-  const decoded = decodeIdToken(idToken, keys, context);
+  const decoded = verifyIdToken(idToken, keys, context);
   const inviteToken = await dbClient
     .collection("issuer-invite")
     .findOne({ token: context.data.token });
@@ -130,7 +131,7 @@ async function getAuthSigningKeys(context: HookContext): Promise<SigningKey[]> {
   return (await oidcClient.getSigningKeysAsync()) as SigningKey[];
 }
 
-function decodeIdToken(
+function verifyIdToken(
   idToken: string | undefined,
   keys: SigningKey[],
   context: HookContext

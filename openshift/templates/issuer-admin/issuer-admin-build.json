@@ -37,7 +37,7 @@
         "runPolicy": "Serial",
         "source": {
           "type": "Dockerfile",
-          "dockerfile": "FROM ${RUNTIME_IMAGE_NAME}:${RUNTIME_IMAGE_TAG}\nCOPY /app/dist /srv\nCOPY /app/config/Caddyfile /etc/caddy/caddy/Caddyfile",
+          "dockerfile": "FROM ${RUNTIME_IMAGE_NAME}:${RUNTIME_IMAGE_TAG}\nCOPY /app/dist /srv",
           "images": [
             {
               "from": {

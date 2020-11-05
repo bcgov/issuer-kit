@@ -7,5 +7,5 @@ COPY issuer-web/ .
 RUN npm run build
 
 # production stage
-FROM abiosoft/caddy:1.0.3-no-stats as production-stage
+FROM caddy:alpine as production-stage
 COPY --from=build-stage /app/dist /srv

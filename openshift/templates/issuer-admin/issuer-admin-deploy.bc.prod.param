@@ -23,7 +23,7 @@
 # APP_LOGO_FILE_NAME=logo.svg
 # APP_TERMS_FILE_NAME=terms-and-conditions.html
 # APP_UNAUTHORIZED_FILE_NAME=unauthorized.html
-# WEB_HOST_NAME=http://localhost
+# WEB_HOST_NAME=
 # WEB_HOST_PORT=8080
 # WEB_HOST_TLS=off
 # API_HOST=identity-kit-controller

@@ -1,4 +1,5 @@
 {
+    #  See https://caddy.community/t/making-sense-of-auto-https-and-why-disabling-it-still-serves-https-instead-of-http/9761
     auto_https off
 }
 

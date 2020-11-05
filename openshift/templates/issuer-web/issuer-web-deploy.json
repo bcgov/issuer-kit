@@ -526,7 +526,7 @@
       "displayName": "Web Host Name",
       "description": "The host name used by Caddy.",
       "required": true,
-      "value": "localhost"
+      "value": "http://localhost"
     },
     {
       "name": "WEB_HOST_PORT",

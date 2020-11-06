@@ -225,7 +225,7 @@ configureEnvironment() {
 
   # issuer-admin
   export ISSUER_ADMIN_PORT=4250
-  export ADMIN_WEB_HOST_NAME=0.0.0.0
+  export ADMIN_WEB_HOST_NAME=http://localhost
   export ADMIN_WEB_HOST_PORT=8081
   export ADMIN_WEB_HOST_TLS=off
   export ADMIN_API_HOST=api
@@ -233,7 +233,7 @@ configureEnvironment() {
 
   # issuer-web
   export ISSUER_WEB_PORT=4251
-  export PUBLIC_WEB_HOST_NAME=0.0.0.0
+  export PUBLIC_WEB_HOST_NAME=http://localhost
   export PUBLIC_WEB_HOST_PORT=8082
   export PUBLIC_WEB_HOST_TLS=off
   export PUBLIC_API_HOST=api

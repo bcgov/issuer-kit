@@ -37,7 +37,7 @@
         "runPolicy": "Serial",
         "source": {
           "type": "Dockerfile",
-          "dockerfile": "FROM ${RUNTIME_IMAGE_NAME}:${RUNTIME_IMAGE_TAG}\nCOPY /app/dist /srv\nCOPY /app/config/Caddyfile /etc/Caddyfile",
+          "dockerfile": "FROM ${RUNTIME_IMAGE_NAME}:${RUNTIME_IMAGE_TAG}\nCOPY /app/dist /srv",
           "images": [
             {
               "from": {
@@ -113,14 +113,14 @@
       "displayName": "Source Image Tag",
       "description": "The tag of the source image.",
       "required": true,
-      "value": "1.0.3-no-stats"
+      "value": "alpine"
     },
     {
       "name": "SOURCE_IMAGE_NAME",
       "displayName": "Source Image Name",
       "description": "The name of the runtime image.",
       "required": true,
-      "value": "abiosoft/caddy"
+      "value": "caddy"
     },
     {
       "name": "SOURCE_IMAGE_KIND",

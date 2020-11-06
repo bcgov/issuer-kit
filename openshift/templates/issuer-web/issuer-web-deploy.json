@@ -449,7 +449,7 @@
       "displayName": "Config Mount Path",
       "description": "The path to use to mount the config file.",
       "required": true,
-      "value": "/etc/"
+      "value": "/etc/caddy/"
     },
     {
       "name": "APP_CONFIG_MAP_NAME",
@@ -525,8 +525,8 @@
       "name": "WEB_HOST_NAME",
       "displayName": "Web Host Name",
       "description": "The host name used by Caddy.",
-      "required": true,
-      "value": "0.0.0.0"
+      "required": false,
+      "value": ""
     },
     {
       "name": "WEB_HOST_PORT",

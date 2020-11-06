@@ -1,27 +1,41 @@
-{%WEB_HOST_NAME%}:{%WEB_HOST_PORT%} {
-    # Uncomment the following to enable logging;
-    log stdout
-    errors stdout
+{
+    #  See https://caddy.community/t/making-sense-of-auto-https-and-why-disabling-it-still-serves-https-instead-of-http/9761
+    auto_https off
+}
 
-    tls {%WEB_HOST_TLS%}  # Use `self_signed` to enable self_signed tls, or `off` to disable tls.  TLS not needed for OpenShift.
-
-    # enable gzip compression
-    gzip
-
-    root /srv/
-
-    # Openly exposed health check endpoint for OpenShift
-    status 200 /health
-
-    # Required for angular router to work
-    rewrite {
-        if {path} not_match ^/api
-        to {path} {path}/ /
+{$WEB_HOST_NAME}:{$WEB_HOST_PORT} {
+    # Log everything to stdout
+    log {
+        output stdout
     }
 
-    proxy /api {%API_HOST%}:{%API_PORT%} {
-        without /api
-        transparent
-        fail_timeout 0 # see https://github.com/mholt/caddy/issues/1925
+    #  Set server root
+    root * /srv
+
+    # Enable serving static files
+    file_server
+
+    # Enable gzip, zstd compression
+    encode zstd gzip
+
+    # Enable templates module - required for 
+    templates
+
+    # Openly exposed health check endpoint for OpenShift
+    respond /health 200
+
+    # Required for SPA router to work
+    @spa_router {
+        not path /api/*
+        file {
+            try_files {path} /index.html
+        }
+    }
+    rewrite @spa_router {http.matchers.file.relative}
+
+    # Proxy requests to API service
+    route /api/* {
+        uri strip_prefix /api
+        reverse_proxy {$API_HOST}:{$API_PORT}
     }
 }

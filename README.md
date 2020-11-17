@@ -196,8 +196,6 @@ If you are running a deployment and require emails to be sent, set the following
   
   - *ADMIN_EMAIL*: the email address that will be used as sender of your emails.
 
-If additional tweaks are required, the code responsible for email delivery is in [email.service.ts](api/src/app/services/email.service.ts).
-
 ### API Docs
 
 The `api` service exposes a Swagger documentation page at `http://localhost:5000/swagger/docs`.

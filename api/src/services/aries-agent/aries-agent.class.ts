@@ -155,10 +155,14 @@ export class AriesAgent {
     logger.debug(
       `Attempting revocation for id [${revocation_id}] on registry [${revoc_reg_id}]`
     );
-    const url = `${this.acaPyUtils.getAdminUrl()}/issue-credential/revoke?cred_rev_id=${revocation_id}&rev_reg_id=${revoc_reg_id}&publish=true`;
+    const url = `${this.acaPyUtils.getAdminUrl()}/revocation/revoke`;
     const response = await Axios.post(
       url,
-      null,
+      {
+        cred_rev_id: revocation_id,
+        rev_reg_id: revoc_reg_id,
+        publish: true,
+      },
       this.acaPyUtils.getRequestConfig()
     );
     return response.status === 200;

@@ -57,7 +57,7 @@ Both the admin and issuer webapp use [SurveyJS](https://surveyjs.io) to display 
 
 * `credentials` (issuer-web only): OPTIONAL - this object contains the configuration that determines which schema will be requested when sending the credential-request to the agent. If not specified, the schema marked as default in the API/controller will be used.
 
- * `schema_id`: the schema_id as published on the target ledger.
+  * `schema_id`: the schema_id as published on the target ledger.
 
 * `issuedSuccess` (issuer-web only): an object holding additional settings to be used when displaying the success page after issuing a credential.
 

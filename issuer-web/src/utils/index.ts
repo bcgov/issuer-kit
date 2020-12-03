@@ -17,8 +17,6 @@ export function multiGuard(guards: Function[]) {
     guards.forEach((guard: Function) => {
       //itterate over guards until one tries to redirect
       guard(to, from, (param?: object) => {
-        console.log(guard)
-        console.log(param)
         //this method will be called async, so we need observable
         obs.next(param);
       });

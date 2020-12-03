@@ -8,8 +8,8 @@ import Unauthorized from "@/views/Unauthorized.vue";
 import Vue from "vue";
 import VueRouter, { RouteConfig } from "vue-router";
 import { vuexOidcCreateRouterMiddleware } from "vuex-oidc";
+import hasPresReq from "./guards/pres-req";
 import validToken from "./guards/valid-token";
-import hasPresReq from "./guards/pres-req"
 
 function router(config: AppConfig): VueRouter {
   Vue.use(VueRouter);
@@ -23,7 +23,7 @@ function router(config: AppConfig): VueRouter {
       meta: {
         isPublic: true
       },
-      beforeEnter: multiGuard([validToken, hasPresReq])
+      beforeEnter: validToken
     },
     {
       // required for backwards compatibility with old issuer app

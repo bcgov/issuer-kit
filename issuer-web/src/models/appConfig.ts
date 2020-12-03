@@ -16,6 +16,9 @@ export interface AppConfig {
       automaticSilentRenew: string;
       silentRedirectUri: string;
       post_logout_redirect_uri: string;
+      extraQueryParams: {
+        pres_req_conf_id: string;
+      }
     };
   };
   apiServer: {

@@ -50,6 +50,8 @@ Both the admin and issuer webapp use [SurveyJS](https://surveyjs.io) to display 
 
 * `authentication`:
   * `enabled`: defines wether the OIDC plugin should be enabled, thus requiring successful authentication via the specified Identity Provider in order to access the application.
+
+  * `autoSignOut`: when set to `true`, a silent sign-out is performed after the credential is issued.
   
   * `oidcSettings`:  settings for the OIDC client. Details can be found in the [library docs](https://github.com/IdentityModel/oidc-client-js/wiki).
 

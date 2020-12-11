@@ -3,9 +3,10 @@
   "issuer": {
     "name": "Test Issuer"
   },
-  "inviteRequired": true,
+  "inviteRequired": false,
   "authentication": {
     "enabled": true,
+    "autoSignOut": true,
     "oidcSettings": {
       "authority": "http://localhost:8180/auth/realms/issuer-kit",
       "clientId": "issuer-kit-public",

@@ -6,6 +6,7 @@ export interface AppConfig {
   inviteRequired: boolean;
   authentication: {
     enabled: boolean;
+    autoSignOut: boolean;
     oidcSettings: {
       authority: string;
       clientId: string;

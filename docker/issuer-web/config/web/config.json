@@ -6,6 +6,7 @@
   "inviteRequired": true,
   "authentication": {
     "enabled": true,
+    "autoSignOut": true,
     "oidcSettings": {
       "authority": "http://localhost:8180/auth/realms/issuer-kit",
       "clientId": "issuer-kit-public",

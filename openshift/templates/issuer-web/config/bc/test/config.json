@@ -6,6 +6,7 @@
   "inviteRequired": true,
   "authentication": {
     "enabled": true,
+    "autoSignOut": true,
     "oidcSettings": {
       "authority": "https://test.oidc.gov.bc.ca/auth/realms/gzyg46lx",
       "clientId": "identity-kit-public-test",

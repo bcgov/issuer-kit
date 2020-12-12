@@ -8,9 +8,4 @@ declare module "*.json" {
   export default value;
 }
 
-declare module "vue-qrcode" {
-  const qrcode: any;
-  export default qrcode;
-}
-
 declare module 'vuex-oidc';

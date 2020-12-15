@@ -1,3 +1,6 @@
+[![img](https://img.shields.io/badge/Lifecycle-Maturing-007EC6)](https://github.com/bcgov/repomountie/blob/master/doc/lifecycle-badges.md)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+
 # BC Gov Issuer Kit
 
 This repo contains code and deployment instructions for running the BC Gov's Issuer Kit Verifiable Credentials proof of concept (PoC). The ID Kit PoC includes:

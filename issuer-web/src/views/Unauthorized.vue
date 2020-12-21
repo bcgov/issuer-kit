@@ -25,7 +25,7 @@ export default class Unauthorized extends Vue {
   private htmlContent = "";
 
   beforeCreate() {
-    Axios.get("/unauthorized.html").then((htmlContent) => {
+    Axios.get("/unauthorized.html").then(htmlContent => {
       this.htmlContent = htmlContent.data;
     });
   }

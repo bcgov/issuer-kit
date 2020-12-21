@@ -44,7 +44,7 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="secondary darken-1" @click="helpDialog = false">
+          <v-btn color="secondary darken-1" @click="closeHelp()">
             Close
           </v-btn>
         </v-card-actions>
@@ -79,9 +79,12 @@ import Axios from "axios";
 })
 export default class Header extends Vue {
   @Prop() logoutUrl!: string;
+
   private issuerName = "";
+
+  @Prop() helpDialog!: boolean;
+  private helpDialogOpened = false;
   private helpDialogEnabled = false;
-  private helpDialog = false;
   private helpContent = "";
 
   beforeCreate() {
@@ -101,9 +104,15 @@ export default class Header extends Vue {
       "configuration/getConfiguration"
     ] as Configuration;
     this.issuerName = appConfig.app.issuer.name;
+
     if (appConfig.app.help?.enabled) {
       this.helpDialogEnabled = true;
     }
+  }
+
+  closeHelp() {
+    this.helpDialog = false;
+    this.$emit("helpDialog", false);
   }
 }
 </script>

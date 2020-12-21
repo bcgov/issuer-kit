@@ -1,9 +1,9 @@
 <template>
   <v-app>
-    <Header />
+    <Header :helpDialog="displayHelp" />
 
     <v-main>
-      <router-view></router-view>
+      <router-view @helpDialog="handleHelpDialog($event)"></router-view>
     </v-main>
 
     <Footer />
@@ -33,18 +33,19 @@
 }
 </style>
 
-<script>
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+<script lang="ts">
+import { Component, Vue } from "vue-property-decorator";
+import Header from "@/components/Header.vue";
+import Footer from "@/components/Footer.vue";
 
-export default {
-  name: "app",
-  components: {
-    Header,
-    Footer
-  },
-  data() {
-    return {};
+@Component({
+  components: { Header, Footer }
+})
+export default class App extends Vue {
+  private displayHelp = false;
+
+  handleHelpDialog(toggleHelp: boolean) {
+    this.displayHelp = toggleHelp;
   }
-};
+}
 </script>

@@ -31,7 +31,7 @@ export interface AppConfig {
   };
   issuedSuccess: {
     successText: string;
-    links: Array<any>;
+    links: Array<any>; // eslint-disable-line
   };
   credentials: {
     schema_id: string;

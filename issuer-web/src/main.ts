@@ -1,4 +1,5 @@
 import App from "@/App.vue";
+import VueCookies from "@/plugins/vue-cookies";
 import Vuetify from "@/plugins/vuetify";
 import router from "@/router";
 import * as ConfigService from "@/services/config";
@@ -21,6 +22,8 @@ Promise.all([
   const config = values[0] as AppConfig;
   const themeConfig = values[1] as UserVuetifyPreset;
   const claimConfig = values[2];
+
+  console.debug("Initializing vue-cookies...", VueCookies);
 
   new Vue({
     store: IssueStore.getInstance(config),

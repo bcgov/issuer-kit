@@ -28,7 +28,7 @@ The contents of the file will be displayed below the generic unauthorized messag
 
 #### Home page
 
-Similarly to the `unauthorized.html` configuration file we discussed earlier, `terms-and-confitions.html` defines custom HTML/CSS that will be injected in the main landing page for the issuer webapp. This can be used to add a welcome message or a disclaimer.
+Similarly to the `unauthorized.html` configuration file we discussed earlier, `terms-and-confitions.html` defines custom HTML/CSS that will be injected in the main landing page for the issuer webapp. This can be used to add a welcome message or a disclaimer. `help.html` uses the same pattern to inject content that will be displayed in a help dialog - if enabled (see relevant settings below).
 
 #### Dynamic Form Configuration
 
@@ -45,6 +45,11 @@ Both the admin and issuer webapp use [SurveyJS](https://surveyjs.io) to display 
 * `env`: a string describing the environment the deployment is running in. This is just a label, useful to quickly identify which configuration is being used.
 
 * `issuer`: an object containing information about the issuer. It currently only holds the `name` property, a string with the issuer's name.
+
+* `help`: an (optional) object containing information to configure a help dialog Default is no help dialog configured.
+  * `enabled`: defines wether the help dialog is enabled.
+
+  * `displayOnFirstVisit`: if set to `true`, the app will use a cookie to determine whether the current visit is the first visit to the website and, if that is the case, will automatically display the help dialog when navigating to the view designed to collect the credential data.
 
 * `inviteRequired` (issuer-web only): turns on/off the requirement for a valid, not used and not expired invite in order to access the issuer.
 

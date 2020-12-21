@@ -3,6 +3,10 @@
   "issuer": {
     "name": "Identity Kit BC - TEST"
   },
+  "help": {
+    "enabled": false,
+    "displayOnFirstVisit": false
+  },
   "inviteRequired": true,
   "authentication": {
     "enabled": true,

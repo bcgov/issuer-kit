@@ -3,6 +3,10 @@
   "issuer": {
     "name": "BC Identity Kit"
   },
+  "help": {
+    "enabled": false,
+    "displayOnFirstVisit": false
+  },
   "inviteRequired": true,
   "authentication": {
     "enabled": true,

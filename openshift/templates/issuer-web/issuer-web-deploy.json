@@ -136,6 +136,18 @@
                 }
               },
               {
+                "name": "${NAME}${SUFFIX}-app-help-volume",
+                "configMap": {
+                  "name": "${APP_CONFIG_MAP_NAME}${SUFFIX}",
+                  "items": [
+                    {
+                      "key": "${APP_HELP_FILE_NAME}",
+                      "path": "${APP_HELP_FILE_NAME}"
+                    }
+                  ]
+                }
+              },
+              {
                 "name": "${NAME}${SUFFIX}-app-vuetify-volume",
                 "configMap": {
                   "name": "${APP_CONFIG_MAP_NAME}${SUFFIX}",
@@ -231,6 +243,11 @@
                     "name": "${NAME}${SUFFIX}-app-unauthorized-volume",
                     "mountPath": "${APP_ARTIFACT_MOUNT_PATH}${APP_UNAUTHORIZED_FILE_NAME}",
                     "subPath": "${APP_UNAUTHORIZED_FILE_NAME}"
+                  },
+                  {
+                    "name": "${NAME}${SUFFIX}-app-help-volume",
+                    "mountPath": "${APP_ARTIFACT_MOUNT_PATH}${APP_HELP_FILE_NAME}",
+                    "subPath": "${APP_HELP_FILE_NAME}"
                   }
                 ],
                 "livenessProbe": {
@@ -520,6 +537,13 @@
       "description": "The name of the application unauthorized file.",
       "required": true,
       "value": "unauthorized.html"
+    },
+    {
+      "name": "APP_HELP_FILE_NAME",
+      "displayName": "Application Help File Name",
+      "description": "The name of the application help file.",
+      "required": true,
+      "value": "help.html"
     },
     {
       "name": "WEB_HOST_NAME",

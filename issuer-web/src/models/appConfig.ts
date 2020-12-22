@@ -3,6 +3,10 @@ export interface AppConfig {
   issuer: {
     name: string;
   };
+  help: {
+    enabled: boolean;
+    displayOnFirstVisit: boolean;
+  };
   inviteRequired: boolean;
   authentication: {
     enabled: boolean;
@@ -19,7 +23,7 @@ export interface AppConfig {
       post_logout_redirect_uri: string;
       extraQueryParams: {
         pres_req_conf_id: string;
-      }
+      };
     };
   };
   apiServer: {
@@ -27,7 +31,7 @@ export interface AppConfig {
   };
   issuedSuccess: {
     successText: string;
-    links: Array<any>;
+    links: Array<any>; // eslint-disable-line
   };
   credentials: {
     schema_id: string;

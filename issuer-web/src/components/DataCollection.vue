@@ -124,7 +124,7 @@ export default class DataCollection extends Vue {
     // eslint-disable-next-line
     // @ts-ignore: implicit any type
     const surveyFunctions = window["surveyFunctions"] || [];
-    surveyFunctions.forEach((f: any) => {
+    surveyFunctions.forEach((f: any) => { // eslint-disable-line
       // eslint-disable-line
       SurveyVue.FunctionFactory.Instance.register(f.name, f);
     });

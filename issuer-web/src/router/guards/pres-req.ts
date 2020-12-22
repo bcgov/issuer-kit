@@ -14,7 +14,7 @@ export default async function hasPresReq(
     .dispatch("oidcStore/getOidcUser")
     .then(result => {
       //grab req id tokens if they exist
-      const idToken = decode(result?.id_token) as { [key: string]: any };
+      const idToken = decode(result?.id_token) as { [key: string]: any }; // eslint-disable-line
       const reqId = idToken?.pres_req_conf_id;
       const confReqId =
         config.authentication.oidcSettings?.extraQueryParams?.pres_req_conf_id;

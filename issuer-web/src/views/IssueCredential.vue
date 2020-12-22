@@ -74,7 +74,7 @@ import { Invitation } from "../models/invitation";
 export default class Connect extends Vue {
   private issued = false;
   private successText = "";
-  private successLinks = new Array<any>();
+  private successLinks = new Array<any>(); // eslint-disable-line
   private cancelTokenSource!: CancelTokenSource;
   private idToken!: string;
 

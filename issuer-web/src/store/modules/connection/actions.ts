@@ -1,6 +1,6 @@
 import {
   AgentConnectionInterface,
-  AgentConnectionStatusInterface,
+  AgentConnectionStatusInterface
 } from "@/models/api";
 import { Configuration } from "@/models/appConfig";
 import { Connection, ConnectionStatus } from "@/models/connection";
@@ -18,7 +18,7 @@ export const actions: ActionTree<ConnectionState, RootState> = {
     ] as Configuration;
     return new Promise<Connection>((resolve, reject) => {
       Axios.post(`${config.app.apiServer.url}/connection`)
-        .then((response) => {
+        .then(response => {
           if (response.status === 201) {
             const responseData = response.data as AgentConnectionInterface;
             const connection = new Connection();
@@ -33,7 +33,7 @@ export const actions: ActionTree<ConnectionState, RootState> = {
             );
           }
         })
-        .catch((error) => {
+        .catch(error => {
           console.error(error);
           reject(error);
         });
@@ -49,7 +49,7 @@ export const actions: ActionTree<ConnectionState, RootState> = {
     return new Promise<ConnectionStatus>((resolve, reject) => {
       const id = context.getters["getConnection"].id;
       const retryInterceptor = Axios.interceptors.response.use(
-        async (response) => {
+        async response => {
           const responseData = response.data as AgentConnectionStatusInterface;
           if (
             !response.config.url?.match(
@@ -65,16 +65,16 @@ export const actions: ActionTree<ConnectionState, RootState> = {
             return Axios.request(response.config);
           }
         },
-        (error) => {
+        error => {
           // Any status codes that falls outside the range of 2xx cause this function to trigger
           console.log("An error occurred while fetching the connection status");
           return Promise.reject(error);
         }
       );
       Axios.get(`${config.app.apiServer.url}/connection/${id}`, {
-        cancelToken: options.cancelToken,
+        cancelToken: options.cancelToken
       })
-        .then((response) => {
+        .then(response => {
           if (response.status === 200) {
             const responseData = response.data as AgentConnectionStatusInterface;
             context.commit("setStatus", responseData.state);
@@ -85,7 +85,7 @@ export const actions: ActionTree<ConnectionState, RootState> = {
             );
           }
         })
-        .catch((error) => {
+        .catch(error => {
           console.error(error);
           reject(error);
         })
@@ -93,5 +93,5 @@ export const actions: ActionTree<ConnectionState, RootState> = {
           Axios.interceptors.response.eject(retryInterceptor);
         });
     });
-  },
+  }
 };

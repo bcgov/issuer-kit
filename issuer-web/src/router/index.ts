@@ -2,7 +2,7 @@ import OidcCallback from "@/components/auth/OidcCallback.vue";
 import OidcCallbackError from "@/components/auth/OidcCallbackError.vue";
 import { AppConfig } from "@/models/appConfig";
 import IssuerStore from "@/store";
-import { multiGuard } from '@/utils';
+import { multiGuard } from "@/utils";
 import Home from "@/views/Home.vue";
 import Unauthorized from "@/views/Unauthorized.vue";
 import Vue from "vue";

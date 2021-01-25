@@ -5,9 +5,9 @@
   },
   "help": {
     "enabled": true,
-    "displayOnFirstVisit": true
+    "displayOnFirstVisit": false
   },
-  "inviteRequired": false,
+  "inviteRequired": true,
   "authentication": {
     "enabled": false,
     "autoSignOut": true,

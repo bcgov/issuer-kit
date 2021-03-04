@@ -12,9 +12,9 @@
     "@mdi/font": "^3.6.95",
     "axios": "^0.21.1",
     "bootstrap": "^4.6.0",
-    "core-js": "^3.8.3",
-    "jquery": "^3.5.1",
-    "oidc-client": "^1.10.1",
+    "core-js": "^3.9.1",
+    "jquery": "^3.6.0",
+    "oidc-client": "^1.11.5",
     "qrcode": "^1.4.4",
     "roboto-fontface": "*",
     "survey-vue": "^1.8.26",
@@ -22,10 +22,10 @@
     "vue-class-component": "^7.2.6",
     "vue-property-decorator": "^8.5.1",
     "vue-qrcode": "^0.3.5",
-    "vue-router": "^3.5.0",
-    "vuetify": "^2.4.3",
-    "vuex": "^3.6.0",
-    "vuex-oidc": "^3.10.1"
+    "vue-router": "^3.5.1",
+    "vuetify": "^2.4.5",
+    "vuex": "^3.6.2",
+    "vuex-oidc": "^3.10.2"
   },
   "devDependencies": {
     "@fortawesome/fontawesome-free": "^5.15.2",
@@ -43,10 +43,10 @@
     "eslint-plugin-prettier": "^3.3.1",
     "eslint-plugin-vue": "^6.2.2",
     "prettier": "^1.19.1",
-    "sass": "^1.32.5",
+    "sass": "^1.32.8",
     "sass-loader": "^8.0.2",
-    "typescript": "^3.9.7",
-    "vue-cli-plugin-vuetify": "^2.0.9",
+    "typescript": "^3.9.9",
+    "vue-cli-plugin-vuetify": "^2.2.2",
     "vue-template-compiler": "^2.6.12"
   }
 }

@@ -49,7 +49,7 @@ Demo mode runs Issuer Kit using the [BCovrin Test](http://test.bcovrin.vonx.io) 
 
 To run in demo mode, open two shell/terminal sessions:
 
-1. From within the [scripts](./scripts) folder execute `./start-ngrok.sh`. This will create a tunnel for the agent.
+1. From within the [ngrok](./ngrok) folder execute `./start-ngrok.sh`. This will create a tunnel for the agent.
 
 2. From within the [docker](./docker) folder:
     - run `./manage build` to assemble the runtime images for the services

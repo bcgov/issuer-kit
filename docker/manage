@@ -266,7 +266,6 @@ configureEnvironment() {
   export WALLET_USER="DB_USER"
   export WALLET_PASSWORD="DB_PASSWORD"
   export WALLET_DATABASE="issuer_kit"
-  export WALLET_ADMIN_PASSWORD="mysecretpassword"
 
   # tails-server
   export TAILS_SERVER_PORT=6543

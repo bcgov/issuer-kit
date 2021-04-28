@@ -266,7 +266,6 @@ configureEnvironment() {
   export WALLET_USER="DB_USER"
   export WALLET_PASSWORD="DB_PASSWORD"
   export WALLET_DATABASE="issuer_kit"
-  export WALLET_ADMIN_PASSWORD="mysecretpassword"
 
   # tails-server
   export TAILS_SERVER_PORT=6543
@@ -278,9 +277,7 @@ configureEnvironment() {
   export AGENT_WALLET_NAME="issuer_kit_agent"
   export AGENT_WALLET_ENCRYPTION_KEY="key"
   export AGENT_STORAGE_WALLET_TYPE="postgres_storage"
-  if [ -z "${DEV_MODE}" ]; then
-    export AGENT_WALLET_SEED=$(generateSeed issuer-kit-demo)
-  else
+  if [[ ! -f ".env" ]]; then
     export AGENT_WALLET_SEED="issuer_kit_000000000000000000000"
   fi
   export AGENT_ADMIN_PORT=8024
@@ -458,7 +455,13 @@ case "${COMMAND}" in
     unset DEV_MODE
     unset AGENT_WEBHOOK_URL
     export LEDGER_URL="http://test.bcovrin.vonx.io"
-    export TAILS_SERVER_URL="https://tails-server-dev.pathfinder.gov.bc.ca"
+    export TAILS_SERVER_URL="https://tails-dev.vonx.io"
+    if [[ ! -f ".env" ]]; then
+      AGENT_WALLET_SEED=$(generateSeed issuer-kit-demo)
+      echo "Generated AGENT_WALLET_SEED=${AGENT_WALLET_SEED}"
+      echo "AGENT_WALLET_SEED=${AGENT_WALLET_SEED}" > .env
+    fi
+
     if [ -z "$NGROK_AGENT_ENDPOINT" ]; then
       isNgrokInstalled
       export NGROK_AGENT_ENDPOINT=$(${CURL_EXE} http://localhost:4040/api/tunnels | ${JQ_EXE} --raw-output '.tunnels | map(select(.name | contains("issuer-agent"))) | .[0] | .public_url')
@@ -466,9 +469,10 @@ case "${COMMAND}" in
     
     checkNgrokTunnelActive
     echo "Running in demo mode, will use ${LEDGER_URL} as ledger and ${NGROK_AGENT_ENDPOINT} as the agent endpoint."
+
     configureEnvironment "$@"
     customizeKeycloakConfig
-    docker-compose up -d ${_startupParams} ${DEFAULT_CONTAINERS} ${PROD_CONTAINERS}
+    docker-compose --env-file .env up -d ${_startupParams} ${DEFAULT_CONTAINERS} ${PROD_CONTAINERS}
     docker-compose logs -f
     ;;
   stop)
@@ -476,6 +480,10 @@ case "${COMMAND}" in
     docker-compose stop 
     ;;
   rm|down)
+    if [ -f ".env" ] ; then
+        rm ".env"
+    fi
+
     configureEnvironment
     deleteVolumes
     ;;

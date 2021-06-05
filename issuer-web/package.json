@@ -18,7 +18,7 @@
     "oidc-client": "^1.11.5",
     "qrcode": "^1.4.4",
     "roboto-fontface": "*",
-    "survey-vue": "^1.8.44",
+    "survey-vue": "^1.8.47",
     "vue": "^2.6.12",
     "vue-class-component": "^7.2.6",
     "vue-cookies": "^1.7.4",

@@ -1,6 +1,6 @@
 # Getting a Mobile Wallet
 
-Use these instructions to get a compatible mobile app on your phone that can receive, hold and prove your verifiable credentials. There are currently two options from [Trinsic](#trinsic-wallet) and [esatus](#esatus-wallet).
+Use these instructions to get a compatible mobile app on your phone that can receive, hold and prove your verifiable credentials. There are currently three options: [Trinsic](#trinsic-wallet), [esatus](#esatus-wallet) and [Lissi](https://lissi.id/).
 
 ## Trinsic Wallet
 

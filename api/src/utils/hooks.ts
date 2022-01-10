@@ -155,5 +155,9 @@ function extractIdToken(authHeader: string | undefined): string | undefined {
   if (!authHeader || authHeader.split(" ").length === 1) {
     return undefined;
   }
-  return authHeader.split(" ")[1];
+  const token = authHeader.split(" ")[1];
+  if (token === 'null' || token === 'undefined') {
+    return undefined;
+  }
+  return token
 }

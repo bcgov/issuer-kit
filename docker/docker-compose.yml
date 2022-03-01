@@ -21,7 +21,13 @@ services:
       PUBLIC_SITE_URL: ${PUBLIC_SITE_URL}
       LOG_LEVEL: ${LOG_LEVEL}
     volumes:
-      - ../api:/usr/src/api
+    # ToDo:
+    #   - When running in Docker-from-Docker the mount needs to be the path to the file/folder
+    #     on the host OS.  Which is different than the /workspaces/<project-name>/* path
+    #     that gets resolved from inside the devcontainer.
+    #   - Figure out a way to fix or workaround this.
+    #   - Perhaps some tips here; https://github.com/docker/compose-cli/issues/1795
+      - /c/Users/wade/git-repos/issuer-kit/api:/usr/src/api
     ports:
       - ${API_PORT}:${API_PORT}
     networks:
@@ -50,7 +56,13 @@ services:
       LOG_LEVEL: ${LOG_LEVEL}
       S2I_SCRIPTS_PATH: ${S2I_SCRIPTS_PATH}
     volumes:
-      - ./api/config:/opt/app-root/src/config
+    # ToDo:
+    #   - When running in Docker-from-Docker the mount needs to be the path to the file/folder
+    #     on the host OS.  Which is different than the /workspaces/<project-name>/* path
+    #     that gets resolved from inside the devcontainer.
+    #   - Figure out a way to fix or workaround this.
+    #   - Perhaps some tips here; https://github.com/docker/compose-cli/issues/1795
+      - /c/Users/wade/git-repos/issuer-kit/docker/api/config:/opt/app-root/src/config
     ports:
       - ${API_PORT}:${API_PORT}
     networks:
@@ -69,7 +81,13 @@ services:
   issuer-admin-dev:
     image: node:erbium
     volumes:
-      - ../issuer-admin:/usr/src/issuer-admin
+    # ToDo:
+    #   - When running in Docker-from-Docker the mount needs to be the path to the file/folder
+    #     on the host OS.  Which is different than the /workspaces/<project-name>/* path
+    #     that gets resolved from inside the devcontainer.
+    #   - Figure out a way to fix or workaround this.
+    #   - Perhaps some tips here; https://github.com/docker/compose-cli/issues/1795
+      - /c/Users/wade/git-repos/issuer-kit/issuer-admin:/usr/src/issuer-admin
     working_dir: /usr/src/issuer-admin
     ports:
       - ${ISSUER_ADMIN_PORT}:${ISSUER_ADMIN_PORT}
@@ -86,8 +104,14 @@ services:
       API_HOST: ${ADMIN_API_HOST}
       API_PORT: ${ADMIN_API_PORT}
     volumes:
-      - ./issuer-admin/config/Caddyfile:/etc/caddy/Caddyfile
-      - ./issuer-admin/config/admin:/srv/config
+    # ToDo:
+    #   - When running in Docker-from-Docker the mount needs to be the path to the file/folder
+    #     on the host OS.  Which is different than the /workspaces/<project-name>/* path
+    #     that gets resolved from inside the devcontainer.
+    #   - Figure out a way to fix or workaround this.
+    #   - Perhaps some tips here; https://github.com/docker/compose-cli/issues/1795
+      - /c/Users/wade/git-repos/issuer-kit/docker/issuer-admin/config/Caddyfile:/etc/caddy/Caddyfile
+      - /c/Users/wade/git-repos/issuer-kit/docker/issuer-admin/config/admin:/srv/config
     ports:
       - ${ADMIN_WEB_HOST_PORT}:${ADMIN_WEB_HOST_PORT}
     networks:
@@ -99,7 +123,13 @@ services:
   issuer-web-dev:
     image: node:erbium
     volumes:
-      - ../issuer-web:/usr/src/issuer-web
+    # ToDo:
+    #   - When running in Docker-from-Docker the mount needs to be the path to the file/folder
+    #     on the host OS.  Which is different than the /workspaces/<project-name>/* path
+    #     that gets resolved from inside the devcontainer.
+    #   - Figure out a way to fix or workaround this.
+    #   - Perhaps some tips here; https://github.com/docker/compose-cli/issues/1795
+      - /c/Users/wade/git-repos/issuer-kit/issuer-web:/usr/src/issuer-web
     working_dir: /usr/src/issuer-web
     ports:
       - ${ISSUER_WEB_PORT}:${ISSUER_WEB_PORT}
@@ -116,8 +146,14 @@ services:
       API_HOST: ${PUBLIC_API_HOST}
       API_PORT: ${PUBLIC_API_PORT}
     volumes:
-      - ./issuer-web/config/Caddyfile:/etc/caddy/Caddyfile
-      - ./issuer-web/config/web:/srv/config
+    # ToDo:
+    #   - When running in Docker-from-Docker the mount needs to be the path to the file/folder
+    #     on the host OS.  Which is different than the /workspaces/<project-name>/* path
+    #     that gets resolved from inside the devcontainer.
+    #   - Figure out a way to fix or workaround this.
+    #   - Perhaps some tips here; https://github.com/docker/compose-cli/issues/1795
+      - /c/Users/wade/git-repos/issuer-kit/docker/issuer-web/config/Caddyfile:/etc/caddy/Caddyfile
+      - /c/Users/wade/git-repos/issuer-kit/docker/issuer-web/config/web:/srv/config
     ports:
       - ${PUBLIC_WEB_HOST_PORT}:${PUBLIC_WEB_HOST_PORT}
     networks:
@@ -157,7 +193,13 @@ services:
       ROOT_LOGLEVEL: ${KEYCLOAK_ROOT_LOGLEVEL}
       KEYCLOAK_IMPORT: ${KEYCLOAK_IMPORT}
     volumes:
-      - ../docker/keycloak/config/realm-export-docker.json:/tmp/realm-export-docker.json
+    # ToDo:
+    #   - When running in Docker-from-Docker the mount needs to be the path to the file/folder
+    #     on the host OS.  Which is different than the /workspaces/<project-name>/* path
+    #     that gets resolved from inside the devcontainer.
+    #   - Figure out a way to fix or workaround this.
+    #   - Perhaps some tips here; https://github.com/docker/compose-cli/issues/1795
+      - /c/Users/wade/git-repos/issuer-kit/docker/keycloak/config/realm-export-docker.json:/tmp/realm-export-docker.json
     ports:
       - 8180:8080
     depends_on:

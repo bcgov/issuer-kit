@@ -298,6 +298,7 @@ configureEnvironment() {
   export API_PORT=5000
   export AGENT_ADMIN_URL=${AGENT_ADMIN_URL:-http://agent:$AGENT_ADMIN_PORT}
   export DB_SERVICE="db"
+  export SERVER_SELECTION_TIMEOUT=${SERVER_SELECTION_TIMEOUT:-30}
   export SMTP_HOST=${SMTP_HOST:-maildev}
   export SMTP_PORT=${SMTP_PORT:-25}
   export ADMIN_EMAIL=${ADMIN_EMAIL:-"noreply@example.com"}

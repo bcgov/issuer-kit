@@ -2,6 +2,7 @@
   "host": "localhost",
   "port": "PORT",
   "public": "../public/",
+  "serverSelectionTimeout": "SERVER_SELECTION_TIMEOUT",
   "paginate": {
     "default": 10,
     "max": 50

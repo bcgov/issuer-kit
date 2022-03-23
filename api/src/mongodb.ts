@@ -1,11 +1,27 @@
 import { MongoClient } from "mongodb";
 import { Application } from "./declarations";
 
-export let db_status = 503;
 
-export default function (app: Application) {
+function buildConnection(app:Application){
   const settings = app.get("mongodb");
   const connection = `mongodb://${settings.user}:${settings.password}@${settings.host}:${settings.port}/${settings.db}`;
+  return connection
+}
+
+export async function dbStatus(app: Application){
+  const connection = buildConnection(app);
+  const client = new MongoClient(connection);
+  var db_code = 200;
+  await client.connect().then(()=>{
+    client.close();
+  }).catch(()=>{
+    db_code = 503
+  });
+  return db_code
+}
+
+export default function (app: Application) {
+  const connection = buildConnection(app);
   const database = connection.substr(connection.lastIndexOf("/") + 1);
   let serverSelectionTimeout = app.get("serverSelectionTimeout");
   if(!serverSelectionTimeout){
@@ -16,7 +32,6 @@ export default function (app: Application) {
     useUnifiedTopology: true,
     serverSelectionTimeoutMS: serverSelectionTimeout*1000
   }).then((client) => {
-    db_status = 200;
     return client.db(database);
   })
   .catch((error) =>{

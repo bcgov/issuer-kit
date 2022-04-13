@@ -57,7 +57,7 @@ To run in demo mode, open two shell/terminal sessions:
 
 Once started, the services will be exposed on localhost at the following endpoints:
 
-- `api`: http://localhost:5000
+- `api`: http://localhost:5050
 
 - `issuer-admin` Administrator app: http://localhost:8081
 
@@ -101,7 +101,7 @@ To run in local mode, open two shell/terminal sessions:
 
 Once started, the services will be exposed on localhost at the following endpoints:
 
-- `api`: http://localhost:5000
+- `api`: http://localhost:5050
 
 - `issuer-admin` Administrator app: http://localhost:8081
 
@@ -134,7 +134,7 @@ To run in development mode, run `npm install` in each one of the `issuer-admin`,
 
 The services will be running at the following endpoints:
 
-- `api`: http://localhost:5000
+- `api`: http://localhost:5050
 
 - `issuer-admin` Administrator app: http://localhost:4250
 
@@ -201,7 +201,7 @@ If you are running a deployment and require emails to be sent, set the following
 
 ### API Docs
 
-The `api` service exposes a Swagger documentation page at `http://localhost:5000/swagger/docs`.
+The `api` service exposes a Swagger documentation page at `http://localhost:5050/swagger/docs`.
 Publicly available APIs are documented there.
 
 :information_source: at the time of writing, the response structure of the `/connection` POST method to request a new connection invitation is not accurate. The API docs represent the response the same as for the GET method, however in this case the response represent a new Aries connection invitation that matches the AriesConnection data model in [this file](api/src/models/connection.ts).

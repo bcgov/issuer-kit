@@ -15,6 +15,7 @@ import {
   CredExServiceResponse,
 } from "../../models/credential-exchange";
 import { ServiceAction, ServiceType } from "../../models/enums";
+import { AriesAgentSetup } from "../../utils/aries-agent-setup";
 import { AcaPyUtils } from "../../utils/aca-py";
 import { formatCredentialPreview } from "../../utils/credential-exchange";
 
@@ -30,16 +31,18 @@ export class AriesAgent {
   app: Application;
   options: ServiceOptions;
   acaPyUtils: AcaPyUtils;
+  ariesAgentSetup: AriesAgentSetup;
 
   constructor(options: ServiceOptions = {}, app: Application) {
     this.options = options;
     this.app = app;
+    this.ariesAgentSetup = AriesAgentSetup.getInstance(app);
     this.acaPyUtils = AcaPyUtils.getInstance(app);
     this.init();
   }
 
   private async init() {
-    const result = await this.acaPyUtils.init();
+    const result = await this.ariesAgentSetup.init();
 
     this.app.set("schemas", result.schemas);
     this.app.set("credDefs", result.credDefs);

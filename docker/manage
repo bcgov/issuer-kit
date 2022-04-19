@@ -225,6 +225,15 @@ configureEnvironment() {
   export DEBUG=${DEBUG}
   export LOG_LEVEL=${LOG_LEVEL:-DEBUG}
 
+  # traction
+  export ACAPY_AGENT_MODE=${ACAPY_AGENT_MODE:-"aca-py"}
+  export TRACTION_ENDPOINT=http://host.docker.internal:5100
+  export TRACTION_INNKEEPER_PREFIX=/innkeeper
+  export TRACTION_INNKEEPER_USER=innkeeper
+  export TRACTION_INNKEEPER_PASSWORD=change-me
+  export TRACTION_TENANT_PREFIX=/tenant
+  export TRACTION_ACAPY_WRAPPER_PREFIX=/traction_acapy
+
   # issuer-admin
   export ISSUER_ADMIN_PORT=4250
   export ADMIN_WEB_HOST_NAME=http://localhost
@@ -265,6 +274,7 @@ configureEnvironment() {
   # wallet
   export WALLET_HOST="wallet"
   export WALLET_PORT="5432"
+  export WALLET_PORT_EXPOSED="5438"
   export WALLET_USER="DB_USER"
   export WALLET_PASSWORD="DB_PASSWORD"
   export WALLET_DATABASE="issuer_kit"

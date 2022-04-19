@@ -16,7 +16,16 @@
   },
   "agent": {
     "adminUrl": "AGENT_ADMIN_URL",
-    "adminApiKey": "AGENT_ADMIN_API_KEY"
+    "adminApiKey": "AGENT_ADMIN_API_KEY",
+    "mode": "ACAPY_AGENT_MODE"
+  },
+  "traction": {
+    "endpoint": "TRACTION_ENDPOINT",
+    "innkeeperPrefix": "TRACTION_INNKEEPER_PREFIX",
+    "innkeeperUser": "TRACTION_INNKEEPER_USER",
+    "innkeeperPassword": "TRACTION_INNKEEPER_PASSWORD",
+    "tenantPrefix": "TRACTION_TENANT_PREFIX",
+    "acapyWrapperPrefix": "TRACTION_ACAPY_WRAPPER_PREFIX"
   },
   "smtp": {
     "host": "SMTP_HOST",

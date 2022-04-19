@@ -1,5 +1,4 @@
 import { Application } from "@feathersjs/express";
-import Axios from "axios";
 import logger from "../logger";
 import { UndefinedAppError } from "../models/errors";
 import { AriesSchema, SchemaDefinition } from "../models/schema";
@@ -55,12 +54,10 @@ export class SchemaUtils {
   }
 
   async publishSchema(schema: SchemaDefinition): Promise<AriesSchema> {
-    const url = `${this.utils.getAdminUrl()}/schemas`;
     logger.debug(`Publishing schema to ledger: ${JSON.stringify(schema)}`);
-    const response = await Axios.post(
-      url,
-      schema,
-      this.utils.getRequestConfig()
+    const response = await this.utils.makeAgentPost(
+      '/schemas',
+      schema
     );
     const schemaResponse = response.data as AriesSchema;
     logger.debug(`Published schema: ${JSON.stringify(schemaResponse)}`);
@@ -73,9 +70,11 @@ export class SchemaUtils {
     isDefault = false,
     isPublic = false
   ): Promise<AriesSchema> {
-    const url = `${this.utils.getAdminUrl()}/schemas/${id}`;
+    const url_part = `/schemas/${id}`;
     logger.debug(`Fetching schema with id ${id} from ledger.`);
-    const response = await Axios.get(url, this.utils.getRequestConfig());
+    const response = await this.utils.makeAgentGet(
+      url_part
+    );
     const schemaResponse = response.data as AriesSchema;
 
     if (!schemaResponse.schema) {

@@ -5,7 +5,6 @@ import {
 import { Application } from "@feathersjs/express";
 import { AcaPyUtils } from "./aca-py";
 import { UndefinedAppError } from "../models/errors";
-import Axios from "axios";
 import logger from "../logger";
 
 export class CredDefUtils {
@@ -60,11 +59,9 @@ export class CredDefUtils {
       logger.debug(
         `Publishing credential definition to ledger: ${JSON.stringify(credDef)}`
       );
-      const url = `${this.utils.getAdminUrl()}/credential-definitions`;
-      const response = await Axios.post(
-        url,
-        credDef,
-        this.utils.getRequestConfig()
+      const response = await this.utils.makeAgentPost(
+        '/credential-definitions',
+        credDef
       );
       credDefResponse = response.data as CredDefServiceResponse;
       logger.debug(

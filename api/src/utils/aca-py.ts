@@ -26,6 +26,25 @@ export class AcaPyUtils {
     return this.instance;
   }
 
+  async makeAgentPost(url_part: string, data?: any): Promise<any> {
+    const url = `${this.getAdminUrl()}${url_part}`;
+    const response = await Axios.post(
+      url,
+      data,
+      this.getRequestConfig()
+    );
+    return response;
+  }
+
+  async makeAgentGet(url_part: string): Promise<any> {
+    const url = `${this.getAdminUrl()}${url_part}`;
+    const response = await Axios.get(
+      url,
+      this.getRequestConfig()
+    );
+    return response;
+  }
+
   getRequestConfig(): AxiosRequestConfig {
     return {
       headers: {

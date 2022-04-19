@@ -226,7 +226,8 @@ configureEnvironment() {
   export LOG_LEVEL=${LOG_LEVEL:-DEBUG}
 
   # traction
-  export ACAPY_AGENT_MODE=${ACAPY_AGENT_MODE:-"aca-py"}
+  # run in "ACAPY" or "TRACTION" mode
+  export ACAPY_AGENT_MODE=${ACAPY_AGENT_MODE:-"ACAPY"}
   export TRACTION_ENDPOINT=http://host.docker.internal:5100
   export TRACTION_INNKEEPER_PREFIX=/innkeeper
   export TRACTION_INNKEEPER_USER=innkeeper

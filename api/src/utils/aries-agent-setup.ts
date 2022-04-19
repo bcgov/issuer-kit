@@ -43,6 +43,11 @@ export class AriesAgentSetup {
     // wait for aca-py agent to be ready
     await this.utils.init();
 
+    if (this.utils.isTractionBackend()) {
+      // for traction, we need to create a default tenant and "activate" it
+      // TODO
+    }
+
     // init schemas and cred_defs
     for (let schemaDef of config) {
       try {

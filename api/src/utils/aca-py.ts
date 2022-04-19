@@ -5,6 +5,13 @@ import { UndefinedAppError } from "../models/errors";
 import { loadJSON } from "./load-config-file";
 import { sleep } from "./sleep";
 
+
+enum AgentMode {
+  AcaPy = "ACAPY",
+  Traction = "TRACTION"
+}
+
+
 export class AcaPyUtils {
   static instance: AcaPyUtils;
   app: Application;
@@ -28,6 +35,7 @@ export class AcaPyUtils {
 
   async makeAgentPost(url_part: string, data?: any): Promise<any> {
     const url = `${this.getAdminUrl()}${url_part}`;
+    logger.debug(`POST ${url}`)
     const response = await Axios.post(
       url,
       data,
@@ -38,6 +46,7 @@ export class AcaPyUtils {
 
   async makeAgentGet(url_part: string): Promise<any> {
     const url = `${this.getAdminUrl()}${url_part}`;
+    logger.debug(`GET ${url}`)
     const response = await Axios.get(
       url,
       this.getRequestConfig()
@@ -45,28 +54,58 @@ export class AcaPyUtils {
     return response;
   }
 
+  isTractionBackend(): boolean {
+    logger.debug(`Check if traction mode ... ${this.app.get("agent").mode}`);
+    const is_traction = (this.app.get("agent").mode === AgentMode.Traction);
+    logger.debug(`... returns ${is_traction}`);
+    return is_traction;
+  }
+
+  tenantBearerToken(): string {
+    return 'TODO';
+  }
+
   getRequestConfig(): AxiosRequestConfig {
-    return {
-      headers: {
-        "x-api-key": this.app.get("agent").adminApiKey || "",
-      },
-    } as AxiosRequestConfig;
+    // if we're running on traction we need an additional param
+    let requestConfig;
+    if (this.isTractionBackend()) {
+      requestConfig = {
+        headers: {
+          "x-api-key": this.app.get("agent").adminApiKey || "",
+          "Authorization": `Bearer ${this.tenantBearerToken()}`,
+        },
+      };
+    } else {
+      requestConfig = {
+        headers: {
+          "x-api-key": this.app.get("agent").adminApiKey || "",
+        },
+      };
+    }
+    return requestConfig as AxiosRequestConfig;
   }
 
   getAdminUrl(): string {
-    return this.app.get("agent").adminUrl;
+    // admin url depends if we are running on traction (default aca-py)
+    if (this.isTractionBackend()) {
+      return `${this.app.get("traction").endpoint}${this.app.get("traction").acapyWrapperPrefix}`;
+    } else {
+      return this.app.get("agent").adminUrl;
+    }
   }
 
   async init() {
-    // wait for the agent to be ready
-    while (!(await this.isAgentReady())) {
-      logger.debug("Agent not ready, retrying in 500ms...");
-      await sleep(500);
+    // wait for the agent to be ready (aca-py only) (assume traction is already started)
+    if (!(this.isTractionBackend())) {
+      while (!(await this.isAgentReady())) {
+        logger.debug("Agent not ready, retrying in 500ms...");
+        await sleep(500);
+      }
     }
   }
 
   async isAgentReady(): Promise<boolean> {
-    const url = `${this.app.get("agent").adminUrl}/status/ready`;
+    const url = `${this.getAdminUrl()}/status/ready`;
     let result;
     try {
       const response = await Axios.get(url, this.getRequestConfig());

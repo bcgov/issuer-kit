@@ -45,7 +45,11 @@ export class AriesAgentSetup {
 
     if (this.utils.isTractionBackend()) {
       // for traction, we need to create a default tenant and "activate" it
-      // TODO
+      let tenantName = this.app.get("traction").tenantName + "_" + Math.random().toString(36).slice(2, 7);
+      const tenantInfo = await this.utils.createIssuerTenant(
+        tenantName
+      );
+      logger.debug(`Created tenant: ${tenantInfo}`);
     }
 
     // init schemas and cred_defs

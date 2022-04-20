@@ -25,6 +25,7 @@
     "innkeeperUser": "TRACTION_INNKEEPER_USER",
     "innkeeperPassword": "TRACTION_INNKEEPER_PASSWORD",
     "tenantPrefix": "TRACTION_TENANT_PREFIX",
+    "tenantName": "TRACTION_TENANT_NAME",
     "acapyWrapperPrefix": "TRACTION_ACAPY_WRAPPER_PREFIX"
   },
   "smtp": {

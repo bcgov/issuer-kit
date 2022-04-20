@@ -233,7 +233,8 @@ configureEnvironment() {
   export TRACTION_INNKEEPER_USER=innkeeper
   export TRACTION_INNKEEPER_PASSWORD=change-me
   export TRACTION_TENANT_PREFIX=/tenant
-  export TRACTION_ACAPY_WRAPPER_PREFIX=/traction_acapy
+  export TRACTION_TENANT_NAME="${TRACTION_TENANT_NAME:-default}"
+  export TRACTION_ACAPY_WRAPPER_PREFIX=/tenant_acapy
 
   # issuer-admin
   export ISSUER_ADMIN_PORT=4250

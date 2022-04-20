@@ -8,6 +8,8 @@ import {
 import { HookContext } from "@feathersjs/feathers";
 import { ServiceType, ServiceAction } from "../models/enums";
 import { GeneralError } from "@feathersjs/errors";
+import { loadJSON } from "./load-config-file";
+import { SchemaDefinition } from "../models/schema";
 
 export function formatCredentialOffer(
   connection_id: string,
@@ -36,6 +38,16 @@ export function formatCredentialPreview(
       "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/issue-credential/1.0/credential-preview",
     attributes: attributes,
   };
+}
+
+export function getSchemaAttrsByID(schema_name: string, schema_version: string): string[] {
+  const schemas = loadJSON("schemas.json") as SchemaDefinition[];
+  const filtered = schemas.filter((s) => s.schema_name === schema_name && s.schema_version === schema_version);
+  let schemaAttributes: string[] = [];
+  if (filtered.length > 0 && filtered[0].attributes) {
+    schemaAttributes = filtered[0].attributes;
+  }
+  return schemaAttributes;
 }
 
 export async function revokeCredential(context: HookContext) {

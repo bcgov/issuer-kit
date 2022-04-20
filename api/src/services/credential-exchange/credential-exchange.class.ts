@@ -11,11 +11,9 @@ import {
   CredExServiceResponse,
 } from "../../models/credential-exchange";
 import { ServiceAction, ServiceType } from "../../models/enums";
-import { formatCredentialOffer } from "../../utils/credential-exchange";
+import { formatCredentialOffer, getSchemaAttrsByID } from "../../utils/credential-exchange";
 import { updateInviteRecord } from "../../utils/issuer-invite";
-import { AriesSchema, SchemaDefinition } from "../../models/schema";
-import logger from "../../logger";
-import { loadJSON } from "../../utils/load-config-file";
+import { AriesSchema } from "../../models/schema";
 
 
 interface Data {
@@ -36,15 +34,6 @@ export class CredentialExchange implements ServiceSwaggerAddon {
     this.app = app;
   }
 
-  getSchemaAttrsByID(schema_name: string, schema_version: string): string[] {
-    const schemas = loadJSON("schemas.json") as SchemaDefinition[]
-    const filtered = schemas.filter((s) => s.schema_name === schema_name && s.schema_version === schema_version)
-    let schemaAttributes: string[] = []
-    if (filtered.length > 0 && filtered[0].attributes) {
-      schemaAttributes = filtered[0].attributes
-    }
-    return schemaAttributes
-  }
 
   async get(id: Id, params?: Params): Promise<CredExServiceResponse> {
     return await this.app.service("aries-agent").create({
@@ -79,20 +68,20 @@ export class CredentialExchange implements ServiceSwaggerAddon {
 
       //allows blank attributes to be supplied in isser-web/admin
       const schemaChunks = schema_id.split(':');
-      const schemaVersion = schemaChunks[schemaChunks.length - 1]
-      const schemaName = schemaChunks[schemaChunks.length - 2]
-      const schemaAttributes = this.getSchemaAttrsByID(schemaName, schemaVersion)
-      const requestAttributes = data.claims.map((claim) => claim.name)
+      const schemaVersion = schemaChunks[schemaChunks.length - 1];
+      const schemaName = schemaChunks[schemaChunks.length - 2];
+      const schemaAttributes = getSchemaAttrsByID(schemaName, schemaVersion);
+      const requestAttributes = data.claims.map((claim) => claim.name);
 
       //take the set difference
-      const diff = schemaAttributes.filter(attr => !requestAttributes.includes(attr))
+      const diff = schemaAttributes.filter(attr => !requestAttributes.includes(attr));
       const diffAttrs = diff.map((attr) =>
       ({
         name: attr,
         value: "",
         "mime-type": "text/plain",
-      } as AriesCredentialAttribute))
-      attributes.push(...diffAttrs)
+      } as AriesCredentialAttribute));
+      attributes.push(...diffAttrs);
     }
     const cred_def_id = this.app.get("credDefs").get(schema_id) as string;
 

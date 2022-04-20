@@ -14,6 +14,7 @@ import { Application } from "./declarations";
 import logger from "./logger";
 import middleware from "./middleware";
 import mongodb from "./mongodb";
+import {dbStatus} from "./mongodb";
 import { internalServices, services } from "./services";
 
 // Don't remove this comment. It's needed to format import lines nicely.
@@ -31,6 +32,12 @@ app.use(express.urlencoded({ extended: true }));
 app.use(favicon(path.join(app.get("public"), "favicon.ico")));
 // Host the public folder
 app.use("/", express.static(app.get("public")));
+
+//database health check
+app.get("/health", async (_,res)=>{
+  const db_code = await dbStatus(app);
+  res.status(db_code).end()
+})
 
 // Set up Plugins and providers
 app.configure(express.rest());

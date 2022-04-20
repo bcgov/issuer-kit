@@ -13,8 +13,10 @@ import {
 import { ServiceAction, ServiceType } from "../../models/enums";
 import { formatCredentialOffer } from "../../utils/credential-exchange";
 import { updateInviteRecord } from "../../utils/issuer-invite";
-import { AriesSchema } from "../../models/schema";
+import { AriesSchema, SchemaDefinition } from "../../models/schema";
 import logger from "../../logger";
+import { loadJSON } from "../../utils/load-config-file";
+
 
 interface Data {
   token?: string;
@@ -23,7 +25,7 @@ interface Data {
   claims: Claim[];
 }
 
-interface ServiceOptions {}
+interface ServiceOptions { }
 
 export class CredentialExchange implements ServiceSwaggerAddon {
   app: Application;
@@ -32,6 +34,16 @@ export class CredentialExchange implements ServiceSwaggerAddon {
   constructor(options: ServiceOptions = {}, app: Application) {
     this.options = options;
     this.app = app;
+  }
+
+  getSchemaAttrsByID(schema_name: string, schema_version: string): string[] {
+    const schemas = loadJSON("schemas.json") as SchemaDefinition[]
+    const filtered = schemas.filter((s) => s.schema_name === schema_name && s.schema_version === schema_version)
+    let schemaAttributes: string[] = []
+    if (filtered.length > 0 && filtered[0].attributes) {
+      schemaAttributes = filtered[0].attributes
+    }
+    return schemaAttributes
   }
 
   async get(id: Id, params?: Params): Promise<CredExServiceResponse> {
@@ -46,11 +58,11 @@ export class CredentialExchange implements ServiceSwaggerAddon {
     const comment = this.app.get("issuer").offerComment;
     const attributes = data.claims.map(
       (claim: any) =>
-        ({
-          name: claim.name,
-          value: claim.value,
-          "mime-type": "text/plain",
-        } as AriesCredentialAttribute)
+      ({
+        name: claim.name,
+        value: claim.value,
+        "mime-type": "text/plain",
+      } as AriesCredentialAttribute)
     );
 
     let schema_id = data.schema_id;
@@ -64,6 +76,23 @@ export class CredentialExchange implements ServiceSwaggerAddon {
         );
       }
       schema_id = default_schema.schema_id || default_schema.schema.id;
+
+      //allows blank attributes to be supplied in isser-web/admin
+      const schemaChunks = schema_id.split(':');
+      const schemaVersion = schemaChunks[schemaChunks.length - 1]
+      const schemaName = schemaChunks[schemaChunks.length - 2]
+      const schemaAttributes = this.getSchemaAttrsByID(schemaName, schemaVersion)
+      const requestAttributes = data.claims.map((claim) => claim.name)
+
+      //take the set difference
+      const diff = schemaAttributes.filter(attr => !requestAttributes.includes(attr))
+      const diffAttrs = diff.map((attr) =>
+      ({
+        name: attr,
+        value: "",
+        "mime-type": "text/plain",
+      } as AriesCredentialAttribute))
+      attributes.push(...diffAttrs)
     }
     const cred_def_id = this.app.get("credDefs").get(schema_id) as string;
 

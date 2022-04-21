@@ -65,24 +65,25 @@ export class CredentialExchange implements ServiceSwaggerAddon {
         );
       }
       schema_id = default_schema.schema_id || default_schema.schema.id;
-
-      //allows blank attributes to be supplied in isser-web/admin
-      const schemaChunks = schema_id.split(':');
-      const schemaVersion = schemaChunks[schemaChunks.length - 1];
-      const schemaName = schemaChunks[schemaChunks.length - 2];
-      const schemaAttributes = getSchemaAttrsByID(schemaName, schemaVersion);
-      const requestAttributes = data.claims.map((claim) => claim.name);
-
-      //take the set difference
-      const diff = schemaAttributes.filter(attr => !requestAttributes.includes(attr));
-      const diffAttrs = diff.map((attr) =>
-      ({
-        name: attr,
-        value: "",
-        "mime-type": "text/plain",
-      } as AriesCredentialAttribute));
-      attributes.push(...diffAttrs);
     }
+    
+    //allows blank attributes to be supplied in isser-web/admin
+    const schemaChunks = schema_id.split(':');
+    const schemaVersion = schemaChunks[schemaChunks.length - 1];
+    const schemaName = schemaChunks[schemaChunks.length - 2];
+    const schemaAttributes = getSchemaAttrsByID(schemaName, schemaVersion);
+    const requestAttributes = data.claims.map((claim) => claim.name);
+
+    //take the set difference
+    const diff = schemaAttributes.filter(attr => !requestAttributes.includes(attr));
+    const diffAttrs = diff.map((attr) =>
+    ({
+      name: attr,
+      value: "",
+      "mime-type": "text/plain",
+    } as AriesCredentialAttribute));
+    attributes.push(...diffAttrs);
+
     const cred_def_id = this.app.get("credDefs").get(schema_id) as string;
 
     const credentialOffer = formatCredentialOffer(

@@ -11,10 +11,10 @@ import {
   CredExServiceResponse,
 } from "../../models/credential-exchange";
 import { ServiceAction, ServiceType } from "../../models/enums";
-import { formatCredentialOffer } from "../../utils/credential-exchange";
+import { formatCredentialOffer, getSchemaAttrsByID } from "../../utils/credential-exchange";
 import { updateInviteRecord } from "../../utils/issuer-invite";
 import { AriesSchema } from "../../models/schema";
-import logger from "../../logger";
+
 
 interface Data {
   token?: string;
@@ -23,7 +23,7 @@ interface Data {
   claims: Claim[];
 }
 
-interface ServiceOptions {}
+interface ServiceOptions { }
 
 export class CredentialExchange implements ServiceSwaggerAddon {
   app: Application;
@@ -33,6 +33,7 @@ export class CredentialExchange implements ServiceSwaggerAddon {
     this.options = options;
     this.app = app;
   }
+
 
   async get(id: Id, params?: Params): Promise<CredExServiceResponse> {
     return await this.app.service("aries-agent").create({
@@ -46,11 +47,11 @@ export class CredentialExchange implements ServiceSwaggerAddon {
     const comment = this.app.get("issuer").offerComment;
     const attributes = data.claims.map(
       (claim: any) =>
-        ({
-          name: claim.name,
-          value: claim.value,
-          "mime-type": "text/plain",
-        } as AriesCredentialAttribute)
+      ({
+        name: claim.name,
+        value: claim.value,
+        "mime-type": "text/plain",
+      } as AriesCredentialAttribute)
     );
 
     let schema_id = data.schema_id;
@@ -64,6 +65,23 @@ export class CredentialExchange implements ServiceSwaggerAddon {
         );
       }
       schema_id = default_schema.schema_id || default_schema.schema.id;
+
+      //allows blank attributes to be supplied in isser-web/admin
+      const schemaChunks = schema_id.split(':');
+      const schemaVersion = schemaChunks[schemaChunks.length - 1];
+      const schemaName = schemaChunks[schemaChunks.length - 2];
+      const schemaAttributes = getSchemaAttrsByID(schemaName, schemaVersion);
+      const requestAttributes = data.claims.map((claim) => claim.name);
+
+      //take the set difference
+      const diff = schemaAttributes.filter(attr => !requestAttributes.includes(attr));
+      const diffAttrs = diff.map((attr) =>
+      ({
+        name: attr,
+        value: "",
+        "mime-type": "text/plain",
+      } as AriesCredentialAttribute));
+      attributes.push(...diffAttrs);
     }
     const cred_def_id = this.app.get("credDefs").get(schema_id) as string;
 

@@ -37,95 +37,16 @@ export class AcaPyUtils {
     return this.instance;
   }
 
-  async makeAgentPost(url_part: string, data?: any): Promise<any> {
-    const url = `${this.getAdminUrl()}${url_part}`;
-    logger.debug(`POST ${url}`)
-    const response = await Axios.post(
-      url,
-      data,
-      this.getRequestConfig()
-    );
-    return response;
-  }
-
-  async makeAgentGet(url_part: string): Promise<any> {
-    const url = `${this.getAdminUrl()}${url_part}`;
-    logger.debug(`GET ${url}`)
-    const response = await Axios.get(
-      url,
-      this.getRequestConfig()
-    );
-    return response;
-  }
-
   isTractionBackend(): boolean {
-    logger.debug(`Check if traction mode ... ${this.app.get("agent").mode}`);
-    const is_traction = (this.app.get("agent").mode === AgentMode.Traction);
-    logger.debug(`... returns ${is_traction}`);
-    return is_traction;
+    return (this.app.get("agent").mode === AgentMode.Traction);
   }
 
-  async setTenantBearerToken(wallet_id: string, wallet_key: string) {
-    if (!this._tenantBearerToken) {
-      // login to get a bearer token
-      const url = `${this.getTractionTenantUrl()}/token`;
-      logger.debug(`Login to traction tenant using ${url}`)
-      const user = wallet_id;
-      const pwd = wallet_key;
-      const data = `grant_type=&username=${user}&password=${pwd}&scope=&client_id=&client_secret=`
-      const response = await Axios({
-        method: 'post',
-        url: url,
-        data: data,
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          "accept": "application/json"
-        }
-      });
-      this._tenantBearerToken = response.data.access_token;
-      logger.debug(`Traction tenant access token is REDACTED`)
-    }
+  innkeeperBearerToken(): string {
+    return this._innkeeperBearerToken;
   }
 
   tenantBearerToken(): string {
     return this._tenantBearerToken;
-  }
-
-  getTractionTenantUrl(): string {
-    if (this.isTractionBackend()) {
-      return `${this.app.get("traction").endpoint}${this.app.get("traction").tenantPrefix}`;
-    } else {
-      return '';
-    }
-  }
-
-  getRequestConfig(): AxiosRequestConfig {
-    // if we're running on traction we need an additional param
-    let requestConfig;
-    if (this.isTractionBackend()) {
-      requestConfig = {
-        headers: {
-          "x-api-key": this.app.get("agent").adminApiKey || "",
-          "Authorization": `Bearer ${this.tenantBearerToken()}`,
-        },
-      };
-    } else {
-      requestConfig = {
-        headers: {
-          "x-api-key": this.app.get("agent").adminApiKey || "",
-        },
-      };
-    }
-    return requestConfig as AxiosRequestConfig;
-  }
-
-  getAdminUrl(): string {
-    // admin url depends if we are running on traction (default aca-py)
-    if (this.isTractionBackend()) {
-      return `${this.app.get("traction").endpoint}${this.app.get("traction").acapyWrapperPrefix}`;
-    } else {
-      return this.app.get("agent").adminUrl;
-    }
   }
 
   async init() {
@@ -150,48 +71,6 @@ export class AcaPyUtils {
     return Promise.resolve(result);
   }
 
-  async makeTractionInnkeeperPost(url_part: string, data?: any): Promise<any> {
-    const url = `${this.getTractionInnkeeperUrl()}${url_part}`;
-    logger.debug(`POST ${url}`)
-    const response = await Axios.post(
-      url,
-      data,
-      this.getTractionInnkeeperRequestConfig()
-    );
-    return response;
-  }
-
-  async makeTractionInnkeeperGet(url_part: string): Promise<any> {
-    const url = `${this.getTractionInnkeeperUrl()}${url_part}`;
-    logger.debug(`GET ${url}`)
-    const response = await Axios.get(
-      url,
-      this.getTractionInnkeeperRequestConfig()
-    );
-    return response;
-  }
-
-  async makeTractionTenantPost(url_part: string, data?: any): Promise<any> {
-    const url = `${this.getTractionTenantUrl()}${url_part}`;
-    logger.debug(`POST ${url}`)
-    const response = await Axios.post(
-      url,
-      data,
-      this.getRequestConfig()
-    );
-    return response;
-  }
-
-  async makeTractionTenantGet(url_part: string): Promise<any> {
-    const url = `${this.getTractionTenantUrl()}${url_part}`;
-    logger.debug(`GET ${url}`)
-    const response = await Axios.get(
-      url,
-      this.getRequestConfig()
-    );
-    return response;
-  }
-
   async createIssuerTenant(name: string): Promise<any> {
     // first authenticate as innkeeper
     await this.setInnkeeperBearerToken();
@@ -202,7 +81,6 @@ export class AcaPyUtils {
       {"name": name, "webhook_url": "tbd"},
     );
     const tenantInfo = tenantInfoResponse.data;
-    logger.debug(`tenant info: ${tenantInfo}`)
 
     // make the tenant an issuer
     let url_part = `/v0/issuers/${tenantInfo['id']}`;
@@ -211,7 +89,6 @@ export class AcaPyUtils {
       {},
     );
     const tenantIssuerInfo = tenantIssuerInfoResponse;
-    logger.debug(`tenant issuer info: ${tenantIssuerInfo}`)
 
     // now authenticate as the tenant
     await this.setTenantBearerToken(tenantInfo['wallet_id'], tenantInfo['wallet_key']);
@@ -243,6 +120,77 @@ export class AcaPyUtils {
     return null;
   }
 
+  async makeAgentPost(url_part: string, data?: any): Promise<any> {
+    const url = `${this.getAdminUrl()}${url_part}`;
+    logger.debug(`POST ${url}`)
+    const response = await Axios.post(
+      url,
+      data,
+      this.getRequestConfig()
+    );
+    return response;
+  }
+
+  async makeAgentGet(url_part: string): Promise<any> {
+    const url = `${this.getAdminUrl()}${url_part}`;
+    logger.debug(`GET ${url}`)
+    const response = await Axios.get(
+      url,
+      this.getRequestConfig()
+    );
+    return response;
+  }
+
+  getRequestConfig(): AxiosRequestConfig {
+    // if we're running on traction we need an additional param
+    let requestConfig;
+    if (this.isTractionBackend()) {
+      requestConfig = {
+        headers: {
+          "x-api-key": this.app.get("agent").adminApiKey || "",
+          "Authorization": `Bearer ${this.tenantBearerToken()}`,
+        },
+      };
+    } else {
+      requestConfig = {
+        headers: {
+          "x-api-key": this.app.get("agent").adminApiKey || "",
+        },
+      };
+    }
+    return requestConfig as AxiosRequestConfig;
+  }
+
+  getAdminUrl(): string {
+    // admin url depends if we are running on traction (default aca-py)
+    if (this.isTractionBackend()) {
+      return `${this.app.get("traction").endpoint}${this.app.get("traction").acapyWrapperPrefix}`;
+    } else {
+      return this.app.get("agent").adminUrl;
+    }
+  }
+
+  async makeTractionInnkeeperPost(url_part: string, data?: any): Promise<any> {
+    const url = `${this.getTractionInnkeeperUrl()}${url_part}`;
+    logger.debug(`POST ${url}`)
+    const response = await Axios.post(
+      url,
+      data,
+      this.getTractionInnkeeperRequestConfig()
+    );
+    return response;
+  }
+
+  async makeTractionInnkeeperGet(url_part: string): Promise<any> {
+    const url = `${this.getTractionInnkeeperUrl()}${url_part}`;
+    logger.debug(`GET ${url}`)
+    const response = await Axios.get(
+      url,
+      this.getTractionInnkeeperRequestConfig()
+    );
+    return response;
+  }
+
   async setInnkeeperBearerToken() {
     if (!this._innkeeperBearerToken) {
       // login to get a bearer token
@@ -265,10 +213,6 @@ export class AcaPyUtils {
     }
   }
 
-  innkeeperBearerToken(): string {
-    return this._innkeeperBearerToken;
-  }
-
   getTractionInnkeeperRequestConfig(): AxiosRequestConfig {
     let requestConfig;
     if (this.isTractionBackend()) {
@@ -289,5 +233,71 @@ export class AcaPyUtils {
     } else {
       return '';
     }
+  }
+
+  async makeTractionTenantPost(url_part: string, data?: any): Promise<any> {
+    const url = `${this.getTractionTenantUrl()}${url_part}`;
+    logger.debug(`POST ${url}`)
+    const response = await Axios.post(
+      url,
+      data,
+      this.getRequestConfig()
+    );
+    return response;
+  }
+
+  async makeTractionTenantGet(url_part: string): Promise<any> {
+    const url = `${this.getTractionTenantUrl()}${url_part}`;
+    logger.debug(`GET ${url}`)
+    const response = await Axios.get(
+      url,
+      this.getRequestConfig()
+    );
+    return response;
+  }
+
+  async setTenantBearerToken(wallet_id: string, wallet_key: string) {
+    if (!this._tenantBearerToken) {
+      // login to get a bearer token
+      const url = `${this.getTractionTenantUrl()}/token`;
+      logger.debug(`Login to traction tenant using ${url}`)
+      const user = wallet_id;
+      const pwd = wallet_key;
+      const data = `grant_type=&username=${user}&password=${pwd}&scope=&client_id=&client_secret=`
+      const response = await Axios({
+        method: 'post',
+        url: url,
+        data: data,
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          "accept": "application/json"
+        }
+      });
+      this._tenantBearerToken = response.data.access_token;
+      logger.debug(`Traction tenant access token is REDACTED`)
+    }
+  }
+
+  getTractionTenantUrl(): string {
+    if (this.isTractionBackend()) {
+      return `${this.app.get("traction").endpoint}${this.app.get("traction").tenantPrefix}`;
+    } else {
+      return '';
+    }
+  }
+
+  async waitForTransaction(txnId: string): Promise<any> {
+    const url_part = `/transactions/${txnId}`;
+    let i = 0;
+    while (i < 20) {
+      await sleep(500);
+      const txnResult = await this.makeAgentGet(url_part);
+      const txn = txnResult.data;
+      if (txn['state'] === 'transaction_acked') {
+        return txn;
+      }
+      i = i + 1;
+    }
+    return null;
   }
 }

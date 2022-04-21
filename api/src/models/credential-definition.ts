@@ -4,6 +4,12 @@ export interface AriesCredentialDefinition {
   tag: string;
 }
 
+export interface CredDefCreateServiceResponse {
+  credential_definition_id: string;
+  sent: any;
+  txn: any;
+}
+
 export interface CredDefServiceResponse {
   credential_definition_id: string;
 }

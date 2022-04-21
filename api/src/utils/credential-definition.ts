@@ -1,6 +1,7 @@
 import {
   AriesCredentialDefinition,
   CredDefServiceResponse,
+  CredDefCreateServiceResponse,
 } from "../models/credential-definition";
 import { Application } from "@feathersjs/express";
 import { AcaPyUtils } from "./aca-py";
@@ -63,7 +64,22 @@ export class CredDefUtils {
         '/credential-definitions',
         credDef
       );
-      credDefResponse = response.data as CredDefServiceResponse;
+      const credDefCreateResponse = response.data as CredDefCreateServiceResponse;
+      if (credDefCreateResponse.txn) {
+        const txnId = credDefCreateResponse.txn['transaction_id'];
+        const txnState = credDefCreateResponse.txn['state'];
+        logger.debug(`cred def transaction ${txnState}, id: ${txnId}`)
+
+        // wait for txn to complete
+        const txn = await this.utils.waitForTransaction(txnId);
+        credDefResponse = {
+          credential_definition_id: txn['meta_data']['context']['cred_def_id']
+        }
+      } else {
+        credDefResponse = {
+          credential_definition_id: credDefCreateResponse.credential_definition_id
+        }
+      }
       logger.debug(
         `Published credential definition: ${JSON.stringify(credDefResponse)}`
       );

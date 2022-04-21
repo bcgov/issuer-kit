@@ -59,7 +59,21 @@ export class SchemaUtils {
       '/schemas',
       schema
     );
-    const schemaResponse = response.data as AriesSchema;
+    let schemaResponse = response.data as AriesSchema;
+    if (schemaResponse.txn) {
+      const txnId = schemaResponse.txn['transaction_id'];
+      const txnState = schemaResponse.txn['state'];
+      logger.debug(`schema transaction ${txnState}, id: ${txnId}`)
+
+      // wait for txn to complete
+      const txn = await this.utils.waitForTransaction(txnId);
+
+      // make the schema response look the same as if we just stored it
+      const schema_id = txn['meta_data']['context']['schema_id'];
+      const url_part = `/schemas/${schema_id}`;
+      const schemaReadResponse = await this.utils.makeAgentGet(url_part);
+      schemaResponse = schemaReadResponse.data as AriesSchema;
+    }
     logger.debug(`Published schema: ${JSON.stringify(schemaResponse)}`);
     this.storeSchema(schemaResponse, schema.default, schema.public);
     return Promise.resolve(schemaResponse);

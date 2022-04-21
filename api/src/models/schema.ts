@@ -22,6 +22,8 @@ export interface AriesSchema {
     attrNames: string[];
     seqNo: number;
   };
+  sent: any;
+  txn: any;
 }
 
 export interface SchemaDefinition {

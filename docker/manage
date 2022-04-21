@@ -153,6 +153,7 @@ EOF
 # Default Settings:
 # -----------------------------------------------------------------------------------------------------------------
 DEFAULT_CONTAINERS="db agent wallet keycloak keycloak-db maildev tails-server"
+TRACTION_CONTAINERS="db keycloak keycloak-db maildev tails-server"
 PROD_CONTAINERS="api issuer-admin issuer-web"
 DEV_CONTAINERS="api-dev issuer-admin-dev issuer-web-dev"
 # -----------------------------------------------------------------------------------------------------------------

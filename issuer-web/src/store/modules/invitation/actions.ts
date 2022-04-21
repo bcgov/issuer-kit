@@ -43,10 +43,14 @@ export const actions: ActionTree<InvitationState, RootState> = {
         Axios.post(`${config.apiServer.url}/token/${token}/validate`).then(
           response => {
             const responseData = response.data as IssuerInvitationInterface;
-            const invitationStatus = getInviteStatus({
-              issued: responseData.issued || false,
-              expired: responseData.expired || false
-            });
+            // if no issued or expired attributes, treat as expired (ie: invalid)
+            let invitationStatus = InvitationStatus.INVALID
+            if(responseData.expired !== undefined && responseData.issued !== undefined){
+              invitationStatus = getInviteStatus({
+                issued: responseData.issued,
+                expired: responseData.expired
+              });
+            }
             invitation.status = invitationStatus;
             if (InvitationStatus.VALID === invitationStatus) {
               invitation.token = token;

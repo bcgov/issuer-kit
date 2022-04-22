@@ -88,6 +88,39 @@ To restart the applications:
   - In the second terminal, hit Ctrl-C and run `./manage down`
   - In the first terminal, hit Ctrl-C to stop `ngrok`
 
+### Traction Mode
+
+Issuer kit can run in multi-tenant mode, using [Traction](https://github.com/bcgov/traction) to manage Aca-Py tenants.
+
+You must run traction first, before starting Issuer Kit - in a separate shell, run the following:
+
+```bash
+git clone https://github.com/bcgov/traction.git
+cd traction/scripts
+docker-compose build
+docker-compose up
+```
+
+Once traction is running, start up Issuer Kit as follows:
+
+```bash
+ACAPY_AGENT_MODE=TRACTION ./manage start-demo
+```
+
+Currently, Issuer Kit will create a default tenant in Traction using the supplied configuration.  In the future, capabilities will be added to Issuer Kit to dynamically add new Issuer tenants.
+
+To shut down Issuer Kit:
+
+```bash
+./manage rm
+```
+
+To shut down Traction:
+
+```bash
+docker-compose down -v --remove-orphans
+```
+
 ### Local Mode
 
 In Local Mode the entire application runs locally and uses a locally deployed Indy ledger. In Local Mode you cannot use the Streetcred agent because it is unable to access the ledger being used.

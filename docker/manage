@@ -361,6 +361,9 @@ getStartupParams() {
   if [ -z "$CONTAINERS" ]; then
     CONTAINERS="$DEFAULT_CONTAINERS"
   fi
+  if [ "$ACAPY_AGENT_MODE" == "TRACTION" ]; then
+    CONTAINERS="$TRACTION_CONTAINERS"
+  fi
 
   echo ${ARGS} ${CONTAINERS}
 }
@@ -486,9 +489,15 @@ case "${COMMAND}" in
     checkNgrokTunnelActive
     echo "Running in demo mode, will use ${LEDGER_URL} as ledger and ${NGROK_AGENT_ENDPOINT} as the agent endpoint."
 
+    if [ "$ACAPY_AGENT_MODE" == "TRACTION" ]; then
+      CONTAINERS="$TRACTION_CONTAINERS"
+    else
+      CONTAINERS="$DEFAULT_CONTAINERS"
+    fi
+
     configureEnvironment "$@"
     customizeKeycloakConfig
-    docker-compose --env-file .env up -d ${_startupParams} ${DEFAULT_CONTAINERS} ${PROD_CONTAINERS}
+    docker-compose --env-file .env up -d ${_startupParams} ${CONTAINERS} ${PROD_CONTAINERS}
     docker-compose logs -f
     ;;
   stop)

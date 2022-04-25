@@ -97,6 +97,7 @@ You must run traction first, before starting Issuer Kit - in a separate shell, r
 ```bash
 git clone https://github.com/bcgov/traction.git
 cd traction/scripts
+git checkout issuer-kit-integration
 docker-compose build
 docker-compose up
 ```

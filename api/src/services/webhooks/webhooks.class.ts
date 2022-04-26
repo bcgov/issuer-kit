@@ -103,8 +103,9 @@ export class TractionWebhooks {
   }
 
   async create(data: TractionData, params?: Params): Promise<any> {
-    logger.warn(`Webhook ${data} received`)
+    const tenant = params?.route?.tenant;
     const topic = data.topic;
+    logger.debug(`Webhook received for ${tenant} ${topic}`);
     switch (topic) {
       case WebhookTopic.Connections:
         this.handleConnection(data.payload);

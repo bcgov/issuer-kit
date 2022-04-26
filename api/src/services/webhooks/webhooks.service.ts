@@ -9,7 +9,7 @@ import hooks from "./webhooks.hooks";
 declare module "../../declarations" {
   interface ServiceTypes {
     "webhooks/topic/:topic": Webhooks & ServiceAddons<any>;
-    "webhooks/traction": TractionWebhooks & ServiceAddons<any>;
+    "webhooks/traction/:tenant": TractionWebhooks & ServiceAddons<any>;
   }
 }
 
@@ -25,10 +25,10 @@ export default function (app: Application) {
   service.hooks(hooks);
 
   // Initialize our service with any options it requires
-  app.use("/webhooks/traction", new TractionWebhooks(options, app));
+  app.use("/webhooks/traction/:tenant", new TractionWebhooks(options, app));
 
   // Get our initialized service so that we can register hooks
-  const tractionService = app.service("webhooks/traction");
+  const tractionService = app.service("webhooks/traction/:tenant");
 
   tractionService.hooks(hooks);
 }

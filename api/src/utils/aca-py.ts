@@ -51,7 +51,12 @@ export class AcaPyUtils {
 
   async init() {
     // wait for the agent to be ready (aca-py only) (assume traction is already started)
-    if (!(this.isTractionBackend())) {
+    if (this.isTractionBackend()) {
+      while (!(await this.isTractionReady())) {
+        logger.debug("Traction service not ready, retrying in 500ms...");
+        await sleep(500);
+      }
+    } else {
       while (!(await this.isAcaPyReady())) {
         logger.debug("Aca-Py agent not ready, retrying in 500ms...");
         await sleep(500);
@@ -64,6 +69,18 @@ export class AcaPyUtils {
     let result;
     try {
       const response = await Axios.get(url, this.getRequestConfig());
+      result = response.status === 200 ? true : false;
+    } catch (error) {
+      result = false;
+    }
+    return Promise.resolve(result);
+  }
+
+  async isTractionReady(): Promise<boolean> {
+    const url = `${this.app.get("traction").endpoint}/`;
+    let result;
+    try {
+      const response = await Axios.get(url, {});
       result = response.status === 200 ? true : false;
     } catch (error) {
       result = false;
@@ -97,7 +114,7 @@ export class AcaPyUtils {
     const tenantIdResult = await this.makeTractionTenantGet('/v0/admin/tenant');
     const tenantId = tenantIdResult.data['id'];
     const tenantWebhookConfig = {
-      "webhook_url": `${this.app.get("webhook").url}/traction`,
+      "webhook_url": `${this.app.get("webhook").url}/traction/${tenantId}`,
       "config": {
         "acapy": true
       },

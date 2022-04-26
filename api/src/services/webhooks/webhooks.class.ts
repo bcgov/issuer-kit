@@ -7,6 +7,7 @@ import {
   ServiceType,
   ServiceAction,
 } from "../../models/enums";
+import logger from "../../logger";
 import { updateInviteRecord } from "../../utils/issuer-invite";
 import { AriesCredentialAttribute } from "../../models/credential-exchange";
 
@@ -17,6 +18,8 @@ interface Data {
   revocation_id?: string;
   revoc_reg_id?: string;
 }
+
+interface TractionData {}
 
 interface ServiceOptions {}
 
@@ -36,10 +39,12 @@ export class Webhooks {
         this.handleConnection(data);
         return { result: "Success" };
       case WebhookTopic.IssueCredential:
-        this.handleIssueCredential(data);
+        this.handleIssueCredential(data as Data);
         return { result: "Success" };
       default:
-        return new NotImplemented(`Webhook ${topic} is not supported`);
+        logger.warn(`Webhook ${topic} is not supported`)
+        //return new NotImplemented(`Webhook ${topic} is not supported`);
+        return { result: "Success" };
     }
   }
 
@@ -82,5 +87,20 @@ export class Webhooks {
         );
         return { status: `Unexpected state ${data.state}` };
     }
+  }
+}
+
+export class TractionWebhooks {
+  app: Application;
+  options: ServiceOptions;
+
+  constructor(options: ServiceOptions = {}, app: Application) {
+    this.options = options;
+    this.app = app;
+  }
+
+  async create(data: TractionData, params?: Params): Promise<any> {
+    logger.warn(`Webhook ${data} received`)
+    return { result: "Success" };
   }
 }

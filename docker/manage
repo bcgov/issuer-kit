@@ -297,7 +297,7 @@ configureEnvironment() {
   fi
   export AGENT_ADMIN_PORT=8024
   export AGENT_WEBHOOK_PORT=8020
-  export AGENT_WEBHOOK_URL=${AGENT_WEBHOOK_URL:-http://api:5050/webhooks}
+  export AGENT_WEBHOOK_URL=${AGENT_WEBHOOK_URL:-http://host.docker.internal:5050/webhooks}
   export AGENT_HTTP_INTERFACE_PORT=8021
   export AGENT_NAME="issuer-kit-demo"
   export AGENT_ENDPOINT=${NGROK_AGENT_ENDPOINT:-http://$DOCKERHOST:$AGENT_HTTP_INTERFACE_PORT}

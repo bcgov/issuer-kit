@@ -78,7 +78,7 @@ export class AcaPyUtils {
     // create a new tenant
     const tenantInfoResponse = await this.makeTractionInnkeeperPost(
       '/v0/check-in',
-      {"name": name, "webhook_url": "tbd"},
+      {"name": name},
     );
     const tenantInfo = tenantInfoResponse.data;
 
@@ -92,6 +92,24 @@ export class AcaPyUtils {
 
     // now authenticate as the tenant
     await this.setTenantBearerToken(tenantInfo['wallet_id'], tenantInfo['wallet_key']);
+
+    // setup webhook for new tenant wallet - get tenant id and then add webhook
+    const tenantIdResult = await this.makeTractionTenantGet('/v0/admin/tenant');
+    const tenantId = tenantIdResult.data['id'];
+    const tenantWebhookConfig = {
+      "webhook_url": `${this.app.get("webhook").url}/traction`,
+      "config": {
+        "acapy": true
+      },
+      "webhook_key": "tbd",
+      "tenant_id": tenantId
+    };
+    logger.debug(`Updating webhook to: ${tenantWebhookConfig}`);
+    const tenantWebhookResult = await this.makeTractionTenantPost(
+      '/v0/admin/webhook',
+      tenantWebhookConfig
+    );
+    logger.debug(`... with result ${tenantWebhookResult.data}`);
 
     // complete the tenant/issuer process
     const tenantIssuerResponse = await this.makeTractionTenantPost(

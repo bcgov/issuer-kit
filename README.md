@@ -122,6 +122,8 @@ To shut down Traction:
 docker-compose down -v --remove-orphans
 ```
 
+[This document](https://hackmd.io/LbDlqU-9Q0mcGnBXg_hYRw?view) describes the Issuer Kit/Traction integration approach (and options).
+
 ### Local Mode
 
 In Local Mode the entire application runs locally and uses a locally deployed Indy ledger. In Local Mode you cannot use the Streetcred agent because it is unable to access the ledger being used.

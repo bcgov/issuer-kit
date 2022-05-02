@@ -98,6 +98,8 @@ You must run traction first, before starting Issuer Kit - in a separate shell, r
 git clone https://github.com/bcgov/traction.git
 cd traction/scripts
 git checkout issuer-kit-integration
+cp .env-example .env
+# edit .env file to set any local configuration options
 docker-compose build
 docker-compose up
 ```

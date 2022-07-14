@@ -41,7 +41,7 @@ export class AcaPyUtils {
     return this.app.get("agent").adminUrl;
   }
 
-  async processDefinition(schemaDef: SchemaDefinition) {}
+  async processDefinition(schemaDef: SchemaDefinition) { }
 
   async init(): Promise<any> {
     const config = loadJSON("schemas.json") as SchemaDefinition[];
@@ -80,17 +80,24 @@ export class AcaPyUtils {
           schemas.set("default", schema);
         }
 
-        const support_revocation = schemaDef.revocable || false;
-        const tag = schemaDef.tag || "default";
+        // Get credential definition id from schemas.json if it exists
+        let credDefId
+        if (schemaDef.cred_def_id) {
+          credDefId = schemaDef.cred_def_id
+        } else {
+          const support_revocation = schemaDef.revocable || false;
+          const tag = schemaDef.tag || "default";
+          //  publish cred_def for current schema
+          const formattedCredDef = credDefUtils.formatCredentialDefinition(
+            schema.schema.id,
+            support_revocation,
+            tag
+          );
+          const credDef = await credDefUtils.getOrCreateCredDef(formattedCredDef);
+          credDefId = credDef.credential_definition_id
+        }
 
-        //  publish cred_def for current schema
-        const formattedCredDef = credDefUtils.formatCredentialDefinition(
-          schema.schema.id,
-          support_revocation,
-          tag
-        );
-        const credDef = await credDefUtils.getOrCreateCredDef(formattedCredDef);
-        credDefs.set(schema.schema.id, credDef.credential_definition_id);
+        credDefs.set(schema.schema.id, credDefId);
       } catch (err) {
         logger.error(err);
       }

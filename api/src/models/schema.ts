@@ -31,7 +31,6 @@ export interface SchemaDefinition {
   attributes?: string[];
   revocable?: boolean;
   tag?: string;
-  cred_def_id?: string;
   default?: boolean;
   public?: boolean;
 }

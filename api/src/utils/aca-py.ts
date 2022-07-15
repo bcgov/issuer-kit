@@ -80,24 +80,17 @@ export class AcaPyUtils {
           schemas.set("default", schema);
         }
 
-        // Get credential definition id from schemas.json if it exists
-        let credDefId
-        if (schemaDef.cred_def_id) {
-          credDefId = schemaDef.cred_def_id
-        } else {
-          const support_revocation = schemaDef.revocable || false;
-          const tag = schemaDef.tag || "default";
-          //  publish cred_def for current schema
-          const formattedCredDef = credDefUtils.formatCredentialDefinition(
-            schema.schema.id,
-            support_revocation,
-            tag
-          );
-          const credDef = await credDefUtils.getOrCreateCredDef(formattedCredDef);
-          credDefId = credDef.credential_definition_id
-        }
+        const support_revocation = schemaDef.revocable || false;
+        const tag = schemaDef.tag || "default";
 
-        credDefs.set(schema.schema.id, credDefId);
+        //  publish cred_def for current schema
+        const formattedCredDef = credDefUtils.formatCredentialDefinition(
+          schema.schema.id,
+          support_revocation,
+          tag
+        );
+        const credDef = await credDefUtils.getOrCreateCredDef(formattedCredDef);
+        credDefs.set(schema.schema.id, credDef.credential_definition_id);
       } catch (err) {
         logger.error(err);
       }

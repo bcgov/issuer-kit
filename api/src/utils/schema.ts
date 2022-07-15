@@ -68,6 +68,15 @@ export class SchemaUtils {
     return Promise.resolve(schemaResponse);
   }
 
+  // fetchSchemaIDs find matching schema IDs on ledger based on schema name and version
+  async fetchSchemaIDs(schemaName?: string, schemaVersion?: string): Promise<{ schema_ids: string[] }> {
+    const url = `${this.utils.getAdminUrl()}/schemas/created`;
+    let config = this.utils.getRequestConfig()
+    config["params"] = { schema_name: schemaName, schema_version: schemaVersion }
+    const response = await Axios.get(url, config)
+    return Promise.resolve(response.data)
+  }
+
   async fetchSchema(
     id: string,
     isDefault = false,

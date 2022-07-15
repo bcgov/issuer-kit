@@ -71,8 +71,25 @@ export class AcaPyUtils {
             schemaDef.public
           );
         } else {
-          // Register to the ledger
-          schema = await schemaUtils.publishSchema(schemaDef);
+          // Search for schema first
+          logger.debug(
+            `Searching for schema on ledger: ${JSON.stringify(schemaDef)}`
+          );
+          const response = await schemaUtils.fetchSchemaIDs(schemaDef.schema_name, schemaDef.schema_version)
+          const schemaIDs = response.schema_ids
+          if (schemaIDs.length > 0) {
+            schema = await schemaUtils.fetchSchema(
+              schemaIDs[schemaIDs.length - 1],
+              schemaDef.default,
+              schemaDef.public
+            );
+            logger.debug(
+              `Schema found on ledger: ${JSON.stringify(schemaDef)}`
+            );
+          }else{
+            // Register to the ledger if no results found
+            schema = await schemaUtils.publishSchema(schemaDef);
+          }
         }
         schemas.set(schema.schema_id || schema.schema.id, schema);
         if (schemaDef.default) {

@@ -57,19 +57,40 @@ export class CredDefUtils {
           this.app.get("credDefs").get(credDef.schema_id) || "",
       };
     } else {
+      // Search for credential definition on ledger first, otherwise publish
       logger.debug(
-        `Publishing credential definition to ledger: ${JSON.stringify(credDef)}`
+        `Searching for credential definition on ledger: ${JSON.stringify(credDef)}`
       );
-      const url = `${this.utils.getAdminUrl()}/credential-definitions`;
-      const response = await Axios.post(
-        url,
-        credDef,
-        this.utils.getRequestConfig()
-      );
-      credDefResponse = response.data as CredDefServiceResponse;
-      logger.debug(
-        `Published credential definition: ${JSON.stringify(credDefResponse)}`
-      );
+      const url = `${this.utils.getAdminUrl()}/credential-definitions/created`;
+      let config = this.utils.getRequestConfig()
+      config["params"] = { schema_id: credDef.schema_id }
+
+      const response = await Axios.get(url, config)
+      const credDefIDs = response.data.credential_definition_ids as string[]
+
+      if (credDefIDs.length > 0) {
+        credDefResponse = {
+          credential_definition_id: credDefIDs[credDefIDs.length - 1]
+        }
+        logger.debug(
+          `Credential definition found on ledger: ${JSON.stringify(credDef)}`
+        );
+      } else {
+        logger.debug(
+          `Publishing credential definition to ledger: ${JSON.stringify(credDef)}`
+        );
+        const url = `${this.utils.getAdminUrl()}/credential-definitions`;
+        const response = await Axios.post(
+          url,
+          credDef,
+          this.utils.getRequestConfig()
+        );
+        credDefResponse = response.data as CredDefServiceResponse;
+        logger.debug(
+          `Published credential definition: ${JSON.stringify(credDefResponse)}`
+        );
+      }
+
     }
     return credDefResponse;
   }

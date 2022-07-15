@@ -71,8 +71,25 @@ export class AcaPyUtils {
             schemaDef.public
           );
         } else {
-          // Register to the ledger
-          schema = await schemaUtils.publishSchema(schemaDef);
+          // Search for schema first
+          logger.debug(
+            `Searching for schema on ledger: ${JSON.stringify(schemaDef)}`
+          );
+          const response = await schemaUtils.fetchSchemaIDs(schemaDef.schema_name, schemaDef.schema_version)
+          const schemaIDs = response.schema_ids
+          if (schemaIDs.length > 0) {
+            schema = await schemaUtils.fetchSchema(
+              schemaIDs[schemaIDs.length - 1],
+              schemaDef.default,
+              schemaDef.public
+            );
+            logger.debug(
+              `Schema found on ledger: ${JSON.stringify(schemaDef)}`
+            );
+          }else{
+            // Register to the ledger if no results found
+            schema = await schemaUtils.publishSchema(schemaDef);
+          }
         }
         schemas.set(schema.schema_id || schema.schema.id, schema);
         if (schemaDef.default) {
@@ -80,24 +97,17 @@ export class AcaPyUtils {
           schemas.set("default", schema);
         }
 
-        // Get credential definition id from schemas.json if it exists
-        let credDefId
-        if (schemaDef.cred_def_id) {
-          credDefId = schemaDef.cred_def_id
-        } else {
-          const support_revocation = schemaDef.revocable || false;
-          const tag = schemaDef.tag || "default";
-          //  publish cred_def for current schema
-          const formattedCredDef = credDefUtils.formatCredentialDefinition(
-            schema.schema.id,
-            support_revocation,
-            tag
-          );
-          const credDef = await credDefUtils.getOrCreateCredDef(formattedCredDef);
-          credDefId = credDef.credential_definition_id
-        }
+        const support_revocation = schemaDef.revocable || false;
+        const tag = schemaDef.tag || "default";
 
-        credDefs.set(schema.schema.id, credDefId);
+        //  publish cred_def for current schema
+        const formattedCredDef = credDefUtils.formatCredentialDefinition(
+          schema.schema.id,
+          support_revocation,
+          tag
+        );
+        const credDef = await credDefUtils.getOrCreateCredDef(formattedCredDef);
+        credDefs.set(schema.schema.id, credDef.credential_definition_id);
       } catch (err) {
         logger.error(err);
       }

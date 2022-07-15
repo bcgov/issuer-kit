@@ -3,3 +3,4 @@ tunnels:
     addr: 8021
     proto: http
     bind-tls: true
+version: "1"

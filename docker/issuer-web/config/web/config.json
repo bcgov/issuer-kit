@@ -8,6 +8,7 @@
     "displayOnFirstVisit": false
   },
   "inviteRequired": true,
+  "deepLinkPrefix":"didcomm://launch",
   "authentication": {
     "enabled": false,
     "autoSignOut": true,

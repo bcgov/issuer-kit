@@ -8,6 +8,7 @@ export interface AppConfig {
     displayOnFirstVisit: boolean;
   };
   inviteRequired: boolean;
+  deepLinkPrefix: string;
   authentication: {
     enabled: boolean;
     autoSignOut: boolean;

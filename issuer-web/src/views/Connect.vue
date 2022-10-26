@@ -1,4 +1,6 @@
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+
+</style>
 
 <template>
   <v-container fluid>
@@ -15,20 +17,13 @@
         start automatically.
       </p>
 
-      <v-progress-circular
-        v-if="qrKey === 0"
-        :indeterminate="true"
-        rotate="true"
-        size="32"
-        width="4"
-        color="secondary darken-2"
-        class="mx-3"
-      ></v-progress-circular>
+      <v-progress-circular v-if="qrKey === 0" :indeterminate="true" rotate="true" size="32" width="4"
+        color="secondary darken-2" class="mx-3"></v-progress-circular>
 
       <QRCode v-if="qrKey > 0" :value="inviteURL" :width="width" :key="qrKey" />
 
       <v-container>
-        <v-btn color="white" :h="`didcomm://launch?d_m=${base64Invitation}`">
+        <v-btn color="white" :h="`${deeplinkPrefix}?d_m=${base64Invitation}`">
           <v-icon left light>fas fa-external-link-alt</v-icon>
           Open in a Trusted Digital Wallet
         </v-btn>
@@ -39,9 +34,7 @@
       <v-container fluid>
         <v-row align="center" justify="space-between" class="mr-2">
           <v-col cols="6" md="2">
-            <v-btn outlined color="error" :to="{ path: 'confirm-data' }"
-              >Back</v-btn
-            >
+            <v-btn outlined color="error" :to="{ path: 'confirm-data' }">Back</v-btn>
           </v-col>
           <v-col cols="6" md="2"> </v-col>
         </v-row>
@@ -55,6 +48,8 @@ import { Component, Vue } from "vue-property-decorator";
 import QRCode from "@/components/QRCode.vue";
 import { Connection, ConnectionStatus } from "../models/connection";
 import Axios, { CancelTokenSource } from "axios";
+import { AppConfig } from "@/models/appConfig";
+import * as ConfigService from "@/services/config";
 
 @Component({ components: { QRCode } })
 export default class Connect extends Vue {
@@ -63,12 +58,18 @@ export default class Connect extends Vue {
   private width!: number;
   private qrKey = 0;
   private cancelTokenSource!: CancelTokenSource;
+  private deeplinkPrefix = "didcomm://launch"
 
   created() {
     this.width = 300;
     this.base64Invitation = "Loading invite...";
 
     this.cancelTokenSource = Axios.CancelToken.source();
+
+    ConfigService.getAppConfig().then(config => {
+      // load deeplink prefix from store
+      this.deeplinkPrefix = config.deepLinkPrefix ?? this.deeplinkPrefix
+    })
 
     this.$store
       .dispatch("connection/getNewConnection")

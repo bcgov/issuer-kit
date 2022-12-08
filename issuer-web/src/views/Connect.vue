@@ -23,7 +23,7 @@
       <QRCode v-if="qrKey > 0" :value="inviteURL" :width="width" :key="qrKey" />
 
       <v-container>
-        <v-btn color="white" :h="`${deeplinkPrefix}?d_m=${base64Invitation}`">
+        <v-btn color="white" :href="`${deeplinkPrefix}?d_m=${base64Invitation}`">
           <v-icon left light>fas fa-external-link-alt</v-icon>
           Open in a Trusted Digital Wallet
         </v-btn>

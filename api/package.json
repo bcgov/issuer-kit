@@ -73,7 +73,7 @@
     "@types/mongodb": "^3.6.20",
     "@types/serve-favicon": "^2.5.3",
     "@types/uuid": "^8.3.4",
-    "mocha": "^7.2.0",
+    "mocha": "^10.2.0",
     "nodemon": "^2.0.15",
     "shx": "^0.3.4",
     "ts-mocha": "^7.0.0",

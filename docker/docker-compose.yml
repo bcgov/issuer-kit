@@ -4,7 +4,7 @@ services:
   # API/Controller
   #
   api-dev:
-    image: node:erbium
+    image: node:hydrogen
     environment:
       PORT: ${API_PORT}
       AGENT_ADMIN_URL: ${AGENT_ADMIN_URL}

@@ -159,7 +159,7 @@ DEV_CONTAINERS="api-dev issuer-admin-dev issuer-web-dev"
 # Functions:
 # -----------------------------------------------------------------------------------------------------------------
 build-api() {
-  BASE_IMAGE="centos/nodejs-12-centos7"
+  BASE_IMAGE="quay.io/fedora/nodejs-18"
   echo "Building issuer-kit-api image using $BASE_IMAGE as base..."
   
   ${S2I_EXE} build \

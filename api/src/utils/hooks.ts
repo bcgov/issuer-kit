@@ -1,7 +1,7 @@
 import { Forbidden, MethodNotAllowed } from "@feathersjs/errors";
 import { HookContext } from "@feathersjs/feathers";
 import { decode, verify } from "jsonwebtoken";
-import jwks, { ClientOptions, JwksClient, SigningKey } from "jwks-rsa";
+import jwks, { JwksClient, SigningKey } from "jwks-rsa";
 import { Db, ObjectId } from "mongodb";
 import logger from "../logger";
 
@@ -15,7 +15,7 @@ export async function validateEmail(context: HookContext) {
 
 export async function searchRegex(context: HookContext) {
   const query = context.params.query;
-  for (let field in query) {
+  for (const field in query) {
     if (field === "email") {
       query[field] = { $regex: new RegExp(query[field], "i") };
     }
@@ -32,7 +32,7 @@ export async function canDeleteInvite(context: HookContext) {
       .collection("issuer-invite")
       .findOne({ _id: new ObjectId(context.id) });
 
-    if (invite.revoked === undefined) {
+    if (invite?.revoked === undefined) {
       return context;
     } else {
       throw new MethodNotAllowed(
@@ -126,9 +126,9 @@ async function getAuthSigningKeys(context: HookContext): Promise<SigningKey[]> {
   // fetch public key from JWKS url and verify token
   const jwksOptions = {
     jwksUri: context.app.get("authentication").jwksUri,
-  } as ClientOptions;
+  };
   const oidcClient = jwks(jwksOptions) as JwksClient;
-  return (await oidcClient.getSigningKeysAsync()) as SigningKey[];
+  return (await oidcClient.getSigningKeys()) as SigningKey[];
 }
 
 function verifyIdToken(

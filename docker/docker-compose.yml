@@ -146,7 +146,7 @@ services:
   # keycloak service
   #
   keycloak:
-    image: jboss/keycloak:12.0.4
+    image: jboss/keycloak:16.1.1
     environment:
       DB_VENDOR: ${KEYCLOAK_DB_VENDOR}
       DB_ADDR: ${KEYCLOAK_DB_ADDR}
@@ -272,11 +272,13 @@ services:
         --log-level $LOG_LEVEL
 
   maildev:
-    image: djfarrelly/maildev
+    image: maildev/maildev
+    environment:
+      MAILDEV_SMTP_PORT: 25
     networks:
       - issuer_kit
     ports:
-      - "8050:80"
+      - "8050:1080"
 
 networks:
   issuer_kit:

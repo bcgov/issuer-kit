@@ -173,9 +173,9 @@ export default class DataCollection extends Vue {
         this.issuerInvite.issued = invite.issued;
         this.issuerInvite.expired = invite.expired;
         this.issuerInvite.revoked = invite.revoked;
-        this.issuerInvite.revocation_id = invite.revocation_id; // eslint-disable-line @typescript-eslint/camelcase
-        this.issuerInvite.revoc_reg_id = invite.revoc_reg_id; // eslint-disable-line @typescript-eslint/camelcase
-        this.issuerInvite.revocation_history = invite.revocation_history; // eslint-disable-line @typescript-eslint/camelcase
+        this.issuerInvite.revocation_id = invite.revocation_id;
+        this.issuerInvite.revoc_reg_id = invite.revoc_reg_id;
+        this.issuerInvite.revocation_history = invite.revocation_history;
         this.issuerInvite._id = (this.$route.query.id as string) || "";
         this.surveyKey += 1;
       });

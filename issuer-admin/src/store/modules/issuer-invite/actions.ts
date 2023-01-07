@@ -137,10 +137,10 @@ export const actions: ActionTree<IssuerInviteState, RootState> = {
       issued: issuerInvite.issued,
       expired: issuerInvite.expired,
       revoked: issuerInvite.revoked,
-      revocation_id: issuerInvite.revocation_id, // eslint-disable-line @typescript-eslint/camelcase
-      revoc_reg_id: issuerInvite.revoc_reg_id, // eslint-disable-line @typescript-eslint/camelcase
-      revocation_history: issuerInvite.revocation_history, // eslint-disable-line @typescript-eslint/camelcase
-      updated_by: issuerInvite.updated_by // eslint-disable-line @typescript-eslint/camelcase
+      revocation_id: issuerInvite.revocation_id,
+      revoc_reg_id: issuerInvite.revoc_reg_id,
+      revocation_history: issuerInvite.revocation_history,
+      updated_by: issuerInvite.updated_by
     };
 
     const idToken = context.rootGetters["oidcStore/oidcIdToken"];

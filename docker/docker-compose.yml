@@ -69,7 +69,7 @@ services:
   # Admin frontend with hot-reloading
   #
   issuer-admin-dev:
-    image: node:erbium
+    image: node:hydrogen
     volumes:
       - ../issuer-admin:/usr/src/issuer-admin
     working_dir: /usr/src/issuer-admin

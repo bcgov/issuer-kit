@@ -10,7 +10,7 @@
   "inviteRequired": false,
   "deepLinkPrefix":"didcomm://launch",
   "authentication": {
-    "enabled": true,
+    "enabled": false,
     "autoSignOut": true,
     "oidcSettings": {
       "authority": "http://localhost:8180/auth/realms/issuer-kit",

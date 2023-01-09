@@ -99,7 +99,7 @@ services:
   # Public frontend with hot-reloading
   #
   issuer-web-dev:
-    image: node:erbium
+    image: node:hydrogen
     volumes:
       - ../issuer-web:/usr/src/issuer-web
     working_dir: /usr/src/issuer-web

@@ -48,7 +48,7 @@ export default class DataCollection extends Vue {
       .claims;
     this.survey = new SurveyVue.Model(claimConfig);
     this.survey.completeText = "Request Credential";
-    this.survey.onComplete.add(result => {
+    this.survey.onComplete.add((result: any) => {
       const credentialClaims = new Array<Claim>();
       Object.keys(result.data).forEach(key => {
         credentialClaims.push({ name: key, value: result.data[key] });

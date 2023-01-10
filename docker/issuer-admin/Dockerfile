@@ -1,4 +1,4 @@
-FROM docker.io/node:erbium
+FROM docker.io/node:hydrogen
 WORKDIR /app
 COPY issuer-admin/package*.json ./
 RUN npm install

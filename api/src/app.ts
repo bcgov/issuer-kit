@@ -53,7 +53,6 @@ app.configure(
     openApiVersion: 3,
     docsPath: "/swagger/docs",
     docsJsonPath: "/swagger/jsondocs",
-    uiIndex: true,
     specs: {
       info: {
         title: "API",

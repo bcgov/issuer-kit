@@ -12,10 +12,10 @@ export function multiGuard(guards: Function[]) {
     let rets = -1;
 
     //hold the navigation route set by any of the guards
-    let params: object = {};
+    let params: any = null;
 
     guards.forEach((guard: Function) => {
-      //itterate over guards until one tries to redirect
+      //iterate over guards until one tries to redirect
       guard(to, from, (param?: object) => {
         //this method will be called async, so we need observable
         obs.next(param);
@@ -24,13 +24,13 @@ export function multiGuard(guards: Function[]) {
     obs.subscribe(param => {
       //wait for all guards to return
       rets++;
-      //update nav route if isset
+      //update nav route if is set
       if (param) {
         params = param;
       }
       //navigate once all guards return
       if (rets === guards.length) {
-        params !== {} ? next(params) : next();
+        params !== null ? next(params) : next();
       }
     });
   };

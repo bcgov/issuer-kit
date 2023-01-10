@@ -156,9 +156,9 @@ export default class Connect extends Vue {
     ] as Invitation;
     const data = {
       token: invitation.token,
-      connection_id: connection.id, // eslint-disable-line @typescript-eslint/camelcase
+      connection_id: connection.id,
       claims: credential.claims,
-      schema_id: config.credentials?.schema_id // eslint-disable-line @typescript-eslint/camelcase
+      schema_id: config.credentials?.schema_id
     };
     return Axios.post(`${config.apiServer.url}/credential-exchange/`, data, {
       cancelToken: this.cancelTokenSource.token,

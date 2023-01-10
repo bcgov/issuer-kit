@@ -4,7 +4,7 @@
   <DataCollection />
 </template>
 
-<script>
+<script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import DataCollection from "@/components/DataCollection.vue";
 

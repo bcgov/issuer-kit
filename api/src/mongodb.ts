@@ -8,15 +8,15 @@ function buildConnection(app: Application) {
   return connection
 }
 
-var db_status = false;
+let db_status = false;
 
 export async function dbStatus(app: Application) {
   if (!db_status) { //if initial connection failed return 503
     return 503
   }
   const connection = buildConnection(app);
-  const client = new MongoClient(connection, { useUnifiedTopology: true, serverSelectionTimeoutMS: 1000 });
-  var db_code = 200;
+  const client = new MongoClient(connection, { serverSelectionTimeoutMS: 1000 });
+  let db_code = 200;
   await client.connect().then(() => {
     client.close();
   }).catch(() => {
@@ -34,8 +34,6 @@ export default function (app: Application) {
     serverSelectionTimeout = 30
   }
   const mongoClient = MongoClient.connect(connection, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
     serverSelectionTimeoutMS: serverSelectionTimeout * 1000
   }).then((client) => {
     db_status = true

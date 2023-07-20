@@ -44,7 +44,7 @@
     "@feathersjs/errors": "^4.5.15",
     "@feathersjs/express": "^4.5.15",
     "@feathersjs/feathers": "^4.5.15",
-    "@feathersjs/socketio": "^4.5.15",
+    "@feathersjs/socketio": "^4.5.18",
     "@feathersjs/transport-commons": "^4.5.15",
     "axios": "^1.2.2",
     "compression": "^1.7.4",

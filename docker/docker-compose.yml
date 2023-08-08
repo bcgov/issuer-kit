@@ -146,20 +146,17 @@ services:
   # keycloak service
   #
   keycloak:
-    image: jboss/keycloak:16.1.1
+    image: quay.io/keycloak/keycloak:22.0
+    command: start-dev --import-realm --http-relative-path=/auth
     environment:
-      DB_VENDOR: ${KEYCLOAK_DB_VENDOR}
-      DB_ADDR: ${KEYCLOAK_DB_ADDR}
-      DB_DATABASE: ${KEYCLOAK_DB_NAME}
-      DB_USER: ${KEYCLOAK_DB_USER}
-      DB_PASSWORD: ${KEYCLOAK_DB_PASSWORD}
-      KEYCLOAK_USER: ${KEYCLOAK_USER}
-      KEYCLOAK_PASSWORD: ${KEYCLOAK_PASSWORD}
-      KEYCLOAK_LOGLEVEL: ${KEYCLOAK_LOGLEVEL}
-      ROOT_LOGLEVEL: ${KEYCLOAK_ROOT_LOGLEVEL}
-      KEYCLOAK_IMPORT: ${KEYCLOAK_IMPORT}
+      KC_DB: ${KEYCLOAK_DB_VENDOR}
+      KC_DB_URL: jdbc:postgresql://${KEYCLOAK_DB_ADDR}/keycloak
+      KC_DB_USERNAME: ${KEYCLOAK_DB_USER}
+      KC_DB_PASSWORD: ${KEYCLOAK_DB_PASSWORD}
+      KEYCLOAK_ADMIN: ${KEYCLOAK_USER}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_PASSWORD}
     volumes:
-      - ../docker/keycloak/config/realm-export-docker.json:/tmp/realm-export-docker.json
+      - ../docker/keycloak/config:/opt/keycloak/data/import
     ports:
       - 8180:8080
     depends_on:
@@ -171,7 +168,7 @@ services:
   # keycloak-db
   #
   keycloak-db:
-    image: postgres:12-alpine
+    image: postgres:15-alpine
     environment:
       POSTGRES_USER: ${KEYCLOAK_DB_USER}
       POSTGRES_PASSWORD: ${KEYCLOAK_DB_PASSWORD}
@@ -185,7 +182,7 @@ services:
   # Issuer Kit Agent
   #
   agent:
-    image: bcgovimages/aries-cloudagent:py36-1.16-1_0.7.4-rc0
+    image: ghcr.io/hyperledger/aries-cloudagent-python:py3.9-0.9.0
     environment:
       LEDGER_URL: ${LEDGER_URL}
       WALLET_TYPE: ${AGENT_STORAGE_WALLET_TYPE}
@@ -226,7 +223,7 @@ services:
         --auto-verify-presentation \
         --auto-respond-presentation-proposal \
         --auto-provision \
-        --wallet-type 'indy' \
+        --wallet-type 'askar' \
         --wallet-name '${AGENT_WALLET_NAME}' \
         --wallet-key '${AGENT_WALLET_ENCRYPTION_KEY}' \
         --wallet-storage-type '${AGENT_STORAGE_WALLET_TYPE}' \

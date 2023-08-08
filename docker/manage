@@ -1,5 +1,6 @@
 #!/bin/bash
 export MSYS_NO_PATHCONV=1
+
 # getDockerHost; for details refer to https://github.com/bcgov/DITP-DevOps/tree/main/code/snippets#getdockerhost
 . /dev/stdin <<<"$(cat <(curl -s --raw https://raw.githubusercontent.com/bcgov/DITP-DevOps/main/code/snippets/getDockerHost))" 
 export DOCKERHOST=$(getDockerHost)
@@ -249,13 +250,10 @@ configureEnvironment() {
   export MONGODB_PORT=27017
 
   # keycloak
-  export KEYCLOAK_DB_VENDOR="POSTGRES"
+  export KEYCLOAK_DB_VENDOR="postgres"
   export KEYCLOAK_DB_ADDR="keycloak-db"
   export KEYCLOAK_USER="admin"
   export KEYCLOAK_PASSWORD="admin"
-  export KEYCLOAK_IMPORT="/tmp/realm-export-docker.json"
-  export KEYCLOAK_LOGLEVEL="WARN"
-  export KEYCLOAK_ROOT_LOGLEVEL="WARN"
 
   # keycloak-db
   export KEYCLOAK_DB_NAME="keycloak"

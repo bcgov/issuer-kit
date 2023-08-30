@@ -57,7 +57,7 @@
     "jsonwebtoken": "^9.0.0",
     "jwks-rsa": "^3.0.0",
     "moment": "^2.29.4",
-    "mongodb": "^4.13.0",
+    "mongodb": "^4.17.0",
     "mongodb-core": "^3.2.7",
     "serve-favicon": "^2.5.0",
     "uuid": "^9.0.0",

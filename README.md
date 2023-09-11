@@ -13,7 +13,7 @@ The instructions below allow you to run the application on your laptop in a coup
 
 An overview of the architecture of the IdKit and the administrator and participant flows can be found [here](docs/issuer-kit.md).
 
-Need a mobile app to try? Instructions are available [here](../issuer-kit/docs/GettingApp.md) for getting an IOS mobile app. An Android app will be available Real Soon Now.
+Need a mobile app to try? Instructions are available [here](docs/GettingApp.md) for getting an IOS mobile app. An Android app will be available Real Soon Now.
 
 > The instructions here are still a bit raw. We're iterating on them and check back if things don't go smoothly. We're happy to answer any questions you have. Easiest way to connect with us is to add an [issue](https://github.com/bcgov/issuer-kit/issues) in this repo.
 
@@ -21,7 +21,7 @@ Need a mobile app to try? Instructions are available [here](../issuer-kit/docs/G
 
 - [Docker](https://www.docker.com/products/docker-desktop)
 
-- [s2i](https://github.com/openshift/source-to-image/releases)
+- [s2i](https://github.com/openshift/source-to-image#installation)
 
 - [jq](https://stedolan.github.io/jq)
 

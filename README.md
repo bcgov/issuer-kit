@@ -173,7 +173,7 @@ When using Issuer Kit in demo mode the api/controller will use the schema marked
   }
 ```
 
-:information_source: If you are planning on using Issuer Kit in your own production-like environment - regardless of wether you will be re-using the BCGov schema or creating your own - you may want to update the `AGENT_WALLET_SEED` environment variable with a unique value used only by your agent/organization rather than using the default value used for demo purposes.
+:information_source: If you are planning on using Issuer Kit in your own production-like environment - regardless of wether you will be re-using the BCGov schema or creating your own - you may want to update the `ACAPY_WALLET_SEED` environment variable with a unique value used only by your agent/organization rather than using the default value used for demo purposes.
 
 ## App Configuration
 

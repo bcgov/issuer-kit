@@ -278,7 +278,7 @@ configureEnvironment() {
   export AGENT_WALLET_ENCRYPTION_KEY="key"
   export AGENT_STORAGE_WALLET_TYPE="postgres_storage"
   if [[ ! -f ".env" ]]; then
-    export AGENT_WALLET_SEED="issuer_kit_000000000000000000000"
+    export ACAPY_WALLET_SEED="issuer_kit_000000000000000000000"
   fi
   export AGENT_ADMIN_PORT=8024
   export AGENT_WEBHOOK_PORT=8020
@@ -458,9 +458,9 @@ case "${COMMAND}" in
     export LEDGER_URL="http://test.bcovrin.vonx.io"
     export TAILS_SERVER_URL="https://tails-dev.vonx.io"
     if [[ ! -f ".env" ]]; then
-      AGENT_WALLET_SEED=$(generateSeed issuer-kit-demo)
-      echo "Generated AGENT_WALLET_SEED=${AGENT_WALLET_SEED}"
-      echo "AGENT_WALLET_SEED=${AGENT_WALLET_SEED}" > .env
+      ACAPY_WALLET_SEED=$(generateSeed issuer-kit-demo)
+      echo "Generated ACAPY_WALLET_SEED=${ACAPY_WALLET_SEED}"
+      echo "ACAPY_WALLET_SEED=${ACAPY_WALLET_SEED}" > .env
     fi
 
     if [ -z "$NGROK_AGENT_ENDPOINT" ]; then

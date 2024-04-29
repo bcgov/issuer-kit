@@ -61,7 +61,7 @@
     "mongodb-core": "^3.2.7",
     "serve-favicon": "^2.5.0",
     "uuid": "^9.0.0",
-    "winston": "^3.8.2"
+    "winston": "^3.13.0"
   },
   "devDependencies": {
     "@types/compression": "^1.7.2",

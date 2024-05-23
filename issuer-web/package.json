@@ -35,7 +35,7 @@
     "@fortawesome/fontawesome-free": "^6.2.1",
     "@types/jsonwebtoken": "^9.0.0",
     "@types/qrcode": "^1.5.0",
-    "@typescript-eslint/eslint-plugin": "^5.48.0",
+    "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.48.0",
     "@vue/cli-plugin-babel": "^5.0.8",
     "@vue/cli-plugin-eslint": "^5.0.8",

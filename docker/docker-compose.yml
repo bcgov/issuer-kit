@@ -182,7 +182,8 @@ services:
   # Issuer Kit Agent
   #
   agent:
-    image: ghcr.io/hyperledger/aries-cloudagent-python:py3.9-0.9.0
+    image: ghcr.io/hyperledger/aries-cloudagent-python:py3.9-0.12.1
+    platform: linux/amd64
     environment:
       LEDGER_URL: ${LEDGER_URL}
       WALLET_TYPE: ${AGENT_STORAGE_WALLET_TYPE}

@@ -12,7 +12,7 @@
     "@mdi/font": "^7.1.96",
     "axios": "^1.2.2",
     "bootstrap": "^4.6.1",
-    "core-js": "^3.21.1",
+    "core-js": "^3.37.1",
     "jquery": "^3.6.0",
     "oidc-client-ts": "^2.2.0",
     "roboto-fontface": "^0.10.0",

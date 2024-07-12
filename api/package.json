@@ -55,7 +55,7 @@
     "feathers-swagger": "^2.0.0",
     "helmet": "^6.0.1",
     "jsonwebtoken": "^9.0.0",
-    "jwks-rsa": "^3.0.0",
+    "jwks-rsa": "^3.1.0",
     "moment": "^2.29.4",
     "mongodb": "^4.13.0",
     "mongodb-core": "^3.2.7",
